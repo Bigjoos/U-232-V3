@@ -1,0 +1,73 @@
+.widget {
+width: 760px;
+margin: 20px;
+padding: 10px;
+background: #444;
+border: 1px solid #444;
+margin-bottom: 15px;-moz-border-radius: 10px;
+}
+
+   .widget a {
+   color: #000000;
+   text-decoration: none;
+   }
+   
+   .widget a:hover {
+   color: #009;
+   text-decoration: underline;
+   }
+
+   .tabnav li {
+   display: inline;
+   list-style: none;
+   padding-right: 5px;
+   }
+   
+      .tabnav li a {
+      text-decoration: none;
+      text-transform: uppercase;
+      color: #222;
+      font-weight: bold;
+      padding: 4px 6px;
+      outline: none;
+      }
+      
+      .tabnav li a:hover, .tabnav li a:active, .tabnav li.ui-tabs-selected a {
+      background: #dedbd1;
+      color: #222;
+      text-decoration: none;
+      }
+      
+   .tabdiv {
+   margin-top: 2px;
+   background: #333;
+   border: 1px solid #333;
+   padding: 5px;-moz-border-radius: 10px;
+   }
+   
+      .tabdiv li {
+      list-style-image: url("pic/star.png");
+      margin-left: 20px;
+      }
+
+.ui-tabs-hide {
+      display: none;
+      }
+
+      #featuredvid {
+      text-align: center;
+      }
+      
+         .fvid {
+         margin-bottom: 5px;
+         }
+      
+         .vidselector li {
+         text-align: left;
+         list-style: none;
+         padding: 5px;
+         background: #ffffff;
+         border: 1px solid #dedbd1;
+         text-transform: uppercase;
+         margin-bottom: 5px;
+         }
