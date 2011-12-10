@@ -53,7 +53,6 @@ $count = $row[0];
 $perpage = 15;
 $pager = pager($perpage, $count, "staffpanel.php?tool=cheaters&amp;action=cheaters&amp;");
 
-
 $HTMLOUT .="<form action='staffpanel.php?tool=cheaters&amp;action=cheaters' method='post'>
 <script type='text/javascript'>
 /*<![CDATA[*/
@@ -104,7 +103,7 @@ $HTMLOUT .="<table width=\"80%\">
 $res = sql_query("SELECT c.id as cid, c.added, c.userid, c.torrentid, c.client, c.rate, c.beforeup, c.upthis, c.timediff, c.userip, u.id AS uid, u.username AS user, u.class, u.downloaded, u.uploaded, t.id AS tid, t.name AS tname FROM cheaters AS c LEFT JOIN users AS u ON u.id=c.userid LEFT JOIN torrents AS t ON t.id=c.torrentid ORDER BY added DESC ".$pager['limit']."") or sqlerr(__FILE__, __LINE__);
 while ($arr = mysqli_fetch_assoc($res)) {
     $torrname = htmlspecialchars(CutName($arr["tname"], 80));
-    $cheater = "<b><a href='{$INSTALLER09['baseurl']}/userdetails.php?id={$arr['uid']}'>{$arr['user']}</a></b>{$lang['cheaters_hbcc']}<br />
+    $cheater = "<b><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['uid']."'>".htmlspecialchars($arr['user'])."</a></b>{$lang['cheaters_hbcc']}<br />
     <b>{$lang['cheaters_torrent']} <a href='{$INSTALLER09['baseurl']}/details.php?id=".(int)$arr['tid']."' title='{$torrname}'>{$torrname}</a></b>
 <br />{$lang['cheaters_upped']} <b>".mksize((int)$arr['upthis'])."</b><br />{$lang['cheaters_speed']} <b>".mksize((int)$arr['rate'])."/s</b><br />{$lang['cheaters_within']} <b>".(int)$arr['timediff']." {$lang['cheaters_sec']}</b><br />{$lang['cheaters_uc']} <b>".htmlspecialchars($arr['client'])."</b><br />{$lang['cheaters_ipa']} <b>".htmlspecialchars($arr['userip'])."</b>";
 
