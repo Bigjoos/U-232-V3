@@ -44,19 +44,11 @@ function mysql_fetch_all($query, $default_value = Array())
     return $result;
 }
 
-function get_user_name($userid){
-	
-  $res = sql_query("SELECT `username` , `id` , `class`, `chatpost`, `leechwarn`, `warned`, `pirate`, `king`, `donor`, `enabled` FROM `users` WHERE `id` = $userid LIMIT 1")  or sqlerr(__FILE__, __LINE__);
-  $username = mysqli_fetch_assoc($res);
-  
-  return $username;
-}
-
 $count1 = get_row_count('events');
 $perpage = 15;
 $pager = pager($perpage, $count1, 'staffpanel.php?tool=events&amp;action=events&amp;');
 
-$scheduled_events = mysql_fetch_all("SELECT * from `events` ORDER BY `startTime` DESC ".$pager['limit'].";", array());
+$scheduled_events = mysql_fetch_all("SELECT e.id, e.userid, e.startTime, e.endTime, e.overlayText, e.displayDates, e.freeleechEnabled, e.duploadEnabled, e.hdownEnabled, u.id, u.username AS name FROM events AS e LEFT JOIN users AS u ON u.id=e.userid ORDER BY startTime DESC ".$pager['limit'].";", array());
 
 if (is_array($scheduled_events)){
 foreach ($scheduled_events as $scheduled_event)
@@ -171,9 +163,9 @@ $showDates = 0;
 
 
 if(array_key_exists('userid', $_POST))
-$userid = $_POST['userid'];
+$userid = (int)$_POST['userid'];
 if(array_key_exists('editText', $_POST))
-$text = $_POST['editText'];
+$text = htmlspecialchars($_POST['editText']);
 if(array_key_exists('editStartTime', $_POST))
 $start = strtotime(trim($_POST['editStartTime']));
 if(array_key_exists('editEndTime', $_POST))
@@ -232,9 +224,9 @@ $HTMLOUT .="<p><strong> Events Schedular </strong> (eZERO) - <strong> <font colo
 <tr><th>User</th><th>Text</th><th>Start</th><th>End</th><th>Freeleech?</th><th>DUpload?</th><th>halfdownload?</th><th>Show Dates?</th><th>&nbsp;</th></tr>";
 
 foreach($scheduled_events as $scheduled_event){
-$id = $scheduled_event['id'];
-$username = get_user_name($scheduled_event['userid']);
-$text = $scheduled_event['overlayText'];
+$id = (int)$scheduled_event['id'];
+$username = htmlspecialchars($scheduled_event['name']);
+$text = htmlspecialchars($scheduled_event['overlayText']);
 $start = get_date((int)$scheduled_event['startTime'], 'DATE');
 $end = get_date((int)$scheduled_event['endTime'], 'DATE');
 $freeleech = (bool)(int)$scheduled_event['freeleechEnabled'];
@@ -263,7 +255,7 @@ $showdates = "<img src=\"{$INSTALLER09['pic_base_url']}on.gif\" alt=\"Showing of
 }else{
 $showdates = "<img src=\"{$INSTALLER09['pic_base_url']}off.gif\" alt=\"Showing of Dates Disabled\" title=\"Disabled\" />";
 }
-$HTMLOUT .="<tr><td align=\"center\">".format_username($username)."</td><td align=\"center\">{$text}</td><td align=\"center\">{$start}</td><td align=\"center\">{$end}</td><td align=\"center\">{$freeleech}</td><td align=\"center\">{$doubleUpload}</td><td align=\"center\">{$halfdownload}</td><td align=\"center\">{$showdates}</td><td align=\"center\"><input type=\"submit\" name=\"editEvent_$id\" value=\"Edit\" /> <input type=\"submit\" onclick=\"return checkAllGood('$text')\" name=\"removeEvent_$id\" value=\"Remove\" /></td></tr>";
+$HTMLOUT .="<tr><td align=\"center\">{$username}</td><td align=\"center\">{$text}</td><td align=\"center\">{$start}</td><td align=\"center\">{$end}</td><td align=\"center\">{$freeleech}</td><td align=\"center\">{$doubleUpload}</td><td align=\"center\">{$halfdownload}</td><td align=\"center\">{$showdates}</td><td align=\"center\"><input type=\"submit\" name=\"editEvent_$id\" value=\"Edit\" /> <input type=\"submit\" onclick=\"return checkAllGood('$text')\" name=\"removeEvent_$id\" value=\"Remove\" /></td></tr>";
 }
 $HTMLOUT .="<tr><td colspan='9' align='right'><input type='submit' name='editEvent_-1' value='Add Event' /></td></tr></table>";
 
@@ -287,7 +279,7 @@ $HTMLOUT .="<table>
 else
 foreach($scheduled_events as $scheduled_event){
 if($id == $scheduled_event['id']){
-$text = $scheduled_event['overlayText'];
+$text = htmlspecialchars($scheduled_event['overlayText']);
 $start = get_date((int)$scheduled_event['startTime'], 'DATE');
 $end = get_date((int)$scheduled_event['endTime'], 'DATE');
 $freeleech = (bool)(int)$scheduled_event['freeleechEnabled'];
