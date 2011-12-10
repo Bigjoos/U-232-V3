@@ -101,30 +101,18 @@ $HTMLOUT .="<table width=\"80%\">
 <td class=\"table\" width=\"10\" align=\"center\" valign=\"middle\">{$lang['cheaters_d']}</td>
 <td class=\"table\" width=\"10\" align=\"center\" valign=\"middle\">{$lang['cheaters_r']}</td></tr>\n";
 
-$res = sql_query("SELECT * FROM cheaters ORDER BY added DESC ".$pager['limit']."") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT c.id as cid, c.added, c.userid, c.torrentid, c.client, c.rate, c.beforeup, c.upthis, c.timediff, c.userip, u.id AS uid, u.username AS user, u.class, u.downloaded, u.uploaded, t.id AS tid, t.name AS tname FROM cheaters AS c LEFT JOIN users AS u ON u.id=c.userid LEFT JOIN torrents AS t ON t.id=c.torrentid ORDER BY added DESC ".$pager['limit']."") or sqlerr(__FILE__, __LINE__);
 while ($arr = mysqli_fetch_assoc($res)) {
-    $rrr = sql_query("SELECT id, username, class, downloaded, uploaded FROM users WHERE id = {$arr['userid']}");
-    $aaa = mysqli_fetch_assoc($rrr);
+    $torrname = htmlspecialchars(CutName($arr["tname"], 80));
+    $cheater = "<b><a href='{$INSTALLER09['baseurl']}/userdetails.php?id={$arr['uid']}'>{$arr['user']}</a></b>{$lang['cheaters_hbcc']}<br />
+    <b>{$lang['cheaters_torrent']} <a href='{$INSTALLER09['baseurl']}/details.php?id=".(int)$arr['tid']."' title='{$torrname}'>{$torrname}</a></b>
+<br />{$lang['cheaters_upped']} <b>".mksize((int)$arr['upthis'])."</b><br />{$lang['cheaters_speed']} <b>".mksize((int)$arr['rate'])."/s</b><br />{$lang['cheaters_within']} <b>".(int)$arr['timediff']." {$lang['cheaters_sec']}</b><br />{$lang['cheaters_uc']} <b>".htmlspecialchars($arr['client'])."</b><br />{$lang['cheaters_ipa']} <b>".htmlspecialchars($arr['userip'])."</b>";
 
-    $rrr2 = sql_query("SELECT name FROM torrents WHERE id = {$arr['torrentid']}");
-    $aaa2 = mysqli_fetch_assoc($rrr2);
-
-    if ($aaa["downloaded"] > 0) {
-        $ratio = number_format($aaa["uploaded"] / $aaa["downloaded"], 3);
-    } else {
-        $ratio = "---";
-    }
-    $ratio = "<font color=" .get_ratio_color($ratio) . ">$ratio</font>";
-
-    $uppd = mksize($arr["upthis"]);
-
-    $cheater = "<b><a href='{$INSTALLER09['baseurl']}/userdetails.php?id={$aaa['id']}'>{$aaa['username']}</a></b>{$lang['cheaters_hbcc']}<br /><br />{$lang['cheaters_upped']} <b>$uppd</b><br />{$lang['cheaters_speed']} <b>".mksize($arr['rate'])."/s</b><br />{$lang['cheaters_within']} <b>{$arr['timediff']} {$lang['cheaters_sec']}</b><br />{$lang['cheaters_uc']} <b>{$arr['client']}</b><br />{$lang['cheaters_ipa']} <b>{$arr['userip']}</b>";
-
-    $HTMLOUT .="<tr><td class=\"table\" width=\"10\" align=\"center\">{$arr['id']}</td>
-    <td class=\"table\" align=\"left\"><a href=\"javascript:klappe('a1{$arr['id']}')\">{$aaa['username']}</a> - Added: ".get_date($arr['added'], 'DATE')."
-    <div id=\"ka1{$arr['id']}\" style=\"display: none;\"><font color=\"red\">{$cheater}</font></div></td>
-    <td class=\"table\" valign=\"top\" width=\"10\"><input type=\"checkbox\" name=\"desact[]\" value=\"{$aaa["id"]}\"/></td>
-    <td class=\"table\" valign=\"top\" width=\"10\"><input type=\"checkbox\" name=\"remove[]\" value=\"{$arr["id"]}\"/></td></tr>";
+    $HTMLOUT .="<tr><td class=\"table\" width=\"10\" align=\"center\">".(int)$arr['cid']."</td>
+    <td class=\"table\" align=\"left\"><a href=\"javascript:klappe('a1".(int)$arr['cid']."')\">".htmlspecialchars($arr['user'])."</a> - Added: ".get_date($arr['added'], 'DATE')."
+    <div id=\"ka1".(int)$arr['cid']."\" style=\"display: none;\"><font color=\"red\">{$cheater}</font></div></td>
+    <td class=\"table\" valign=\"top\" width=\"10\"><input type=\"checkbox\" name=\"desact[]\" value=\"".(int)$arr["uid"]."\"/></td>
+    <td class=\"table\" valign=\"top\" width=\"10\"><input type=\"checkbox\" name=\"remove[]\" value=\"".(int)$arr["cid"]."\"/></td></tr>";
 }
 
 $HTMLOUT .="<tr>
