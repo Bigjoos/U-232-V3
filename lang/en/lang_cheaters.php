@@ -19,7 +19,8 @@ $lang = array(
 'cheaters_hbcc' => " has been flagged with an abnormally high upload speed !",
 'cheaters_cad' => "Check All Disable",
 'cheaters_car' => "Check All Remove",
-'cheaters_ac' => "Apply Changes"
+'cheaters_ac' => "Apply Changes",
+'cheaters_torrent' => "On torrent"
 );
 
 ?>
