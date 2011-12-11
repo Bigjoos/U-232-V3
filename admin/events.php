@@ -48,7 +48,7 @@ $count1 = get_row_count('events');
 $perpage = 15;
 $pager = pager($perpage, $count1, 'staffpanel.php?tool=events&amp;action=events&amp;');
 
-$scheduled_events = mysql_fetch_all("SELECT e.id, e.userid, e.startTime, e.endTime, e.overlayText, e.displayDates, e.freeleechEnabled, e.duploadEnabled, e.hdownEnabled, u.id, u.username AS name FROM events AS e LEFT JOIN users AS u ON u.id=e.userid ORDER BY startTime DESC ".$pager['limit'].";", array());
+$scheduled_events = mysql_fetch_all("SELECT e.id, e.userid, e.startTime, e.endTime, e.overlayText, e.displayDates, e.freeleechEnabled, e.duploadEnabled, e.hdownEnabled, u.id, u.username, u.class, u.chatpost, u.leechwarn, u.warned, u.pirate, u.king, u.donor, u.enabled FROM events AS e LEFT JOIN users AS u ON u.id=e.userid ORDER BY startTime DESC ".$pager['limit'].";", array());
 
 if (is_array($scheduled_events)){
 foreach ($scheduled_events as $scheduled_event)
@@ -225,7 +225,9 @@ $HTMLOUT .="<p><strong> Events Schedular </strong> (eZERO) - <strong> <font colo
 
 foreach($scheduled_events as $scheduled_event){
 $id = (int)$scheduled_event['id'];
-$username = htmlspecialchars($scheduled_event['name']);
+$users = $scheduled_event;
+$users['id'] = (int)$scheduled_event['userid'];
+$username = format_username($users);
 $text = htmlspecialchars($scheduled_event['overlayText']);
 $start = get_date((int)$scheduled_event['startTime'], 'DATE');
 $end = get_date((int)$scheduled_event['endTime'], 'DATE');
