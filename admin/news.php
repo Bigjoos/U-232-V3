@@ -80,8 +80,10 @@ if ($mode == 'add') {
     if (!$added)
         $added = TIME_NOW;
     sql_query("INSERT INTO news (userid, added, body, title, sticky) VALUES (" . sqlesc($CURUSER['id']) . "," . sqlesc($added) . ", " . sqlesc($body) . ", " . sqlesc($title) . ", " . sqlesc($sticky) . ")") or sqlerr(__FILE__, __LINE__);
-    mysqli_affected_rows($GLOBALS["___mysqli_ston"]) == 1 ? stderr("Success", "News entry was added successfully.") : stderr("oopss", "Something's wrong !! .");
     $mc1->delete_value('latest_news_');
+    header("Refresh: 3; url=staffpanel.php?tool=news&mode=news");
+    mysqli_affected_rows($GLOBALS["___mysqli_ston"]) == 1 ? stderr("Success", "News entry was added successfully.") : stderr("oopss", "Something's wrong !! .");
+    
 }
 
 //==Edit/change news
