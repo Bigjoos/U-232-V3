@@ -69,8 +69,8 @@ if ($mode == 'delete') {
 
 //==Add news
 if ($mode == 'add') {
-    $body = isset($_POST['body']) ? htmlentities($_POST['body']) : '';
-    $sticky = isset($_POST['sticky']) ? htmlentities($_POST['sticky']) : 'yes';
+    $body = isset($_POST['body']) ? $_POST['body'] : '';
+    $sticky = isset($_POST['sticky']) ? $_POST['sticky'] : 'yes';
     if (!$body)
         stderr("Error", "The news item cannot be empty!");
     $title = htmlentities($_POST['title']);
@@ -94,8 +94,8 @@ if ($mode == 'edit') {
         stderr("Error", "No news item with that ID .");
     $arr = mysqli_fetch_assoc($res);
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $body = isset($_POST['body']) ? htmlentities($_POST['body']) : '';
-        $sticky = isset($_POST['sticky']) ? htmlentities($_POST['sticky']) : 'yes';
+        $body = isset($_POST['body']) ? $_POST['body'] : '';
+        $sticky = isset($_POST['sticky']) ? $_POST['sticky'] : 'yes';
         if ($body == "")
         stderr("Error", "Body cannot be empty!");
         $title = htmlentities($_POST['title']);
@@ -104,7 +104,7 @@ if ($mode == 'edit') {
         $body = sqlesc($body);
         $sticky = sqlesc($sticky);
         $editedat = sqlesc(TIME_NOW);
-        sql_query("UPDATE news SET body=".sqlesc($body).", sticky=".sqlesc($sticky).", title=" . sqlesc($title) . " WHERE id=".sqlesc($newsid)) or sqlerr(__FILE__, __LINE__);
+        sql_query("UPDATE news SET body=$body, sticky=$sticky, title=".sqlesc($title)." WHERE id=".sqlesc($newsid)) or sqlerr(__FILE__, __LINE__);
         $mc1->delete_value('latest_news_');
         header("Refresh: 3; url=staffpanel.php?tool=news&mode=news");
         stderr("Success", "News item was edited successfully - Please wait while you are redirected!");
@@ -114,7 +114,7 @@ if ($mode == 'edit') {
         <table border='1' cellspacing='0' cellpadding='5'>
         <tr><td><input type='text' name='title' value='" . htmlspecialchars($arr['title']) . "' /></td></tr>
         <tr><td align='left' style='padding: 0px'>
-         ".BBcode(htmlspecialchars($arr["body"]), FALSE)."
+         ".BBcode($arr["body"], FALSE)."
         </td></tr>
         <tr><td colspan='2' class='rowhead'>Sticky<input type='radio' " . ($arr["sticky"] == "yes" ? " checked='checked'" : "") . " name='sticky' value='yes' />Yes<input name='sticky' type='radio' value='no' " . ($arr["sticky"] == "no" ? " checked='checked'" : "") . " />No</td></tr>
         <tr><td colspan='2' align='center'><input type='submit' value='Okay' class='btn' /></td></tr>
@@ -151,7 +151,7 @@ if ($mode == 'edit') {
         - [<a href='staffpanel.php?tool=news&amp;mode=delete&amp;newsid=$newsid&amp;sure=1&amp;h=$hash'><b>Delete</b></a>]
         </td></tr></table>\n";
         $HTMLOUT .= begin_table(true);
-        $HTMLOUT .="<tr valign='top'><td class='comment'><b>" . htmlentities($title) . "</b><br />" . format_comment($body) . "</td></tr>\n";
+        $HTMLOUT .="<tr valign='top'><td class='comment'><b>" . htmlspecialchars($title) . "</b><br />" . format_comment($body) . "</td></tr>\n";
         $HTMLOUT .= end_table();
         $HTMLOUT .= "<br />";
     }
