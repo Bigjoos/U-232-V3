@@ -205,14 +205,8 @@ else if ($mode == "backup")
 	$mysql_user = $INSTALLER09['mysql_user'];
 	$mysql_pass = $INSTALLER09['mysql_pass'];
 	$mysql_db = $INSTALLER09['mysql_db'];
-	
-	//$ext = $mysql_db.'-'.date('d').'-'.date('m').'-'.date('Y').".sql";
    $ext = $mysql_db.'-'.date('d').'-'.date('m').'-'.date('Y').'_'.date('H').'-'.date('i').'-'.date('s').'_'.date('D').".sql";
-	
 	$filepath = $backupdir.'/'.$ext;
-	//print $filepath;
-   //exit();
-
 	exec("$mysqldump_path --default-character-set=latin1 -h $mysql_host -u $mysql_user -p$mysql_pass $mysql_db > $filepath");
 	if ($use_gzip)
 		exec($gzip_path.' '.$filepath);
@@ -231,7 +225,7 @@ else if ($mode == "backup")
 	if ($write2log)
 		write_log($CURUSER['username'].'('.get_user_class_name($CURUSER['class']).') successfully backed-up the database.');
 	
-	header("Location: staffpanel.php?tool=backup&".$location);
+	header("Location: staffpanel.php?tool=backup");
 }
 else if ($mode == "download")
 {

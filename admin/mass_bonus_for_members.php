@@ -89,7 +89,7 @@ if ($free_for_classes === 1)
             if ($count > 0){
             sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
             sql_query("INSERT INTO users (id, uploaded, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE uploaded=uploaded+values(uploaded),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-            write_log("Staff mass bonus - added upload credit to ".$count." members in all classes");
+            write_log("Staff mass bonus - added upload credit to ".$count." members in all classes by ".$CURUSER['username']."");
             }
             
             unset ($users_buffer, $pm_buffer, $count);  
@@ -132,7 +132,7 @@ elseif ($free_for_classes === 0)
                         if ($count > 0){
                         sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
                         sql_query("INSERT INTO users (id, uploaded, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE uploaded=uploaded+values(uploaded),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-                        write_log("Staff mass bonus - added upload credit to ".$count." members");
+                        write_log("Staff mass bonus - added upload credit to ".$count." members by ".$CURUSER['username']."");
                         }
                         unset ($users_buffer, $pm_buffer, $count);
                         }
@@ -180,7 +180,7 @@ if ($free_for_classes === 1)
             if ($count > 0){
             sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
             sql_query("INSERT INTO users (id, seedbonus, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE seedbonus=seedbonus+values(seedbonus),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-            write_log("Staff mass bonus - added karma points to ".$count." members in all classes");
+            write_log("Staff mass bonus - added karma points to ".$count." members in all classes by ".$CURUSER['username']."");
             }
   
             unset ($users_buffer, $pm_buffer, $count);
@@ -221,7 +221,7 @@ elseif ($free_for_classes === 0)
                         if ($count > 0){
                         sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
                         sql_query("INSERT INTO users (id, seedbonus, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE seedbonus=seedbonus+values(seedbonus),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-                        write_log("Staff mass bonus - added karma points to ".$count." members");
+                        write_log("Staff mass bonus - added karma points to ".$count." members by ".$CURUSER['username']."");
                         }
                         
                         unset ($users_buffer, $pm_buffer, $count);
@@ -271,7 +271,7 @@ if ($free_for_classes === 1)
             if ($count > 0){
             sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
             sql_query("INSERT INTO users (id, freeslots, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE freeslots=freeslots+values(freeslots),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-            write_log("Staff mass bonus - added freeslots to ".$count." members in all classes");
+            write_log("Staff mass bonus - added freeslots to ".$count." members in all classes by ".$CURUSER['username']."");
             }
                         
             unset ($users_buffer, $pm_buffer, $count);
@@ -314,7 +314,7 @@ elseif ($free_for_classes === 0)
                         if ($count > 0){
                         sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
                         sql_query("INSERT INTO users (id, freeslots, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE freeslots=freeslots+values(freeslots),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-                        write_log("Staff mass bonus - added freeslots to ".$count." members");
+                        write_log("Staff mass bonus - added freeslots to ".$count." members by ".$CURUSER['username']."");
                         }
                         
                         unset ($users_buffer, $pm_buffer, $count);
@@ -365,7 +365,7 @@ if ($free_for_classes === 1)
             if ($count > 0){
             sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
             sql_query("INSERT INTO users (id, invites, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE invites=invites+values(invites),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-            write_log("Staff mass bonus - added invites to ".$count." members in all classes");
+            write_log("Staff mass bonus - added invites to ".$count." members in all classes by ".$CURUSER['username']."");
             }
                         
             unset ($users_buffer, $pm_buffer, $count);
@@ -409,7 +409,7 @@ elseif ($free_for_classes === 0)
                         if ($count > 0){
                         sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
                         sql_query("INSERT INTO users (id, invites, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE invites=invites+values(invites),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-                        write_log("Staff mass bonus - added invites to ".$count." members");
+                        write_log("Staff mass bonus - added invites to ".$count." members by ".$CURUSER['username']."");
                         }
                         
                        unset ($users_buffer, $pm_buffer, $count);
