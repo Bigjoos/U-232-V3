@@ -197,8 +197,8 @@ function add_cat() {
     $cat_name = sqlesc($params['new_cat_name']);
     $cat_desc = sqlesc($params['new_cat_desc']);
     $cat_image = sqlesc($params['new_cat_image']);
-	  $cat_parent = sqlesc($params['new_parent_id']);
-	  $cat_tabletype = sqlesc($params['new_tabletype']);
+	 $cat_parent = sqlesc($params['new_cat_parent_id']);
+	 $cat_tabletype = sqlesc($params['new_cat_tabletype']);
     
     sql_query( "INSERT INTO categories (name, cat_desc, image, parent_id, tabletype)
                   VALUES($cat_name, $cat_desc, $cat_image, $cat_parent, $cat_tabletype)" );
@@ -560,11 +560,11 @@ function show_categories() {
     </tr>
 	    <tr>
       <td align='right'>New Parent ID:</td>
-      <td align='left'><input type='text' name='new_parent_id' size='50' maxlength='50' /></td>
+      <td align='left'><input type='text' name='new_cat_parent_id' size='50' maxlength='50' /></td>
     </tr>
 	    <tr>
       <td align='right'>New Table Type:</td>
-      <td align='left'><input type='text' name='new_tabletype' size='50' maxlength='50' /></td>
+      <td align='left'><input type='text' name='new_cat_tabletype' size='50' maxlength='50' /></td>
     </tr>
     <tr>
       <td align='right'>New Cat Description:</td>
