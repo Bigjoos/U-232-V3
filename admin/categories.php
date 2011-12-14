@@ -466,7 +466,7 @@ function edit_cat_form() {
       <input type='hidden' name='mode' value='takeedit_cat' />
       <input type='hidden' name='id' value='{$r['id']}' />
     
-      <table class='torrenttable' align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2'>
+      <table class='torrenttable' align='center' width='80%' bgcolor='#555555' cellspacing='2' cellpadding='2'>
       <tr>
         <td align='right'>New Cat Name:</td>
         <td><input type='text' name='cat_name' class='option' size='50' value='".htmlentities($r['name'], ENT_QUOTES)."' /></td>
@@ -548,7 +548,7 @@ function show_categories() {
     $htmlout .= "<form action='staffpanel.php?tool=categories&amp;action=categories' method='post'>
     <input type='hidden' name='mode' value='takeadd_cat' />
     
-    <table class='torrenttable' border='1' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2'>
+    <table class='torrenttable' border='1' width='80%' bgcolor='#555555' cellspacing='2' cellpadding='2'>
     <tr>
       <td class='colhead' colspan='2' align='center'>
         <b>Make a new category:</b>
@@ -586,7 +586,7 @@ function show_categories() {
 
 
     <h2>Current Categories:</h2>
-    <table class='torrenttable' border='1' width='80%' bgcolor='#cecece' cellpadding='5px'>
+    <table class='torrenttable' border='1' width='80%' bgcolor='#333333' cellpadding='5px'>
     <tr>
       <td class='colhead' width='60'>Cat ID</td>
 	  <td class='colhead' width='60'>Parent ID</td>
