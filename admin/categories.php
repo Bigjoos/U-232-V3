@@ -156,7 +156,7 @@ function move_cat_form() {
       <input type='hidden' name='mode' value='takemove_cat' />
       <input type='hidden' name='id' value='{$r['id']}' />
     
-      <table class='torrenttable' align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='4px'>
+      <table class='torrenttable' align='center' width='80%' bgcolor='#555555' cellspacing='2' cellpadding='4px'>
       <tr>
         <td colspan='2' class='colhead'>You are about to move category: ".htmlentities($r['name'], ENT_QUOTES)."</td>
       </tr>
@@ -321,7 +321,7 @@ function delete_cat_form() {
       <input type='hidden' name='mode' value='takedel_cat' />
       <input type='hidden' name='id' value='{$r['id']}' />
     
-      <table class='torrenttable' align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2'>
+      <table class='torrenttable' align='center' width='80%' bgcolor='#555555' cellspacing='2' cellpadding='2'>
       <tr>
         <td colspan='2' class='colhead'>You are about to delete category: ".htmlentities($r['name'], ENT_QUOTES)."</td>
       </tr>
