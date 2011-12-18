@@ -52,6 +52,7 @@ function mkint($x) {
 
 	if ($_SERVER["REQUEST_METHOD"] == "POST")
 	{
+		//$groups = isset($_POST["groups"]) ? $_POST["groups"] : "";
       $groups = isset($_POST["groups"]) ? array_map('mkint',$_POST["groups"]) : "";
 		$subject = isset($_POST["subject"]) ? htmlspecialchars($_POST["subject"]) : "";
 		$msg = isset($_POST["message"]) ? htmlspecialchars($_POST["message"]) : "";
@@ -124,12 +125,13 @@ function mkint($x) {
 				
 				if(sizeof($pms) > 0)
 					$r = sql_query("INSERT INTO messages(sender,receiver,added,msg,subject) VALUES ".join(",",$pms)) or sqlerr(__FILE__, __LINE__);
+               $mc1->delete_value('inbox_new_'.$rid);
+               $mc1->delete_value('inbox_new_sb_'.$rid);
 					$err[] = ($r ? "Message sent!" : "Unable to send the message try again!");
 			}
 			else $err[] = "There is not users in the groups you selected!";
 		}
-	 $mc1->delete_value('inbox_new_'.$a['id']);
-  $mc1->delete_value('inbox_new_sb_'.$a['id']);
+	 
 	}
 	
 
