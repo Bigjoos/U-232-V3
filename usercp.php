@@ -203,7 +203,7 @@ loggedinorreturn();
 	  <option value='2'".($CURUSER['paranoia'] == 2 ? " selected='selected'" : "").">I'm paranoid</option>
 	  <option value='3'".($CURUSER['paranoia'] == 3 ? " selected='selected'" : "").">I wear a tin-foil hat</option>
 	  </select> <a class='altlink'  title='Click for more info' id='paranoia_open' style='font-weight:bold;cursor:pointer;'>Paranoia Levels explained!</a> <br /><br />
-	  <div id='paranoia_info' style='display:none;background-color:#FEFEF4;max-width:400px;padding: 5px 5px 5px 10px;'>
+	  <div id='paranoia_info' style='display:none;background-color:transparent;max-width:400px;padding: 5px 5px 5px 10px;'>
 	  <span style='font-weight: bold;'>I'm totally relaxed</span><br />
 	  <span style='font-size: x-small;'>Default setting, nothing is hidden except your IP, passkey, email. the same as any tracker.</span><br /><br />
 	  <span style='font-weight: bold;'>I'm a little paranoid</span><br />
@@ -315,8 +315,8 @@ loggedinorreturn();
     //==Language
     $HTMLOUT .= tr($lang['usercp_language'],
     "<select name='language'>
-    <option value='en'".($CURUSER['language'] == 'en' ? " selected='selected'" : "").">En</option>
-    <option value='swe'".($CURUSER['language'] == 'swe'  ? " selected='selected'" : "").">Swe</option>
+    <option value='1'".($CURUSER['language'] == '1' ? " selected='selected'" : "").">En</option>
+    <option value='2'".($CURUSER['language'] == '2'  ? " selected='selected'" : "").">Swe</option>
     </select>", $CURUSER['language']);
     */
     //==status mod
