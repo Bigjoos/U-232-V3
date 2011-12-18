@@ -5,7 +5,7 @@ div#wiki-row { display: table-row;}
 div#wiki-navigation {
     margin: 2px; padding: 2px;
     border: 0px solid #e2e2e2;
-    background-color: transparent;}
+    background-color: #778899;}
 div#wiki-content-left div#content-add {
     text-align: center;}
 div#wiki-content-left textarea#body {
@@ -18,7 +18,7 @@ div#wiki-content-right {
 div#wiki-content-left div#name, div#content, div#content-add {
     margin: 2px; padding: 2px;
     border: 0px solid #e2e2e2;
-    background-color: transparent;}
+    background-color: #778899;}
 div#wiki-content-left div#name {
     width: 80%; text-align: center; font-size: 18px;}
 div#wiki-content-left div#content, div#content-add {
@@ -26,13 +26,13 @@ div#wiki-content-left div#content, div#content-add {
 div#wiki-content-right div#search, div#details {
     margin: 2px; padding: 2px;
     border: 0px solid #e2e2e2;
-    background-color: transparent;}
+    background-color: #778899;}
 div#wiki-content-right div#search, div#details {
     width: 250px;}
 div.wiki-search {
     margin: 2px; padding: 2px;
     border: 0px solid #e2e2e2;
-    background-color: transparent;}
+    background-color: #778899;}
 div.global_head_wiki {
     width: 885px; height: 35px; margin-top: -0px; margin-right: 0px;
     text-align: left; color: #474747; font-size: 15px; font-weight: bolder;
@@ -49,6 +49,6 @@ div.global_icon {
     -moz-border-radius-topleft: 8px; -webkit-border-radius-topleft: 8px; border-top-left-radius: 8px;
     float: left; display:inline; border-color: #eae9e9;}
 div.global_text {
-    width: 938px; text-align: center; color: #474747; background: #e1e0e0; margin-bottom: 20px; padding:15px;
+    width: 938px; text-align: center; color: #474747; background-color: #778899; margin-bottom: 20px; padding:15px;
     -moz-border-radius-bottomright: 8px; -webkit-border-radius-bottomright: 8px; border-bottom-right-radius: 8px;
     -moz-border-radius-bottomleft: 8px; -webkit-border-radius-bottomleft: 8px; border-bottom-left-radius: 8px;}
