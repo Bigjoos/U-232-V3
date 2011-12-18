@@ -64,6 +64,6 @@ loggedinorreturn();
         $html .= "<p style='text-align:center'>".($CURUSER['class'] >= $valid['viewtickets']['minclass'] ? "<a href='lottery.php?do=viewtickets'>[View bought tickets]</a>&nbsp;&nbsp;" : "").($CURUSER['class'] >= $valid['config']['minclass'] ? "<a href='lottery.php?do=config'>[Lottery configuration]</a>&nbsp;&nbsp;" : "")."<a href='lottery.php?do=tickets'>[Buy tickets]</a></p>";
         $html .= end_main_frame();
         }
-        }
-echo(stdhead('Lottery').$html.stdfoot());    
+echo(stdhead('Lottery').$html.stdfoot());
+}
 ?>
