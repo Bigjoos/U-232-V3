@@ -96,7 +96,7 @@ dbconn();
             
             $CURUSER['freeslots'] = ($CURUSER['freeslots'] - 1);
             
-            sql_query('UPDATE users SET freeslots = freeslots - 1 WHERE id = '.$user['id'].' LIMIT 1') or sqlerr(__FILE__, __LINE__);
+            sql_query('UPDATE users SET freeslots = freeslots - 1 WHERE id = '.$CURUSER['id'].' LIMIT 1') or sqlerr(__FILE__, __LINE__);
             
             if ($used_slot && $slot['free'] == 'yes')
                 sql_query('UPDATE freeslots SET doubleup = "yes", addedup = '.$added.' WHERE torrentid = '.$id.' AND userid = '.$CURUSER['id'].' AND free = "yes"') or sqlerr(__FILE__, __LINE__);
