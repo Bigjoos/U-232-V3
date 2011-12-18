@@ -126,7 +126,7 @@ loggedinorreturn();
 	  $i = 0;
 	  foreach($subs as $s)
 	  {	
-	  $subs_list .=  ($i && $i % 2 == 0) ? "</tr><tr>" : "";
+	  $subs_list .=  ($i && $i % 4 == 0) ? "</tr><tr>" : "";
 	  $subs_list .= "<td style='padding-right: 5px'><input name=\"subs[]\" " . (strpos($row["subs"], $s["id"]) !== false ? " checked='checked'" : "") . "  type=\"checkbox\" value=\"".$s["id"]."\" /> ".$s["name"]."</td>\n";
 	  ++$i;
 	  }
