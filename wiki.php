@@ -187,8 +187,8 @@ if ($action == "article") {
             $HTMLOUT .="
 				<div id=\"wiki-content-left\" align=\"right\">
 					<div id=\"name\"><b><a href=\"wiki.php?action=article&amp;name=$wiki[name]\">$wiki[name]</a></b></div>
-					<div id=\"content\">" . ($wiki['userid'] > 0 ? "<font style=\"color: grey; font-size: 9px;\"><i>Article added by <a href=\"userdetails.php?id=$wiki[userid]\"><b>$author[username]</b></a></i></font><br /><br />" : "") . wikireplace(format_comment($wiki["body"])) . "";
-            $HTMLOUT .="<div align=\"right\">" . ($edit ? "<font style=\"color: grey; font-size: 9px;\">$edit</font>" : "") . ($CURUSER['class'] >= UC_STAFF || $CURUSER["id"] == $wiki["userid"] ? " - <a href=\"wiki.php?action=edit&amp;id=$wiki[id]\">Edit</a>" : "") . "</div>";
+					<div id=\"content\">" . ($wiki['userid'] > 0 ? "<font-size: 9px;\"><i>Article added by <a href=\"userdetails.php?id=$wiki[userid]\"><b>$author[username]</b></a></i></font><br /><br />" : "") . wikireplace(format_comment($wiki["body"])) . "";
+            $HTMLOUT .="<div align=\"right\">" . ($edit ? "<font-size: 9px;\">$edit</font>" : "") . ($CURUSER['class'] >= UC_STAFF || $CURUSER["id"] == $wiki["userid"] ? " - <a href=\"wiki.php?action=edit&amp;id=$wiki[id]\">Edit</a>" : "") . "</div>";
             $HTMLOUT .="</div></div>";
         }
 
