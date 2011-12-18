@@ -48,10 +48,10 @@ loggedinorreturn();
         $html .= stdmsg('Sorry','Lottery is closed at the moment');
       if($lottery_config['end_date'] > TIME_NOW)
         $html .= stdmsg('Lottery in progress',"Lottery started on <b>".get_date($lottery_config['start_date'],'LONG')."</b> and ends on <b>".get_date($lottery_config['end_date'],'LONG')."</b> remaining <span style='color:#ff0000;'>".mkprettytime($lottery_config['end_date']-TIME_NOW)."</span><br />
-       <p style='text-align:center'>".($CURUSER['class'] >= $valid['viewtickets']['minclass'] ? "<a href='lottery.php?do=viewtickets'>[View bought tickets]</a>&nbsp;&nbsp;" : "").($CURUSER['class'] >= $valid['config']['minclass'] ? "<a href='lottery.php?do=config'>[Lottery configuration]</a>&nbsp;&nbsp;" : "")."<a href='lottery.php?do=tickets'>[Buy tickets]</a></p>");
+       <p style='text-align:center'>".($CURUSER['class'] >= $valid['viewtickets']['minclass'] ? "<a href='lottery.php?do=viewtickets'>[View bought tickets]</a>&nbsp;&nbsp;" : "")."<a href='lottery.php?do=tickets'>[Buy tickets]</a></p>");
       //get last lottery data
       if(!empty($lottery_config['lottery_winners'])) {
-        $html .= stdmsg('Last lottery',''.get_date($lottery_config['end_date'],'LONG').'');
+        $html .= stdmsg('Last lottery',''.get_date($lottery_config['lottery_winners_time'],'LONG').'');
         $uids = (strpos($lottery_config['lottery_winners'],'|') ? explode('|',$lottery_config['lottery_winners']) : $lottery_config['lottery_winners']);
         $last_winners = array();
         $qus = sql_query('SELECT id,username FROM users WHERE id '.(is_array($uids) ? 'IN ('.join(',',$uids).')' : '='.$uids)) or sqlerr(__FILE__,__LINE__);
@@ -63,7 +63,7 @@ loggedinorreturn();
         } else {
         $html .= begin_main_frame();
         $html .="<ul><li> Nobody has won, because nobody has played yet : )</li>";
-        $html .= "<p style='text-align:center'>".($CURUSER['class'] >= $valid['viewtickets']['minclass'] ? "<a href='lottery.php?do=viewtickets'>[View bought tickets]</a>&nbsp;&nbsp;" : "").($CURUSER['class'] >= $valid['config']['minclass'] ? "<a href='lottery.php?do=config'>[Lottery configuration]</a>&nbsp;&nbsp;" : "")."<a href='lottery.php?do=tickets'>[Buy tickets]</a></p>";
+        $html .= "<p style='text-align:center'>".($CURUSER['class'] >= $valid['config']['minclass'] ? "<a href='lottery.php?do=config'>[Lottery configuration]</a>&nbsp;&nbsp;" : "Nothing Configured Atm Sorry")."</p>";
         $html .= end_main_frame();
         }
         
