@@ -26,6 +26,7 @@ loggedinorreturn();
   exit();
   }
 
+
   switch(true) {
     case $do == 'config' && $CURUSER['class'] >= $valid['config']['minclass'] :
       require_once($valid['config']['file']);
@@ -46,7 +47,8 @@ loggedinorreturn();
       if(!$lottery_config['enable'])
         $html .= stdmsg('Sorry','Lottery is closed at the moment');
       if($lottery_config['end_date'] > TIME_NOW)
-        $html .= stdmsg('Lottery in progress',"Lottery started on <b>".get_date($lottery_config['start_date'],'LONG')."</b> and ends on <b>".get_date($lottery_config['end_date'],'LONG')."</b> remaining <span style='color:#ff0000;'>".mkprettytime($lottery_config['end_date']-TIME_NOW)."</span>");
+        $html .= stdmsg('Lottery in progress',"Lottery started on <b>".get_date($lottery_config['start_date'],'LONG')."</b> and ends on <b>".get_date($lottery_config['end_date'],'LONG')."</b> remaining <span style='color:#ff0000;'>".mkprettytime($lottery_config['end_date']-TIME_NOW)."</span><br />
+       <p style='text-align:center'>".($CURUSER['class'] >= $valid['viewtickets']['minclass'] ? "<a href='lottery.php?do=viewtickets'>[View bought tickets]</a>&nbsp;&nbsp;" : "").($CURUSER['class'] >= $valid['config']['minclass'] ? "<a href='lottery.php?do=config'>[Lottery configuration]</a>&nbsp;&nbsp;" : "")."<a href='lottery.php?do=tickets'>[Buy tickets]</a></p>");
       //get last lottery data
       if(!empty($lottery_config['lottery_winners'])) {
         $html .= stdmsg('Last lottery',''.get_date($lottery_config['end_date'],'LONG').'');
@@ -56,7 +58,7 @@ loggedinorreturn();
       while($aus = mysqli_fetch_assoc($qus))
         $last_winners[] = "<a href='userdetails.php?id={$aus['id']}'>{$aus['username']}</a>";
         $html .= begin_main_frame();
-        $html .= stdmsg("Lottery Infos", "<ul style='text-align:left;'><li>Last winners: ".join(', ',$last_winners)."</li><li>Amount won	(each): ".$lottery_config['lottery_winners_amount']."</li></ul>");
+        $html .= stdmsg("Lottery Winners Info", "<ul style='text-align:left;'><li>Last winners: ".join(', ',$last_winners)."</li><li>Amount won	(each): ".$lottery_config['lottery_winners_amount']."</li></ul>");
         $html .= end_main_frame();
         } else {
         $html .= begin_main_frame();
@@ -64,6 +66,7 @@ loggedinorreturn();
         $html .= "<p style='text-align:center'>".($CURUSER['class'] >= $valid['viewtickets']['minclass'] ? "<a href='lottery.php?do=viewtickets'>[View bought tickets]</a>&nbsp;&nbsp;" : "").($CURUSER['class'] >= $valid['config']['minclass'] ? "<a href='lottery.php?do=config'>[Lottery configuration]</a>&nbsp;&nbsp;" : "")."<a href='lottery.php?do=tickets'>[Buy tickets]</a></p>";
         $html .= end_main_frame();
         }
+        
 echo(stdhead('Lottery').$html.stdfoot());
-}
+}    
 ?>
