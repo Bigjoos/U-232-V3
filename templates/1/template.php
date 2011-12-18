@@ -315,8 +315,8 @@ function StatusBar() {
 	global $CURUSER, $INSTALLER09, $lang, $rep_is_on, $mc1, $msgalert;
 	if (!$CURUSER)
 	return "";
-	$upped = mksize((int)$CURUSER['uploaded']);
-	$downed = mksize((int)$CURUSER['downloaded']);
+	$upped = (int)mksize($CURUSER['uploaded']);
+	$downed = (int)mksize($CURUSER['downloaded']);
    //==Memcache unread pms
 	$PMCount=0;
 	$unread1 = $mc1->get_value('inbox_new_sb_'.$CURUSER['id']);
