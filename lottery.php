@@ -22,12 +22,10 @@ loggedinorreturn();
   $do = isset($_GET['do']) && in_array($_GET['do'],array_keys($valid)) ? $_GET['do'] : '';
   
   if ($CURUSER["game_access"] == 0 || $CURUSER["game_access"] > 1 || $CURUSER['suspended'] == 'yes'){
-   stderr("Error","Your gaming rights have been disabled.");
-   exit();
-   }
+  stderr("Error","Your gaming rights have been disabled.");
+  exit();
+  }
 
-  //print('<pre>'.print_r($valid,1));
-  //print($do);
   switch(true) {
     case $do == 'config' && $CURUSER['class'] >= $valid['config']['minclass'] :
       require_once($valid['config']['file']);
@@ -40,6 +38,7 @@ loggedinorreturn();
     break;
     default : 
       $html='';
+      
       //get config from database 
       $lconf = sql_query('SELECT * FROM lottery_config') or sqlerr(__FILE__,__LINE__);
       while($ac = mysqli_fetch_assoc($lconf))
@@ -49,23 +48,22 @@ loggedinorreturn();
       if($lottery_config['end_date'] > TIME_NOW)
         $html .= stdmsg('Lottery in progress',"Lottery started on <b>".get_date($lottery_config['start_date'],'LONG')."</b> and ends on <b>".get_date($lottery_config['end_date'],'LONG')."</b> remaining <span style='color:#ff0000;'>".mkprettytime($lottery_config['end_date']-TIME_NOW)."</span>");
       //get last lottery data
-      
-      $html .= stdmsg('Last lottery',''.get_date($lottery_config['end_date'],'LONG').'');
-      if(!empty($lottery_confi['lottery_winnter'])) {
-       $uids = (strpos($lottery_config['lottery_winners'],'|') ? explode('|',$lottery_config['lottery_winners']) : $lottery_config['lottery_winners']);
-       $last_winners = array();
-       $qus = sql_query('SELECT id,username FROM users WHERE id '.(is_array($uids) ? 'IN ('.join(',',$uids).')' : '='.$uids)) or sqlerr(__FILE__,__LINE__);
-        while($aus = mysqli_fetch_assoc($qus))
-        $html .= begin_main_frame();
+      if(!empty($lottery_config['lottery_winners'])) {
+        $html .= stdmsg('Last lottery',''.get_date($lottery_config['end_date'],'LONG').'');
+        $uids = (strpos($lottery_config['lottery_winners'],'|') ? explode('|',$lottery_config['lottery_winners']) : $lottery_config['lottery_winners']);
+        $last_winners = array();
+        $qus = sql_query('SELECT id,username FROM users WHERE id '.(is_array($uids) ? 'IN ('.join(',',$uids).')' : '='.$uids)) or sqlerr(__FILE__,__LINE__);
+      while($aus = mysqli_fetch_assoc($qus))
         $last_winners[] = "<a href='userdetails.php?id={$aus['id']}'>{$aus['username']}</a>";
-        $html .= "<ul style='text-align:left;'><li>Last winners: ".join(', ',$last_winners)."</li><li>Amount won	(each): ".$lottery_config['lottery_winners_amount']."</li></ul>";
-        $html .= end_main_frame();
-        } else
         $html .= begin_main_frame();
-        $html .="<ul><li> Nobody won, because nobody played</li>";
-        $html .="<li>Date of last lottery: ".get_date($lottery_config['lottery_winners_time'],'LONG')."</li></ul>";
+        $html .= stdmsg("Lottery Infos", "<ul style='text-align:left;'><li>Last winners: ".join(', ',$last_winners)."</li><li>Amount won	(each): ".$lottery_config['lottery_winners_amount']."</li></ul>");
+        $html .= end_main_frame();
+        } else {
+        $html .= begin_main_frame();
+        $html .="<ul><li> Nobody has won, because nobody has played yet : )</li>";
         $html .= "<p style='text-align:center'>".($CURUSER['class'] >= $valid['viewtickets']['minclass'] ? "<a href='lottery.php?do=viewtickets'>[View bought tickets]</a>&nbsp;&nbsp;" : "").($CURUSER['class'] >= $valid['config']['minclass'] ? "<a href='lottery.php?do=config'>[Lottery configuration]</a>&nbsp;&nbsp;" : "")."<a href='lottery.php?do=tickets'>[Buy tickets]</a></p>";
-      $html .= end_main_frame();
-      print(stdhead('Lottery').$html.stdfoot());    
-  }
+        $html .= end_main_frame();
+        }
+        }
+echo(stdhead('Lottery').$html.stdfoot());    
 ?>
