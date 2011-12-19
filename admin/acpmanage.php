@@ -43,7 +43,7 @@ $HTMLOUT="";
 
     $do = isset($_POST["do"]) ? htmlspecialchars(trim($_POST["do"])) : '';
 
-    if ($do == 'enabled')
+if ($do == 'enabled')
         sql_query("UPDATE users SET enabled = 'yes' WHERE ID IN(" . join(', ', $ids) . ") AND enabled = 'no'") or sqlerr(__FILE__, __LINE__);
         $mc1->begin_transaction('MyUser_'.$ids);
         $mc1->update_row(false, array('enabled' => 'yes'));
@@ -51,7 +51,8 @@ $HTMLOUT="";
         $mc1->begin_transaction('user'.$ids);
         $mc1->update_row(false, array('enabled' => 'yes'));
         $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
-    elseif ($do == 'confirm')
+        //else
+        if ($do == 'confirm')
         sql_query("UPDATE users SET status = 'confirmed' WHERE ID IN(" . join(', ', $ids) . ") AND status = 'pending'") or sqlerr(__FILE__, __LINE__);
         $mc1->begin_transaction('MyUser_'.$ids);
         $mc1->update_row(false, array('status' => 'confirmed'));
@@ -59,7 +60,8 @@ $HTMLOUT="";
         $mc1->begin_transaction('user'.$ids);
         $mc1->update_row(false, array('status' => 'confirmed'));
         $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
-    elseif ($do == 'delete')
+        //else
+        if ($do == 'delete')
         sql_query("DELETE FROM users WHERE ID IN(" . join(', ', $ids) . ") AND class < 3") or sqlerr(__FILE__, __LINE__);
     else {
         header('Location: ' . $_SERVER['PHP_SELF']);
