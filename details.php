@@ -527,7 +527,7 @@ $my_points   = (isset( $torrent['torrent_points_'][$CURUSER['id']]) ?  (int)$tor
 		$HTMLOUT .= tr("Rating", $s, 1);
       
   	   $HTMLOUT .= tr("{$lang['details_last_seeder']}", "{$lang['details_last_activity']}" .get_date( $l_a['lastseed'],'',0,1));
-		$HTMLOUT .= tr("{$lang['details_size']}",mksize((int)$torrents["size"]) . " (" . number_format((int)$torrents["size"]) . "{$lang['details_bytes']})");
+		$HTMLOUT .= tr("{$lang['details_size']}",mksize($torrents["size"]) . " (" . number_format($torrents["size"]) . "{$lang['details_bytes']})");
 		$HTMLOUT .= tr("{$lang['details_added']}", get_date( $torrents['added'],"{$lang['details_long']}"));
 		$HTMLOUT .= tr("{$lang['details_views']}", (int)$torrents["views"]);
 		$HTMLOUT .= tr("{$lang['details_hits']}", (int)$torrents["hits"]);
