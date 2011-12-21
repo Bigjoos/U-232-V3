@@ -63,7 +63,7 @@ loggedinorreturn();
     $torrents['thanks'] = (int)$torrents['thanks'];
     $torrents['comments'] =(int) $torrents['comments'];
     $torrents['owner'] = (int)$torrents['owner'];
-    $torrents['size'] = (int)$torrents['size'];
+    $torrents['size'] = (float)$torrents['size'];
     $torrents['added'] = (int)$torrents['added'];
     $torrents['views'] = (int)$torrents['views'];
     $torrents['hits'] = (int)$torrents['hits'];
