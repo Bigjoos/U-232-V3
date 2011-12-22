@@ -59,7 +59,7 @@ loggedinorreturn();
     $torrents['points'] = (int)$torrents['points'];
     $torrents['ratingsum'] = (int)$torrents['ratingsum'];
     $torrents['numratings'] = (int)$torrents['numratings'];
-    $torrents['rating'] = (int)$torrents['rating'];
+    $torrents['rating'] = (float)$torrents['rating'];
     $torrents['thanks'] = (int)$torrents['thanks'];
     $torrents['comments'] =(int) $torrents['comments'];
     $torrents['owner'] = (int)$torrents['owner'];
