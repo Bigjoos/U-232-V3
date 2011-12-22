@@ -278,6 +278,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 					<div align='center'><a href='javascript:close()'><input type='button' value='Close' /></a></div>
 					</body>
 					</html>";
+         echo $HTMLOUT;
 			}
 			else die("No users");
 			}
