@@ -12,12 +12,7 @@ require_once(INCL_DIR.'html_functions.php');
 require_once(CLASS_DIR.'page_verify.php');
 require_once(INCL_DIR.'password_functions.php');
 require_once(CACHE_DIR.'timezones.php');
-
-global $CURUSER;
-if(!$CURUSER){
-get_template();
-}
-dbconn();
+dbconn(false);
 
 $lang = array_merge( load_language('global') );
 
@@ -54,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 			if(!$q)
 			stderr("Error", "Something wrong happned, please retry");
 			else
-			stderr("Success","The promo link <b>".$promoname."</b> was added! here is the link <br /><input type=\"text\" name=\"promo-link\" value=\"".$INSTALLER09['baseurl'].$_SERVER["PHP_SELF"]."?do=signup&amp;link=".$link."\" size=\"80\" onclick=\"select();\"  /><br/><a href=\"".$_SERVER["PHP_SELF"]."\"><input type=\"button\" value=\"Back to Promos\" /></a>");
+			stderr("Success","The promo link <b>".htmlspecialchars($promoname)."</b> was added! here is the link <br /><input type=\"text\" name=\"promo-link\" value=\"".$INSTALLER09['baseurl'].$_SERVER["PHP_SELF"]."?do=signup&amp;link=".$link."\" size=\"80\" onclick=\"select();\"  /><br/><a href=\"".$_SERVER["PHP_SELF"]."\"><input type=\"button\" value=\"Back to Promos\" /></a>");
 	}
 	elseif($_SERVER["REQUEST_METHOD"] == "POST" && $do == "signup")
 	{
@@ -99,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 						stderr("Error", "Username or password already exists");
 					
 					$secret = mksecret();
-          $passhash = make_passhash( $secret, md5($password) );
+               $passhash = make_passhash( $secret, md5($password) );
 					$editsecret = make_passhash_login_key();
 		
 					$res = sql_query("INSERT INTO users(username, passhash, secret, editsecret, email, added, uploaded, invites, seedbonus) VALUES (".implode(",",array_map("sqlesc",array($username,$passhash,$secret,$editsecret,$email,TIME_NOW,($ar_check["bonus_upload"]*1073741824),$ar_check["bonus_invites"],$ar_check["bonus_karma"]))).") ") or sqlerr(__FILE__, __LINE__);
@@ -115,10 +110,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 						$subject = $INSTALLER09['site_name']." user registration confirmation";
 						
 						$message = "Hi!
-						You used the link from promo ".$ar_check["name"]." and registred a new account at {$INSTALLER09['site_name']}
+						You used the link from promo ".htmlspecialchars($ar_check["name"])." and registred a new account at {$INSTALLER09['site_name']}
 							
 						To confirm your account click the link below
-						{$INSTALLER09['baseurl']}/confirm.php?id=$userid&secret=$sec
+						{$INSTALLER09['baseurl']}/confirm.php?id=".(int)$userid."&secret=$sec
 
 						Welcome and enjoy your stay 
 						Staff at {$INSTALLER09['site_name']}";
@@ -137,7 +132,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 		$r = sql_query("SELECT name FROM promo WHERE id=".$id) or sqlerr(__FILE__, __LINE__);
 		if($sure == "no" ){
 			$a = mysqli_fetch_assoc($r);
-			stderr("Sanity check...", "You are about to delete promo <b>".$a["name"]."</b>, if you are sure click <a href=\"".$_SERVER["PHP_SELF"]."?do=delete&amp;id=".$id."&amp;sure=yes\">here</a>");
+			stderr("Sanity check...", "You are about to delete promo <b>".htmlspecialchars($a["name"])."</b>, if you are sure click <a href=\"".$_SERVER["PHP_SELF"]."?do=delete&amp;id=".$id."&amp;sure=yes\">here</a>");
 		}
 		elseif( $sure == "yes")
 		{
@@ -211,7 +206,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 						
 						$HTMLOUT .="<form action='".($_SERVER["PHP_SELF"])."' method='post'>
 						  <table cellpadding='10' width='50%' align='center' cellspacing='0'  border='1' style='border-collapse:collapse'>
-						  <tr><td class='colhead' align='center' colspan='2'>Promo : ".($ar["name"])." </td></tr>
+						  <tr><td class='colhead' align='center' colspan='2'>Promo : ".htmlspecialchars($ar["name"])." </td></tr>
 						  <tr><td nowrap='nowrap' align='right'>Bonuses</td>
 							  <td align='left' width='100%'>
 								".($ar["bonus_upload"] > 0 ? "<b>upload</b>:&nbsp;".mksize($ar["bonus_upload"]*1073741824)."<br />" : "")."
@@ -230,7 +225,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 						</form>";
 						
 						$HTMLOUT .= end_frame();
-					echo stdhead("Signup for promo :".$ar["name"]) . $HTMLOUT . stdfoot();
+					echo stdhead("Signup for promo :".htmlspecialchars($ar["name"])."") . $HTMLOUT . stdfoot();
 					}
 			}
 	}
@@ -254,7 +249,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
           <html xmlns='http://www.w3.org/1999/xhtml'>
           <head>
 					<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
-					<title>Users list for promo : {$a1["name"]}</title>
+					<title>Users list for promo : ".htmlspecialchars($a1["name"])."</title>
 					<style type=\"text/css\">
 					body { background-color:#999999;
 					color:#333333;
@@ -274,7 +269,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 						
 						 while ($ap = mysqli_fetch_assoc($q2))
 						 {
-						 $HTMLOUT .="<tr><td align='left' width='100'><a href='userdetails.php?id=".$ap["id"]."'>".$ap["username"]."</a></td><td  align='left' nowrap='nowrap' >".get_date($ap["added"], 'LONG',0,1)."</td></tr>";
+						 $HTMLOUT .="<tr><td align='left' width='100'><a href='userdetails.php?id=".(int)$ap["id"]."'>".htmlspecialchars($ap["username"])."</a></td><td  align='left' nowrap='nowrap' >".get_date($ap["added"], 'LONG',0,1)."</td></tr>";
 						 }
 						
 						
@@ -292,7 +287,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 	    else 
 	    {
 		  loggedinorreturn();
-		  if($CURUSER['class'] < UC_MODERATOR)
+		  if($CURUSER['class'] < UC_STAFF)
 			stderr("Error", "There is nothing for you here! Go play somewere else");
 			
 		  $r = sql_query("SELECT p.*,u.username from promo as p LEFT JOIN users as u on p.creator=u.id ORDER by p.added,p.days_valid DESC") or sqlerr(__FILE__, __LINE__);
@@ -301,7 +296,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 			else{
 			
 		$HTMLOUT .= begin_frame("Current Promos&nbsp;<font class=\"small\"><a href=\"".$_SERVER["PHP_SELF"]."?do=addpromo\">- Add promo</a></font>");
-		
 		$HTMLOUT .="<script type='text/javascript'>
 		/*<![CDATA[*/
 		function link(id)
@@ -330,22 +324,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 			</tr>";
 	
 			while($ar = mysqli_fetch_assoc($r)) {
-			
-					
-				
-		  $active = (($ar["max_users"] == $ar["accounts_made"]) || (($ar["added"] + (86400*$ar["days_valid"])) < TIME_NOW)) ? false : true;
-		
+		   $active = (($ar["max_users"] == $ar["accounts_made"]) || (($ar["added"] + (86400*$ar["days_valid"])) < TIME_NOW)) ? false : true;
 			$HTMLOUT .="<tr ".(!$active ? "title=\"This promo has ended\"" : "" ).">
 				<td nowrap='nowrap' align='center'>".(htmlspecialchars($ar["name"]))."<br /><input type='text' ".(!$active ? "disabled=\"disabled\"" : "")." value='".($INSTALLER09['baseurl'].$_SERVER["PHP_SELF"]."?do=signup&amp;link=".$ar["link"])."' size='60' name='".(htmlspecialchars($ar["name"]))."' onclick='select();' /></td>
 				<td nowrap='nowrap' align='center'>".(date("d/M-Y",$ar["added"]))."</td>
 				<td nowrap='nowrap' align='center'>".(date("d/M-Y",($ar["added"] + (86400*$ar["days_valid"]))))."</td>
 				<td nowrap='nowrap' align='center'>".(0+$ar["max_users"])."</td>
-				<td nowrap='nowrap' align='center'>".($ar["accounts_made"] > 0 ? "<a href=\"javascript:link(".$ar["id"].")\" >".$ar["accounts_made"]."</a>" : 0  )."</td>
+				<td nowrap='nowrap' align='center'>".($ar["accounts_made"] > 0 ? "<a href=\"javascript:link(".(int)$ar["id"].")\" >".(int)$ar["accounts_made"]."</a>" : 0  )."</td>
 				<td nowrap='nowrap' align='center'>".(mksize($ar["bonus_upload"]*1073741824))."</td>
 				<td nowrap='nowrap' align='center'>".(0+$ar["bonus_invites"])."</td>
 				<td nowrap='nowrap' align='center'>".(0+$ar["bonus_karma"])."</td>
-				<td nowrap='nowrap' align='center'><a href='userdetails.php?id=".$ar["creator"]."'>".$ar["username"]."</a></td>
-				<td nowrap='nowrap' align='center'><a href='".$_SERVER["PHP_SELF"]."?do=delete&amp;id=".$ar["id"]."'><img src='pic/del.png' border='0' alt='Drop' /></a></td>
+				<td nowrap='nowrap' align='center'><a href='userdetails.php?id=".$ar["creator"]."'>".htmlspecialchars($ar["username"])."</a></td>
+				<td nowrap='nowrap' align='center'><a href='".$_SERVER["PHP_SELF"]."?do=delete&amp;id=".(int)$ar["id"]."'><img src='pic/del.png' border='0' alt='Drop' /></a></td>
 			</tr>";
 		}
 		$HTMLOUT .="</table>";
