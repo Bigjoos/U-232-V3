@@ -167,6 +167,14 @@ dbconn();
     
     $latestuser_cache['id'] =  (int)$id;
     $latestuser_cache['username'] = $wantusername;
+    $latestuser_cache['class'] =  '0';
+    $latestuser_cache['donor'] =  'no';
+    $latestuser_cache['warned'] =  '0';
+    $latestuser_cache['enabled'] =  'yes';
+    $latestuser_cache['chatpost'] =  '1';
+    $latestuser_cache['leechwarn'] =  '0';
+    $latestuser_cache['pirate'] =  '0';
+    $latestuser_cache['king'] =  '0';
     /** OOP **/
     $mc1->cache_value('latestuser', $latestuser_cache, $INSTALLER09['expires']['latestuser']);
     write_log("User account $id ($wantusername) was created");
