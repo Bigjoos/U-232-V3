@@ -9,11 +9,12 @@
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
 require_once(INCL_DIR.'html_functions.php');
-require_once(CLASS_DIR.'page_verify.php');
 require_once(INCL_DIR.'password_functions.php');
-require_once(CACHE_DIR.'timezones.php');
-dbconn(false);
-
+dbconn(true);
+global $CURUSER;
+if(!$CURUSER){
+get_template();
+}
 $lang = array_merge( load_language('global') );
 
 $HTMLOUT='';
@@ -103,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 						//==Updating promo table 
 						$userid = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
 						$users = (empty($ar_check["users"]) ? $userid : $ar_check["users"].",".$userid );
-						sql_query("update promo set accounts_made=accounts_made+1 , users=".sqlesc($users)." WHERE id=".$ar_check["id"]) or sqlerr(__FILE__, __LINE__);
+						sql_query("update promo set accounts_made=accounts_made+1 , users=".sqlesc($users)." WHERE id=".sqlesc($ar_check["id"])) or sqlerr(__FILE__, __LINE__);
 						
 						//==Email part :)
 						$sec = $editsecret;
@@ -149,7 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 	elseif ($do == "addpromo")
 	{
 			loggedinorreturn();
-			if($CURUSER['class'] < UC_MODERATOR)
+			if($CURUSER['class'] < UC_STAFF)
 			stderr("Error", "There is nothing for you here! Go play somewere else");
 			$HTMLOUT .= begin_frame("Add Promo Link");
 			
@@ -235,15 +236,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 		die("Can't find id");
 		else
 		{
-			$q1 = sql_query("SELECT name,users FROM promo WHERE id=".$id."") or sqlerr(__FILE__, __LINE__);
+			$q1 = sql_query("SELECT name, users FROM promo WHERE id=".$id."") or sqlerr(__FILE__, __LINE__);
 			if (mysqli_num_rows($q1) == 1)
 			{
 				 $a1 = mysqli_fetch_assoc($q1);
 			  if (!empty($a1["users"])) {
 				 $users = explode(",",$a1["users"]);
 					if(!empty($users))
-				 $q2 = sql_query("SELECT id,username,added from users where id IN (".join(",",$users).") AND status='confirmed'") or sqlerr(__FILE__, __LINE__);
-				 
+				 $q2 = sql_query("SELECT id, username, added FROM users WHERE id IN (".join(",",$users).")") or sqlerr(__FILE__, __LINE__);
+				  
 				  $HTMLOUT = "
           <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN''http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
           <html xmlns='http://www.w3.org/1999/xhtml'>
@@ -265,7 +266,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 					</head>
 					<body>
 					<table width='200' cellpadding='10' border='1' align='center' style='border-collapse:collapse'>
-						<tr><td class='rowhead' align='left' width='100'> User</td><td class='rowhead' align='left' nowrap='nowrap' >Added</td></tr>";
+						<tr><td class='rowhead' align='left' width='100'> User</td><td class='rowhead' align='left' nowrap='nowrap'>Added</td></tr>";
 						
 						 while ($ap = mysqli_fetch_assoc($q2))
 						 {
@@ -309,19 +310,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 		$HTMLOUT .="<table align='center' width='100%' cellpadding='5' cellspacing='0' border='1' style='border-collapse:collapse'>
 			<tr>
 				<td align='left' width='100%' rowspan='2'>Promo</td>
-				<td align='center'  nowrap='nowrap' rowspan='2'>Added</td>
-				<td align='center'  nowrap='nowrap' rowspan='2'>Valid Till</td>
-				<td align='center'  nowrap='nowrap' colspan='2'>Users</td>
-				<td align='center'  nowrap='nowrap' colspan='3' >Bonuses</td>
-				<td align='center'  nowrap='nowrap' rowspan='2'>Added by</td>       
-				<td align='center'  nowrap='nowrap' rowspan='2'>Remove</td>       
+				<td align='center' nowrap='nowrap' rowspan='2'>Added</td>
+				<td align='center' nowrap='nowrap' rowspan='2'>Valid Till</td>
+				<td align='center' nowrap='nowrap' colspan='2'>Users</td>
+				<td align='center' nowrap='nowrap' colspan='3' >Bonuses</td>
+				<td align='center' nowrap='nowrap' rowspan='2'>Added by</td>       
+				<td align='center' nowrap='nowrap' rowspan='2'>Remove</td>       
 			</tr>
 			<tr>
-				<td align='center'  nowrap='nowrap'>max</td>
-				<td align='center'  nowrap='nowrap'>till now</td>
-				<td align='center'  nowrap='nowrap' >upload</td>
-				<td align='center'  nowrap='nowrap' >invites</td>
-				<td align='center'  nowrap='nowrap' >karma</td>       
+				<td align='center' nowrap='nowrap'>max</td>
+				<td align='center' nowrap='nowrap'>till now</td>
+				<td align='center' nowrap='nowrap' >upload</td>
+				<td align='center' nowrap='nowrap' >invites</td>
+				<td align='center' nowrap='nowrap' >karma</td>       
 			</tr>";
 	
 			while($ar = mysqli_fetch_assoc($r)) {
@@ -335,7 +336,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 				<td nowrap='nowrap' align='center'>".(mksize($ar["bonus_upload"]*1073741824))."</td>
 				<td nowrap='nowrap' align='center'>".(0+$ar["bonus_invites"])."</td>
 				<td nowrap='nowrap' align='center'>".(0+$ar["bonus_karma"])."</td>
-				<td nowrap='nowrap' align='center'><a href='userdetails.php?id=".$ar["creator"]."'>".htmlspecialchars($ar["username"])."</a></td>
+				<td nowrap='nowrap' align='center'><a href='userdetails.php?id=".(int)$ar["creator"]."'>".htmlspecialchars($ar["username"])."</a></td>
 				<td nowrap='nowrap' align='center'><a href='".$_SERVER["PHP_SELF"]."?do=delete&amp;id=".(int)$ar["id"]."'><img src='pic/del.png' border='0' alt='Drop' /></a></td>
 			</tr>";
 		}
