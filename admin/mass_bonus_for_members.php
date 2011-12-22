@@ -235,7 +235,7 @@ elseif ($free_for_classes === 0)
     case 'freeslots':
     
 $freeslots = isset($_POST['freeslots']) ? 0 + $_POST['freeslots'] : 0; 
-if ($freeslots < 1 || $freeslots > 10) //=== forgot to enter freeslots or wrong numbers
+if ($freeslots < 1 || $freeslots > 50) //=== forgot to enter freeslots or wrong numbers
     stderr('Free Leech Slot Error', 'You forgot to select an amount!');
     
 //=== if for all classes
