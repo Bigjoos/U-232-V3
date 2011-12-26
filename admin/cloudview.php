@@ -37,6 +37,7 @@ $HTMLOUT='';
 if(isset($_POST["delcloud"])) {
 $do="DELETE FROM searchcloud WHERE id IN (" . implode(", ", $_POST['delcloud']) . ")";
 $res=sql_query($do);
+$mc1 -> delete_value('searchcloud');
 header ("Refresh: 3; url=staffpanel.php?tool=cloudview&action=cloudview");
 stderr("Success" , "The obscene terms where successfully deleted!");
 }
