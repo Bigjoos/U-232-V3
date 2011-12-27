@@ -53,7 +53,7 @@ loggedinorreturn();
     foreach($categorie as $key => $value)
     $change[$value['id']] = array('id' => $value['id'], 'name'  => $value['name'], 'image' => $value['image']);
     if(($torrents = $mc1->get_value('torrent_details_'.$id)) === false) {
-    $torrents = mysqli_fetch_assoc(sql_query("SELECT seeders, leechers, banned, thanks, leechers, info_hash, checked_by, filename, search_text, LENGTH(nfo) AS nfosz, name, comments, owner, save_as, visible, size, added, views, hits, id, type, poster, url, numfiles, times_completed, anonymous, points, allow_comments, description, nuked, nukereason, last_reseed, vip, category, subs, username, newgenre, release_group, free, ratingsum, numratings, IF(numratings < {$INSTALLER09['minvotes']}, NULL, ROUND(ratingsum / numratings, 1)) AS rating FROM torrents WHERE id = ".$id)) or sqlerr(__FILE__, __LINE__);
+    $torrents = mysqli_fetch_assoc(sql_query("SELECT seeders, leechers, banned, thanks, leechers, info_hash, checked_by, filename, search_text, LENGTH(nfo) AS nfosz, name, comments, owner, save_as, visible, size, added, views, hits, id, type, poster, url, numfiles, times_completed, anonymous, points, allow_comments, description, nuked, nukereason, last_reseed, vip, category, subs, username, newgenre, release_group, free, youtube, ratingsum, numratings, IF(numratings < {$INSTALLER09['minvotes']}, NULL, ROUND(ratingsum / numratings, 1)) AS rating FROM torrents WHERE id = ".$id)) or sqlerr(__FILE__, __LINE__);
     $torrents['seeders'] = (int)$torrents['seeders'];
     $torrents['leechers'] = (int)$torrents['leechers'];
     $torrents['points'] = (int)$torrents['points'];
@@ -365,7 +365,10 @@ $my_points   = (isset( $torrent['torrent_points_'][$CURUSER['id']]) ?  (int)$tor
     
     if (!empty($torrents_txt["descr"]))
 	  $HTMLOUT .= "<tr><td style='vertical-align:top'><b>{$lang['details_description']}</b></td><td><div style='background-color:transparent;width:100%;height:150px;overflow: auto'>". str_replace(array("\n", "  "), array("<br />\n", "&nbsp; "), format_comment( $torrents_txt["descr"] ))."</div></td></tr>";
-	  $HTMLOUT .= "</table>";
+	 if(!empty($torrents['youtube']))
+    $HTMLOUT .= tr($lang['details_youtube'],'<object type="application/x-shockwave-flash" style="width:560px; height:340px;" data="'.str_replace('watch?v=','v/',$torrents['youtube']).'"><param name="movie" value="'.str_replace('watch?v=','v/',$torrents['youtube']).'" /></object><br/><a 
+href=\''.htmlspecialchars($torrents['youtube']).'\' target=\'_blank\'>'.$lang['details_youtube_link'].'</a>',1);
+    $HTMLOUT .= "</table>";
     $HTMLOUT .= "</div>";
     $HTMLOUT .= "<div id='Poster'>";
     $HTMLOUT .= "<table align='center' width='750' border='1' cellspacing='0' cellpadding='5'>\n";

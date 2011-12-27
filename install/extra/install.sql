@@ -2242,6 +2242,7 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `username` varchar(40) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `thanks` int(10) NOT NULL DEFAULT '0',
   `description` varchar(120) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `youtube` varchar(42) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `info_hash` (`info_hash`),
   KEY `owner` (`owner`),

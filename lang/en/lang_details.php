@@ -79,6 +79,8 @@ $lang = array(
 'details_similiar' => 'Similiar torrents',
 'details_anon' => "Anonymous",
 'details_small_descr' => "Small Description",
+'details_youtube' => 'Youtube',
+'details_youtube_link' => 'Open in a new window',
 'details_thumbs' => "Thumbs Up"
 );
 

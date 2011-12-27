@@ -19,7 +19,7 @@ loggedinorreturn();
 
     $lang = array_merge( load_language('global'), load_language('upload') );
     $stdhead = array(/** include css **/'css' => array('forums','style','style2','bbcode'));
-    $stdfoot = array(/** include js **/'js' => array('shout','FormManager'));
+    $stdfoot = array(/** include js **/'js' => array('shout','FormManager','getname'));
     
     if (function_exists('parked'))
     parked();
@@ -92,6 +92,10 @@ loggedinorreturn();
     <td valign='top' align='left'><input type='text' name='poster' size='80' /><br />{$lang['upload_poster1']}</td>
     </tr>
     <tr>
+    <td class='heading' valign='top' align='right'>{$lang['upload_youtube']}</td>
+    <td valign='top' align='left'><input type='text' name='youtube' size='80' /><br />({$lang['upload_youtube_info']})</td>
+    </tr>
+    <tr>
     <td class='heading' valign='top' align='right'><b>{$lang['upload_bitbucket']}</b></td>
     <td valign='top' align='left'>
     <iframe src='imgup.html' style='width:600px; height:48px; border:none' frameborder='0'></iframe>
@@ -100,11 +104,11 @@ loggedinorreturn();
     </tr>
     <tr>
     <td class='heading' valign='top' align='right'>{$lang['upload_torrent']}</td>
-    <td valign='top' align='left'><input type='file' name='file' size='80' /></td>
+    <td valign='top' align='left'><input type='file' name='file' id='torrent' onchange='getname()' size='80' /></td>
     </tr>
     <tr>
     <td class='heading' valign='top' align='right'>{$lang['upload_name']}</td>
-    <td valign='top' align='left'><input type='text' name='name' size='80' /><br />({$lang['upload_filename']})</td>
+    <td valign='top' align='left'><input type='text' id='name' name='name' size='80' /><br />({$lang['upload_filename']})</td>
     </tr>
     <tr>
     <td class='heading' valign='top' align='right'>{$lang['upload_description']}</td>
@@ -121,10 +125,7 @@ loggedinorreturn();
     </tr>";
 
     $s = "<select name='type'>\n<option value='0'>({$lang['upload_choose_one']})</option>\n";
-    //".BBcode($descr, false)."
-    //{$lang['upload_description']}
-    //". textbbcode("upload","descr")."
-    //
+
     $cats = genrelist2();
     foreach ($cats as $cat)
     {

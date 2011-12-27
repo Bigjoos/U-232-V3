@@ -22,7 +22,7 @@ function readMore($text, $char, $link)
 function torrenttable($res, $variant = "index") {
     global $INSTALLER09, $CURUSER, $lang, $free, $mc1;
     require_once(INCL_DIR.'bbcode_functions.php');
-    $htmlout = $prevdate = $free_slot = $free_color = $slots_check = $double_slot = $private = $newgenre =  $oldlink = $char = $description = $type = $sort = $row = '';
+    $htmlout = $prevdate = $free_slot = $free_color = $slots_check = $double_slot = $private = $newgenre =  $oldlink = $char = $description = $type = $sort = $row = $youtube = '';
     $count_get = 0;
     /** ALL FREE/DOUBLE **/
     foreach($free as $fl) {
@@ -78,7 +78,6 @@ if ($oldlink > 0)
    <tr>
    <td class='colhead' align='center'>{$lang["torrenttable_type"]}</td>
    <td class='colhead' align='left'><a href='{$_SERVER["PHP_SELF"]}?{$oldlink}sort=1&amp;type={$link1}'>{$lang["torrenttable_name"]}</a></td>
-   <!--<td class='colhead' align='left'>{$lang["torrenttable_subtitles"]}</td>-->
    <td class='colhead' align='left'><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download' title='Download' /></td>";
    
    $htmlout.= ($variant == 'index' ? "<td class='colhead' align='center'><a href='{$INSTALLER09['baseurl']}/bookmarks.php'><img src='{$INSTALLER09['pic_base_url']}bookmarks.png'  border='0' alt='Bookmark' title='Go To My Bookmarks' /></a></td>" : '');
@@ -140,7 +139,7 @@ if ($oldlink > 0)
        $checked = ((!empty($row['checked_by']) && $CURUSER['class'] >= UC_USER) ? "&nbsp;<img src='{$INSTALLER09['pic_base_url']}mod.gif' width='15' border='0' alt='Checked - by ".htmlspecialchars($row['checked_by'])."' title='Checked - by ".htmlspecialchars($row['checked_by'])."' />" : "");
        $poster = empty($row["poster"]) ? "<img src=\'{$INSTALLER09['pic_base_url']}noposter.png\' width=\'150\' height=\'220\' border=\'0\' alt=\'Poster\' title=\'poster\' />" : "<img src=\'".htmlspecialchars($row['poster'])."\' width=\'150\' height=\'220\' border=\'0\' alt=\'Poster\' title=\'poster\' />";
        $rating = empty($row["rating"]) ? "No votes yet":"".ratingpic((int)$row["rating"]).""; 
-       //$pre = (!empty($row["pretime"]) ? "&nbsp;Uploaded: ".get_pretime($row["pretime"])." after pre." : "No pretime was found" );
+       $youtube = (!empty($row['youtube']) ? "<a href='".htmlspecialchars($row['youtube'])."' target='_blank'><img src='{$INSTALLER09['pic_base_url']}youtube.png' width='16' height='14' border='0' alt='Youtube Trailer' title='Youtube Trailer' /></a>" : "" );
        if ($row["descr"])
        $descr = str_replace("\"", "&quot;", readMore($row["descr"], 350, "details.php?id=".(int)$row["id"]."&amp;hit=1"));
        $htmlout .= "<td align='left'><a href='details.php?";
@@ -176,8 +175,7 @@ if ($oldlink > 0)
        $freeslot = ($INSTALLER09['mods']['slots'] ? ($free_slot ?'&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'freedownload.gif" width="12px" alt="Free Slot" title="Free Slot in Use" />&nbsp;<small>Free Slot</small>' : '').($double_slot ?'&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'doubleseed.gif" width="12px" alt="Double Upload Slot" title="Double Upload Slot in Use" />&nbsp;<small>Double Slot</small>' : ''):'').($row['nuked'] != 'no' && $row['nuked'] != '' ? '&nbsp;<span title="Nuked '.htmlspecialchars($row['nuked']).'" class="browse-icons-nuked"></span>' : '');
        //==
        $Subs='';
-       $movie_cat = array("1","5","6","10","11"); //add here your movie category 
-       if (in_array($row["category"], $movie_cat) && !empty($row["subs"]) )
+       if (in_array($row["category"], $INSTALLER09['movie_cats']) && !empty($row["subs"]) )
        {
        $subs_array = explode(",",$row["subs"]);
        require_once(CACHE_DIR.'subs.php');
@@ -189,7 +187,7 @@ if ($oldlink > 0)
        }
        }else
        $Subs ="---";
-       $htmlout .= "' onmouseover=\"Tip('<b>" . CutName($dispname, 80) . "</b><br /><b>Added:&nbsp;".get_date($row['added'],'DATE',0,1)."</b><br /><b>Size:&nbsp;".mksize(htmlspecialchars($row["size"])) ."</b><br /><b>Subtitle:&nbsp;{$Subs}</b><br /><b>Seeders:&nbsp;".htmlspecialchars($row["seeders"]) ."</b><br /><b>Leechers:&nbsp;".htmlspecialchars($row["leechers"]) ."</b><br /><b>Rating:&nbsp;".htmlspecialchars($rating) ."</b><br />$poster');\" onmouseout=\"UnTip();\"><b>" . CutName($dispname, 45) . "</b></a>&nbsp;&nbsp;<a href=\"javascript:klappe_descr('descr" . (int)$row["id"] . "');\" ><img src=\"{$INSTALLER09['pic_base_url']}plus.png\" border=\"0\" alt=\"Show torrent info in this page\" title=\"Show torrent info in this page\" /></a>&nbsp;&nbsp;$viponly&nbsp;$release_group&nbsp;$sticky&nbsp;".($row['added'] >= $CURUSER['last_browse'] ? " <img src='{$INSTALLER09['pic_base_url']}newb.png' border='0' alt='New !' title='New !' />" : "")."&nbsp;$checked&nbsp;$free_tag&nbsp;$nuked<br />\n".$freeslot."&nbsp;$newgenre&nbsp;$bump&nbsp;$smalldescr</td>\n";
+       $htmlout .= "' onmouseover=\"Tip('<b>" . CutName($dispname, 80) . "</b><br /><b>Added:&nbsp;".get_date($row['added'],'DATE',0,1)."</b><br /><b>Size:&nbsp;".mksize(htmlspecialchars($row["size"])) ."</b><br /><b>Subtitle:&nbsp;{$Subs}</b><br /><b>Seeders:&nbsp;".htmlspecialchars($row["seeders"]) ."</b><br /><b>Leechers:&nbsp;".htmlspecialchars($row["leechers"]) ."</b><br /><b>Rating:&nbsp;".htmlspecialchars($rating) ."</b><br />$poster');\" onmouseout=\"UnTip();\"><b>" . CutName($dispname, 45) . "</b></a>&nbsp;&nbsp;<a href=\"javascript:klappe_descr('descr" . (int)$row["id"] . "');\" ><img src=\"{$INSTALLER09['pic_base_url']}plus.png\" border=\"0\" alt=\"Show torrent info in this page\" title=\"Show torrent info in this page\" /></a>&nbsp;&nbsp;$youtube&nbsp;$viponly&nbsp;$release_group&nbsp;$sticky&nbsp;".($row['added'] >= $CURUSER['last_browse'] ? " <img src='{$INSTALLER09['pic_base_url']}newb.png' border='0' alt='New !' title='New !' />" : "")."&nbsp;$checked&nbsp;$free_tag&nbsp;$nuked<br />\n".$freeslot."&nbsp;$newgenre&nbsp;$bump&nbsp;$smalldescr</td>\n";
 	     if ($variant == "mytorrents")
        $htmlout .= "<td align='center'><a href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."\"><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download This Torrent!' title='Download This Torrent!' /></a></td>\n";
 	        

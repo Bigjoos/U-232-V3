@@ -162,9 +162,17 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     $offer = (((isset($_POST['offer']) && is_valid_id($_POST['offer'])) ? intval($_POST['offer']) : 0));
 
     $subs = isset($_POST["subs"]) ? implode(",", $_POST['subs']) : "";	
-    //$movie_cat = array("3","5","6","10","11"); //add here your movie category 
-    //if (empty($subs) && in_array($catid, $movie_cat))
-    //stderr ("Error", "Select a subtitle!");
+    if (empty($subs) && in_array($catid, $INSTALLER09['movie_catS']))
+    stderr ("Error", "Select a subtitle!");
+
+    $youtube = '';
+    if(in_array(0+$_POST['type'],$INSTALLER09['movie_cats'])) {
+        if(isset($_POST['youtube']) && preg_match($youtube_pattern,$_POST['youtube'],$temp_youtube))
+          $youtube = $temp_youtube[0];
+        else
+        stderr($lang['takeupload_failed'],$lang['takeupload_no_youtube']);
+        die();
+    }
 
     $release_group_array =  array('scene' =>1, 'p2p' =>1, 'none' =>1);
     $release_group = isset($_POST['release_group']) && isset($release_group_array[$_POST['release_group']]) ? $_POST['release_group'] : 'none'; 
@@ -278,19 +286,11 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     $infohash = sha1($info["string"]);
     unset($info);
     
-    /*
-    $pretime = file_get_contents('http://127.0.0.1/pretime.php?torrent='.trim($torrent));
-	  if ($pretime > 0){
-	  $pretime = get_pretime($pretime);
-	  } else {
-	  $pretime = '0';
-	  }
-	  */
     // Replace punctuation characters with spaces
     $torrent = str_replace("_", " ", $torrent);
     $vip = (isset($_POST["vip"]) ? "1" : "0");
-    $ret = sql_query("INSERT INTO torrents (search_text, filename, owner, username, visible, vip, release_group, newgenre, poster, anonymous, allow_comments, info_hash, name, size, numfiles, type, offer, request, url, subs, descr, ori_descr, description, category, free, save_as, added, last_action, nfo, client_created_by) VALUES (" .
-        implode(",", array_map("sqlesc", array(searchfield("$shortfname $dname $torrent"), $fname, $CURUSER["id"], $CURUSER["username"], "no", $vip, $release_group, $genre, $poster, $anonymous, $allow_comments, $infohash, $torrent, $totallen, count($filelist), $type, $offer, $request, $url, $subs, $descr, $descr, $description, 0 + $_POST["type"], $free, $dname))) .
+    $ret = sql_query("INSERT INTO torrents (search_text, filename, owner, username, visible, vip, release_group, newgenre, poster, anonymous, allow_comments, info_hash, name, size, numfiles, type, offer, request, url, subs, descr, ori_descr, description, category, free, save_as, youtube, added, last_action, nfo, client_created_by) VALUES (" .
+        implode(",", array_map("sqlesc", array(searchfield("$shortfname $dname $torrent"), $fname, $CURUSER["id"], $CURUSER["username"], "no", $vip, $release_group, $genre, $poster, $anonymous, $allow_comments, $infohash, $torrent, $totallen, count($filelist), $type, $offer, $request, $url, $subs, $descr, $descr, $description, 0 + $_POST["type"], $free, $dname, $youtube))) .
         ", " . TIME_NOW . ", " . TIME_NOW . ", $nfo, $tmaker)");
     if (!$ret) {
       if (((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) == 1062)
@@ -392,7 +392,7 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
         "<title>{$INSTALLER09['site_name']}</title>\n<description>Installer09 is the best!</description>\n<link>{$INSTALLER09['baseurl']}/</link>\n";
       @fwrite($fd1, $s);
       @fwrite($fd2, $s);
-      $r = sql_query("SELECT id,name,descr,filename,category FROM torrents ORDER BY added DESC LIMIT 15") or sqlerr(__FILE__, __LINE__);
+      $r = sql_query("SELECT id, name, descr, filename, category FROM torrents ORDER BY added DESC LIMIT 15") or sqlerr(__FILE__, __LINE__);
       while ($a = mysqli_fetch_assoc($r))
       {
         $cat = $cats[$a["category"]];

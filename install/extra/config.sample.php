@@ -193,6 +193,9 @@ $INSTALLER09['sql_error_log'] = ROOT_DIR.'logs'.DIRECTORY_SEPARATOR.'sql_err_'.d
 $INSTALLER09['pic_base_url'] = "./pic/";
 $INSTALLER09['stylesheet'] = "1";
 $INSTALLER09['categorie_icon'] = "1";
+//for subs & youtube mode
+$INSTALLER09['movie_cats'] = array(3,5,6,10,11);
+$youtube_pattern = "/^http\:\/\/www\.youtube\.com\/watch\?v\=[\w]{11}/i";
 //== set this to size of user avatars
 $INSTALLER09['av_img_height'] = 100;
 $INSTALLER09['av_img_width'] = 100;

@@ -13,6 +13,7 @@ $lang = array(
 'takeedit_img_big' => "Image file is too big! Max 512,000 bytes.",
 'takeedit_img_exists' => "An image already exists. Contact Admin for assistance.",
 'takeedit_img_copyerror' => "An error occured copy the image to the image storage repository. Contact Admin for assistance.",
+'takedit_youtube' => "Youtube link is not correct or is not present!",
 );
 
 ?>

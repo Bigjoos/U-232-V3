@@ -16,7 +16,7 @@ dbconn(false);
 loggedinorreturn();
 
 if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
-    sql_query("UPDATE users SET last_browse=".TIME_NOW." where id=".$CURUSER['id']) or sqlerr(__FILE__, __LINE__);
+    sql_query("UPDATE users SET last_browse=".TIME_NOW." WHERE id=".$CURUSER['id']) or sqlerr(__FILE__, __LINE__);
     $mc1->begin_transaction('MyUser_'.$CURUSER['id']);
     $mc1->update_row(false, array('last_browse' => TIME_NOW));
     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -272,7 +272,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
         }
       $pager = pager($torrentsperpage, $count, "browse.php?" . $addparam);
 
-    $query = "SELECT id, category, leechers, seeders, bump, release_group, subs, name, times_completed, size, added, poster, descr, type, free, comments, numfiles, filename, anonymous, sticky, nuked, vip, nukereason, newgenre, description, owner, username, checked_by, IF(nfo <> '', 1, 0) as nfoav," .
+    $query = "SELECT id, category, leechers, seeders, bump, release_group, subs, name, times_completed, size, added, poster, descr, type, free, comments, numfiles, filename, anonymous, sticky, nuked, vip, nukereason, newgenre, description, owner, username, youtube, checked_by, IF(nfo <> '', 1, 0) as nfoav," .
     "IF(numratings < {$INSTALLER09['minvotes']}, NULL, ROUND(ratingsum / numratings, 1)) AS rating ".
     "FROM torrents $where $orderby {$pager['limit']}";
     $res = sql_query($query) or sqlerr(__FILE__, __LINE__);

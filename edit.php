@@ -89,6 +89,7 @@ loggedinorreturn();
     $HTMLOUT  .= $ismodd;
     $HTMLOUT  .= tr("{$lang['edit_imdb_url']}", "<input type='text' name='url' size='80' value='".$row["url"]."' />", 1);
     $HTMLOUT .= tr($lang['edit_poster'], "<input type='text' name='poster' size='80' value='" . htmlspecialchars($row["poster"]) . "' /><br />{$lang['edit_poster1']}\n", 1);
+    $HTMLOUT  .= tr($lang['edit_youtube'], "<input type='text' name='youtube' value='{$row['youtube']}'size='80' /><br />({$lang['edit_youtube_info']})\n", 1);
     $HTMLOUT  .= tr($lang['edit_torrent_name'], "<input type='text' name='name' value='" . htmlspecialchars($row["name"]) . "' size='80' />", 1);
     $HTMLOUT  .= tr($lang['edit_torrent_description'], "<input type='text' name='description' value='" . htmlspecialchars($row['description']) . "' size='80' />", 1);
     $HTMLOUT  .= tr($lang['edit_nfo'], "<input type='radio' name='nfoaction' value='keep' checked='checked' />{$lang['edit_keep_current']}<br />".
@@ -102,7 +103,6 @@ loggedinorreturn();
       $c = " checked";
     }
     $HTMLOUT .= tr($lang['edit_description'], "". textbbcode("edit","descr","".htmlspecialchars($row['ori_descr'])."")."<br />({$lang['edit_tags']})", 1);
-    //$HTMLOUT .= tr($lang['edit_description'], "". BBcode(htmlspecialchars($row['ori_descr']),false)."<br />({$lang['edit_tags']})", 1);
     $s = "<select name=\"type\">\n";
     $cats = genrelist2();
     foreach ($cats as $cat)

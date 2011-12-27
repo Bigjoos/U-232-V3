@@ -44,6 +44,8 @@ $lang = array(
 'edit_cover_add' => "Add more",
 'edit_imdb_url' => "Imdb Url",
 'edit_comment' => "Allow Comments",
+'edit_youtube' => '<a href=\'http://youtube.com\' target=\'_blank\'>Youtube</a>',
+'edit_youtube_info' => 'Link should look like <b>http://www.youtube.com/watch?v=camI8yuoy8U</b>',
 #edit stdhead
 'edit_stdhead' => "Edit torrent"
 
