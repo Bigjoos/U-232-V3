@@ -176,7 +176,7 @@ dbconn();
     $latestuser_cache['pirate'] =  '0';
     $latestuser_cache['king'] =  '0';
     /** OOP **/
-    $mc1->cache_value('latestuser', $latestuser_cache, $INSTALLER09['expires']['latestuser']);
+    $mc1->add_value('latestuser', $latestuser_cache, $INSTALLER09['expires']['latestuser']);
     write_log("User account $id ($wantusername) was created");
 
     $psecret = $editsecret; 
