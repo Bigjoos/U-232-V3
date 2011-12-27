@@ -453,6 +453,10 @@ function format_comment($text, $strip_html = true, $urls = true)
    // [img=http://www/image.gif]
    $s = preg_replace("/\[img=((http|https):\/\/[^\s'\"<>]+(\.(gif|jpg|png|bmp)))\]/i", "<a href=\"\\1\" rel=\"lightbox\"><img src=\"\\1\" border=\"0\" alt=\"\"  style=\"max-width: 150px;\" /></a>", $s);
    }
+   // [mcom]Text[/mcom]
+   if (stripos($s, '[mcom]') !== false)
+   $s = preg_replace("/\[mcom\](.+?)\[\/mcom\]/is","<div style=\"font-size: 18pt; line-height: 50%;\">
+   <div style=\"border-color: red; background-color: red; color: white; text-align: center; font-weight: bold; font-size: large;\"><b>\\1</b></div></div>", $s); 
    // the [you] tag
    if (stripos($s, '[you]') !== false)
    $s = preg_replace("/\[you\]/i", $CURUSER['username'], $s);
@@ -640,9 +644,7 @@ $bbcodebody =<<<HTML
 HTML;
 if($CURUSER['class'] >= UC_MODERATOR)
 $bbcodebody .=<<<HTML
-	<img class="bb_icon" src="{$INSTALLER09['pic_base_url']}bbcode/php.png" onclick="tag('php')" title="Add php" alt="Php" /> 
-	<img class="bb_icon" src="{$INSTALLER09['pic_base_url']}bbcode/sql.png" onclick="tag('sql')" title="Add sql" alt="Sql" /> 
-	<img class="bb_icon" src="{$INSTALLER09['pic_base_url']}bbcode/script.png" onclick="tag('html')" title="Add html" alt="Html" /> 
+	<img class="bb_icon" src="{$INSTALLER09['pic_base_url']}bbcode/php.png" onclick="tag('php')" title="Add php code" alt="Php" /> 
 	<img class="bb_icon" src="{$INSTALLER09['pic_base_url']}bbcode/modcom.png" onclick="tag('mcom')" title="Mod comment" alt="Mod comment" />
 HTML;
 $bbcodebody .=<<<HTML
