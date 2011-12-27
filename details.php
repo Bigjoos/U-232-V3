@@ -22,7 +22,7 @@ loggedinorreturn();
     $lang = array_merge( load_language('global'), load_language('details') );
     parked();
     
-    $stdhead = array(/** include css **/'css' => array('jquery-ui'));
+    $stdhead = array(/** include css **/'css' => array('jquery-ui','bbcode'));
     $stdfoot = array(/** include js **/'js' => array('popup','jquery.thanks','wz_tooltip','java_klappe','balloontip','shout','jquery-ui-personalized-1.5.2.packed','sprinkle'));
     $HTMLOUT = $torrent_cache = '';
 
