@@ -76,7 +76,7 @@ $HTMLOUT .= "<table width='78%'border='0' cellspacing='0' cellpadding='5'>
 </tr>\n";
 
 
-$res = sql_query("SELECT s.*, s.userid AS su, torrents.username as username1, users.username as username2, torrents.anonymous as anonymous1, users.anonymous as anonymous2, size, parked, warned, enabled, class, chatpost, leechwarn, donor, timesann, owner FROM snatched AS s INNER JOIN users ON s.userid = users.id INNER JOIN torrents ON s.torrentid = torrents.id WHERE torrentid = $id ORDER BY complete_date DESC ".$pager['limit']."") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT s.*, s.userid AS su, torrents.username as username1, users.username as username2, users.paranoia, torrents.anonymous as anonymous1, users.anonymous as anonymous2, size, parked, warned, enabled, class, chatpost, leechwarn, donor, timesann, owner FROM snatched AS s INNER JOIN users ON s.userid = users.id INNER JOIN torrents ON s.torrentid = torrents.id WHERE torrentid = $id ORDER BY complete_date DESC ".$pager['limit']."") or sqlerr(__FILE__, __LINE__);
 while ($arr = mysqli_fetch_assoc($res)) {
 
  $upspeed = ($arr["upspeed"] > 0 ? mksize($arr["upspeed"]) : ($arr["seedtime"] > 0 ? mksize($arr["uploaded"] / ($arr["seedtime"] + $arr["leechtime"])) : mksize(0)));
@@ -84,7 +84,7 @@ while ($arr = mysqli_fetch_assoc($res)) {
  $ratio = ($arr["downloaded"] > 0 ? number_format($arr["uploaded"] / $arr["downloaded"], 3) : ($arr["uploaded"] > 0 ? "Inf." : "---"));
  $completed = sprintf("%.2f%%", 100 * (1 - ($arr["to_go"] / $arr["size"])));
  $snatchuser = (isset($arr['username2']) ? ("<a href='userdetails.php?id=".(int)$arr['userid']."'><b>".htmlspecialchars($arr['username2'])."</b></a>") : "{$lang['snatches_unknown']}");
- $username = (($arr['anonymous2'] == 'yes') ? ($CURUSER['class'] < UC_STAFF && $arr['userid'] != $CURUSER['id'] ? '' : $snatchuser.' - ')."<i>{$lang['snatches_anon']}</i>" : $snatchuser);
+ $username = (($arr['anonymous2'] == 'yes' OR $arr['paranoia'] >= 2) ? ($CURUSER['class'] < UC_STAFF && $arr['userid'] != $CURUSER['id'] ? '' : $snatchuser.' - ')."<i>{$lang['snatches_anon']}</i>" : $snatchuser);
   //if($arr['owner'] != $arr['su']){
   $HTMLOUT .= "<tr>
   <td align='left'>{$username}</td>

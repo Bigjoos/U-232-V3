@@ -49,10 +49,10 @@ function dltable($name, $arr, $torrent)
     foreach ($arr as $e) {
 		$htmlout .= "<tr>\n";
 		if($e['username']){
-	  if(($e['tanonymous'] == 'yes' && $e['owner'] == $e['userid'] || $e['anonymous'] == 'yes' && $CURUSER['id'] != $e['userid']) && $CURUSER['class'] < UC_STAFF)
-		$htmlout .= "<td><b>Anonymous</b></td>\n";
+	  if(($e['tanonymous'] == 'yes' && $e['owner'] == $e['userid'] || $e['anonymous'] == 'yes'  OR $e['paranoia'] >= 2 && $CURUSER['id'] != $e['userid']) && $CURUSER['class'] < UC_STAFF)
+		$htmlout .= "<td><b>Kezer Soze</b></td>\n";
 		else
-		$htmlout .= "<td><a href='userdetails.php?id=".$e['userid']."'><b>".$e['username']."</b></a></td>\n";
+		$htmlout .= "<td><a href='userdetails.php?id=".(int)$e['userid']."'><b>".htmlspecialchars($e['username'])."</b></a></td>\n";
 		} 
 		else
 			$htmlout .= "<td>" . ($mod ? $e["ip"] : preg_replace('/\.\d+$/', ".xxx", $e["ip"])) . "</td>\n";
@@ -97,7 +97,7 @@ function dltable($name, $arr, $torrent)
 
           $downloaders = array();
           $seeders = array();
-          $subres = sql_query("SELECT u.username,u.anonymous, t.owner, t.anonymous as tanonymous, p.seeder, p.finishedat, p.downloadoffset, p.uploadoffset, p.ip, p.port, p.uploaded, p.downloaded, p.to_go, p.started AS st, p.connectable, p.agent, p.last_action AS la, p.userid, p.peer_id
+          $subres = sql_query("SELECT u.username, u.anonymous, u.paranoia, t.owner, t.anonymous as tanonymous, p.seeder, p.finishedat, p.downloadoffset, p.uploadoffset, p.ip, p.port, p.uploaded, p.downloaded, p.to_go, p.started AS st, p.connectable, p.agent, p.last_action AS la, p.userid, p.peer_id
     FROM peers p
     LEFT JOIN users u ON p.userid = u.id
 	LEFT JOIN torrents as t on t.id = p.torrent
