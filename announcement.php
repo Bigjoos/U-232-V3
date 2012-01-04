@@ -25,11 +25,11 @@ $row['curr_ann_id'] == 0;
 $row['curr_ann_last_check'] == 0;
 }
 
-// If elapsed > 10 minutes, force a announcement refresh.
+// If elapsed > 3 minutes, force a announcement refresh.
 if (($row['curr_ann_last_check'] != 0) AND (($row['curr_ann_last_check']) < ($dt - 600))/** 10 mins **/)
 $row['curr_ann_last_check'] == 0;
 
-     if (($row['curr_ann_id'] == 0) AND ($row['curr_ann_last_check'] >= 0))
+     if (($row['curr_ann_id'] == 0) AND ($row['curr_ann_last_check'] == 0))
      { // Force an immediate check...
         $query = sprintf('SELECT m.*,p.process_id FROM announcement_main AS m '.
            'LEFT JOIN announcement_process AS p ON m.main_id = p.main_id '.
@@ -66,8 +66,7 @@ $row['curr_ann_last_check'] == 0;
     $row['curr_ann_body'] = $ann_row['body'];
 
     // Create additional set for main UPDATE query.
-    //$add_set = 'curr_ann_id = '.sqlesc($ann_row['main_id']);
-    sql_query("UPDATE users SET curr_ann_id = ".sqlesc($ann_row['main_id'])." WHERE id={$row['id']}") or sqlerr(__FILE__, __LINE__);
+    $add_set = 'curr_ann_id = '.sqlesc($ann_row['main_id']);
     $mc1->begin_transaction('user'.$CURUSER['id']);
     $mc1->update_row(false, array('curr_ann_id' => $ann_row['main_id']));
     $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -79,8 +78,7 @@ $row['curr_ann_last_check'] == 0;
     else
     {
     // Announcement not valid for member...
-    //$add_set = 'curr_ann_last_check = '.sqlesc($dt);
-    sql_query("UPDATE users SET curr_ann_last_check = ".sqlesc($dt)." WHERE id={$row['id']}") or sqlerr(__FILE__, __LINE__);
+    $add_set = 'curr_ann_last_check = '.sqlesc($dt);
     $mc1->begin_transaction('user'.$CURUSER['id']);
     $mc1->update_row(false, array('curr_ann_last_check' => $dt));
     $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -113,8 +111,7 @@ $row['curr_ann_last_check'] == 0;
     else
     {
     // No Main Result Set. Set last update to now...
-    //$add_set = 'curr_ann_last_check = '.sqlesc($dt);
-    sql_query("UPDATE users SET curr_ann_last_check = ".sqlesc($dt)." WHERE id={$row['id']}") or sqlerr(__FILE__, __LINE__);
+    $add_set = 'curr_ann_last_check = '.sqlesc($dt);
     $mc1->begin_transaction('user'.$CURUSER['id']);
     $mc1->update_row(false, array('curr_ann_last_check' => $dt));
     $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -125,10 +122,10 @@ $row['curr_ann_last_check'] == 0;
     unset($result);
     unset($ann_row);
     }
-    //$add_set = (isset($add_set)) ? $add_set : '';
-    //if (($row['last_access'] != '0') AND (($row['last_access']) < ($dt - 300))/** 5 mins **/) {
-    //sql_query("UPDATE users SET curr_ann_last_check = ".sqlesc($dt)." WHERE id={$row['id']}") or sqlerr(__FILE__, __LINE__);
-    //}
+    
+    $add_set = (isset($add_set)) ? $add_set : 'curr_ann_last_check = 0';
+    sql_query("UPDATE users SET $add_set WHERE id={$row['id']}") or sqlerr(__FILE__, __LINE__);
+    
     // Announcement Code...
     $ann_subject = trim($row['curr_ann_subject']);
     $ann_body = trim($row['curr_ann_body']);

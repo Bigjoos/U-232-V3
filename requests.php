@@ -109,7 +109,7 @@ if ($count = 0)
     
 
 $HTMLOUT .= (isset($_GET['new']) ? '<h1>Request Added!</h1>' : '' ).(isset($_GET['request_deleted']) ? '<h1>Request Deleted!</h1>' : '' ).
-        $top_menu.''.$menu.'</div><br />';
+        $top_menu.''.$menu.'<br />';
     
 $HTMLOUT .= '<table border="0" cellspacing="0" cellpadding="5" align="center">
     <tr>
@@ -145,7 +145,7 @@ $HTMLOUT .= '<table border="0" cellspacing="0" cellpadding="5" align="center">
     
  $HTMLOUT .= '</table>';
  
-$HTMLOUT .= ''.$menu.'</div><br />';
+$HTMLOUT .= ''.$menu.'<br />';
     
 echo stdhead('Requests', true, $stdhead).$HTMLOUT.stdfoot($stdfoot);
         break;
@@ -635,7 +635,7 @@ require_once INCL_DIR.'pager_new.php';
 
 $body = htmlspecialchars((isset($_POST['body']) ? $_POST['body'] : ''));
 
-$HTMLOUT .= $top_menu.'<p><form method="post" action="requests.php?action=add_comment">
+$HTMLOUT .= $top_menu.'<form method="post" action="requests.php?action=add_comment">
         <input type="hidden" name="id" value="'.$id.'"/>
         '.(isset($_POST['button']) && $_POST['button'] == 'Preview' ? '
     <table width="80%" border="1" cellspacing="5" cellpadding="5" align="center">
@@ -659,7 +659,7 @@ $HTMLOUT .= $top_menu.'<p><form method="post" action="requests.php?action=add_co
         <input name="button" type="submit" class="button" value="Preview" onmouseover="this.className=\'button_hover\'" onmouseout="this.className=\'button\'" /> 
         <input name="button" type="submit" class="button" value="Save" onmouseover="this.className=\'button_hover\'" onmouseout="this.className=\'button\'" /></td>
     </tr>
-	</table></form></p>';
+	</table></form>';
 
       $res = sql_query('SELECT c.request, c.id AS comment_id, c.text, c.added, c.editedby, c.editedat, 
                                 u.id, u.username, u.warned, u.suspended, u.enabled, u.donor, u.class, u.avatar, u.offensive_avatar, u.title, u.leechwarn, u.chatpost, u.pirate,  u.king
@@ -725,7 +725,7 @@ require_once INCL_DIR.'bbcode_functions.php';
       $avatar = avatar_stuff($arr_user);
       }
         
-$HTMLOUT .= $top_menu.'<p><form method="post" action="requests.php?action=edit_comment">
+$HTMLOUT .= $top_menu.'<form method="post" action="requests.php?action=edit_comment">
         <input type="hidden" name="id" value="'.$arr['request'].'"/>
         <input type="hidden" name="comment_id" value="'.$comment_id.'"/>
 	 '.(isset($_POST['button']) && $_POST['button'] == 'Preview' ? '<table width="80%" border="0" cellspacing="5" cellpadding="5" align="center">
@@ -736,7 +736,7 @@ $HTMLOUT .= $top_menu.'<p><form method="post" action="requests.php?action=edit_c
         <td width="80" valign="top" class="two">'.$avatar.'</td>
         <td valign="top" align="left" class="two">'.format_comment($body).'</td>
     </tr></table><br />' : '').'
-    <table align="center" width="80%" border="0" cellspacing="0" cellpadding="5" align="center">
+    <table align="center" width="80%" border="0" cellspacing="0" cellpadding="5">
 	<tr>
         <td align="center" class="colhead" colspan="2"><h1>Edit comment to "'.htmlspecialchars($arr['request_name'], ENT_QUOTES).'"</h1></td>
     </tr>
@@ -748,7 +748,7 @@ $HTMLOUT .= $top_menu.'<p><form method="post" action="requests.php?action=edit_c
         <input name="button" type="submit" class="button" value="Preview" onmouseover="this.className=\'button_hover\'" onmouseout="this.className=\'button\'" /> 
         <input name="button" type="submit" class="button" value="Edit" onmouseover="this.className=\'button_hover\'" onmouseout="this.className=\'button\'" /></td>
     </tr>
-	</table></form></p>';
+	</table></form>';
 
 
 echo stdhead('Edit comment to "'.$arr['request_name'].'"', true, $stdhead).$HTMLOUT.stdfoot($stdfoot);
@@ -812,7 +812,7 @@ function comment_table($rows)
     {
         $res_user = sql_query('SELECT username FROM users WHERE id='.$row['editedby']) or sqlerr(__FILE__,__LINE__);
         $arr_user = mysqli_fetch_assoc($res_user);
-        $text .= '<p><font size="1" class="small">Last edited by <a href="member_details.php?id='.$row['editedby'].'">
+        $text .= '<p><font size="1" class="small">Last edited by <a href="userdetails.php?id='.$row['editedby'].'">
         <b>'.$arr_user['username'].'</b></a> at '.get_date($row['editedat'],'DATE').'</font></p>';
     }
 

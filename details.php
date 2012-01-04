@@ -23,7 +23,7 @@ loggedinorreturn();
     parked();
     
     $stdhead = array(/** include css **/'css' => array('jquery-ui','bbcode'));
-    $stdfoot = array(/** include js **/'js' => array('popup','jquery.thanks','wz_tooltip','java_klappe','balloontip','shout','jquery-ui-personalized-1.5.2.packed','sprinkle'));
+    $stdfoot = array(/** include js **/'js' => array('popup','jquery.thanks','wz_tooltip','java_klappe','balloontip','shout','jquery-ui-personalized-1.5.2.packed','sprinkle','thumbs'));
     $HTMLOUT = $torrent_cache = '';
 
     if (!isset($_GET['id']) || !is_valid_id($_GET['id']))
@@ -151,7 +151,7 @@ loggedinorreturn();
 		if (isset($_GET["uploaded"])) {
 			$HTMLOUT .= "<h2>{$lang['details_success']}</h2>\n";
 			$HTMLOUT .= "<p>{$lang['details_start_seeding']}</p>\n";
-			//$HTMLOUT .='<meta http-equiv="refresh" content="1;url=download.php?torrent='.$id.''.($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "").'" />';
+			$HTMLOUT .='<meta http-equiv="refresh" content="1;url=download.php?torrent='.$id.''.($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "").'" />';
 		}
 		elseif (isset($_GET["edited"])) {
 			$HTMLOUT .= "<h2>{$lang['details_success_edit']}</h2>\n";
@@ -216,7 +216,7 @@ loggedinorreturn();
     <div id="balloon3" class="balloonstyle">
     Remember to show your gratitude and Thank the Uploader. <img src="'.$INSTALLER09['pic_base_url'].'smilies/smile1.gif" alt="" /></div>';
     /** end **/
-    $HTMLOUT .= "<div id='tabvanilla' bgcolor='transparent' class='widget'>";
+    $HTMLOUT .= "<div id='tabvanilla' class='widget'>";
     $HTMLOUT .= "<ul class='tabnav'>
     <li><a href='#Download'>Download</a></li>
     <li><a href='#Poster'>Poster</a></li>
@@ -225,9 +225,9 @@ loggedinorreturn();
     <li><a href='#comments'>Comments</a></li>
     </ul>";
     $HTMLOUT .= "<div class='tabdiv'>";
-    $HTMLOUT .= "<div id='Download' bgcolor='transparent'>";
-    $HTMLOUT .= "<table align='center' width='750' border='1' cellspacing='0' cellpadding='5' bgcolor='transparent'>\n";
-		$url = "edit.php?id=" . $torrents["id"];
+    $HTMLOUT .= "<div id='Download'>";
+    $HTMLOUT .= "<table align='center' width='750' border='1' cellspacing='0' cellpadding='5'>\n";
+		$url = "edit.php?id=" .(int)$torrents["id"];
 		if (isset($_GET["returnto"])) {
 			$addthis = "&amp;returnto=" . urlencode($_GET["returnto"]);
 			$url .= $addthis;
@@ -271,8 +271,7 @@ loggedinorreturn();
             }
         $mc1->add('coin_points_'.$id, $torrent['torrent_points_'], 0);              
     }
-    
-$my_points   = (isset( $torrent['torrent_points_'][$CURUSER['id']]) ?  (int)$torrent['torrent_points_'][$CURUSER['id']] : 0);
+    $my_points   = (isset( $torrent['torrent_points_'][$CURUSER['id']]) ?  (int)$torrent['torrent_points_'][$CURUSER['id']] : 0);
 
     $HTMLOUT .= '<tr><td class="heading" valign="top" align="right">Karma Points</td>
         <td valign="top" align="left"><b>In total '.(int)$torrents['points'].' Karma Points given to this torrent of which '.$my_points.' from you.<br /><br />
@@ -320,6 +319,17 @@ $my_points   = (isset( $torrent['torrent_points_'][$CURUSER['id']]) ?  (int)$tor
     $HTMLOUT .= "<tr><td align='right' class='heading'>Ratio After Download</td><td>{$sr}&nbsp;&nbsp;Your new ratio if you download this torrent.</td></tr>";
     }
 	 //==End
+    //Thumbs Up
+    if(($thumbs = $mc1->get_value('thumbs_up_'.$id)) === false) {
+    $thumbs = mysqli_num_rows(sql_query("SELECT id, type, torrentid, userid FROM thumbsup WHERE torrentid = ".sqlesc($torrents['id']).""));		
+	 $thumbs = (int)$thumbs;
+    $mc1->add_value('thumbs_up_'.$id, $thumbs, 0); 
+    }
+    $HTMLOUT .= "<tr><td class='rowhead' width='1%'>{$lang['details_thumbs']}</td><td width='99%' align='left'>
+	 <div id='thumbsup'>
+	 (".(int)$thumbs.")<a href=\"javascript:ThumbsUp('".(int)$torrents['id']."')\">
+	 <img src='{$INSTALLER09['pic_base_url']}thumb_up.png' alt='Thumbs Up' title='Thumbs Up' width='12' height='12' /></a></div></td></tr>\n";
+    //==
     $HTMLOUT .= tr("{$lang['details_info_hash']}", htmlspecialchars($torrents["info_hash"]));
     }
     else {
@@ -358,15 +368,14 @@ $my_points   = (isset( $torrent['torrent_points_'][$CURUSER['id']]) ?  (int)$tor
     $HTMLOUT .= tr("{$lang['details_similiar']}", "<a href=\"javascript: klappe_news('a5')\"><img border=\"0\" src=\"pic/plus.png\" id=\"pica5".(int)$a['id']."\" alt=\"[Hide/Show]\" title=\"[Hide/Show]\" /></a><div id=\"ka5\" style=\"display: none;\"><br />$sim_torrent</div>", 1);
     } else {
     if (empty($sim_torrents))
-    $HTMLOUT .= "<tr><td colspan='2'>Nothing matching...</td></tr><br />";
+    $HTMLOUT .= "<tr><td colspan='2'>Nothing similiar to ".htmlspecialchars($torrents["name"]) . " found.</td></tr>";
     }
     }
     /////////////////////////////////////////////////////////
-    
     if (!empty($torrents_txt["descr"]))
 	  $HTMLOUT .= "<tr><td style='vertical-align:top'><b>{$lang['details_description']}</b></td><td><div style='background-color:transparent;width:100%;height:150px;overflow: auto'>". str_replace(array("\n", "  "), array("<br />\n", "&nbsp; "), format_comment( $torrents_txt["descr"] ))."</div></td></tr>";
 	 if(!empty($torrents['youtube']))
-    $HTMLOUT .= tr($lang['details_youtube'],'<object type="application/x-shockwave-flash" style="width:560px; height:340px;" data="'.str_replace('watch?v=','v/',$torrents['youtube']).'"><param name="movie" value="'.str_replace('watch?v=','v/',$torrents['youtube']).'" /></object><br/><a 
+    $HTMLOUT .= tr($lang['details_youtube'],'<object type="application/x-shockwave-flash" style="width:560px; height:340px;" data="'.str_replace('watch?v=','v/',$torrents['youtube']).'"><param name="movie" value="'.str_replace('watch?v=','v/',$torrents['youtube']).'" /></object><br /><a 
 href=\''.htmlspecialchars($torrents['youtube']).'\' target=\'_blank\'>'.$lang['details_youtube_link'].'</a>',1);
     $HTMLOUT .= "</table>";
     $HTMLOUT .= "</div>";
@@ -375,11 +384,13 @@ href=\''.htmlspecialchars($torrents['youtube']).'\' target=\'_blank\'>'.$lang['d
 	  //==09 Poster mod
     if (!empty($torrents["poster"]))
     $HTMLOUT .= tr("{$lang['details_poster']}", "<img src='".htmlspecialchars($torrents["poster"])."' alt='Poster' title='Poster' />", 1);
+    if (empty($torrents["poster"]))
+    $HTMLOUT .="<tr><td colspan='2'>No Poster Found.</td></tr>";
 	 $HTMLOUT .= "</table>";
     $HTMLOUT .= "</div>";
     $HTMLOUT .= "<div id='imdb'>";
     $HTMLOUT .= "<table align='center' width='750' border='1' cellspacing='0' cellpadding='5'>\n";
-	 
+    //== tvrage by pdq/putyn
     $torrents['tvcats'] = array(5); // change these to match your TV categories
     if (in_array($torrents['category'], $torrents['tvcats'])) {
 		  require_once(INCL_DIR.'tvrage_functions.php');
@@ -441,13 +452,14 @@ href=\''.htmlspecialchars($torrents['youtube']).'\' target=\'_blank\'>'.$lang['d
 		}
 		$HTMLOUT .= tr('Auto imdb',$imdb_html,1);
 	}
+  if (empty($tvrage_info) && empty($imdb_html))
+  $HTMLOUT .="<tr><td colspan='2'>No Imdb or Tvrage info.</td></tr>";
   $HTMLOUT .= "</table>";
   $HTMLOUT .= "</div>";
   $HTMLOUT .= "<div id='info'>";
   $HTMLOUT .= "<table align='center' width='750' border='1' cellspacing='0' cellpadding='5'>\n";
   //==subs by putyn
-    $movie_cat = array("3","5","6","10","11"); //add here your movie category 
-	  if (in_array($torrents["category"], $movie_cat) && !empty($torrents["subs"]) )
+	if (in_array($torrents["category"], $INSTALLER09['movie_cats']) && !empty($torrents["subs"]) )
     {
 	  $HTMLOUT .="<tr><td class='rowhead'>Subtitles</td><td align='left'>";
 	  $subs_array = explode(",",$torrents["subs"]);
@@ -483,7 +495,7 @@ href=\''.htmlspecialchars($torrents['youtube']).'\' target=\'_blank\'>'.$lang['d
 			if ($INSTALLER09['minvotes'] > 1) {
 				$s .= "none yet (needs at least {$INSTALLER09['minvotes']} votes and has got ";
 				if ($torrents["numratings"])
-					$s .= "only " . $torrents["numratings"];
+					$s .= "only " . htmlentities($torrents["numratings"]);
 				else
 					$s .= "none";
 				$s .= ")";
@@ -494,7 +506,7 @@ href=\''.htmlspecialchars($torrents['youtube']).'\' target=\'_blank\'>'.$lang['d
 		else {
             $rpic = ratingpic($torrents["rating"]);
             if($torrents['rating'] > 0)
-				$s .= "$rpic (" . $torrents["rating"] . " out of 5 with " . $torrents["numratings"] . " vote(s) total)";
+				$s .= "$rpic (" . htmlentities($torrents["rating"]) . " out of 5 with " . htmlentities($torrents["numratings"]) . " vote(s) total)";
 		}
 		$s .= "\n";
 		$s .= "</td><td class=\"embedded\">$spacer</td><td valign=\"top\" class=\"embedded\">";
@@ -512,7 +524,7 @@ href=\''.htmlspecialchars($torrents['youtube']).'\' target=\'_blank\'>'.$lang['d
       }
      
       if (!empty($xrow))
-					$s .= "(you rated this torrent as \"" . $xrow["rating"] . " - " . $ratings[$xrow["rating"]] . "\")";
+					$s .= "(you rated this torrent as \"" . htmlentities($xrow["rating"]) . " - " .htmlentities($ratings[$xrow["rating"]]) . "\")";
 				  else {
 					$s .= "<form method=\"post\" action=\"takerate.php\"><input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
 					$s .= "<select name=\"rating\">\n";
@@ -530,11 +542,11 @@ href=\''.htmlspecialchars($torrents['youtube']).'\' target=\'_blank\'>'.$lang['d
 		$HTMLOUT .= tr("Rating", $s, 1);
       
   	   $HTMLOUT .= tr("{$lang['details_last_seeder']}", "{$lang['details_last_activity']}" .get_date( $l_a['lastseed'],'',0,1));
-		$HTMLOUT .= tr("{$lang['details_size']}",mksize($torrents["size"]) . " (" . number_format($torrents["size"]) . "{$lang['details_bytes']})");
+		$HTMLOUT .= tr("{$lang['details_size']}",mksize($torrents["size"]) . " (" . number_format($torrents["size"]) . " {$lang['details_bytes']})");
 		$HTMLOUT .= tr("{$lang['details_added']}", get_date( $torrents['added'],"{$lang['details_long']}"));
 		$HTMLOUT .= tr("{$lang['details_views']}", (int)$torrents["views"]);
 		$HTMLOUT .= tr("{$lang['details_hits']}", (int)$torrents["hits"]);
-		$HTMLOUT .= tr("{$lang['details_snatched']}", ($torrents["times_completed"] > 0 ? "<a href='./snatches.php?id={$id}'>{$torrents['times_completed']} {$lang['details_times']}</a>" : "0 {$lang['details_times']}"), 1);
+		$HTMLOUT .= tr("{$lang['details_snatched']}", ($torrents["times_completed"] > 0 ? "<a href='{$INSTALLER09["baseurl"]}/snatches.php?id={$id}'>{$torrents['times_completed']} {$lang['details_times']}</a>" : "0 {$lang['details_times']}"), 1);
     //== Tor Reputation by pdq 
 		if ($torrent_cache['rep']) {         
     $torrents = array_merge($torrents, $torrent_cache['rep']);         
@@ -554,7 +566,7 @@ href=\''.htmlspecialchars($torrents['youtube']).'\' target=\'_blank\'>'.$lang['d
            $checked_by = mysqli_fetch_assoc(sql_query("SELECT id FROM users WHERE username='".$torrents['checked_by']."'")) or sqlerr(__FILE__, __LINE__);
            $mc1->add_value('checked_by_'.$id, $checked_by, 30*86400);         
            } 
-           $HTMLOUT .="<tr><td class='rowhead'>Checked by</td><td align='left'><a href='{$INSTALLER09["baseurl"]}/userdetails.php?id=".$checked_by['id']."'><strong>
+           $HTMLOUT .="<tr><td class='rowhead'>Checked by</td><td align='left'><a href='{$INSTALLER09["baseurl"]}/userdetails.php?id=".(int)$checked_by['id']."'><strong>
            ".htmlspecialchars($torrents['checked_by'])."</strong></a> 
            <img src='{$INSTALLER09['pic_base_url']}mod.gif' width='15' border='0' alt='Checked' title='Checked - by ".htmlspecialchars($torrents['checked_by'])."' />
            <a href='{$INSTALLER09["baseurl"]}/details.php?id=".(int)$torrents['id']."&amp;rechecked=1'><small><em><strong>[Re-Check this torrent]</strong></em></small></a> 
@@ -562,7 +574,7 @@ href=\''.htmlspecialchars($torrents['youtube']).'\' target=\'_blank\'>'.$lang['d
        }
        else {
        $HTMLOUT .="<tr><td class='rowhead'>Checked by</td><td align='left'><font color='#ff0000'><strong>NOT CHECKED!</strong></font> 
-       <a href='{$INSTALLER09["baseurl"]}/details.php?id=".$torrents['id']."&amp;checked=1'>
+       <a href='{$INSTALLER09["baseurl"]}/details.php?id=".(int)$torrents['id']."&amp;checked=1'>
        <small><em><strong>[Check this torrent]</strong></em></small></a>  * STAFF Eyes Only *</td></tr>";
        }
     }

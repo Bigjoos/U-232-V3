@@ -22,7 +22,7 @@ parked();
 $newpage = new page_verify(); 
 $newpage->create('mdk1@@9'); 
 
-$stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box'));
+$stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box','flush_torrents'));
  
     $id = 0 + $_GET["id"];
     if (!is_valid_id($id))
@@ -114,10 +114,10 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
       $user['game_access'] = (int)$user['game_access'];
     $mc1->cache_value('user'.$id, $user, $INSTALLER09['expires']['user_cache']);
     }
-
+    
     if ($user["status"] == "pending") 
     stderr("Error","User is still pending.");
-    
+
     // user stats
     $user_stats = $mc1->get_value('user_stats_'.$id);
     if ($user_stats === false) {
@@ -223,7 +223,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
     $countries = countries();
     foreach ($countries as $cntry)
     if ($cntry['id'] == $user['country']) {
-    $country = "<td class='embedded'><img src=\"{$INSTALLER09['pic_base_url']}flag/{$cntry['flagpic']}\" alt=\"". htmlspecialchars($cntry['name']) ."\" style='margin-left: 8pt' /></td>";
+    $country = "<img src=\"{$INSTALLER09['pic_base_url']}flag/{$cntry['flagpic']}\" alt=\"". htmlspecialchars($cntry['name']) ."\" style='margin-left: 8pt' />";
     break;
     }
 
@@ -255,7 +255,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
     }
     }
   
-    $HTMLOUT = $perms = $suspended = $watched_user = '';
+    $HTMLOUT = $perms = $suspended = $watched_user = $h1_thingie = '';
     if ($user['anonymous'] == 'yes' && ($CURUSER['class'] < UC_STAFF && $user["id"] != $CURUSER["id"]))
     {
 	  $HTMLOUT .= "<table width='100%' border='1' cellspacing='0' cellpadding='5' class='main'>";
@@ -273,13 +273,13 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
   	}
     $HTMLOUT .= "</td></tr></table><br />";
     }
-    
-    $suspended .= ($user['suspended'] == 'yes' ? '<td class="embedded">&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" alt="Suspended" title="Suspended" />&nbsp;<b>This account has been suspended</b>&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" alt="Suspended" title="Suspended" /></td>' : '');
-    $watched_user .=  ($user['watched_user'] == 0 ? '' : '<td class="embedded">&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" align="middle" alt="Watched User" title="Watched User" /> <b>This account is currently on the <a href="admin.php?action=watched_users" >watched user list</a></b> <img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" align="middle" alt="Watched User" title="Watched User" /></td>');
-    $perms .= (($user['perms'] & bt_options::PERMS_NO_IP) ? '<td class="embedded">&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/super.gif" alt="Invincible!"  title="Invincible!" /></td>' : '');
+    $h1_thingie = ((isset($_GET['sn']) || isset($_GET['wu'])) ? '<h1>Member Updated</h1>' : '');
+    $suspended .= ($user['suspended'] == 'yes' ? '&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" alt="Suspended" title="Suspended" />&nbsp;<b>This account has been suspended</b>&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" alt="Suspended" title="Suspended" />' : '');
+    $watched_user .=  ($user['watched_user'] == 0 ? '' : '&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" align="middle" alt="Watched User" title="Watched User" /> <b>This account is currently on the <a href="staffpanel.php?tool=watched_users" >watched user list</a></b> <img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" align="middle" alt="Watched User" title="Watched User" />');
+    $perms .= (($user['perms'] & bt_options::PERMS_NO_IP) ? '&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/super.gif" alt="Invincible!"  title="Invincible!" />' : '');
     $enabled = $user["enabled"] == 'yes';
     $HTMLOUT .= "<table class='main' border='0' cellspacing='0' cellpadding='0'>".
-    "<tr><td class='embedded'><h1 style='margin:0px'>" . format_username($user, true) . "</h1></td>$country$perms$suspended</tr></table>\n";
+    "<tr><td class='embedded'><h1 style='margin:0px'>" . format_username($user, true) . "</h1>$country$perms$watched_user$suspended$h1_thingie</td></tr></table>\n";
    
      if ($user["parked"] == 'yes')
  	  $HTMLOUT .= "<p><b>{$lang['userdetails_parked']}</b></p>\n";
@@ -314,6 +314,8 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
       $HTMLOUT .= "<p>(<a href='friends.php?action=add&amp;type=block&amp;targetid=$id'>{$lang['userdetails_add_blocks']}</a>)</p>\n";
       }
      
+      
+
     //== 09 Shitlist by Sir_Snuggles
     if ($CURUSER['class'] >= UC_STAFF){
     $shitty = '';
@@ -381,6 +383,43 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
     <img src="'.$INSTALLER09['pic_base_url'].'smilies/'.$moodpic.'" alt="'.$moodname.'" border="0" />
     <span class="tip">'.htmlspecialchars($user['username']).' '.$moodname.' !</span></a></span></td></tr>';
 
+   // === make sure prople can't see their own naughty history by snuggles
+    if (($CURUSER['id'] !== $user['id']) && ($CURUSER['class'] >= UC_STAFF)) 
+    {
+    //=== watched user stuff
+    $the_flip_box = '[ <a name="watched_user"></a><a class="altlink" href="#watched_user" onclick="javascript:flipBox(\'3\')" title="Add - Edit - View Watched User">'.($user['watched_user'] > 0 ? 'Add - Edit - View ' : 'Add - View ').'<img onclick="javascript:flipBox(\'3\')" src="pic/panel_on.gif" name="b_3" style="vertical-align:middle;"   width="8" height="8" alt="Add - Edit - View Watched User" title="Add - Edit - View Watched User" /></a> ]';
+      $HTMLOUT .= '<tr><td class="rowhead">Watched User</td>
+			<td align="left">'.($user['watched_user'] > 0 ? 'Currently being watched since  '.get_date( $user['watched_user'],'').' ' : ' Not currently being watched ').
+			$the_flip_box.'
+			<div align="left" id="box_3" style="display:none">
+			<form method="post" action="member_input.php" name="notes_for_staff">
+			<input name="id" type="hidden" value="'.$id.'" />
+			<input type="hidden" value="watched_user" name="action" />
+			Add to watched users? 			
+			<input type="radio" value="yes" name="add_to_watched_users"'.($user['watched_user'] > 0 ? ' checked="checked"' : '').' /> yes 
+			<input type="radio" value="no" name="add_to_watched_users"'.($user['watched_user'] == 0 ? ' checked="checked"' : '').' /> no <br />
+			<span id="desc_text" style="color:red;font-size: xx-small;">* you must select yes or no if you wish to change the watched user status!<br />
+			you may add, edit or delete the text below without changing their status.</span><br />
+			<textarea id="watched_reason" cols="50" rows="6" name="watched_reason">'.htmlspecialchars($user['watched_user_reason']).'</textarea><br />
+			<input id="watched_user_button" type="submit" value="Submit!" class="btn" name="watched_user_button" />
+			</form></div> </td></tr>';
+         //=== staff Notes
+      $the_flip_box_4 = '[ <a name="staff_notes"></a><a class="altlink" href="#staff_notes" onclick="javascript:flipBox(\'4\')" name="b_4" title="Open / Close Staff Notes">view <img onclick="javascript:flipBox(\'4\')" src="pic/panel_on.gif" name="b_4" style="vertical-align:middle;"  width="8" height="8" alt="Open / Close Staff Notes" title="Open / Close Staff Notes" /></a> ]';
+      $HTMLOUT .= '<tr><td class="rowhead">Staff Notes</td><td align="left">		
+			<a class="altlink" href="#staff_notes" onclick="javascript:flipBox(\'17\')" name="b_17" title="Add - Edit - View staff note">'.($user['staff_notes'] !== '' ? 'View - Add - Edit ' : 'Add ').'<img onclick="javascript:flipBox(\'17\')" src="pic/panel_on.gif" name="b_17" style="vertical-align:middle;"  width="8" height="8" alt="Add - Edit - View staff note" title="Add - Edit - View staff note" /></a>
+			<div align="left" id="box_17" style="display:none">
+			<form method="post" action="member_input.php" name="notes_for_staff">
+			<input name="id" type="hidden" value="'.(int)$user['id'].'" />
+			<input type="hidden" value="staff_notes" name="action" id="action" />
+			<textarea id="new_staff_note" cols="50" rows="6" name="new_staff_note">'.htmlspecialchars($user['staff_notes']).'</textarea>
+			<br /><input id="staff_notes_button" type="submit" value="Submit!" class="btn" name="staff_notes_button"/>
+			</form>
+			</div> </td></tr>';
+      //=== system comments
+      $the_flip_box_16 = '[ <a name="system_comments"></a><a class="altlink" href="#system_comments" onclick="javascript:flipBox(\'16\')"  name="b_16" title="Open / Close System Comments">view <img onclick="javascript:flipBox(\'16\')" src="pic/panel_on.gif" name="b_16" style="vertical-align:middle;"  width="8" height="8" alt="Open / Close System Comments" title="Open / System Comments" /></a> ]';
+      if(!empty($user_stats['modcomment']))
+      $HTMLOUT .= "<tr><td class='rowhead'>System Comments</td><td align='left'>".($user_stats['modcomment'] != '' ? $the_flip_box_16.'<div align="left" id="box_16" style="display:none"><hr />'.format_comment($user_stats['modcomment']).'</div>' : '')."</td></tr>\n"; 
+     }   
      //==Begin blocks
      if (curuser::$blocks['userdetails_page'] & block_userdetails::LOGIN_LINK && $BLOCKS['userdetails_login_link_on']){
 	  require_once(BLOCK_DIR.'userdetails/loginlink.php');
@@ -509,9 +548,6 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
 	  }
 
      //==end blocks
-    
-    
-    
     $HTMLOUT .="<script type='text/javascript'>
     /*<![CDATA[*/
     function togglepic(bu, picid, formid){
@@ -526,31 +562,6 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
 		form.value = 'plus';
 	  }
     }
-    /*]]>*/
-    </script>";
-    
-    $HTMLOUT .="<script type='text/javascript'>
-    /*<![CDATA[*/
- $(document).ready(function() {  
-     // hides the slickbox as soon as the DOM is ready  
-      $('#slickbox').hide();  
-     // shows the slickbox on clicking the noted link  
-      $('#slick-show').click(function() {  
-        $('#slickbox').show('slow');  
-        return false;  
-      });  
-     // hides the slickbox on clicking the noted link  
-      $('#slick-hide').click(function() {  
-        $('#slickbox').hide('fast');  
-        return false;  
-      });  
-  
-     // toggles the slickbox on clicking the noted link  
-      $('#slick-toggle').click(function() {  
-        $('#slickbox').toggle(400);  
-        return false;  
-      });  
-    });  
     /*]]>*/
     </script>";
 
@@ -902,13 +913,13 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
      //==End
      //==Games disable
      if ($CURUSER['class'] >= UC_STAFF) {
-       $game_access = $user['game_access'] != 0;
+       $game_access = $user['game_access'] != 1;
      $HTMLOUT .= "<tr><td class='rowhead'".(!$game_access ? ' rowspan="2"' : '').">{$lang['userdetails_games']}</td>
         <td align='left' width='20%'>".($game_access ? "<input name='game_access' value='42' type='radio' />Remove games disablement" : "No disablement Status Set")."</td>\n";
 
      if ($game_access)
      {
-     if ($user['game_access'] == 1)
+     if ($user['game_access'] == 0)
      $HTMLOUT .= '<td align="center">(Unlimited Duration)</td></tr>';
      else
      $HTMLOUT .= "<td align='center'>Until ".get_date($user['game_access'], 'DATE'). " (".mkprettytime($user['game_access'] - TIME_NOW). " to go)</td></tr>";
@@ -926,11 +937,8 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
      }
      }   
       //==High speed
-      if ($CURUSER["class"] < UC_SYSOP)
-      $HTMLOUT .="<input type=\"hidden\" name=\"highspeed\" value=\"$user[highspeed]\" />\n";
-      else {
+      if ($CURUSER["class"] == UC_SYSOP) {
       $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_highspeed']}</td><td class='row' colspan='2' align='left'><input type='radio' name='highspeed' value='yes' " .($user["highspeed"] == "yes" ? " checked='checked'" : "") ." />Yes <input type='radio' name='highspeed' value='no' " . ($user["highspeed"] == "no" ? " checked='checked'" : "") . " />No</td></tr>\n";
-
       }
      $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_park']}</td><td colspan='2' align='left'><input name='parked' value='yes' type='radio'" .
 	   ($user["parked"] == "yes" ? " checked='checked'" : "") . " />{$lang['userdetails_yes']} <input name='parked' value='no' type='radio'" .

@@ -92,7 +92,6 @@ if ($oldlink > 0)
    <td class='colhead' align='right'><a href='{$_SERVER["PHP_SELF"]}?{$oldlink}sort=3&amp;type={$link3}'>{$lang["torrenttable_comments"]}</a></td>
    <td class='colhead' align='center'><a href='{$_SERVER["PHP_SELF"]}?{$oldlink}sort=4&amp;type={$link4}'>{$lang["torrenttable_added"]}</a></td>
    <td class='colhead' align='center'><a href='{$_SERVER["PHP_SELF"]}?{$oldlink}sort=5&amp;type={$link5}'>{$lang["torrenttable_size"]}</a></td>
-   <!--<td class='colhead' align='center'>{$lang["torrenttable_progress"]}</td>-->
    <td class='colhead' align='center'><a href='{$_SERVER["PHP_SELF"]}?{$oldlink}sort=6&amp;type={$link6}'>{$lang["torrenttable_snatched"]}</a></td>
    <td class='colhead' align='right'><a href='{$_SERVER["PHP_SELF"]}?{$oldlink}sort=7&amp;type={$link7}'>{$lang["torrenttable_seeders"]}</a></td>
    <td class='colhead' align='right'><a href='{$_SERVER["PHP_SELF"]}?{$oldlink}sort=8&amp;type={$link8}'>{$lang["torrenttable_leechers"]}</a></td>";
@@ -139,9 +138,10 @@ if ($oldlink > 0)
        $checked = ((!empty($row['checked_by']) && $CURUSER['class'] >= UC_USER) ? "&nbsp;<img src='{$INSTALLER09['pic_base_url']}mod.gif' width='15' border='0' alt='Checked - by ".htmlspecialchars($row['checked_by'])."' title='Checked - by ".htmlspecialchars($row['checked_by'])."' />" : "");
        $poster = empty($row["poster"]) ? "<img src=\'{$INSTALLER09['pic_base_url']}noposter.png\' width=\'150\' height=\'220\' border=\'0\' alt=\'Poster\' title=\'poster\' />" : "<img src=\'".htmlspecialchars($row['poster'])."\' width=\'150\' height=\'220\' border=\'0\' alt=\'Poster\' title=\'poster\' />";
        $rating = empty($row["rating"]) ? "No votes yet":"".ratingpic((int)$row["rating"]).""; 
-       $youtube = (!empty($row['youtube']) ? "<a href='".htmlspecialchars($row['youtube'])."' target='_blank'><img src='{$INSTALLER09['pic_base_url']}youtube.png' width='16' height='14' border='0' alt='Youtube Trailer' title='Youtube Trailer' /></a>" : "" );
-       if ($row["descr"])
+       $youtube = (!empty($row['youtube']) ? "<a href='".htmlspecialchars($row['youtube'])."' target='_blank'><img src='{$INSTALLER09['pic_base_url']}youtube.png' width='14' height='14' border='0' alt='Youtube Trailer' title='Youtube Trailer' /></a>" : "" );
+       if (isset($row["descr"]))
        $descr = str_replace("\"", "&quot;", readMore($row["descr"], 350, "details.php?id=".(int)$row["id"]."&amp;hit=1"));
+       $descr = str_replace('&','&amp;',$descr);
        $htmlout .= "<td align='left'><a href='details.php?";
        if ($variant == "mytorrents")
        $htmlout .= "returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;";
@@ -188,9 +188,10 @@ if ($oldlink > 0)
        }else
        $Subs ="---";
        $htmlout .= "' onmouseover=\"Tip('<b>" . CutName($dispname, 80) . "</b><br /><b>Added:&nbsp;".get_date($row['added'],'DATE',0,1)."</b><br /><b>Size:&nbsp;".mksize(htmlspecialchars($row["size"])) ."</b><br /><b>Subtitle:&nbsp;{$Subs}</b><br /><b>Seeders:&nbsp;".htmlspecialchars($row["seeders"]) ."</b><br /><b>Leechers:&nbsp;".htmlspecialchars($row["leechers"]) ."</b><br /><b>Rating:&nbsp;".htmlspecialchars($rating) ."</b><br />$poster');\" onmouseout=\"UnTip();\"><b>" . CutName($dispname, 45) . "</b></a>&nbsp;&nbsp;<a href=\"javascript:klappe_descr('descr" . (int)$row["id"] . "');\" ><img src=\"{$INSTALLER09['pic_base_url']}plus.png\" border=\"0\" alt=\"Show torrent info in this page\" title=\"Show torrent info in this page\" /></a>&nbsp;&nbsp;$youtube&nbsp;$viponly&nbsp;$release_group&nbsp;$sticky&nbsp;".($row['added'] >= $CURUSER['last_browse'] ? " <img src='{$INSTALLER09['pic_base_url']}newb.png' border='0' alt='New !' title='New !' />" : "")."&nbsp;$checked&nbsp;$free_tag&nbsp;$nuked<br />\n".$freeslot."&nbsp;$newgenre&nbsp;$bump&nbsp;$smalldescr</td>\n";
-	     if ($variant == "mytorrents")
+	    
+       if ($variant == "mytorrents")
        $htmlout .= "<td align='center'><a href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."\"><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download This Torrent!' title='Download This Torrent!' /></a></td>\n";
-	        
+       
        if ($variant == "mytorrents")  
        $htmlout .= "<td align='center'><a href='edit.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;id={$row['id']}'>{$lang["torrenttable_edit"]}</a></td>\n";
        $htmlout.= ($variant == "index" ? "<td align='center'><a href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."\"><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download This Torrent!' title='Download This Torrent!' /></a></td>" : "");

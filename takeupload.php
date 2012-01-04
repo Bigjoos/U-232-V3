@@ -162,17 +162,11 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     $offer = (((isset($_POST['offer']) && is_valid_id($_POST['offer'])) ? intval($_POST['offer']) : 0));
 
     $subs = isset($_POST["subs"]) ? implode(",", $_POST['subs']) : "";	
-    if (empty($subs) && in_array($catid, $INSTALLER09['movie_catS']))
-    stderr ("Error", "Select a subtitle!");
-
+ 
     $youtube = '';
-    if(in_array(0+$_POST['type'],$INSTALLER09['movie_cats'])) {
-        if(isset($_POST['youtube']) && preg_match($youtube_pattern,$_POST['youtube'],$temp_youtube))
-          $youtube = $temp_youtube[0];
-        else
-        stderr($lang['takeupload_failed'],$lang['takeupload_no_youtube']);
-        die();
-    }
+    if(isset($_POST['youtube']) && preg_match($youtube_pattern,$_POST['youtube'],$temp_youtube))
+    $youtube = $temp_youtube[0];
+    
 
     $release_group_array =  array('scene' =>1, 'p2p' =>1, 'none' =>1);
     $release_group = isset($_POST['release_group']) && isset($release_group_array[$_POST['release_group']]) ? $_POST['release_group'] : 'none'; 

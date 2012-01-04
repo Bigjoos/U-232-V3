@@ -124,7 +124,7 @@ loggedinorreturn();
     <div>{$lang['usercp_psettings']}</div><br />-->
     <div><br />
     <form method='post' action='takeeditcp.php'>
-    <table border='1' width='80%' cellspacing='0' cellpadding='3' align='center' bgcolor='transparent'  ><tr>
+    <table border='1' width='80%' cellspacing='0' cellpadding='3' align='center'><tr>
     <td width='600' valign='top'>";
     //== Avatar
     if ($action == "avatar") {
@@ -147,8 +147,6 @@ loggedinorreturn();
     <br />{$lang['usercp_no_avatar_allow']}</td></tr>";
     }
     //==End
-
-
     //=== adding avatar stuff - snuggs :D
     $HTMLOUT .= tr('Is your avatar offensive',
     '<input type="radio" name="offensive_avatar" '.($CURUSER['offensive_avatar'] == 'yes' ? 'checked="checked"' : '').' value="yes" /> Yes

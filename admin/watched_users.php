@@ -28,12 +28,13 @@ exit();
 require_once INCL_DIR.'user_functions.php';
 require_once INCL_DIR.'pager_new.php';
 require_once INCL_DIR.'html_functions.php';
+require_once INCL_DIR.'bbcode_functions.php';
 require_once(CLASS_DIR.'class_check.php');
 class_check(UC_STAFF);
 
 $lang = array_merge( $lang );
 
-$HTMLOUT = $H1_thingie = $count = '';
+$HTMLOUT = $H1_thingie = $count2 = '';
 
 //=== to delete members from the watched user list... admin and up only!
 if (isset($_GET['remove']))
@@ -95,13 +96,10 @@ if (isset($_GET['remove']))
 		}
 	//=== Check if members were removed
 	if (mysqli_affected_rows($GLOBALS["___mysqli_ston"]) == 0)
-		stderr('Error','No one was deleted!');
+   stderr('Error','No one was deleted!');
 	else
-		staff_action_log('<b>'.$CURUSER['username'].'</b> Removed:<br />'.$removed_log.' <br />from watched users', $CURUSER['id']);
-
-	
+   write_log('<b>'.$CURUSER['username'].'</b> Removed:<br />'.$removed_log.' <br />from watched users');
 	$H1_thingie = '<h1>'.$count.' Member'.($count == 1 ? '' : 's').' removed from list.</h1>';
-
 }
 
 //=== to add members to the watched user list... all staff!
@@ -114,26 +112,25 @@ if (isset($_GET['add']))
 			//=== make sure they are not being watched...
 			$res = sql_query('SELECT modcomment, watched_user, watched_user_reason, username FROM users WHERE id='.sqlesc($member_whos_been_bad)) or sqlerr(__FILE__, __LINE__);
 			$user = mysqli_fetch_assoc($res);
-			
-				if ($user['watched_user'] > 0)
-					stderr('Error', $user['username'].' is on the watched user list already! <a href="userdetails.php?id='.$member_whos_been_bad.'" >back to '.$user['username'].'\'s profile</a>');
+		  if ($user['watched_user'] > 0)
+			stderr('Error', $user['username'].' is on the watched user list already! <a href="userdetails.php?id='.$member_whos_been_bad.'" >back to '.$user['username'].'\'s profile</a>');
 					
-    //== ok they are not watched yet let's add the info part 1
-    if ($_GET['add'] && $_GET['add'] == 1)
-        {
-    $naughty_box = '
-        <form method=post action="staffpanel.php?tool=watched_users&amp;action=watched_users&add=2&id='.$member_whos_been_bad.'">
-    <table width="600">
-    <tr>
-        <td class="colhead">Add '.$user['username'].'To Watched Users</td>
-    </tr>
-    <tr>
-        <td align="center"><b>please fill in the reason for adding '.$user['username'].' to the watched user list.</b><br />
-        <textarea cols="60" rows="6" name="reason">'.htmlspecialchars($user['watched_user_reason']).'</textarea><br /></td>
-    </tr>
-    <tr>
-        <td class="colhead">
-        <input type="submit" class="button_big" value="add to watched users!"" onmouseover="this.className=\'button_big_hover\'" onmouseout="this.className=\'button_big\'" /></form></td>
+  //== ok they are not watched yet let's add the info part 1
+  if ($_GET['add'] && $_GET['add'] == 1)
+  {
+ $naughty_box = '
+ <form method="post" action="staffpanel.php?tool=watched_users&amp;action=watched_users&amp;add=2&amp;id='.$member_whos_been_bad.'">
+ <table width="600">
+ <tr>
+ <td class="colhead">Add '.$user['username'].'To Watched Users</td>
+ </tr>
+ <tr>
+ <td align="center"><b>please fill in the reason for adding '.$user['username'].' to the watched user list.</b><br />
+ <textarea cols="60" rows="6" name="reason">'.htmlspecialchars($user['watched_user_reason']).'</textarea><br /></td>
+ </tr>
+ <tr>
+ <td class="colhead">
+ <input type="submit" class="button_big" value="add to watched users!"" onmouseover="this.className=\'button_big_hover\'" onmouseout="this.className=\'button_big\'" /><form><td>
     </tr>
     </table>';
     
@@ -146,7 +143,7 @@ if (isset($_GET['add']))
 			$modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - Added to watched users by $CURUSER[username].\n". $user['modcomment'];
 			sql_query('UPDATE users SET watched_user = '.TIME_NOW.', modcomment='.sqlesc($modcomment).', watched_user_reason = '.sqlesc($watched_user_reason).' WHERE id='.sqlesc($member_whos_been_bad)) or sqlerr(__FILE__,__LINE__);
          $mc1->begin_transaction('MyUser_'.$member_whos_been_bad);
-         $mc1->update_row(false, array('watched_user' => TIME_NOW, 'watched_user_reason' => $watched_user_reason));
+         $mc1->update_row(false, array('watched_user' => TIME_NOW));
          $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
          $mc1->begin_transaction('user'.$member_whos_been_bad);
          $mc1->update_row(false, array('watched_user' => TIME_NOW, 'watched_user_reason' => $watched_user_reason));
@@ -159,33 +156,24 @@ if (isset($_GET['add']))
 			if (mysqli_affected_rows($GLOBALS["___mysqli_ston"]) > 0)
 			{
 				$H1_thingie = '<h1>Sucess!'. $user['username'].' added!</h1>';
-				staff_action_log('<b>'.$CURUSER['username'].'</b> added <a href="userdetails.php?id='.$member_whos_been_bad.'" class="altlink">'.$user['username'].'</a> to the <a href="staffpanel.php?tool=watched_users&amp;action=watched_users" class="altlink">watched users list</a>.', $CURUSER['id']);
+				write_log('<b>'.$CURUSER['username'].'</b> added <a href="userdetails.php?id='.$member_whos_been_bad.'" class="altlink">'.$user['username'].'</a> to the <a href="staffpanel.php?tool=watched_users&amp;action=watched_users" class="altlink">watched users list</a>.');
 			}
 	}
 
-
-
-
 //=== get number of watched members
 $watched_users = number_format(get_row_count('users', 'WHERE watched_user != \'0\''));
-
 //=== get sort / asc desc, and be sure it's safe
 $good_stuff = array('username','watched_user','invited_by');
 $ORDER_BY = ((isset($_GET['sort']) && in_array($_GET['sort'],$good_stuff,true)) ? $_GET['sort'].' ' : 'watched_user ');
 $ASC = (isset($_GET['ASC']) ? ($_GET['ASC'] == 'ASC' ? 'DESC' : 'ASC') : 'DESC');
-
-
 $i = 1;
 
-//echo stdhead('Watched Users');
-
 $HTMLOUT .= $H1_thingie.'<br />
-		<form action="staffpanel.php?tool=watched_users&amp;action=watched_users&amp;remove=1" method="post"  name="checkme" onSubmit="return ValidateForm(this,\'wu\')">
+		<form action="staffpanel.php?tool=watched_users&amp;action=watched_users&amp;remove=1" method="post"  name="checkme" onsubmit="return ValidateForm(this,\'wu\')">
         <h1>Watched Users [ '.$watched_users.' ]</h1>
     <table border="0" cellspacing="5" cellpadding="5" align="center" style="max-width:800px">';
 //=== get the member info...
-$res = sql_query('SELECT id, username, added, watched_user_reason, watched_user, uploaded, downloaded, warned, suspended, enabled, donor, class, invitedby FROM users WHERE watched_user != \'0\' ORDER BY '.$ORDER_BY.$ASC) or sqlerr(__FILE__, __LINE__);
-
+$res = sql_query('SELECT id, username, added, watched_user_reason, watched_user, uploaded, downloaded, warned, suspended, enabled, donor, class, leechwarn, chatpost, pirate, king, invitedby FROM users WHERE watched_user != \'0\' ORDER BY '.$ORDER_BY.$ASC) or sqlerr(__FILE__, __LINE__);
 $how_many = mysqli_num_rows($res);
 if($how_many > 0)
 {
@@ -193,73 +181,60 @@ $div_link_number = 1;
 
 $HTMLOUT .= '
     <tr>
-        <td class="colhead"><a href="staffpanel.php?tool=watched_users&amp;action=watched_users&sort=watched_user&ASC='.$ASC.'" >Added</a></td>  
-        <td class="colhead"><a href="staffpanel.php?tool=watched_users&amp;action=watched_users&sort=username&ASC='.$ASC.'" >Username</a></td>
-        <td class="colhead" align=left width="400">Suspicion</td>
-        <td class="colhead" align=center>Stats</td>
-        <td class="colhead" align=center><a href="staffpanel.php?tool=watched_users&amp;action=watched_users&sort=invited_by&ASC='.$ASC.'"  >Invited By</a></td>
-        '.($CURUSER['class'] >= UC_STAFF ? '<td class="colhead" align="center"></td>' : '').'
+        <td class="colhead"><a href="staffpanel.php?tool=watched_users&amp;action=watched_users&amp;sort=watched_user&amp;ASC='.$ASC.'">Added</a></td>  
+        <td class="colhead"><a href="staffpanel.php?tool=watched_users&amp;action=watched_users&amp;sort=username&amp;ASC='.$ASC.'">Username</a></td>
+        <td class="colhead" align="left" width="400">Suspicion</td>
+        <td class="colhead" align="center">Stats</td>
+        <td class="colhead" align="center"><a href="staffpanel.php?tool=watched_users&amp;action=watched_users&amp;sort=invited_by&amp;ASC='.$ASC.'">Invited By</a></td>
+        '.($CURUSER['class'] >= UC_STAFF ? '<td class="colhead" align="center">&nbsp;</td>' : '').'
     </tr>';
 		
 	while ($arr = @mysqli_fetch_assoc($res)) 
 	{
-    //=== change colors
-    $count2= (++$count2)%2;
-    $class = ($count2 == 0 ? 'one' : 'two');
-			
-	$invitor_res = sql_query('SELECT id, username, donor, class, enabled, warned, suspended FROM users WHERE id='.sqlesc($arr['invited_by'])) or sqlerr(__FILE__, __LINE__);
+   //=== change colors
+   $count2= (++$count2)%2;
+   $class = ($count2 == 0 ? 'one' : 'two');
+	$invitor_res = sql_query('SELECT id, username, donor, class, enabled, warned, leechwarn, chatpost, pirate, king, suspended FROM users WHERE id='.sqlesc($arr['invitedby'])) or sqlerr(__FILE__, __LINE__);
 	$invitor_arr = mysqli_fetch_assoc($invitor_res);
-	
 	$the_flip_box = '
-        [ <a id="'.$div_link_number.'_open" style="font-weight:bold;cursor:pointer;">view reason</a> ]
-        <div align="left" id="'.$div_link_number.'" style="display:none">'.format_comment($arr['watched_user_reason']).'</div>';
-        
+        [ <a id="d'.$div_link_number.'_open" style="font-weight:bold;cursor:pointer;">View reason</a> ]
+        <div align="left" id="d'.$div_link_number.'" style="display:none">'.format_comment($arr['watched_user_reason']).'</div>';
 $HTMLOUT .= '
     <tr>
         <td align="center" class="'.$class.'">'.get_date( $arr['watched_user'],'').' <br /> '.get_date( $arr['watched_user'],'',0,1).' </td>
         <td align="left" class="'.$class.'">'.print_user_stuff($arr).'</td>
         <td align="left" class="'.$class.'">'.$the_flip_box.'</td>
-        <td align="center" class="'.$class.'">'.member_ratio($arr['uploaded'], $arr['downloaded']).'</td></td>
+        <td align="center" class="'.$class.'">'.member_ratio($arr['uploaded'], $arr['downloaded']).'</td>
         <td align="center" class="'.$class.'">'.($invitor_arr['username'] == '' ? 'open sign-ups' : print_user_stuff($invitor_arr)).'</td>
         '.($CURUSER['class'] >= UC_STAFF ? '
-        <td align="center" class="'.$class.'"><input type="checkbox" name="wu[]" value="'.$arr['id'].'" /></td>' : '').'
+        <td align="center" class="'.$class.'"><input type="checkbox" name="wu[]" value="'.(int)$arr['id'].'" /></td>' : '').'
     </tr>';
 	$div_link_number++;
 	}
 	$div_link_number = 1;	
-
-//=== make script 
-$HTMLOUT .='<script type="text/javascript" src="scripts/jquery.js"></script>
+}
+else
+$HTMLOUT .= '<tr>
+<td align="center" class="one"><h1>The watched members list is empty!</h1></td></tr>';
+$HTMLOUT .= '
+<tr>
+<td align="center" colspan="6" class="colhead"><a class="altlink" href="javascript:SetChecked(1,\'wu[]\')"> select all</a> - <a class="altlink" href="javascript:SetChecked(0,\'wu[]\')">un-select all</a>
+        <input type="submit" class="button_big" value="remove selected from watched users" onmouseover="this.className=\'button_big_hover\'" onmouseout="this.className=\'button_big\'" /></td></tr></table></form>
+<script type="text/javascript" src="scripts/check_selected.js"></script>';
+$HTMLOUT .='
 <script type="text/javascript">
-<!--
+ /*<![CDATA[*/
 $(document).ready(function()	{';
 while ($div_link_number <= $how_many)
 {
-echo '$("#'.$div_link_number.'_open").click(function() {
-  $("#'.$div_link_number.'").slideToggle("slow", function() {
+$HTMLOUT .= '$("#d'.$div_link_number.'_open").click(function() {
+  $("#d'.$div_link_number.'").slideToggle("slow", function() {
   });
 });';
 $div_link_number++;
 }
-echo '});
--->
+$HTMLOUT .= '});
+/*]]>*/
 </script>';
-	
-}
-else
-$HTMLOUT .= '
-    <tr>
-        <td align="center" class="one"><h1>The watched members list is empty!</h1></td>
-    </tr>';
-
-$HTMLOUT .= '
-    <tr>
-        <td align="center" colspan="6" class="colhead"><a class="altlink" href="javascript:SetChecked(1,\'wu[]\')"> select all</a> - <a class=altlink href="javascript:SetChecked(0,\'wu[]\')">un-select all</a>
-        <input type="submit" class="button_big" value="remove selected from watched users" onmouseover="this.className=\'button_big_hover\'" onmouseout="this.className=\'button_big\'" /></form></td>
-    </tr></td>
-    </tr></table>
-
-<script type="text/javascript" src="scripts/check_selected.js"></script>';
- 
 echo stdhead('Watched Users') . $HTMLOUT . stdfoot();
 ?>

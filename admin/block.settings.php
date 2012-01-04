@@ -146,7 +146,6 @@ function get_cache_array()
 
 $HTMLOUT = '';
 $HTMLOUT .='
-    <div>
     <div>Global Block Settings</div><br />
     <div><br />
     <form action="staffpanel.php?tool=block.settings&amp;action=block.settings" method="post">

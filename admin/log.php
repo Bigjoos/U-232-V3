@@ -79,7 +79,7 @@ $pager = pager($perpage, $count, "staffpanel.php?tool=log&amp;action=log&amp;" .
       
   while ($arr = mysqli_fetch_assoc($res))
   {
-$color = 'white'; 
+$color = '#333333'; 
 if (strpos($arr['txt'],'was uploaded by')) $color = "#4799ad";
 if (strpos($arr['txt'],'was created')) $color = "#CC9966";
 if (strpos($arr['txt'],'section')) $color = "#ba79d8";

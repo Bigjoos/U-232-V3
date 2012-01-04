@@ -48,8 +48,8 @@ if ($game)
                        'WHERE id = '.$CURUSER['id']) or sqlerr(__FILE__, __LINE__);
       $User = mysqli_fetch_assoc($sql);
 
-   $User['uploaded'] = (int)$User['uploaded'];
-   $User['downloaded']= (int)$User['downloaded'];
+   $User['uploaded'] = (float)$User['uploaded'];
+   $User['downloaded']= (float)$User['downloaded'];
    $User['bjwins'] = (int)$User['bjwins'];
    $User['bjlosses'] = (int)$User['bjlosses'];
 
@@ -129,9 +129,9 @@ if ($game)
 			if ($points < 21)
 			{
 				$HTMLOUT .="<h1>Welcome, {$CURUSER['username']}!</h1>
-				<table cellspacing='0' cellpadding='3' width='600' bgcolor='transparent'>
+				<table cellspacing='0' cellpadding='3' width='600'>
 				<tr><td colspan='2'>
-				<table class='message' width='100%' cellspacing='0' cellpadding='5' bgcolor='transparent'>
+				<table class='message' width='100%' cellspacing='0' cellpadding='5'>
 				<tr><td align='center'>".trim($showcards)."</td></tr>
 				<tr><td align='center'><b>Points = {$points}</b></td></tr>
 				<tr><td align='center'>
@@ -175,9 +175,9 @@ if ($game)
 			$waitres = sql_query("SELECT COUNT(userid) AS c FROM blackjack WHERE status = 'waiting' AND userid != ".sqlesc($CURUSER['id']));
 			$waitarr = mysqli_fetch_assoc($waitres);
 			$HTMLOUT .="<h1>Game over</h1>
-			<table cellspacing='0' cellpadding='3' width='600' bgcolor='transparent'>
+			<table cellspacing='0' cellpadding='3' width='600'>
 			<tr><td colspan='2'>
-			<table width='100%' cellspacing='0' cellpadding='5' bgcolor='transparent'>
+			<table width='100%' cellspacing='0' cellpadding='5'>
 			<tr><td align='center'>".trim($showcards)."</td></tr>
 			<tr><td align='center'><b>Points = {$points}</b></td></tr>";
 		}
@@ -345,9 +345,9 @@ if ($game)
 		{
 			$HTMLOUT .= cheater_check(empty($playerarr));
 			$HTMLOUT .="<h1>Welcome, {$CURUSER['username']}!</h1>
-			<table cellspacing='0' cellpadding='3' width='600' bgcolor='transparent'>
+			<table cellspacing='0' cellpadding='3' width='600'>
 			<tr><td colspan='2'>
-			<table class='message' width='100%' cellspacing='0' cellpadding='5' bgcolor='transparent'>
+			<table class='message' width='100%' cellspacing='0' cellpadding='5'>
 			<tr><td align='center'>{$showcards}</td></tr>
 			<tr><td align='center'><b>Points = {$points}</b></td></tr>";
 			$HTMLOUT .="<tr>
@@ -368,7 +368,7 @@ if ($game)
 		$HTMLOUT .="<h1>Game over</h1>
 		<table cellspacing='0' cellpadding='3' width='600'>
 		<tr><td colspan='2'>
-		<table class='message' width='100%' cellspacing='0' cellpadding='5' bgcolor='transparent'>
+		<table class='message' width='100%' cellspacing='0' cellpadding='5'>
 		<tr><td align='center'>{$showcards}</td></tr>
 		<tr><td align='center'><b>Points = ".htmlspecialchars($playerarr['points'])."</b></td></tr>";
 		
@@ -471,7 +471,7 @@ else
 	$HTMLOUT .="<h1>{$INSTALLER09['site_name']} Blackjack</h1>
 	<table cellspacing='0' cellpadding='3' width='400'>
 	<tr><td colspan='2' align='center'>
-	<table class='message' width='100%' cellspacing='0' cellpadding='10' bgcolor='transparent'>
+	<table class='message' width='100%' cellspacing='0' cellpadding='10'>
 	<tr><td align='center'><img src='{$INSTALLER09['pic_base_url']}cards/tp.bmp' width='71' height='96' border='0' alt='' />&nbsp;<img src='{$INSTALLER09['pic_base_url']}cards/vp.bmp' width='71' height='96' border='0' alt='' /></td></tr>
 	<tr><td align='left'>You must collect 21 points without going over.<br /><br />
 	<b>NOTE:</b> By playing blackjack, you are betting 1 GB of upload credit!</td></tr>

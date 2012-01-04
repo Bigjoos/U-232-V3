@@ -56,8 +56,8 @@ $casino = "casino.php"; //== Name of file
                        'WHERE id = '.$CURUSER['id']) or sqlerr(__FILE__, __LINE__);
          $User = mysqli_fetch_assoc($sql);
 
-         $User['uploaded'] = (int)$User['uploaded'];
-         $User['downloaded']= (int)$User['downloaded'];
+         $User['uploaded'] = (float)$User['uploaded'];
+         $User['downloaded'] = (float)$User['downloaded'];
          //== Reset user gamble stats!
          $hours = 2; //== Hours to wait after using all tries, until they will be restarted
          $dt = TIME_NOW - $hours * 3600;
@@ -77,11 +77,11 @@ $casino = "casino.php"; //== Name of file
          }
 
          $row = mysqli_fetch_assoc($result);
-         $user_win = (int)$row["win"];
-         $user_lost = (int)$row["lost"];
+         $user_win = (float)$row["win"];
+         $user_lost = (float)$row["lost"];
          $user_trys = (int)$row["trys"];
          $user_date = (int)$row["date"];
-         $user_deposit = (int)$row["deposit"];
+         $user_deposit = (float)$row["deposit"];
          $user_enableplay = htmlentities($row["enableplay"]);
 
          if ($user_enableplay == "no")
@@ -102,10 +102,10 @@ $casino = "casino.php"; //== Name of file
 
           $global_down2 = sql_query(" select (sum(win)-sum(lost)) as globaldown,(sum(deposit)) as globaldeposit, sum(win) as win, sum(lost) as lost from casino") or sqlerr(__FILE__, __LINE__);
           $row = mysqli_fetch_assoc($global_down2);
-          $global_down = (int)$row["globaldown"];
-          $global_win = (int)$row["win"];
-          $global_lost = (int)$row["lost"];
-          $global_deposit = (int)$row["globaldeposit"];
+          $global_down = (float)$row["globaldown"];
+          $global_win = (float)$row["win"];
+          $global_lost = (float)$row["lost"];
+          $global_deposit = (float)$row["globaldeposit"];
 
           if ($user_win > 0)
           $casino_ratio_user = number_format($user_lost / $user_win, 2);
@@ -151,7 +151,7 @@ $casino = "casino.php"; //== Name of file
 
            if (isset($color_options[$post_color]) && isset($number_options[$post_number]) || isset($betmb_options[$post_betmb])) 
            {
-           $betmb = (int)$_POST["betmb"];
+           $betmb = (float)$_POST["betmb"];
            if (isset($_POST["number"])) {
            $win_amount = $win_amount_on_number;
            $cheat_value = $cheat_value + 5;

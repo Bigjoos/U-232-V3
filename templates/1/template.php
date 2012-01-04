@@ -117,6 +117,7 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
         <li><a href='faq.php'><span class='nav'>FAQ</span></a></li>
         <li><a href='staff.php'><span class='nav'>STAFF</span></a></li>
 	     <li><a href='offers.php'><span class='nav'>OFFERS</span></a></li>
+        <li><a href='announcement.php'><span class='nav'>ANNOUNCEMENTS</span></a></li>
         </ul>
         </div></div>
         <!-- U-232 Source - Print Global Messages -->
@@ -315,8 +316,8 @@ function StatusBar() {
 	global $CURUSER, $INSTALLER09, $lang, $rep_is_on, $mc1, $msgalert;
 	if (!$CURUSER)
 	return "";
-	$upped = (int)mksize($CURUSER['uploaded']);
-	$downed = (int)mksize($CURUSER['downloaded']);
+	$upped = (float)mksize($CURUSER['uploaded']);
+	$downed = (float)mksize($CURUSER['downloaded']);
    //==Memcache unread pms
 	$PMCount=0;
 	$unread1 = $mc1->get_value('inbox_new_sb_'.$CURUSER['id']);

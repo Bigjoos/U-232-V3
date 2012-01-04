@@ -509,8 +509,8 @@ $sql = sql_query('SELECT uploaded, downloaded, seedbonus, bonuscomment, free_swi
       $User = mysqli_fetch_assoc($sql);
 
 $seedbonus=htmlspecialchars($bonus-$points,1);
-$upload = (int)$User['uploaded'];
-$download = (int)$User['downloaded'];
+$upload = (float)$User['uploaded'];
+$download = (float)$User['downloaded'];
 $bonuscomment = htmlspecialchars($User['bonuscomment']);
 $free_switch = (int)$User['free_switch'];
 $warned = (int)$User['warned'];

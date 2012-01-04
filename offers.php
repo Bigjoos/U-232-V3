@@ -100,7 +100,7 @@ if ($count = 0)
     stderr('Error!', 'Sorry, there are no current offers!');
     
 $HTMLOUT .= (isset($_GET['new']) ? '<h1>Offer Added!</h1>' : '' ).(isset($_GET['offer_deleted']) ? '<h1>Offer Deleted!</h1>' : '' ).
-        $top_menu.''.$menu.'</div><br />';
+        $top_menu.''.$menu.'<br />';
     
 $HTMLOUT .= '<table border="0" cellspacing="0" cellpadding="5" align="center">
     <tr>
@@ -138,7 +138,7 @@ $HTMLOUT .= '<table border="0" cellspacing="0" cellpadding="5" align="center">
     }
     
  $HTMLOUT .= '</table>';
-$HTMLOUT .= ''.$menu.'</div><br />';
+$HTMLOUT .= ''.$menu.'<br />';
 
 echo stdhead('Offers', true, $stdhead).$HTMLOUT.stdfoot($stdfoot);  
 
@@ -847,7 +847,7 @@ function comment_table($rows)
     {
         $res_user = sql_query('SELECT username FROM users WHERE id='.$row['editedby']) or sqlerr(__FILE__,__LINE__);
         $arr_user = mysqli_fetch_assoc($res_user);
-        $text .= '<p><font size="1" class="small">Last edited by <a href="member_details.php?id='.$row['editedby'].'">
+        $text .= '<p><font size="1" class="small">Last edited by <a href="userdetails.php?id='.$row['editedby'].'">
         <b>'.$arr_user['username'].'</b></a> at '.get_date($row['editedat'],'DATE').'</font></p>';
     }
 

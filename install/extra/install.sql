@@ -2142,6 +2142,24 @@ CREATE TABLE IF NOT EXISTS `thankyou` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `thumbsup`
+--
+
+CREATE TABLE IF NOT EXISTS `thumbsup` (
+`id` int(10) NOT NULL auto_increment,
+`type` enum('torrents', 'posts') collate utf8_unicode_ci NOT NULL default 'torrents',
+`torrentid` int(10) not null default '0',
+`userid` int(11) not null default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `thumbsup`
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tickets`
 --
 

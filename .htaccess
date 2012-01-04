@@ -8,5 +8,7 @@ ErrorDocument 404 /error.php?404
 ErrorDocument 500 /error.php?500
 ##################################################
 RewriteEngine On
-RewriteRule ^avatar/([_0-9a-z-]+).png /avatar/avatar.php?user=$1 
+RewriteRule ^avatar/([_0-9a-z-]+).png /avatar/avatar.php?user=$1
+#Header unset ETag
+FileETag none
 
