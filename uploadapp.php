@@ -25,19 +25,11 @@ if (isset($_POST["form"]) != "1") {
     elseif ($arr['status'] == 'rejected')
         stderr($lang['uploadapp_user_error'], $lang['uploadapp_rejected']);
     else {
-
         $HTMLOUT .="<h1 align='center'>{$lang['uploadapp_application']}</h1>
         <table width='750' border='1' cellspacing='0' cellpadding='10'><tr><td>
-        <form action='{$INSTALLER09['baseurl']}/uploadapps.php' method='post' enctype='multipart/form-data'>
+        <form action='./uploadapp.php' method='post' enctype='multipart/form-data'>
         <table border='1' cellspacing='0' cellpadding='5' align='center'>";
-
-        if ($CURUSER['downloaded'] > 0)
-            $ratio = $CURUSER['uploaded'] / $CURUSER['downloaded'];
-        elseif ($CURUSER['uploaded'] > 0)
-            $ratio = 1;
-        else
-            $ratio = 0;
-
+        $ratio = member_ratio($CURUSER['uploaded'], $CURUSER['downloaded']);
         $res = sql_query("SELECT connectable FROM peers WHERE userid=".sqlesc($CURUSER['id'])."")or sqlerr(__FILE__, __LINE__);
         if ($row = mysqli_fetch_row($res)) {
             $connect = $row[0];
@@ -46,8 +38,7 @@ if (isset($_POST["form"]) != "1") {
             else
                 $connectable = 'No';
         } else
-            $connectable = 'Pending';
-                                                                                                
+            $connectable = 'Pending';                                                                                            
         $HTMLOUT .="<tr>
         <td class='rowhead'>{$lang['uploadapp_username']}</td>
         <td><input name='userid' type='hidden' value='".(int)$CURUSER['id'] ."' />".$CURUSER['username'] ."</td>
@@ -56,7 +47,7 @@ if (isset($_POST["form"]) != "1") {
         <td class='rowhead'>{$lang['uploadapp_joined']}</td><td>".get_date($CURUSER['added'], '', 0, 1) ."</td>
         </tr>
         <tr>
-        <td class='rowhead'>{$lang['uploadapp_ratio']}</td><td>".($ratio >= 1 ? 'Yes' : 'No') ."</td>
+        <td class='rowhead'>{$lang['uploadapp_ratio']}</td><td>".($ratio >= 1 ? 'No' : 'Yes') ."</td>
         </tr>
         <tr>
         <td class='rowhead'>{$lang['uploadapp_connectable']}</td><td><input name='connectable' type='hidden' value='$connectable' />$connectable</td>
@@ -72,39 +63,36 @@ if (isset($_POST["form"]) != "1") {
         </tr>
         <tr>
         <td class='rowhead'>{$lang['uploadapp_uploader']}</td><td><input type='radio' name='sites' value='yes' />{$lang['uploadapp_yes']}
-       <input name='sites' type='radio' value='no' checked='checked' />{$lang['uploadapp_no']}</td>
-       </tr>
+        <input name='sites' type='radio' value='no' checked='checked' />{$lang['uploadapp_no']}</td>
+        </tr>
         <tr>
         <td class='rowhead'>{$lang['uploadapp_sites']}</td><td><textarea name='sitenames' cols='80' rows='1'></textarea></td>
         </tr>
         <tr>
         <td class='rowhead'>{$lang['uploadapp_scene']}</td><td><input type='radio' name='scene' value='yes' />{$lang['uploadapp_yes']}
-	   <input name='scene' type='radio' value='no' checked='checked' />{$lang['uploadapp_no']}</td>
-       </tr>
+	     <input name='scene' type='radio' value='no' checked='checked' />{$lang['uploadapp_no']}</td>
+        </tr>
         <tr>
         <td colspan='2'>
         <br />
         &nbsp;&nbsp;{$lang['uploadapp_create']}
         <br />
         <input type='radio' name='creating' value='yes' />{$lang['uploadapp_yes']}
-    	<input name='creating' type='radio' value='no' checked='checked' />{$lang['uploadapp_no']}
+    	  <input name='creating' type='radio' value='no' checked='checked' />{$lang['uploadapp_no']}
         <br /><br />
         &nbsp;&nbsp;{$lang['uploadapp_seeding']}
         <br />
         <input type='radio' name='seeding' value='yes' />{$lang['uploadapp_yes']}
-     	<input name='seeding' type='radio' value='no' checked='checked' />{$lang['uploadapp_no']}
+     	  <input name='seeding' type='radio' value='no' checked='checked' />{$lang['uploadapp_no']}
         <br /><br />
         <input name='form' type='hidden' value='1' />
-        
-         
         <div align='center'><input type='submit' name='Submit' value='{$lang['uploadapp_send']}' /></div></td>
         </tr>
         </table></form>
         </td></tr></table>";
     }
-    
     // Process application
-} else {
+    } else {
     $app['userid'] = (int) $_POST['userid'];
     $app['connectable'] = htmlentities($_POST['connectable']);
     $app['speed'] = htmlentities($_POST['speed']);
@@ -136,12 +124,13 @@ if (isset($_POST["form"]) != "1") {
             stderr($lang['uploadapp_error'], $lang['uploadapp_tryagain']);
     } else {
         $subject = sqlesc("Uploader application");
-        $msg = sqlesc("An uploader application has just been filled in by [url={$INSTALLER09['baseurl']}/userdetails.php?id=$CURUSER[id]][b]$CURUSER[username][/b][/url]. Click [url={$INSTALLER09['baseurl']}/uploadapps.php][b]Here[/b][/url] to go to the uploader applications page.");
+        $msg = sqlesc("An uploader application has just been filled in by [url={$INSTALLER09['baseurl']}/userdetails.php?id=$CURUSER[id]][b]$CURUSER[username][/b][/url]. Click [url={$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps&action=show][b]Here[/b][/url] to go to the uploader applications page.");
         $dt = TIME_NOW;
-        $subres = sql_query('SELECT id FROM users WHERE class = '.UC_STAFF.'') or sqlerr(__FILE__, __LINE__);
+        $subres = sql_query('SELECT id FROM users WHERE class = '.UC_STAFF) or sqlerr(__FILE__, __LINE__);
         while ($arr = mysqli_fetch_assoc($subres))
-        sql_query("INSERT INTO messages(sender, receiver, added, msg, subject, poster) VALUES(0, $arr[id], $dt, $msg, $subject, 0)") or sqlerr(__FILE__, __LINE__);
-        stderr('Application sent', 'Your application has succesfully been sent to the staff.');
+        sql_query("INSERT INTO messages(sender, receiver, added, msg, subject, poster) VALUES(0, ".sqlesc($arr['id']).", $dt, $msg, $subject, 0)") or sqlerr(__FILE__, __LINE__);
+        $mc1->delete_value('inbox_new_'.$arr['id']);
+        $mc1->delete_value('inbox_new_sb_'.$arr['id']);
         stderr($lang['uploadapp_appsent'], $lang['uploadapp_success']);
     }
 }

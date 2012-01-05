@@ -145,6 +145,7 @@ $class_color = (function_exists('get_user_class_color') ? true : false);
                         'mass_bonus_for_members'   => 'mass_bonus_for_members',
                         'abnormal_upload_detection'   => 'abnormal_upload_detection',
                         'hit_and_run'   => 'hit_and_run',
+                        'uploadapps'   => 'uploadapps',
                         'cloudview'   => 'cloudview'
                         );
     

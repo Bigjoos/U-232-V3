@@ -9,7 +9,7 @@
    if ($newapp > 0){
    $htmlout.="
    <li>
-   <a class='tooltip' href='uploadapps.php'><b><font color='red'>New Uploader App Waiting</font></b><span class='custom info'><img src='./templates/1/images/Info.png' alt='Upload App' height='48' width='48' /><em>New Uploader App Waiting</em>
+   <a class='tooltip' href='staffpanel.php?tool=uploadapps&amp;action=show'><b><font color='red'>New Uploader App Waiting</font></b><span class='custom info'><img src='./templates/1/images/Info.png' alt='Upload App' height='48' width='48' /><em>New Uploader App Waiting</em>
    Hey {$CURUSER['username']}! $newapp uploader application" . ($newapp > 1 ? "s" : "") . " to be dealt with 
    click at the headling above here to view the application</span></a></li>";
    }

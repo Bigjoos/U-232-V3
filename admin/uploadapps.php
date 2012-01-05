@@ -6,18 +6,34 @@
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
  **/
-require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
+if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
+{
+	$HTMLOUT='';
+	$HTMLOUT .= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
+		\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+		<html xmlns='http://www.w3.org/1999/xhtml'>
+		<head>
+		<title>Error!</title>
+		</head>
+		<body>
+	<div style='font-size:33px;color:white;background-color:red;text-align:center;'>Incorrect access<br />You cannot access this file directly.</div>
+	</body></html>";
+	echo $HTMLOUT;
+	exit();
+}
+
 require_once(INCL_DIR.'user_functions.php');
 require_once INCL_DIR.'pager_functions.php';
-dbconn(false);
-loggedinorreturn();
+require_once(CLASS_DIR.'class_check.php');
+class_check(UC_STAFF);
 
 $lang = array_merge( $lang, load_language('uploadapps') );
 
 if ($CURUSER["class"] < UC_STAFF)
 stderr($lang['uploadapps_user_error'], $lang['uploadapps_notmod']);
 
-$possible_actions = array('show', 'viewapp', 'acceptapp', 'rejectapp','takedeleteapp','');      
+$possible_actions = array('show', 'viewapp', 'acceptapp', 'rejectapp','takeappdelete','');      
+
 $action = (isset($_GET['action']) ? htmlspecialchars($_GET['action']) : '');
 
         if (!in_array($action, $possible_actions)) 
@@ -28,15 +44,15 @@ $HTMLOUT = $where1 = '';
 //== View applications
 if (!$action || $action == "show") {
     if ($action == "show")
-        $hide = "[<a href='{$INSTALLER09['baseurl']}/uploadapps.php'>{$lang['uploadapps_hide']}</a>]";
+        $hide = "[<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps'>{$lang['uploadapps_hide']}</a>]";
     else {
-        $hide = "[<a href='{$INSTALLER09['baseurl']}/uploadapps.php?action=show'>{$lang['uploadapps_show']}</a>]";        
+        $hide = "[<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps&amp;action=show'>{$lang['uploadapps_show']}</a>]";        
         $where = "WHERE status = 'pending'";
         $where1 = "WHERE uploadapp.status = 'pending'";
     }
   
     $where ="";
-    $res = sql_query("SELECT count(id) FROM uploadapp $where") or sqlerr(__FILE__, __LINE__);
+    $res = sql_query("SELECT COUNT(id) FROM uploadapp $where") or sqlerr(__FILE__, __LINE__);
     $row = mysqli_fetch_array($res);
     $url = "{$_SERVER['PHP_SELF']}?";
     $count = $row[0];
@@ -46,15 +62,13 @@ if (!$action || $action == "show") {
     
     $HTMLOUT .="<h1 align='center'>{$lang['uploadapps_applications']}</h1>";
     if ($count == 0) {
-        
         $HTMLOUT .="<table class='main' width='850' border='0' cellspacing='0' cellpadding='0'><tr><td class='embedded'>
         <div align='right'><font class='small'>{$hide}</font></div></td></tr></table>
         <table width='100%' border='1' cellspacing='0' cellpadding='5'><tr><td>
         <div align='center'>{$lang['uploadapps_noapps']}</div>
-        
         </td></tr></table>";
     } else {
-        $HTMLOUT .="<form method='post' action='?action=takeappdelete'>";
+        $HTMLOUT .="<form method='post' action='staffpanel.php?tool=uploadapps&amp;action=takeappdelete'>";
         if ($count > $perpage)
         $HTMLOUT .= $pager['pagertop'];
         $HTMLOUT .="<table class='main' width='850' border='0' cellspacing='0' cellpadding='0'><tr><td class='embedded'>
@@ -72,7 +86,6 @@ if (!$action || $action == "show") {
         <td class='colhead' align='left'>{$lang['uploadapps_delete']}</td>
         </tr>\n";
         
-        
         $res = sql_query("SELECT uploadapp.*, users.id AS uid, users.username, users.class, users.added, users.uploaded, users.downloaded FROM uploadapp INNER JOIN users on uploadapp.userid = users.id $where1 ".$pager['limit']."") or sqlerr(__FILE__, __LINE__);
         while ($arr = mysqli_fetch_assoc($res)) {
             if ($arr["status"] == "accepted")
@@ -81,25 +94,17 @@ if (!$action || $action == "show") {
                 $status = "<font color='red'>{$lang['uploadapps_rejected']}</font>";
             else
                 $status = "<font color='blue'>{$lang['uploadapps_pending']}</font>";
-            
             $membertime = get_date($arr['added'], '', 0, 1);
             $elapsed = get_date($arr['applied'], '', 0, 1);
             
-            if ($arr["downloaded"] == 0 && $arr["uploaded"] == 0)
-            $ratio = '---';
-            else if ($arr["downloaded"] == 0 && $arr["uploaded"] != 0)
-            $ratio = 'Inf.';
-            else
-            $ratio = number_format($arr["uploaded"] / $arr["downloaded"], 3);
-            
             $HTMLOUT .="<tr>
             <td>{$elapsed}</td>
-            <td><a href='?action=viewapp&amp;id=".(int)$arr['id']."'>{$lang['uploadapps_viewapp']}</a></td>
+            <td><a href='staffpanel.php?tool=uploadapps&amp;action=viewapp&amp;id=".(int)$arr['id']."'>{$lang['uploadapps_viewapp']}</a></td>
             <td><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['uid']."'>".htmlspecialchars($arr['username'])."</a></td>
             <td>{$membertime}</td>
             <td>" . get_user_class_name($arr["class"]) . "</td>
-            <td>" . mksize((int)$arr["uploaded"]) . "</td>
-            <td>{$ratio}</td>
+            <td>" . mksize($arr["uploaded"]) . "</td>
+            <td>".member_ratio($arr['uploaded'], $arr['downloaded'])."</td>
             <td>{$status}</td>
             <td><input type=\"checkbox\" name=\"deleteapp[]\" value=\"".(int)$arr['id']."\" /></td>
             </tr>\n";
@@ -119,12 +124,6 @@ if ($action == "viewapp") {
     $arr = mysqli_fetch_assoc($res);
     $membertime = get_date($arr['added'], '', 0, 1);
     $elapsed = get_date($arr['applied'], '', 0, 1);   
-    if ($arr["downloaded"] == 0 && $arr["uploaded"] == 0)
-    $ratio = '---';
-    else if ($arr["downloaded"] == 0 && $arr["uploaded"] != 0)
-    $ratio = 'Inf.';
-    else
-    $ratio = number_format($arr["uploaded"] / $arr["downloaded"], 3);
     $HTMLOUT .="<h1 align='center'>Uploader application</h1>
     <table width='750' border='1' cellspacing='0' cellpadding='5'>
     <tr>
@@ -140,7 +139,7 @@ if ($action == "viewapp") {
     <td class='rowhead'>{$lang['uploadapps_downed']} </td><td>" .htmlspecialchars( mksize($arr["downloaded"])) . "</td>
     </tr>
     <tr>
-    <td class='rowhead'>{$lang['uploadapps_ratio1']} </td><td>"  . htmlspecialchars($ratio) . "</td>
+    <td class='rowhead'>{$lang['uploadapps_ratio1']} </td><td>".member_ratio($arr['uploaded'], $arr['downloaded'])."</td>
     </tr>
     <tr>
     <td class='rowhead'>{$lang['uploadapps_connectable']} </td><td>" . htmlspecialchars($arr["connectable"])."</td>
@@ -169,10 +168,10 @@ if ($action == "viewapp") {
     <tr><td class='rowhead'>{$lang['uploadapps_axx']} </td><td>" . htmlspecialchars($arr["scene"])."</td></tr>
     <tr><td colspan='2'>{$lang['uploadapps_create']} <b>" . htmlspecialchars($arr["creating"])."</b><br />{$lang['uploadapps_seeding']} <b>" . htmlspecialchars($arr["seeding"])."</b></td></tr>";
     if ($arr["status"] == "pending")
-    $HTMLOUT .="<tr><td align='center' colspan='2'><form method='post' action='?action=acceptapp'><input name='id' type='hidden' value='".(int)$arr["id"]."' /><b>Note: (optional)</b><br /><input type='text' name='note' size='40' /> <input type='submit' value='Accept' style='height: 20px' /></form><br /><form method='post' action='?action=rejectapp'><input name='id' type='hidden' value='".(int)$arr["id"]."' /><b>Reason: (optional)</b><br /><input type='text' name='reason' size='40' /> <input type='submit' value='Reject' style='height: 20px' /></form></td></tr></table>"; 
+    $HTMLOUT .="<tr><td align='center' colspan='2'><form method='post' action='staffpanel.php?tool=uploadapps&amp;action=acceptapp'><input name='id' type='hidden' value='".(int)$arr["id"]."' /><b>Note: (optional)</b><br /><input type='text' name='note' size='40' /> <input type='submit' value='Accept' style='height: 20px' /></form><br /><form method='post' action='staffpanel.php?tool=uploadapps&amp;action=rejectapp'><input name='id' type='hidden' value='".(int)$arr["id"]."' /><b>Reason: (optional)</b><br /><input type='text' name='reason' size='40' /> <input type='submit' value='Reject' style='height: 20px' /></form></td></tr></table>"; 
     else
     $HTMLOUT .="<tr><td colspan='2' align='center'>{$lang['uploadapps_application']} " . ($arr["status"] == "accepted" ? "accepted" : "rejected") . " by <b>" . htmlspecialchars($arr["moderator"])."</b><br />Comment: " . htmlspecialchars( $arr["comment"] ) . "</td></tr></table>
-    <div align='center'><a href='{$INSTALLER09['baseurl']}/uploadapps.php'>Return to uploader applications page</a></div>";
+    <div align='center'><a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps'>Return to uploader applications page</a></div>";
     }
     
 //== Accept application
@@ -200,11 +199,15 @@ if ($action == "acceptapp") {
     $mc1->update_row(false, array('class' => 3));
     $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
     sql_query("INSERT INTO messages(sender, receiver, added, msg, subject, poster) VALUES(0, {$arr['uid']}, $dt, $msg, $subject, 0)") or sqlerr(__FILE__, __LINE__);
-    $subres = sql_query("SELECT id FROM users WHERE class = ".UC_STAFF."") or sqlerr(__FILE__, __LINE__);
+    $mc1->delete_value('inbox_new_'.$arr['uid']);
+    $mc1->delete_value('inbox_new_sb_'.$arr['uid']);
+    $subres = sql_query("SELECT id FROM users WHERE class >= ".UC_STAFF) or sqlerr(__FILE__, __LINE__);
     while ($subarr = mysqli_fetch_assoc($subres))
     sql_query("INSERT INTO messages(sender, receiver, added, msg, subject, poster) VALUES(0, {$subarr['id']}, $dt, $msg1, $subject, 0)") or sqlerr(__FILE__, __LINE__);
+    $mc1->delete_value('inbox_new_'.$subarr['id']);
+    $mc1->delete_value('inbox_new_sb_'.$subarr['id']);
     $mc1->delete_value('new_uploadapp_');
-    stderr("Application accepted", "The application was succesfully accepted. The user has been promoted and has been sent a PM notification. Click <a href='{$INSTALLER09['baseurl']}/uploadapps.php'><b>Here</b></a> to return to the upload applications page.");
+    stderr("Application accepted", "The application was succesfully accepted. The user has been promoted and has been sent a PM notification. Click <a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps'><b>Here</b></a> to return to the upload applications page.");
    }
 
 //== Reject application
@@ -221,7 +224,7 @@ if ($action == "rejectapp") {
     sql_query("UPDATE uploadapp SET status = 'rejected', comment = " . sqlesc($reason) . ", moderator = " . sqlesc($CURUSER["username"]) . " WHERE id=$id") or sqlerr(__FILE__, __LINE__);
     sql_query("INSERT INTO messages(sender, receiver, added, msg, subject, poster) VALUES(0, {$arr['uid']}, $dt, $msg, $subject, 0)") or sqlerr(__FILE__, __LINE__);
     $mc1->delete_value('new_uploadapp_');
-    stderr("Application rejected", "The application was succesfully rejected. The user has been sent a PM notification. Click <a href='{$INSTALLER09['baseurl']}/uploadapps.php'><b>Here</b></a> to return to the upload applications page.");
+    stderr("Application rejected", "The application was succesfully rejected. The user has been sent a PM notification. Click <a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps'><b>Here</b></a> to return to the upload applications page.");
 }
 
 //== Delete applications
@@ -231,7 +234,7 @@ if ($action == "rejectapp") {
     else {
     sql_query("DELETE FROM uploadapp WHERE id IN (".join(",",$_POST['deleteapp']).") ") or sqlerr(__FILE__, __LINE__);
     $mc1->delete_value('new_uploadapp_');
-    stderr("Deleted", "The upload applications were succesfully deleted. Click <a href='{$INSTALLER09['baseurl']}/uploadapps.php'><b>Here</b></a> to return to the upload applications page.");
+    stderr("Deleted", "The upload applications were succesfully deleted. Click <a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps'><b>Here</b></a> to return to the upload applications page.");
     }
     }
 
