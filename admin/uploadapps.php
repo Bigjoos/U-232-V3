@@ -29,35 +29,34 @@ class_check(UC_STAFF);
 
 $lang = array_merge( $lang, load_language('uploadapps') );
 
-if ($CURUSER["class"] < UC_STAFF)
-stderr($lang['uploadapps_user_error'], $lang['uploadapps_notmod']);
-
-$possible_actions = array('show', 'viewapp', 'acceptapp', 'rejectapp','takeappdelete','');      
+$possible_actions = array('show', 'viewapp', 'acceptapp', 'rejectapp','takeappdelete','app');      
 
 $action = (isset($_GET['action']) ? htmlspecialchars($_GET['action']) : '');
 
         if (!in_array($action, $possible_actions)) 
             stderr('Error', 'A ruffian that will swear, drink, dance, revel the night, rob, murder and commit the oldest of ins the newest kind of ways.');
 
-$HTMLOUT = $where1 = '';
+$HTMLOUT = $where = $where1 = '';
 
 //== View applications
-if (!$action || $action == "show") {
-    if ($action == "show")
-        $hide = "[<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps'>{$lang['uploadapps_hide']}</a>]";
-    else {
+if ($action == "app" || $action == "show") {
+    if ($action == "show") {
+        $hide = "[<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps&amp;action=app'>{$lang['uploadapps_hide']}</a>]";
+        $where = "WHERE status = 'accepted' OR status = 'rejected'";
+        $where1 = "WHERE uploadapp.status = 'accepted' OR uploadapp.status = 'rejected'";
+}
+else {
         $hide = "[<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps&amp;action=show'>{$lang['uploadapps_show']}</a>]";        
         $where = "WHERE status = 'pending'";
         $where1 = "WHERE uploadapp.status = 'pending'";
     }
   
-    $where ="";
+    
     $res = sql_query("SELECT COUNT(id) FROM uploadapp $where") or sqlerr(__FILE__, __LINE__);
-    $row = mysqli_fetch_array($res);
-    $url = "{$_SERVER['PHP_SELF']}?";
+    $row = mysqli_fetch_row($res);
     $count = $row[0];
     $perpage = 15;
-    $pager = pager($perpage, $count, $url);
+    $pager = pager($perpage, $count, ".staffpanel.php?tool=uploadapps&amp;.");
     
     
     $HTMLOUT .="<h1 align='center'>{$lang['uploadapps_applications']}</h1>";
@@ -171,7 +170,7 @@ if ($action == "viewapp") {
     $HTMLOUT .="<tr><td align='center' colspan='2'><form method='post' action='staffpanel.php?tool=uploadapps&amp;action=acceptapp'><input name='id' type='hidden' value='".(int)$arr["id"]."' /><b>Note: (optional)</b><br /><input type='text' name='note' size='40' /> <input type='submit' value='Accept' style='height: 20px' /></form><br /><form method='post' action='staffpanel.php?tool=uploadapps&amp;action=rejectapp'><input name='id' type='hidden' value='".(int)$arr["id"]."' /><b>Reason: (optional)</b><br /><input type='text' name='reason' size='40' /> <input type='submit' value='Reject' style='height: 20px' /></form></td></tr></table>"; 
     else
     $HTMLOUT .="<tr><td colspan='2' align='center'>{$lang['uploadapps_application']} " . ($arr["status"] == "accepted" ? "accepted" : "rejected") . " by <b>" . htmlspecialchars($arr["moderator"])."</b><br />Comment: " . htmlspecialchars( $arr["comment"] ) . "</td></tr></table>
-    <div align='center'><a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps'>Return to uploader applications page</a></div>";
+    <div align='center'><a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps&amp;action=app'>Return to uploader applications page</a></div>";
     }
     
 //== Accept application
@@ -188,7 +187,7 @@ if ($action == "acceptapp") {
     $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - Promoted to 'Uploader' by " . $CURUSER["username"] . "." . ($arr["modcomment"] != "" ? "\n" : "") . "{$arr['modcomment']}";
     $dt = TIME_NOW;
     sql_query("UPDATE uploadapp SET status = 'accepted', comment = " . sqlesc($note) . ", moderator = " . sqlesc($CURUSER["username"]) . " WHERE id=$id") or sqlerr(__FILE__, __LINE__);
-    sql_query("UPDATE users SET class = ".UC_UPLOADER.", modcomment = " . sqlesc($modcomment) . " WHERE id={$arr['uid']} AND class < ".UC_MODERATOR."") or sqlerr(__FILE__, __LINE__);
+    sql_query("UPDATE users SET class = ".UC_UPLOADER.", modcomment = " . sqlesc($modcomment) . " WHERE id=".sqlesc($arr['uid'])." AND class < ".UC_STAFF."") or sqlerr(__FILE__, __LINE__);
     $mc1->begin_transaction('MyUser_'.$arr['uid']);
     $mc1->update_row(false, array('class' => 3));
     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -207,7 +206,7 @@ if ($action == "acceptapp") {
     $mc1->delete_value('inbox_new_'.$subarr['id']);
     $mc1->delete_value('inbox_new_sb_'.$subarr['id']);
     $mc1->delete_value('new_uploadapp_');
-    stderr("Application accepted", "The application was succesfully accepted. The user has been promoted and has been sent a PM notification. Click <a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps'><b>Here</b></a> to return to the upload applications page.");
+    stderr("Application accepted", "The application was succesfully accepted. The user has been promoted and has been sent a PM notification. Click <a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps&amp;action=app'><b>Here</b></a> to return to the upload applications page.");
    }
 
 //== Reject application
@@ -224,7 +223,7 @@ if ($action == "rejectapp") {
     sql_query("UPDATE uploadapp SET status = 'rejected', comment = " . sqlesc($reason) . ", moderator = " . sqlesc($CURUSER["username"]) . " WHERE id=$id") or sqlerr(__FILE__, __LINE__);
     sql_query("INSERT INTO messages(sender, receiver, added, msg, subject, poster) VALUES(0, {$arr['uid']}, $dt, $msg, $subject, 0)") or sqlerr(__FILE__, __LINE__);
     $mc1->delete_value('new_uploadapp_');
-    stderr("Application rejected", "The application was succesfully rejected. The user has been sent a PM notification. Click <a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps'><b>Here</b></a> to return to the upload applications page.");
+    stderr("Application rejected", "The application was succesfully rejected. The user has been sent a PM notification. Click <a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps&amp;action=app'><b>Here</b></a> to return to the upload applications page.");
 }
 
 //== Delete applications
@@ -234,7 +233,7 @@ if ($action == "rejectapp") {
     else {
     sql_query("DELETE FROM uploadapp WHERE id IN (".join(",",$_POST['deleteapp']).") ") or sqlerr(__FILE__, __LINE__);
     $mc1->delete_value('new_uploadapp_');
-    stderr("Deleted", "The upload applications were succesfully deleted. Click <a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps'><b>Here</b></a> to return to the upload applications page.");
+    stderr("Deleted", "The upload applications were succesfully deleted. Click <a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps&amp;action=app'><b>Here</b></a> to return to the upload applications page.");
     }
     }
 

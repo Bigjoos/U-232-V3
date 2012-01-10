@@ -116,7 +116,7 @@ $users['id'] = (int)$hit_and_run_arr['userid'];
 $HTMLOUT .= '<tr><td align="left">'.$avatar.'</td>
 			<td align="left"><a class="altlink" href="userdetails.php?id='.(int)$hit_and_run_arr['userid'].'&amp;completed=1#completed">'.format_username($users).'</a>  [ '.get_user_class_name($hit_and_run_arr['class']).' ]
 </td>
-			<td align="left"><a class="altlink" href="details.php?id='.(int)$hit_and_run_arr['torrentid'].'&amphit=1">'.htmlspecialchars($hit_and_run_arr['name']).'</a><br />
+			<td align="left"><a class="altlink" href="details.php?id='.(int)$hit_and_run_arr['torrentid'].'&amp;hit=1">'.htmlspecialchars($hit_and_run_arr['name']).'</a><br />
 			Leechers: '.(int)$hit_and_run_arr['numleeching'].'<br />
 			Seeders: '.(int)$hit_and_run_arr['numseeding'].'
          </td>

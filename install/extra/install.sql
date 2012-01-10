@@ -2003,7 +2003,8 @@ INSERT INTO `staffpanel` (`id`, `page_name`, `file_name`, `description`, `av_cla
 (80, 'Mass Bonus Manager', 'staffpanel.php?tool=mass_bonus_for_members', 'MassUpload, MassSeedbonus, MassFreeslot, MassInvite', 5, 1, 1311882635),
 (81, 'Hit And Runs', 'staffpanel.php?tool=hit_and_run', 'View All Hit And Runs', 5, 1, 1312682819),
 (82, 'View Possible Cheats', 'staffpanel.php?tool=cheaters', 'View All Cheat Information', 5, 1, 1312682871),
-(83, 'Cleanup Manager', 'staffpanel.php?tool=cleanup_manager', 'Clean up interval manager', 6, 1, 1315001255);
+(83, 'Cleanup Manager', 'staffpanel.php?tool=cleanup_manager', 'Clean up interval manager', 6, 1, 1315001255),
+(84, 'Uploader Applications', 'staffpanel.php?tool=uploadapps&action=app', 'Manage Uploader Applications', 4, 1, 1325807155);
 
 -- --------------------------------------------------------
 

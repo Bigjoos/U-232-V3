@@ -191,7 +191,7 @@ $class_color = (function_exists('get_user_class_color') ? true : false);
 	 }
 	
 	 foreach ($names as $name)
-	 $$name = htmlspecialchars((isset($_POST[$name]) ? $_POST[$name] : ($action == 'edit' ? $arr[$name] : '')));
+	 $$name = (isset($_POST[$name]) ? $_POST[$name] : ($action == 'edit' ? $arr[$name] : ''));
 	
 	 if ($action == 'edit' && $CURUSER['class'] < $av_class)
 		stderr('Error', 'You are not allowed to edit this page.');

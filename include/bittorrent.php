@@ -264,15 +264,7 @@ function check_bans($ip, &$reason = '') {
       $mc1->cache_value('MyUser_'.$id, $row, $INSTALLER09['expires']['curuser']);
       unset($res);
    }
-   /*
-   if( $INSTALLER09['IPcookieCheck'] )
-   {
-   $octet  = explode(".", $ip);
-   $md5ip = md5($octet[0].$INSTALLER09['mysql_user'].$row['passhash'].$INSTALLER09['mysql_host'].$octet[1]);
-   if(!get_mycookie('ipcheck') OR (get_mycookie('ipcheck') !== $md5ip)) 
-   return;
-   }
-   */
+
    if (get_mycookie('pass') !== md5($row["passhash"].$_SERVER["REMOTE_ADDR"])){ 
    logoutcookie(); 
    return; 
@@ -384,7 +376,7 @@ function check_bans($ip, &$reason = '') {
    $userupdate1 = "last_access_numb = ".TIME_NOW;
    //end online-time
    $update_time = ($row['onlinetime'] + $update_time);
-      if (($row['last_access'] != '0') AND (($row['last_access']) < (time($dt) - 180))/** 3 mins **/) {
+      if (($row['last_access'] != '0') AND (($row['last_access']) < (TIME_NOW - 180))/** 3 mins **/) {
       sql_query("UPDATE users SET last_access=".TIME_NOW.", $userupdate0, $userupdate1 WHERE id=".$row['id']);
       $mc1->begin_transaction('MyUser_'.$row['id']);
       $mc1->update_row(false, array('last_access' => TIME_NOW, 'onlinetime' => $update_time, 'last_access_numb' => TIME_NOW));
@@ -628,22 +620,11 @@ function httperr($code = 404) {
     exit();
 }
 
-/*
-//== Cf 2010
-function loginIPcookie($hash, $name='ipcheck') {
-  global $INSTALLER09;
-  $octet  = explode(".", getip());
-  $md5ip = md5($octet[0].$INSTALLER09['mysql_user'].$hash.$INSTALLER09['mysql_host'].$octet[1]);
-  set_mycookie($name, $md5ip, 365);
-}
-*/
-
 function logincookie($id, $passhash, $updatedb = 1, $expires = 0x7fffffff)
 {
     set_mycookie( "uid", $id, $expires );
     set_mycookie( "pass", $passhash, $expires );
     set_mycookie( "hashv", hashit($id,$passhash), $expires );
-    //loginIPcookie($passhash);
     if ($updatedb)
     sql_query("UPDATE users SET last_login = ".TIME_NOW." WHERE id = $id") or sqlerr(__file__, __line__);
 }
