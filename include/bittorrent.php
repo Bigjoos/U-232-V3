@@ -369,10 +369,10 @@ function check_bans($ip, &$reason = '') {
    if (($row['last_access'] != '0') AND (($row['last_access']) < (TIME_NOW - 180))/** 3 mins **/) {
       sql_query("UPDATE users SET last_access=".TIME_NOW.", $userupdate0, $userupdate1 WHERE id=".$row['id']);
       $mc1->begin_transaction('MyUser_'.$row['id']);
-      $mc1->update_row(false, array('last_access' => TIME_NOW, 'onlinetime' => $update_time, 'last_access_numb' => TIME_NOW, 'where_is' => $whereis));
+      $mc1->update_row(false, array('last_access' => TIME_NOW, 'onlinetime' => $update_time, 'last_access_numb' => TIME_NOW));
       $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
       $mc1->begin_transaction('user'.$row['id']);
-      $mc1->update_row(false, array('last_access' => TIME_NOW, 'onlinetime' => $update_time, 'last_access_numb' => TIME_NOW, 'where_is' => $whereis));
+      $mc1->update_row(false, array('last_access' => TIME_NOW, 'onlinetime' => $update_time, 'last_access_numb' => TIME_NOW));
       $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
    }
    //==
