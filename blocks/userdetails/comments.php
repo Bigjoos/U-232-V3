@@ -1,7 +1,6 @@
 <?php
 //==comments
-    $torrentcomments = $mc1->get_value('torrent_comments_'.$id);
-    if ($torrentcomments === false) {
+    if(($torrentcomments = $mc1->get_value('torrent_comments_'.$id)) === false) {
     $res = sql_query("SELECT COUNT(id) FROM comments WHERE user=" . $user['id']) or sqlerr(__FILE__,__LINE__);
     list($torrentcomments) = mysqli_fetch_row($res); 
     $mc1->cache_value('torrent_comments_'.$id, $torrentcomments, $INSTALLER09['expires']['torrent_comments']);

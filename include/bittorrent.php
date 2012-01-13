@@ -16,7 +16,7 @@ require_once(CLASS_DIR.'class_cache.php');
 //== tpl
 //require_once(INCL_DIR.'tpl_functions.php');
 $mc1 = NEW CACHE();
-$mc1->MemcachePrefix = '09source_1_';
+//$mc1->MemcachePrefix = '09source_1_';
 //==Block class
 class curuser {
 public static $blocks  = array();
@@ -128,8 +128,7 @@ return md5("Th15T3xt".$addtext.$var.$addtext."is5add3dto66uddy6he@water...");
 function check_bans($ip, &$reason = '') {
         global $INSTALLER09, $mc1;
         $key = 'bans:::'.$ip;
-        $ban = $mc1->get_value($key);
-        if ($ban === false) {
+        if(($ban = $mc1->get_value($key)) === false) {
         $nip = ip2long($ip);
         $ban_sql = sql_query('SELECT comment FROM bans WHERE (first <= '.$nip.' AND last >= '.$nip.') LIMIT 1');
         if (mysqli_num_rows($ban_sql)) {
@@ -151,7 +150,7 @@ function check_bans($ip, &$reason = '') {
         }
 
    function userlogin() {
-   global $INSTALLER09, $mc1, $CURBLOCK, $mood;
+   global $INSTALLER09, $mc1, $CURBLOCK, $mood, $whereis;
    unset($GLOBALS["CURUSER"]);
    $dt = TIME_NOW;
    $ip = getip();
@@ -166,8 +165,7 @@ function check_bans($ip, &$reason = '') {
    if (!$id OR (strlen( get_mycookie('pass') ) != 32) OR (get_mycookie('hashv') != hashit($id,get_mycookie('pass'))))
       return;
    // let's cache $CURUSER - pdq
-   $row = $mc1->get_value('MyUser_'.$id);
-   if ($row === false) { // $row not found
+   if(($row = $mc1->get_value('MyUser_'.$id)) === false) { // $row not found
       $user_fields = 'id, username, passhash, secret, passkey, email, status, added, '.
                      'last_login, last_access, curr_ann_last_check, curr_ann_id, editsecret, privacy, stylesheet, '.
                      'info, acceptpms, ip, class, override_class, language, avatar, av_w, av_h, '.
@@ -264,12 +262,11 @@ function check_bans($ip, &$reason = '') {
       $mc1->cache_value('MyUser_'.$id, $row, $INSTALLER09['expires']['curuser']);
       unset($res);
    }
-
+   //==
    if (get_mycookie('pass') !== md5($row["passhash"].$_SERVER["REMOTE_ADDR"])){ 
    logoutcookie(); 
    return; 
    }
-  
    // bans by djGrrr <3 pdq
    if (!isset($row['perms']) || (!($row['perms'] & bt_options::PERMS_BYPASS_BAN))) {
    $banned = false;
@@ -281,7 +278,6 @@ function check_bans($ip, &$reason = '') {
             $banned = true;
       }
    }
- 
    if ($banned) {
       header('Content-Type: text/html; charset=utf-8');
       echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -294,7 +290,6 @@ function check_bans($ip, &$reason = '') {
       die;
    }
    }
-
    // Allowed staff
    if ($row["class"] >= UC_STAFF) {
       $allowed_ID = $INSTALLER09['allowed_staff']['id'];
@@ -312,10 +307,8 @@ function check_bans($ip, &$reason = '') {
          logoutcookie();
       }
    }
-
    // user stats
-   $stats = $mc1->get_value('userstats_'.$id);
-   if ($stats === false) {
+   if(($stats = $mc1->get_value('userstats_'.$id)) === false) {
       $sql = sql_query('SELECT uploaded, downloaded, seedbonus FROM users WHERE id = '.$id) or sqlerr(__FILE__, __LINE__);
       $stats = mysqli_fetch_assoc($sql);
       $stats['seedbonus'] = (float)$stats['seedbonus'];
@@ -329,9 +322,8 @@ function check_bans($ip, &$reason = '') {
    $row['uploaded'] = $stats['uploaded'];
    $row['downloaded'] = $stats['downloaded'];
    $row['ratio'] = $stats['ratio'];
- 
-   $ustatus = $mc1->get_value('userstatus_'.$id);
-   if ($ustatus === false) {
+   //==
+   if(($ustatus = $mc1->get_value('userstatus_'.$id)) === false) {
        $sql2 = sql_query('SELECT * FROM ustatus WHERE userid = '.$id);
        if (mysqli_num_rows($sql2))
            $ustatus = mysqli_fetch_assoc($sql2);
@@ -342,7 +334,7 @@ function check_bans($ip, &$reason = '') {
    $row['last_status'] = $ustatus['last_status'];
    $row['last_update'] = $ustatus['last_update'];
    $row['archive'] = $ustatus['archive']; 
-  
+   //==
    if ($row['ssluse'] > 1 && !isset($_SERVER['HTTPS']) && !defined('NO_FORCE_SSL')) {
       $INSTALLER09['baseurl'] = str_replace('http','https',$INSTALLER09['baseurl']);
       header('Location: '.$INSTALLER09['baseurl'].$_SERVER['REQUEST_URI']);
@@ -350,8 +342,7 @@ function check_bans($ip, &$reason = '') {
    }
    // bitwise curuser bloks by pdq
    $blocks_key = 'blocks::'.$row['id'];
-   $CURBLOCK = $mc1->get_value($blocks_key);
-   if ($CURBLOCK === false) {
+   if(($CURBLOCK = $mc1->get_value($blocks_key)) === false) {
       $c_sql = sql_query('SELECT * FROM user_blocks WHERE userid = '.$row['id']) or sqlerr(__FILE__, __LINE__);
       if (mysqli_num_rows($c_sql) == 0) {
          sql_query('INSERT INTO user_blocks(userid) VALUES('.$row['id'].')');
@@ -364,7 +355,6 @@ function check_bans($ip, &$reason = '') {
       $CURBLOCK['userdetails_page'] = (int)$CURBLOCK['userdetails_page'];
       $mc1->cache_value($blocks_key, $CURBLOCK, 0);
    }
-
    //== online time pdq, original code by superman
    $userupdate0 = 'onlinetime = onlinetime + 0';
    $new_time = TIME_NOW - $row['last_access_numb'];
@@ -376,13 +366,13 @@ function check_bans($ip, &$reason = '') {
    $userupdate1 = "last_access_numb = ".TIME_NOW;
    //end online-time
    $update_time = ($row['onlinetime'] + $update_time);
-      if (($row['last_access'] != '0') AND (($row['last_access']) < (TIME_NOW - 180))/** 3 mins **/) {
+   if (($row['last_access'] != '0') AND (($row['last_access']) < (TIME_NOW - 180))/** 3 mins **/) {
       sql_query("UPDATE users SET last_access=".TIME_NOW.", $userupdate0, $userupdate1 WHERE id=".$row['id']);
       $mc1->begin_transaction('MyUser_'.$row['id']);
-      $mc1->update_row(false, array('last_access' => TIME_NOW, 'onlinetime' => $update_time, 'last_access_numb' => TIME_NOW));
+      $mc1->update_row(false, array('last_access' => TIME_NOW, 'onlinetime' => $update_time, 'last_access_numb' => TIME_NOW, 'where_is' => $whereis));
       $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
       $mc1->begin_transaction('user'.$row['id']);
-      $mc1->update_row(false, array('last_access' => TIME_NOW, 'onlinetime' => $update_time, 'last_access_numb' => TIME_NOW));
+      $mc1->update_row(false, array('last_access' => TIME_NOW, 'onlinetime' => $update_time, 'last_access_numb' => TIME_NOW, 'where_is' => $whereis));
       $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
    }
    //==
@@ -468,8 +458,7 @@ function check_bans($ip, &$reason = '') {
 //slots - pdq
 function make_freeslots($userid, $key) {
    global $mc1, $INSTALLER09;
-   $slot = $mc1->get_value($key.$userid);
-   if ($slot === false) {
+   if(($slot = $mc1->get_value($key.$userid)) === false) {
        $res_slots = sql_query('SELECT * FROM freeslots WHERE userid = '.$userid) or sqlerr(__file__, __line__);
         $slot = array();
          if (mysqli_num_rows($res_slots)) {
@@ -483,8 +472,7 @@ function make_freeslots($userid, $key) {
 //bookmarks - pdq
 function make_bookmarks($userid, $key) {
    global $mc1, $INSTALLER09;
-   $book = $mc1->get_value($key.$userid);
-   if ($book === false) {
+   if(($book = $mc1->get_value($key.$userid)) === false) {
        $res_books = sql_query('SELECT * FROM bookmarks WHERE userid = '.$userid) or sqlerr(__file__, __line__);
         $book = array();
          if (mysqli_num_rows($res_books)) {
@@ -512,8 +500,7 @@ function genrelist() {
 function create_moods($force = false) {
    global $mc1, $INSTALLER09;
    $key = 'moods';
-   $mood = $mc1->get_value($key);
-   if ($mood === false || $force) {
+   if(($mood = $mc1->get_value($key)) === false || $force) {
     $res_moods = sql_query('SELECT * FROM moods ORDER BY id ASC') or sqlerr(__file__, __line__);
       $mood = array();
       if (mysqli_num_rows($res_moods)) {
@@ -647,7 +634,7 @@ function set_mycookie( $name, $value="", $expires_in=0, $sticky=1 )
 		}
 		
 		$INSTALLER09['cookie_domain'] = $INSTALLER09['cookie_domain'] == "" ? ""  : $INSTALLER09['cookie_domain'];
-    $INSTALLER09['cookie_path']   = $INSTALLER09['cookie_path']   == "" ? "/" : $INSTALLER09['cookie_path'];
+      $INSTALLER09['cookie_path']   = $INSTALLER09['cookie_path']   == "" ? "/" : $INSTALLER09['cookie_path'];
       	
 		if ( PHP_VERSION < 5.2 )
 		{
@@ -990,6 +977,7 @@ return (strlen($txt)>$len ? substr($txt,0,$len-1) .'...':$txt);
     }   
     return $lang;
 }
+
 
 function flood_limit($table) {
 global $CURUSER,$INSTALLER09,$lang;

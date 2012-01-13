@@ -2,8 +2,7 @@
 //==Memcached message query
     if ($INSTALLER09['msg_alert'] && $CURUSER)
     {
-      $unread = $mc1->get_value('inbox_new_'.$CURUSER['id']);
-      if ($unread === false) {
+      if(($unread = $mc1->get_value('inbox_new_'.$CURUSER['id'])) === false) {
       $res = sql_query('SELECT count(id) FROM messages WHERE receiver='.$CURUSER['id'].' && unread="yes" AND location = "1"') or sqlerr(__FILE__,__LINE__);
       $arr = mysqli_fetch_row($res);
       $unread = (int)$arr[0];

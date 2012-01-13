@@ -1,8 +1,7 @@
 <?php
     //==Start activeusers - pdq
      $keys['activeusers']    = 'activeusers';
-     $active_users_cache = $mc1->get_value($keys['activeusers']);
-     if ($active_users_cache === false) {
+     if(($active_users_cache = $mc1->get_value($keys['activeusers'])) === false) {
      $dt = $_SERVER['REQUEST_TIME'] - 180;                       
      $activeusers = '';
      $active_users_cache = array();

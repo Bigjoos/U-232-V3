@@ -1,7 +1,6 @@
 <?php
    if($INSTALLER09['uploadapp_alert'] && $CURUSER['class'] >= UC_STAFF) {
-   $newapp = $mc1->get_value('new_uploadapp_');
-   if ($newapp === false) {
+   if(($newapp = $mc1->get_value('new_uploadapp_')) === false) {
    $res_newapps = sql_query("SELECT count(id) FROM uploadapp WHERE status = 'pending'");
    list($newapp) = mysqli_fetch_row($res_newapps);
    $mc1->cache_value('new_uploadapp_', $newapp, $INSTALLER09['expires']['alerts']);

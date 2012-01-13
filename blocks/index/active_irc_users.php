@@ -12,8 +12,7 @@ function calctime($val)
 	}
      //== Start activeircusers pdq
      $keys['activeircusers']    = 'activeircusers';
-     $active_irc_users_cache = $mc1->get_value($keys['activeircusers']);
-     if ($active_irc_users_cache === false) {
+     if(($active_irc_users_cache = $mc1->get_value($keys['activeircusers'])) === false) {
      $dt = $_SERVER['REQUEST_TIME'] - 180;                       
      $activeircusers = '';
      $active_irc_users_cache = array();

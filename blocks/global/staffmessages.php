@@ -1,7 +1,6 @@
 <?php
    if($INSTALLER09['staffmsg_alert'] && $CURUSER['class'] >= UC_STAFF) {
-	 $answeredby = $mc1->get_value('staff_mess_');
-	 if ($answeredby === false) {
+	 if(($answeredby = $mc1->get_value('staff_mess_')) === false) {
 	 $res1 = sql_query("SELECT count(id) FROM staffmessages WHERE answeredby = 0");
 	 list($answeredby) = mysqli_fetch_row($res1);
 	 $mc1->cache_value('staff_mess_', $answeredby, $INSTALLER09['expires']['alerts']);

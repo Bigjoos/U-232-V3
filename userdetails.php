@@ -45,8 +45,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
                      'birthday, got_blocks, last_access_numb, onlinetime, pm_on_delete, commentpm, split, browser, hits, '.
                      'comments, categorie_icon, reputation, perms, mood, got_moods, pms_per_page, show_pm_avatar, watched_user, watched_user_reason, staff_notes, game_access';
 
-    $user = $mc1->get_value('user'.$id);
-    if ($user === false) {
+    if(($user = $mc1->get_value('user'.$id)) === false) {
     $r1 = sql_query("SELECT ".$user_fields." FROM users WHERE id=".sqlesc($id)."") or sqlerr(__FILE__,__LINE__);
     $user = mysqli_fetch_assoc($r1) or stderr("Error", "{$lang['userdetails_no_user']}");
     $user['id'] = (int)$user['id'];
@@ -119,8 +118,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
     stderr("Error","User is still pending.");
 
     // user stats
-    $user_stats = $mc1->get_value('user_stats_'.$id);
-    if ($user_stats === false) {
+    if(($user_stats = $mc1->get_value('user_stats_'.$id)) === false) {
       $sql_1 = sql_query('SELECT uploaded, downloaded, seedbonus, bonuscomment, modcomment FROM users WHERE id = '.$id) or sqlerr(__FILE__, __LINE__);
       $user_stats = mysqli_fetch_assoc($sql_1);
       $user_stats['seedbonus'] = (float)$user_stats['seedbonus'];
@@ -131,8 +129,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
       $mc1->cache_value('user_stats_'.$id, $user_stats, $INSTALLER09['expires']['user_stats']); // 5 mins
     }
     
-    $user_status = $mc1->get_value('user_status_'.$id);
-    if ($user_status === false) {
+    if(($user_status = $mc1->get_value('user_status_'.$id)) === false) {
        $sql_2 = sql_query('SELECT * FROM ustatus WHERE userid = '.$id);
        if (mysqli_num_rows($sql_2))
            $user_status = mysqli_fetch_assoc($sql_2);
@@ -142,10 +139,11 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
     }
 
     //===  paranoid settings
-    if ($user['paranoia'] == 3 && $CURUSER['class'] < UC_STAFF && $CURUSER['id'] <> $id) 
+    if ($user['paranoia'] == 3 && $CURUSER['class'] < UC_STAFF && $CURUSER['id'] <> $id) {
     stderr('Error!','<span style="font-weight: bold; text-align: center;"><img src="pic/smilies/tinfoilhat.gif" alt="I wear a tin-foil hat!" title="I wear a tin-foil hat!" /> 
     This members paranoia settings are at tinfoil hat levels!!! <img src="pic/smilies/tinfoilhat.gif" alt="I wear a tin-foil hat!" title="I wear a tin-foil hat!" /></span>');
-    
+    die();
+    }
     //=== delete H&R
     if(isset($_GET['delete_hit_and_run']) && $CURUSER['class'] >= UC_STAFF)
     {
@@ -209,8 +207,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
     //==country by pdq
     function countries() {
     global $mc1, $INSTALLER09;
-    $ret = $mc1->get_value('countries::arr');
-    if ($ret === false) {
+    if(($ret = $mc1->get_value('countries::arr')) === false) {
         $res = sql_query("SELECT id, name, flagpic FROM countries ORDER BY name ASC") or sqlerr(__FILE__, __LINE__);
         while ($row = mysqli_fetch_assoc($res))
             $ret[] = $row;
@@ -289,15 +286,13 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
       
       elseif ($CURUSER["id"] <> $user["id"])
       {
-      $friends = $mc1->get_value('Friends_'.$id);
-      if ($friends === false) {
+      if(($friends = $mc1->get_value('Friends_'.$id)) === false) {
       $r3 = sql_query("SELECT id FROM friends WHERE userid={$CURUSER['id']} AND friendid=$id") or sqlerr(__FILE__, __LINE__);
       $friends = mysqli_num_rows($r3);
       $mc1->cache_value('Friends_'.$id, $friends, $INSTALLER09['expires']['user_friends']);
       }
       
-      $blocks = $mc1->get_value('Blocks_'.$id);
-      if ($blocks === false) {
+      if(($blocks = $mc1->get_value('Blocks_'.$id)) === false) {
       $r4 = sql_query("SELECT id FROM blocks WHERE userid={$CURUSER['id']} AND blockid=$id") or sqlerr(__FILE__, __LINE__);
       $blocks = mysqli_num_rows($r4);
       $mc1->cache_value('Blocks_'.$id, $blocks, $INSTALLER09['expires']['user_blocks']);
@@ -313,14 +308,11 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
       else
       $HTMLOUT .= "<p>(<a href='friends.php?action=add&amp;type=block&amp;targetid=$id'>{$lang['userdetails_add_blocks']}</a>)</p>\n";
       }
-     
-      
-
+    
     //== 09 Shitlist by Sir_Snuggles
-    if ($CURUSER['class'] >= UC_STAFF){
+    if ($CURUSER['class'] >= UC_STAFF) {
     $shitty = '';
-    $shit_list = $mc1->get_value('shit_list_'.$id);
-    if ($shit_list === false) {
+    if(($shit_list = $mc1->get_value('shit_list_'.$id)) === false) {
     $check_if_theyre_shitty = sql_query("SELECT suspect FROM shit_list WHERE userid=".sqlesc($CURUSER['id'])." AND suspect=".$id) or sqlerr(__FILE__, __LINE__);
     list($shit_list) = mysqli_fetch_row($check_if_theyre_shitty); 
     $mc1->cache_value('shit_list_'.$id, $shit_list, $INSTALLER09['expires']['shit_list']);
@@ -382,7 +374,36 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
     <a href="javascript:;" onclick="PopUp(\'usermood.php\',\'Mood\',530,500,1,1);">
     <img src="'.$INSTALLER09['pic_base_url'].'smilies/'.$moodpic.'" alt="'.$moodname.'" border="0" />
     <span class="tip">'.htmlspecialchars($user['username']).' '.$moodname.' !</span></a></span></td></tr>';
-
+    //== Users friends list
+    $dt = TIME_NOW - 180;
+    $keys['user_friends'] = 'user_friends_'.$id;
+    if(($users_friends = $mc1->get_value($keys['user_friends'])) === false) {                    
+    $fr = sql_query("SELECT f.friendid as uid, f.userid AS userid, u.last_access, u.id, u.ip, u.avatar, u.username, u.class, u.donor, u.title, u.warned, u.enabled, u.chatpost, u.leechwarn, u.pirate, u.king, u.downloaded, u.uploaded FROM friends AS f LEFT JOIN users as u ON f.friendid = u.id WHERE userid=$id ORDER BY username ASC LIMIT 100") or  sqlerr(__file__, __line__);
+    while($user_friends = mysqli_fetch_assoc($fr))
+    $users_friends[] = $user_friends;
+    $mc1->cache_value($keys['user_friends'] , $users_friends, 0);
+    }
+    if (count($users_friends) > 0)
+    {
+    $user_friends = "<table width='100%' class='main' border='1' cellspacing='0' cellpadding='5'>\n" .
+    "<tr><td class='colhead' width='20'>Avatar</td><td class='colhead'>Username".($CURUSER['class'] >= UC_STAFF ? "/Ip" : "")."</td><td class='colhead' align='center'>Uploaded</td><td class='colhead' align='center'>Downloaded</td><td class='colhead' align='center'>Ratio</td><td class='colhead' align='center'>Status</td></tr>\n";
+    if ($users_friends)
+    {
+    foreach($users_friends as $a) {
+    $avatar = ($user['avatars'] == 'yes' ? ($a['avatar'] == '' ? '<img src="'.$INSTALLER09['pic_base_url'].'default_avatar.gif"  width="40" alt="default avatar" />' : '<img src="'.htmlspecialchars($a['avatar']).'" alt="avatar"  width="40" />') : '');
+    $status = "<img style='vertical-align: middle;' src='{$INSTALLER09['pic_base_url']}".($a['last_access'] > $dt ? "online.png" : "offline.png")."' border='0' alt='' />";
+    $user_stuff = $a;
+    $user_stuff['id'] = (int)$a['id'];
+    $user_friends .= "<tr><td class='one' style='padding: 0px; border: none' width='40px'>".$avatar."</td><td class='one'>".format_username($user_stuff)."<br />".($CURUSER['class'] >= UC_STAFF ? "".htmlentities($a['ip'])."" : "")."</td><td class='one' style='padding: 1px' align='center'>".mksize($a['uploaded'])."</td><td class='one' style='padding: 1px' align='center'>".mksize($a['downloaded'])."</td><td class='one' style='padding: 1px' align='center'>".member_ratio($a['uploaded'], $a['downloaded'])."</td><td class='one' style='padding: 1px' align='center'>".$status."</td></tr>\n";
+    }
+    $user_friends .= "</table>";
+    $HTMLOUT .="<tr><td class='rowhead' width='1%'>Friends&nbsp</td><td align='left' width='99%'><a href=\"javascript: klappe_news('a6')\"><img border=\"0\" src=\"pic/plus.png\" id=\"pica6".(int)$a['uid']."\" alt=\"[Hide/Show]\" title=\"[Hide/Show]\" /></a><div id=\"ka6\" style=\"display: none;\"><br />$user_friends</div></td></tr>";
+    } else {
+    if (empty($users_friends))
+    $HTMLOUT .= "<tr><td colspan='2'>No Friends yet.</td></tr>";
+    }
+    }
+    //== thee end
    // === make sure prople can't see their own naughty history by snuggles
     if (($CURUSER['id'] !== $user['id']) && ($CURUSER['class'] >= UC_STAFF)) 
     {
@@ -404,10 +425,10 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
 			<input id="watched_user_button" type="submit" value="Submit!" class="btn" name="watched_user_button" />
 			</form></div> </td></tr>';
          //=== staff Notes
-      $the_flip_box_4 = '[ <a name="staff_notes"></a><a class="altlink" href="#staff_notes" onclick="javascript:flipBox(\'4\')" name="b_4" title="Open / Close Staff Notes">view <img onclick="javascript:flipBox(\'4\')" src="pic/panel_on.gif" name="b_4" style="vertical-align:middle;"  width="8" height="8" alt="Open / Close Staff Notes" title="Open / Close Staff Notes" /></a> ]';
+      $the_flip_box_4 = '[ <a name="staff_notes"></a><a class="altlink" href="#staff_notes" onclick="javascript:flipBox(\'4\')" name="b_4" title="Open / Close Staff Notes">view <img onclick="javascript:flipBox(\'4\')" src="pic/panel_on.gif" name="b_4" style="vertical-align:middle;" width="8" height="8" alt="Open / Close Staff Notes" title="Open / Close Staff Notes" /></a> ]';
       $HTMLOUT .= '<tr><td class="rowhead">Staff Notes</td><td align="left">		
-			<a class="altlink" href="#staff_notes" onclick="javascript:flipBox(\'17\')" name="b_17" title="Add - Edit - View staff note">'.($user['staff_notes'] !== '' ? 'View - Add - Edit ' : 'Add ').'<img onclick="javascript:flipBox(\'17\')" src="pic/panel_on.gif" name="b_17" style="vertical-align:middle;"  width="8" height="8" alt="Add - Edit - View staff note" title="Add - Edit - View staff note" /></a>
-			<div align="left" id="box_17" style="display:none">
+			<a class="altlink" href="#staff_notes" onclick="javascript:flipBox(\'6\')" name="b_6" title="Add - Edit - View staff note">'.($user['staff_notes'] !== '' ? 'View - Add - Edit ' : 'Add ').'<img onclick="javascript:flipBox(\'6\')" src="pic/panel_on.gif" name="b_6" style="vertical-align:middle;" width="8" height="8" alt="Add - Edit - View staff note" title="Add - Edit - View staff note" /></a>
+			<div align="left" id="box_6" style="display:none">
 			<form method="post" action="member_input.php" name="notes_for_staff">
 			<input name="id" type="hidden" value="'.(int)$user['id'].'" />
 			<input type="hidden" value="staff_notes" name="action" id="action" />
@@ -416,9 +437,9 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
 			</form>
 			</div> </td></tr>';
       //=== system comments
-      $the_flip_box_16 = '[ <a name="system_comments"></a><a class="altlink" href="#system_comments" onclick="javascript:flipBox(\'16\')"  name="b_16" title="Open / Close System Comments">view <img onclick="javascript:flipBox(\'16\')" src="pic/panel_on.gif" name="b_16" style="vertical-align:middle;"  width="8" height="8" alt="Open / Close System Comments" title="Open / System Comments" /></a> ]';
+      $the_flip_box_5 = '[ <a name="system_comments"></a><a class="altlink" href="#system_comments" onclick="javascript:flipBox(\'5\')"  name="b_5" title="Open / Close System Comments">view <img onclick="javascript:flipBox(\'5\')" src="pic/panel_on.gif" name="b_5" style="vertical-align:middle;" width="8" height="8" alt="Open / Close System Comments" title="Open / System Comments" /></a> ]';
       if(!empty($user_stats['modcomment']))
-      $HTMLOUT .= "<tr><td class='rowhead'>System Comments</td><td align='left'>".($user_stats['modcomment'] != '' ? $the_flip_box_16.'<div align="left" id="box_16" style="display:none"><hr />'.format_comment($user_stats['modcomment']).'</div>' : '')."</td></tr>\n"; 
+      $HTMLOUT .= "<tr><td class='rowhead'>System Comments</td><td align='left'>".($user_stats['modcomment'] != '' ? $the_flip_box_5.'<div align="left" id="box_5" style="display:none"><hr />'.format_comment($user_stats['modcomment']).'</div>' : '')."</td></tr>\n"; 
      }   
      //==Begin blocks
      if (curuser::$blocks['userdetails_page'] & block_userdetails::LOGIN_LINK && $BLOCKS['userdetails_login_link_on']){
@@ -665,7 +686,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
       $HTMLOUT .="<tr><td class='rowhead'>{$lang['userdetails_supportfor']}</td><td colspan='2' align='left'><textarea cols='60' rows='2' name='supportfor'>{$supportfor}</textarea></td></tr>\n";
 
       $modcomment = htmlspecialchars($user_stats["modcomment"]);
-      if ($CURUSER["class"] < UC_SYSOP) {
+      if ($CURUSER["class"] < UC_MAX) {
       $HTMLOUT .="<tr><td class='rowhead'>{$lang['userdetails_comment']}</td><td colspan='2' align='left'><textarea cols='60' rows='6' name='modcomment' readonly='readonly'>$modcomment</textarea></td></tr>\n";
       }
       else {
@@ -937,7 +958,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
      }
      }   
       //==High speed
-      if ($CURUSER["class"] == UC_SYSOP) {
+      if ($CURUSER["class"] == UC_MAX) {
       $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_highspeed']}</td><td class='row' colspan='2' align='left'><input type='radio' name='highspeed' value='yes' " .($user["highspeed"] == "yes" ? " checked='checked'" : "") ." />Yes <input type='radio' name='highspeed' value='no' " . ($user["highspeed"] == "no" ? " checked='checked'" : "") . " />No</td></tr>\n";
       }
      $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_park']}</td><td colspan='2' align='left'><input name='parked' value='yes' type='radio'" .

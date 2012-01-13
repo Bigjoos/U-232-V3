@@ -3,8 +3,7 @@
    if ($user['paranoia'] < 2 || $CURUSER['id'] == $id ) 
    {
     error_reporting(0);
-    $iphistory = $mc1->get_value('ip_history_'.$id);
-        if ($iphistory === false) {
+    if(($iphistory = $mc1->get_value('ip_history_'.$id)) === false) {
             $ipto = sql_query("SELECT COUNT(id),enabled FROM `users` AS iplist WHERE `ip` = '" . $user["ip"] . "' group by enabled") or sqlerr(__FILE__, __LINE__);
             $row12 = mysqli_fetch_row($ipto);
             $row13 = mysqli_fetch_row($ipto);

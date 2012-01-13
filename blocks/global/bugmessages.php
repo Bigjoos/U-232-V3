@@ -1,7 +1,6 @@
 <?php
    if($INSTALLER09['bug_alert'] && $CURUSER['class'] >= UC_STAFF) {
-	 $bugs = $mc1->get_value('bug_mess_');
-	 if ($bugs === false) {
+	 if(($bugs = $mc1->get_value('bug_mess_')) === false) {
 	 $res1 = sql_query("SELECT COUNT(id) FROM bugs WHERE status = 'na'");
 	 list($bugs) = mysqli_fetch_row($res1);
 	 $mc1->cache_value('bug_mess_', $bugs, $INSTALLER09['expires']['alerts']);

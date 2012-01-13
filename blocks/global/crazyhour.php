@@ -3,8 +3,7 @@ function crazyhour() {
 global $CURUSER, $INSTALLER09, $mc1;
 $htmlout = $cz  = '';
 $crazy_hour = (TIME_NOW + 3600);
-$crazyhour['crazyhour'] = $mc1->get_value('crazyhour');
-if ($crazyhour['crazyhour'] === false) {
+if(($crazyhour['crazyhour'] = $mc1->get_value('crazyhour')) === false) {
 $crazyhour['crazyhour_sql'] = sql_query('SELECT var, amount FROM freeleech WHERE type = "crazyhour"') or sqlerr(__FILE__, __LINE__);
 $crazyhour['crazyhour'] = array();
 if (mysqli_num_rows($crazyhour['crazyhour_sql']) !== 0)

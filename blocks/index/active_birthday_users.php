@@ -2,8 +2,7 @@
      //==Start birthdayusers pdq
      $current_date = getdate();
      $keys['birthdayusers'] = 'birthdayusers';
-     $birthday_users_cache = $mc1->get_value($keys['birthdayusers']);
-     if ($birthday_users_cache === false) {                     
+     if(($birthday_users_cache = $mc1->get_value($keys['birthdayusers'])) === false) {                     
      $birthdayusers = '';
      $birthday_users_cache = array();
      $res = sql_query("SELECT id, username, class, donor, title, warned, enabled, chatpost, leechwarn, pirate, king, birthday FROM users WHERE MONTH(birthday) = ".sqlesc($current_date['mon'])." AND DAYOFMONTH(birthday) = ".sqlesc($current_date['mday'])." ORDER BY username ASC") or sqlerr(__FILE__, __LINE__);

@@ -1,8 +1,7 @@
 <?php
 /** latestuser index **/
-    $latestuser_cache = $mc1->get_value('latestuser');
-    if ($latestuser_cache === false) {
-    $latestuser_cache = mysqli_fetch_assoc(sql_query('SELECT id, username, class, donor, warned, enabled, chatpost, leechwarn, pirate, king FROM users WHERE status="confirmed" ORDER BY id DESC LIMIT 1'))/* or sqlerr(__FILE__, __LINE__)*/;
+    if(($latestuser_cache = $mc1->get_value('latestuser')) === false) {
+    $latestuser_cache = mysqli_fetch_assoc(sql_query('SELECT id, username, class, donor, warned, enabled, chatpost, leechwarn, pirate, king FROM users WHERE status="confirmed" ORDER BY id DESC LIMIT 1'));
     $latestuser_cache['id']  = (int)$latestuser_cache['id']; // so is stored as an integer
     $latestuser_cache['class']  = (int)$latestuser_cache['class']; // so is stored as an integer
     $latestuser_cache['warned']  = (int)$latestuser_cache['warned']; // so is stored as an integer

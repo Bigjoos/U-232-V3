@@ -58,6 +58,8 @@ loggedinorreturn();
       $mc1 -> delete_value('Friends_'.$userid);
       $mc1 -> delete_value('Blocks_'.$targetid);
       $mc1 -> delete_value('Friends_'.$targetid);
+      $mc1 -> delete_value('user_friends_'.$targetid);
+      $mc1 -> delete_value('user_friends_'.$userid);
       header("Location: {$INSTALLER09['baseurl']}/friends.php?id=$userid#$frag");
       die;
     }
@@ -79,6 +81,8 @@ loggedinorreturn();
         sql_query("DELETE FROM friends WHERE userid=$userid AND friendid=$targetid") or sqlerr(__FILE__, __LINE__);
         $mc1 -> delete_value('Friends_'.$userid);
         $mc1 -> delete_value('Friends_'.$targetid);
+        $mc1 -> delete_value('user_friends_'.$userid);
+        $mc1 -> delete_value('user_friends_'.$targetid);
         if (mysqli_affected_rows($GLOBALS["___mysqli_ston"]) == 0)
          stderr($lang['friends_error'], $lang['friends_no_friend']);
         $frag = "friends";

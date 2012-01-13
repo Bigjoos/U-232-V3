@@ -119,8 +119,7 @@ loggedinorreturn();
     $torrent['doubleimg'] = '<img src="'.$INSTALLER09['pic_base_url'].'doubleseed.gif" alt="" />';
     $torrent['free_color'] ='#FF0000';
     //==rep user query by pdq
-    $torrent_cache['rep'] = $mc1->get_value('user_rep_'.$torrents['owner']);     
-    if ($torrent_cache['rep'] === false) {          
+    if(($torrent_cache['rep'] = $mc1->get_value('user_rep_'.$torrents['owner'])) === false) {             
     $torrent_cache['rep'] = array();         
     $us = sql_query("SELECT reputation FROM users WHERE id = ".$torrents['owner']) or sqlerr(__FILE__, __LINE__);         
     if (mysqli_num_rows($us)) {             
@@ -261,8 +260,7 @@ loggedinorreturn();
     <a class=\"index\" href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."&amp;zip=1\">&nbsp;<u>".htmlspecialchars($torrents["filename"]) . "</u></a>{$freeslot}</td></tr>";
     /**  Mod by dokty, rewrote by pdq  **/
     $my_points = 0;
-    $torrent['torrent_points_'] = $mc1->get('coin_points_'.$id);
-    if ($torrent['torrent_points_'] === false) {    
+    if(($torrent['torrent_points_'] = $mc1->get('coin_points_'.$id)) === false) {   
         $sql_points = sql_query('SELECT userid, points FROM coins WHERE torrentid='.$id);
         $torrent['torrent_points_'] = array();            
             if (mysqli_num_rows($sql_points) !== 0) {

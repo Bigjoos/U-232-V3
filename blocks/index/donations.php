@@ -1,9 +1,8 @@
 <?php
  //== 09 Donation progress
     $progress='';
-    $totalfunds_cache = $mc1->get_value('totalfunds_');
-    if ($totalfunds_cache === false) {
-    $totalfunds_cache =  mysqli_fetch_assoc(sql_query("SELECT sum(cash) as total_funds FROM funds"))/* or sqlerr(__FILE__, __LINE__)*/;
+    if(($totalfunds_cache = $mc1->get_value('totalfunds_')) === false) {
+    $totalfunds_cache =  mysqli_fetch_assoc(sql_query("SELECT sum(cash) as total_funds FROM funds"));
     $totalfunds_cache["total_funds"] = (int)$totalfunds_cache["total_funds"];
     $mc1->cache_value('totalfunds_', $totalfunds_cache, $INSTALLER09['expires']['total_funds']);
     }

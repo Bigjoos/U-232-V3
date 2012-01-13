@@ -62,8 +62,7 @@ $seeder = ($left == 0) ? "yes" : "no";
 if (!($db = @($GLOBALS["___mysqli_ston"] = mysqli_connect($INSTALLER09['mysql_host'],  $INSTALLER09['mysql_user'],  $INSTALLER09['mysql_pass'])) AND $select = @((bool)mysqli_query( $db, "USE {$INSTALLER09['mysql_db']}"))))
 err('Please call back later');
 
-$user = $mc1->get_value('u_passkey_'.$passkey);
-if ($user === false) {
+if(($user = $mc1->get_value('u_passkey_'.$passkey)) === false) {
 $user_query = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id, uploaded, downloaded, class, downloadpos, parked, perms, ip, free_switch, highspeed, enabled FROM users WHERE passkey=".ann_sqlesc($passkey)) or ann_sqlerr(__FILE__, __LINE__);
 if (mysqli_num_rows($user_query) != 1)
 err("Unknown passkey. Please redownload the torrent from {$INSTALLER09['baseurl']}.");
@@ -209,8 +208,7 @@ if (!isset($self))
   $upthis = max(0, $uploaded - $self["uploaded"]);
   $downthis = max(0, $downloaded - $self["downloaded"]);
   //==sitepot
-  $Pot_query = $mc1->get_value('Sitepot_');
-  if ($Pot_query === false) {
+  if(($Pot_query = $mc1->get_value('Sitepot_')) === false) {
   $Pot_query = mysqli_fetch_assoc(mysqli_query($GLOBALS["___mysqli_ston"],  "SELECT value_s, value_i FROM avps WHERE arg = 'sitepot'")) or ann_sqlerr(__FILE__, __LINE__);
   $Pot_query['value_s'] = (int)$Pot_query['value_s'];
   $Pot_query['value_i'] = (int)$Pot_query['value_i'];
@@ -223,8 +221,7 @@ if (!isset($self))
   }
   /*
   //==Happyhour
-  $happy = $mc1->get_value('happyhour_');
-  if ($happy === false) {
+  if(($happy = $mc1->get_value('happyhour_')) === false) {
   $happy = mysqli_query($GLOBALS["___mysqli_ston"],  "SELECT id, multiplier from happyhour where userid=" . ann_sqlesc( $userid ) . " AND torrentid=" . ann_sqlesc( $torrentid ) . " " ) or ann_sqlerr(__FILE__, __LINE__);
   $happyhour = mysqli_num_rows( $happy ) == 0 ? false : true;
   $happy_multi = mysqli_fetch_row( $happy );
@@ -243,8 +240,7 @@ if (!isset($self))
   */
   //==Karma contribution system by ezero
   //==updates putyn/Mindless
-  $contribution = $mc1->get_value('freecontribution_');
-  if ($contribution === false) {
+  if(($contribution = $mc1->get_value('freecontribution_')) === false) {
   $contribution = mysqli_fetch_assoc(mysqli_query($GLOBALS["___mysqli_ston"], "SELECT startTime, endTime, freeleechEnabled, duploadEnabled, hdownEnabled FROM events ORDER BY startTime DESC LIMIT 1")) or ann_sqlerr(__FILE__, __LINE__);
 	$contribution["startTime"] = (int)$contribution["startTime"];
 	$contribution["endTime"] = (int)$contribution["endTime"];
@@ -317,8 +313,7 @@ if (!isset($self))
 	 {
 	 //== connectable checking - pdq
     $connkey = 'conn:'.md5($realip.':'.$port);
-    $connectable = $mc1->get_value($connkey);
-    if ($connectable === false) {
+    if(($connectable = $mc1->get_value($connkey)) === false) {
     $sockres = @fsockopen($ip, $port, $errno, $errstr, 5);
     if (!$sockres) {
         $connectable = 'no';

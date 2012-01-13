@@ -1,7 +1,6 @@
 <?php
    if($INSTALLER09['report_alert'] && $CURUSER['class'] >= UC_STAFF) {
-   $delt_with = $mc1->get_value('new_report_');
-   if ($delt_with === false) {
+   if(($delt_with = $mc1->get_value('new_report_')) === false) {
    $res_reports = sql_query("SELECT COUNT(id) FROM reports WHERE delt_with = '0'");
    list($delt_with) = mysqli_fetch_row($res_reports);
    $mc1->cache_value('new_report_', $delt_with, $INSTALLER09['expires']['alerts']);

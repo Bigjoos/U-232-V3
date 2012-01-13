@@ -14,8 +14,7 @@
         <div class='headbody'>";
         $page = 1;
         $num = 0;
-        $topics = $mc1->get_value('last_posts_'.$CURUSER['class']);
-        if($topics === false ) {
+        if(($topics = $mc1->get_value('last_posts_'.$CURUSER['class'])) === false) {
         $topicres = sql_query("SELECT t.id, t.user_id, t.topic_name, t.locked, t.forum_id, t.last_post, t.sticky, t.views, f.min_class_read, f.name ".
         ", (SELECT COUNT(id) FROM posts WHERE topic_id=t.id) AS p_count ".
         ", p.user_id AS puser_id, p.added ".

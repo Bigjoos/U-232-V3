@@ -1,8 +1,7 @@
 <?php
      //== Last24 start - pdq
      $keys['last24'] = 'last24';
-     $last24_cache = $mc1->get_value($keys['last24']);
-     if ($last24_cache === false) {
+     if(($last24_cache = $mc1->get_value($keys['last24'])) === false) {
      $last24_cache  = array();
      $time24 = $_SERVER['REQUEST_TIME'] - 86400;
      $activeusers24 = '';

@@ -22,7 +22,7 @@ function docleanup( $data ) {
             $modcomment =  get_date( TIME_NOW, 'DATE', 1 ) . " - pirate status Automatically Removed By System.\n". $modcomment;
             $modcom =  sqlesc($modcomment);
             $msgs_buffer[] = '(0,' . $arr['id'] . ','. TIME_NOW .', ' . sqlesc($msg) . ', ' . sqlesc($subject) . ' )';
-            $users_buffer[] = '(' . $arr['id'] . ', \'0\', \'no\', ' . $modcom . ')';
+            $users_buffer[] = '(' . $arr['id'] . ', \'0\', ' . $modcom . ')';
             $mc1->begin_transaction('user'.$arr['id']);
             $mc1->update_row(false, array('pirate' => 0));
             $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
