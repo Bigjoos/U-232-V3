@@ -18,7 +18,7 @@ $stdhead = array(/** include the css **/'css' => array('staff'));
 
 $htmlout = $firstline = $support = '';
 
-$query = sql_query("SELECT users.id, username, support, support_lang, supportfor, email, last_access, class, title, country, status, countries.flagpic, countries.name FROM users LEFT  JOIN countries ON countries.id = users.country WHERE class >= ".UC_STAFF." OR support='yes' AND status='confirmed' ORDER BY username") or sqlerr(__FILE__, __LINE__);
+$query = sql_query("SELECT users.id, username, support, supportfor, email, last_access, class, title, country, status, countries.flagpic, countries.name FROM users LEFT  JOIN countries ON countries.id = users.country WHERE class >= ".UC_STAFF." OR support='yes' AND status='confirmed' ORDER BY username") or sqlerr(__FILE__, __LINE__);
 unset($support);
 while($arr2 = mysqli_fetch_assoc($query)) {
 	
