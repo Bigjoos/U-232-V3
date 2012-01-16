@@ -191,8 +191,7 @@ global $CURUSER, $INSTALLER09, $start, $query_stat, $mc1, $querytime;
 
     // load averages - pdq
     if ($debug) {
-     $uptime = $mc1->get_value('uptime');
-        if ($uptime === false) {
+     if(($uptime = $mc1->get_value('uptime')) === false) {
      $uptime = `uptime`;
      $mc1->cache_value('uptime', $uptime, 25);
         }
@@ -316,12 +315,11 @@ function StatusBar() {
 	global $CURUSER, $INSTALLER09, $lang, $rep_is_on, $mc1, $msgalert;
 	if (!$CURUSER)
 	return "";
-	$upped = (float)mksize($CURUSER['uploaded']);
-	$downed = (float)mksize($CURUSER['downloaded']);
+	$upped = mksize($CURUSER['uploaded']);
+	$downed = mksize($CURUSER['downloaded']);
    //==Memcache unread pms
 	$PMCount=0;
-	$unread1 = $mc1->get_value('inbox_new_sb_'.$CURUSER['id']);
-   if ($unread1 === false) {
+	if(($unread1 = $mc1->get_value('inbox_new_sb_'.$CURUSER['id'])) === false) {
 	$res1 = sql_query("SELECT COUNT(id) FROM messages WHERE receiver='".$CURUSER['id']."' AND unread = 'yes' AND location = '1'") or sqlerr(__LINE__,__FILE__);
 	list($PMCount) = mysqli_fetch_row($res1); 
   $PMCount= (int)$PMCount;
@@ -329,11 +327,9 @@ function StatusBar() {
   }
 	$inbox = ($unread1 == 1 ? "$unread1&nbsp;{$lang['gl_msg_singular']}" : "$unread1&nbsp;{$lang['gl_msg_plural']}");
   //==Memcache peers
-  $MyPeersCache = $mc1->get_value('MyPeers_'.$CURUSER['id']);
-if ($MyPeersCache == false) {
+  if(($MyPeersCache = $mc1->get_value('MyPeers_'.$CURUSER['id'])) === false) {
     $seed['yes'] = $seed['no'] = 0;
     $seed['conn'] = 3;
-    
       $r = sql_query("select count(id) as count, seeder, connectable FROM peers WHERE userid=".$CURUSER['id']." group by seeder") ; 
        while($a = mysqli_fetch_assoc($r)) {
         $key = $a['seeder'] == 'yes' ? 'yes' : 'no'; 

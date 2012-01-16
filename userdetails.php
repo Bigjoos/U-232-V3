@@ -208,8 +208,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
     //==country by pdq
     function countries() {
     global $mc1, $INSTALLER09;
-    $ret = $mc1->get_value('countries::arr');
-    if ($ret === false) {
+    if(($ret = $mc1->get_value('countries::arr')) === false) {
         $res = sql_query("SELECT id, name, flagpic FROM countries ORDER BY name ASC") or sqlerr(__FILE__, __LINE__);
         while ($row = mysqli_fetch_assoc($res))
             $ret[] = $row;

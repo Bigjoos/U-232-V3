@@ -169,7 +169,6 @@ loggedinorreturn();
     <!--<div ><img src="images/global.design/friends.png" alt="" title="Friends" class="global_image" width="25"/></div>
     <div >'.htmlentities($user['username'], ENT_QUOTES).'\'s friends</div><br />-->
     <div >';
-    //$HTMLOUT .= "<div style='border: 1px solid black;padding:5px;'><span class='btn' style='float:right;'>{$lang['friends_personal']} ".htmlspecialchars($user['username'])."</span>";
     $HTMLOUT .= "<br /><table class='main' width='90%' border='0' cellspacing='0' cellpadding='0'>
     <!--<tr>
     <td class='colhead'><h2  style='width:50%; text-align:left;'><a name='friends'>{$lang['friends_friends_list']}</a></h2></td>
