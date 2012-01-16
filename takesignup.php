@@ -114,15 +114,14 @@ dbconn();
     stderr($lang['takesignup_failed'], $lang['takesignup_qualify']);
 
     // check if email addy is already in use
-    $a = (@mysqli_fetch_row(sql_query("SELECT COUNT(*) FROM users WHERE email='$email'"))) or sqlerr(__FILE__, __LINE__);
+    $a = (mysqli_fetch_row(sql_query("SELECT COUNT(*) FROM users WHERE email='$email'"))) or sqlerr(__FILE__, __LINE__);
     if ($a[0] != 0)
     stderr($lang['takesignup_user_error'], $lang['takesignup_email_used']);
-    /*
     //=== check if ip addy is already in use
-    $c = (@mysqli_fetch_row(sql_query("SELECT COUNT(*) FROM users WHERE ip='" . $_SERVER['REMOTE_ADDR'] . "'"))) or sqlerr(__FILE__, __LINE__);
-    if ($a[0] != 0)
+    $c = (mysqli_fetch_row(sql_query("SELECT COUNT(*) FROM users WHERE ip='" . $_SERVER['REMOTE_ADDR'] . "'"))) or sqlerr(__FILE__, __LINE__);
+    if ($c[0] != 0)
     stderr("Error", "The ip " . $_SERVER['REMOTE_ADDR'] . " is already in use. We only allow one account per ip address.");
-    */
+  
     // TIMEZONE STUFF
     if(isset($_POST["user_timezone"]) && preg_match('#^\-?\d{1,2}(?:\.\d{1,2})?$#', $_POST['user_timezone']))
     {
