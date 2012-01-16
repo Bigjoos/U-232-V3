@@ -18,7 +18,7 @@ $stdhead = array(/** include the css **/'css' => array('staff'));
 
 $htmlout = $firstline = $support = '';
 
-$query = sql_query("SELECT users.id, username, support, supportfor, email, last_access, class, title, country, status, countries.flagpic, countries.name FROM users LEFT  JOIN countries ON countries.id = users.country WHERE class >= ".UC_STAFF." OR support='yes' AND status='confirmed' ORDER BY username") or sqlerr(__FILE__, __LINE__);
+$query = sql_query("SELECT users.id, username, support, support_lang, supportfor, email, last_access, class, title, country, status, countries.flagpic, countries.name FROM users LEFT  JOIN countries ON countries.id = users.country WHERE class >= ".UC_STAFF." OR support='yes' AND status='confirmed' ORDER BY username") or sqlerr(__FILE__, __LINE__);
 unset($support);
 while($arr2 = mysqli_fetch_assoc($query)) {
 	
@@ -30,7 +30,7 @@ while($arr2 = mysqli_fetch_assoc($query)) {
 		
 	if($arr2["class"] == UC_ADMINISTRATOR)
 		$admin[] =  $arr2;
-		
+
 	if($arr2["class"] == UC_SYSOP)
 		$sysop[] =  $arr2;
 	}
@@ -44,17 +44,12 @@ function DoStaff($staff, $staffclass, $cols = 3) {
 	$rows = ceil($counter/$cols);
 	$cols = ($counter < $cols) ? $counter : $cols;
 	$r = 0;
-    $htmlout .= "
-    <!--<div class='global_head'>{$staffclass}</div><br />-->
-    <div class='global_text'><br />";
-	$htmlout .="<table width='100%' border='0' cellpadding='3'>";
-	
+   $htmlout .= "<div class='global_text'><div class='headline'>{$staffclass}</div><table width='100%' border='0' cellpadding='3'>";
 	for($ia = 0; $ia < $rows; $ia++){
         $htmlout .= "<tr>";
         for($i = 0; $i < $cols; $i++){
 			if( isset($staff[$r]) )  {
-			$htmlout .= "
-            <td class='staff_username'><a href='userdetails.php?id=".(int)$staff[$r]['id']."'><font color='#" . get_user_class_color($staff[$r]['class']) . "'><b>".htmlspecialchars($staff[$r]['username'])."</b></font></a></td>"."
+			$htmlout .= "<td class='staff_username'><a href='userdetails.php?id=".(int)$staff[$r]['id']."'><font color='#" . get_user_class_color($staff[$r]['class']) . "'><b>".htmlspecialchars($staff[$r]['username'])."</b></font></a></td>"."
             <td class='staff_online'><img style='vertical-align: middle;' src='images/staff".($staff[$r]['last_access']>$dt?"/online.png":"/offline.png" )."' border='0' height='16' alt='' /></td>"."
             <td class='staff_online'><a href='pm_system.php?action=send_message&amp;receiver=".(int)$staff[$r]['id']."&amp;returnto=".urlencode($_SERVER['REQUEST_URI'])."'><img style='vertical-align: middle;' src='{$INSTALLER09['pic_base_url']}mailicon.png' border='0' title=\"Personal Message\" alt='' /></a></td>"."
             <td class='staff_online'><img style='vertical-align: middle;' height='16' src='{$INSTALLER09['pic_base_url']}flag/{$staff[$r]['flagpic']}' border='0' alt='".htmlspecialchars($staff[$r]['name'])."' /></td>";
@@ -84,22 +79,17 @@ $htmlout .= isset($mods) ? DoStaff($mods, "Moderators") : DoStaff($mods=false, "
         "<td class='staff_online'>".htmlspecialchars($a['supportfor'])."</td></tr>";
         }
         
-        
         $htmlout .= "
-        <!--<div class='global_head'>Support</div><br />-->
-        <div class='global_text'><br />";
-	      $htmlout .="<table width='100%' border='0' cellpadding='3'>
-                <tr>
-                <td class='staff_username' colspan='2'>{$lang['text_first']}<br /><br />
-                </td>
-                </tr>
-                <tr>
-                <td class='staff_username' align='left'><b>{$lang['first_name']}&nbsp;</b></td>
-                <td class='staff_online'><b>{$lang['first_active']}&nbsp;&nbsp;&nbsp;</b></td>
-                <td class='staff_online'><b>{$lang['first_contact']}&nbsp;&nbsp;&nbsp;&nbsp; </b>
-                </td>
-                <td class='staff_online'><b>{$lang['first_lang']}</b></td>
-                <td class='staff_online'><b>{$lang['first_supportfor']}</b></td>
+        <div class='global_text'><div class='headline'>{$lang['header_fls']}</div><table width='100%' border='0' cellpadding='3'>
+        <tr>
+        <td class='staff_username' colspan='2'>{$lang['text_first']}<br /><br /></td>
+        </tr>
+        <tr>
+        <td class='staff_username' align='left'><b>{$lang['first_name']}&nbsp;</b></td>
+        <td class='staff_online'><b>{$lang['first_active']}&nbsp;&nbsp;&nbsp;</b></td>
+        <td class='staff_online'><b>{$lang['first_contact']}&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
+        <td class='staff_online'><b>{$lang['first_lang']}</b></td>
+        <td class='staff_online'><b>{$lang['first_supportfor']}</b></td>
         </tr>".$firstline."";
 $htmlout .="</table></div>";
 }
