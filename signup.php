@@ -25,7 +25,7 @@ get_template();
     
     ini_set('session.use_trans_sid', '0');
 
-    $stdfoot = array(/** include js **/'js' => array('check','jquery.pstrength-min.1.2'));
+    $stdfoot = array(/** include js **/'js' => array('check','jquery.pstrength-min.1.2','jquery.simpleCaptcha-0.2'));
 
     if(!$INSTALLER09['openreg'])
     stderr('Sorry', 'Invite only - Signups are closed presently if you have an invite code click <a href="'.$INSTALLER09['baseurl'].'/invite_signup.php"><b> Here</b></a>');
@@ -63,9 +63,7 @@ get_template();
     //== click X by Retro
     $value = array('...','...','...','...','...','...');
     $value[rand(1,count($value)-1)] = 'X';
-    $HTMLOUT .= "<script type='text/javascript' src='scripts/jquery.js'></script>
-    <script type='text/javascript' src='scripts/jquery.simpleCaptcha-0.2.js'></script>
-    <script type='text/javascript'>
+    $HTMLOUT .= "<script type='text/javascript'>
 	  /*<![CDATA[*/
 	  $(document).ready(function () {
 	  $('#captchasignup').simpleCaptcha();

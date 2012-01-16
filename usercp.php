@@ -104,7 +104,7 @@ loggedinorreturn();
     /*]]>*/
     </script>';
 
-    $possible_actions = array('avatar', 'signature', 'security', 'torrents','personal','default');
+    $possible_actions = array('avatar','signature','security','torrents','personal','default');
 
     $action = isset($_GET["action"]) ? htmlspecialchars(trim($_GET["action"])) : '';
 
@@ -144,7 +144,6 @@ loggedinorreturn();
     </td></tr>";
     }
     else {
-    //$HTMLOUT .= tr("{$lang['my_avatar']}", "{$lang['my_no_avatar_allow']}");
     $HTMLOUT .="<tr><td class='rowhead'>{$lang['usercp_avatar']}</td><td><input name='avatar' size='50' value='" . htmlspecialchars($CURUSER["avatar"]) . "' readonly='readonly'/>
     <br />{$lang['usercp_no_avatar_allow']}</td></tr>";
     }
