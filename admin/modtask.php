@@ -7,12 +7,28 @@
  *   Project Leaders: Mindless, putyn.
  **/
 //==Updated modtask by Retro
-require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
+if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
+{
+	$HTMLOUT='';
+	$HTMLOUT .= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
+		\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+		<html xmlns='http://www.w3.org/1999/xhtml'>
+		<head>
+		<title>Error!</title>
+		</head>
+		<body>
+	<div style='font-size:33px;color:white;background-color:red;text-align:center;'>Incorrect access<br />You cannot access this file directly.</div>
+	</body></html>";
+	echo $HTMLOUT;
+	exit();
+}
+
 require_once(INCL_DIR.'user_functions.php');
 require_once(CLASS_DIR.'page_verify.php');
-dbconn(false);
-loggedinorreturn();
-$lang = array_merge( load_language('global'), load_language('modtask') );
+require_once(CLASS_DIR.'class_check.php');
+class_check(UC_STAFF);
+
+$lang = array_merge( $lang, load_language('modtask') );
 $newpage = new page_verify(); 
 $newpage->check('mdk1@@9');
 $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
@@ -44,7 +60,7 @@ $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
     return $out;
     }
 
-    if ($CURUSER['class'] < UC_MODERATOR) stderr("{$lang['modtask_user_error']}", "{$lang['modtask_try_again']}");
+    if ($CURUSER['class'] < UC_STAFF) stderr("{$lang['modtask_user_error']}", "{$lang['modtask_try_again']}");
     //== Correct call to script
     if ((isset($_POST['action'])) && ($_POST['action'] == "edituser"))
     {

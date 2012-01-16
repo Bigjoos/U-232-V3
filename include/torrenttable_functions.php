@@ -106,6 +106,14 @@ if ($oldlink > 0)
     $change[$value['id']] = array('id' => $value['id'], 'name'  => $value['name'], 'image' => $value['image']);
     while ($row = mysqli_fetch_assoc($res)) 
     {
+       //== @author StarionTurbo @copyright 2007 @modname Show torrents by day @version v1.0 
+       if ($CURUSER['split'] == 'yes') {
+       if(get_date($row['added'], 'DATE') == $prevdate)
+       $cleandate = '';
+       else
+       $htmlout .="<tr><td colspan='12' class='colhead' align='left'><b>{$lang['torrenttable_upped']} ".get_date($row['added'], 'DATE')."</b></td></tr>";
+       $prevdate = get_date($row['added'], 'DATE');
+       }
        $row['cat_name'] = htmlspecialchars($change[$row['category']]['name']);
        $row['cat_pic'] = htmlspecialchars($change[$row['category']]['image']);
        /** Freeslot/doubleslot in Use **/
@@ -119,7 +127,7 @@ if ($oldlink > 0)
        $htmlout .= "<td align='center' style='padding: 0px'>";
        if (isset($row["cat_name"])) 
        {
-       $htmlout .= "<a href='browse.php?cat={$row['category']}'>";
+       $htmlout .= "<a href='browse.php?cat=".(int)$row['category']."'>";
        if (isset($row["cat_pic"]) && $row["cat_pic"] != "")
        $htmlout .= "<img border='0' src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/{$row['cat_pic']}' alt='{$row['cat_name']}' />";
        else
@@ -193,7 +201,7 @@ if ($oldlink > 0)
        $htmlout .= "<td align='center'><a href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."\"><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download This Torrent!' title='Download This Torrent!' /></a></td>\n";
        
        if ($variant == "mytorrents")  
-       $htmlout .= "<td align='center'><a href='edit.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;id={$row['id']}'>{$lang["torrenttable_edit"]}</a></td>\n";
+       $htmlout .= "<td align='center'><a href='edit.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;id=".(int)$row['id']."'>{$lang["torrenttable_edit"]}</a></td>\n";
        $htmlout.= ($variant == "index" ? "<td align='center'><a href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."\"><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download This Torrent!' title='Download This Torrent!' /></a></td>" : "");
         
        if ($variant == "mytorrents") 
@@ -235,33 +243,33 @@ if ($oldlink > 0)
        
        if ($row["type"] == "single")
        {
-       $htmlout .= "<td align='right'>{$row["numfiles"]}</td>\n";
+       $htmlout .= "<td align='right'>".(int)$row["numfiles"]."</td>\n";
        }
        else 
        {
        if ($variant == "index")
        {
-       $htmlout .= "<td align='right'><b><a href='filelist.php?id=$id'>{$row["numfiles"]}</a></b></td>\n";
+       $htmlout .= "<td align='right'><b><a href='filelist.php?id=$id'>".(int)$row["numfiles"]."</a></b></td>\n";
        }
        else
        {
-       $htmlout .= "<td align='right'><b><a href='filelist.php?id=$id'>{$row["numfiles"]}</a></b></td>\n";
+       $htmlout .= "<td align='right'><b><a href='filelist.php?id=$id'>".(int)$row["numfiles"]."</a></b></td>\n";
        }
        }
 
        if (!$row["comments"])
        {
-       $htmlout .= "<td align='right'>{$row["comments"]}</td>\n";
+       $htmlout .= "<td align='right'>".(int)$row["comments"]."</td>\n";
        }
        else 
        {
        if ($variant == "index")
        {
-       $htmlout .= "<td align='right'><b><a href='details.php?id=$id&amp;hit=1&amp;tocomm=1'>{$row["comments"]}</a></b></td>\n";
+       $htmlout .= "<td align='right'><b><a href='details.php?id=$id&amp;hit=1&amp;tocomm=1'>".(int)$row["comments"]."</a></b></td>\n";
        }
        else
        {
-       $htmlout .= "<td align='right'><b><a href='details.php?id=$id&amp;page=0#startcomments'>{$row["comments"]}</a></b></td>\n";
+       $htmlout .= "<td align='right'><b><a href='details.php?id=$id&amp;page=0#startcomments'>".(int)$row["comments"]."</a></b></td>\n";
        }
        }
 
@@ -279,16 +287,16 @@ if ($oldlink > 0)
        if ($variant == "index")
        {
        if ($row["leechers"]) $ratio = $row["seeders"] / $row["leechers"]; else $ratio = 1;
-       $htmlout .= "<td align='right'><b><a href='peerlist.php?id=$id#seeders'><font color='" .get_slr_color($ratio) . "'>{$row["seeders"]}</font></a></b></td>\n";
+       $htmlout .= "<td align='right'><b><a href='peerlist.php?id=$id#seeders'><font color='" .get_slr_color($ratio) . "'>".(int)$row["seeders"]."</font></a></b></td>\n";
        }
        else
        {
-       $htmlout .= "<td align='right'><b><a class='".linkcolor($row["seeders"])."' href='peerlist.php?id=$id#seeders'>{$row["seeders"]}</a></b></td>\n";
+       $htmlout .= "<td align='right'><b><a class='".linkcolor($row["seeders"])."' href='peerlist.php?id=$id#seeders'>".(int)$row["seeders"]."</a></b></td>\n";
        }
        }
        else
        {
-       $htmlout .= "<td align='right'><span class='".linkcolor($row["seeders"])."'>{$row["seeders"]}</span></td>\n";
+       $htmlout .= "<td align='right'><span class='".linkcolor($row["seeders"])."'>".(int)$row["seeders"]."</span></td>\n";
        }
 
        if ($row["leechers"]) 
@@ -296,17 +304,17 @@ if ($oldlink > 0)
        if ($variant == "index")
        $htmlout .= "<td align='right'><b><a href='peerlist.php?id=$id#leechers'>".number_format($row["leechers"])."</a></b></td>\n";
        else
-       $htmlout .= "<td align='right'><b><a class='".linkcolor($row["leechers"])."' href='peerlist.php?id=$id#leechers'>{$row["leechers"]}</a></b></td>\n";
+       $htmlout .= "<td align='right'><b><a class='".linkcolor($row["leechers"])."' href='peerlist.php?id=$id#leechers'>".(int)$row["leechers"]."</a></b></td>\n";
        }
        else
        $htmlout .= "<td align='right'>0</td>\n";
         
        if ($variant == "index") {
-       $htmlout .= "<td align='center'>" . (isset($row["username"]) ? (($row["anonymous"] == "yes" && $CURUSER['class'] < UC_MODERATOR && $row['owner'] != $CURUSER['id']) ? "<i>".$lang['torrenttable_anon']."</i>" : "<a href='userdetails.php?id=" .(int)$row["owner"] . "'><b>" . htmlspecialchars($row["username"]) . "</b></a>") : "<i>(".$lang["torrenttable_unknown_uploader"].")</i>") . "</td>\n";
+       $htmlout .= "<td align='center'>" . (isset($row["username"]) ? (($row["anonymous"] == "yes" && $CURUSER['class'] < UC_STAFF && $row['owner'] != $CURUSER['id']) ? "<i>".$lang['torrenttable_anon']."</i>" : "<a href='userdetails.php?id=" .(int)$row["owner"] . "'><b>" . htmlspecialchars($row["username"]) . "</b></a>") : "<i>(".$lang["torrenttable_unknown_uploader"].")</i>") . "</td>\n";
        }
     
        $htmlout .= "</tr>\n";
-       $htmlout .="<tr id=\"kdescr{$row["id"]}\" style=\"display:none;\"><td width=\"100%\" colspan=\"13\">".format_comment($descr, false)."</td></tr>\n";
+       $htmlout .="<tr id=\"kdescr{$row["id"]}\" style=\"display:none;\"><td width=\"100%\" colspan=\"12\">".format_comment($descr, false)."</td></tr>\n";
        }
        $htmlout .= "</table><!--</div>-->\n";
        return $htmlout;

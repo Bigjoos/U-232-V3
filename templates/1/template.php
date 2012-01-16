@@ -413,7 +413,7 @@ if ($MyPeersCache == false) {
          <div id='base_icons'>
          <ul class='um_menu'>
          <li><a href='pm_system.php'><img src='templates/1/images/mail_box.png' alt='messages' title='Your Private Messages' /></a></li>
-         <li><a href='usercp.php'><img src='templates/1/images/Profile.png' alt='Settings' title='Personal Settings' /></a></li>
+         <li><a href='usercp.php?action=default'><img src='templates/1/images/Profile.png' alt='Settings' title='Personal Settings' /></a></li>
          ".(isset($CURUSER) && $CURUSER['class'] >= UC_STAFF ? "<li><a href='staffpanel.php'><img src='templates/1/images/setting_tools.png' alt='Staff' title='Staffpanel' /></a></li>":"")."
         <li><a href='logout.php'><img src='templates/1/images/logout.png' alt='Logout' title='SignOut' /></a></li>
         </ul>

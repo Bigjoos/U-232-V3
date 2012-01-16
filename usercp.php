@@ -104,7 +104,12 @@ loggedinorreturn();
     /*]]>*/
     </script>';
 
+    $possible_actions = array('avatar', 'signature', 'security', 'torrents','personal','default');
+
     $action = isset($_GET["action"]) ? htmlspecialchars(trim($_GET["action"])) : '';
+
+    if (!in_array($action, $possible_actions)) 
+            stderr('Error', 'A ruffian that will swear, drink, dance, revel the night, rob, murder and commit the oldest of ins the newest kind of ways.');
 
     if (isset($_GET["edited"])) 
     {
@@ -130,15 +135,12 @@ loggedinorreturn();
     if ($action == "avatar") {
     $HTMLOUT .= begin_table(true);
     $HTMLOUT .="<tr><td align='left' class='colhead' style='height:25px;' colspan='2'><input type='hidden' name='action' value='avatar' />Avatar Options</td></tr>";
-    
-    //$HTMLOUT .="<tr><td class='rowhead'>{$lang['usercp_avatar']}</td><td><input name='avatar' size='50' value='" . htmlspecialchars($CURUSER["avatar"]) . "' /><br /><font class='small'>Width should be 150px. (Will be resized if necessary)\n<br />If you need a host for the picture, try our  <a href='{$INSTALLER09['baseurl']}/bitbucket.php'>Bitbucket</a>.</font></td></tr>";
-
     //==Disable avatar selection
     if(!($CURUSER["avatarpos"] == 0 OR $CURUSER["avatarpos"] != 1)){
-    //$HTMLOUT .= tr($lang['my_avatar'], "<input name='avatar' size='50' value='" . htmlspecialchars($CURUSER["avatar"]) ."' /><br />\n{$lang['my_avatar_info']}",1);
     $HTMLOUT .="<tr><td class='rowhead'>{$lang['usercp_avatar']}</td><td><input name='avatar' size='50' value='" . htmlspecialchars($CURUSER["avatar"]) . "' /><br />
     <font class='small'>Width should be 150px. (Will be resized if necessary)\n<br />
-    If you need a host for the picture, try our  <a href='{$INSTALLER09['baseurl']}/bitbucket.php'>Bitbucket</a>.</font>
+    If you need a avatar, try our  <a href='{$INSTALLER09['baseurl']}/avatar/index.php'>Avatar creator</a>.<br />
+    If you need a host for your image, try our  <a href='{$INSTALLER09['baseurl']}/bitbucket.php'>Bitbucket</a>.</font>
     </td></tr>";
     }
     else {
@@ -375,7 +377,7 @@ loggedinorreturn();
     $birthday = $CURUSER["birthday"];
     $birthday = date("Y-m-d", strtotime($birthday));
     list($year1, $month1, $day1) = explode('-', $birthday);
-    if ($CURUSER['birthday'] == "0000-00-00") {
+    if ($CURUSER['birthday'] == '0') {
     $year .= "<select name=\"year\"><option value=\"0000\">--</option>\n";
     $i = "1920";
     while ($i <= (date('Y', TIME_NOW)-13)) {
@@ -418,8 +420,9 @@ loggedinorreturn();
     $HTMLOUT .= end_table();
     } else {
     //== Pms
+    if ($action == "default")
     $HTMLOUT .= begin_table(true);
-    $HTMLOUT .= "<tr><td class='colhead' colspan='2'  style='height:25px;' ><input type='hidden' name='action' value='pm' />Pm options</td></tr>";
+    $HTMLOUT .= "<tr><td class='colhead' colspan='2'  style='height:25px;' ><input type='hidden' name='action' value='default' />Pm options</td></tr>";
     $HTMLOUT .= tr($lang['usercp_accept_pm'],
     "<input type='radio' name='acceptpms'" . ($CURUSER["acceptpms"] == "yes" ? " checked='checked'" : "") . " value='yes' />{$lang['usercp_except_blocks']}
     <input type='radio' name='acceptpms'" .  ($CURUSER["acceptpms"] == "friends" ? " checked='checked'" : "") . " value='friends' />{$lang['usercp_only_friends']}
@@ -449,7 +452,7 @@ loggedinorreturn();
     $HTMLOUT .="<tr><td class='colhead' width='95' style='height:18px;'>".htmlentities($CURUSER["username"], ENT_QUOTES) . "'s Menu</td></tr>";
     $HTMLOUT .="<tr><td align='left'><a href='usercp.php?action=avatar'>Avatar</a><br /></td></tr>
     <tr><td align='left'><a href='usercp.php?action=signature'>Signature</a></td></tr>
-    <tr><td align='left'><a href='usercp.php'>Pm's</a></td></tr>
+    <tr><td align='left'><a href='usercp.php?action=default'>Pm's</a></td></tr>
     <tr><td align='left'><a href='usercp.php?action=security'>Security</a></td></tr>
     <tr><td align='left'><a href='usercp.php?action=torrents'>Torrents</a></td></tr>
     <tr><td align='left'><a href='usercp.php?action=personal'>Personal</a></td></tr>
@@ -459,8 +462,8 @@ loggedinorreturn();
     <tr><td align='left'><a href='topmoods.php'>Top Member Mood's</a></td></tr>
     <tr><td align='left'><a href='lottery.php'>Lottery</a></td></tr>"; 
     if ($CURUSER['class'] >= UC_POWER_USER) {
-    $HTMLOUT .="<tr><td align='left'>  <a href='blackjack.php'>{$INSTALLER09['site_name']} Blackjack</a></td></tr>";
-    $HTMLOUT .="<tr><td align='left'>  <a href='casino.php'>{$INSTALLER09['site_name']} Casino</a></td></tr>";
+    $HTMLOUT .="<tr><td align='left'><a href='blackjack.php'>{$INSTALLER09['site_name']} Blackjack</a></td></tr>";
+    $HTMLOUT .="<tr><td align='left'><a href='casino.php'>{$INSTALLER09['site_name']} Casino</a></td></tr>";
     }
     $HTMLOUT .="</table></td></tr></table></form></div>";
 

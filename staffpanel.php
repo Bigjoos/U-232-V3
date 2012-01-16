@@ -146,6 +146,7 @@ $class_color = (function_exists('get_user_class_color') ? true : false);
                         'abnormal_upload_detection'   => 'abnormal_upload_detection',
                         'hit_and_run'   => 'hit_and_run',
                         'uploadapps'   => 'uploadapps',
+                        'modtask'   => 'modtask',
                         'cloudview'   => 'cloudview'
                         );
     

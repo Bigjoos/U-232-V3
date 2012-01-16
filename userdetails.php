@@ -129,7 +129,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
       $mc1->cache_value('user_stats_'.$id, $user_stats, $INSTALLER09['expires']['user_stats']); // 5 mins
     }
     
-    if(($user_status = $mc1->get_value('user_status_'.$id)) === false) {
+    if(($user_status = $mc1->get_value('user_status_'.$id)) === false) { 
        $sql_2 = sql_query('SELECT * FROM ustatus WHERE userid = '.$id);
        if (mysqli_num_rows($sql_2))
            $user_status = mysqli_fetch_assoc($sql_2);
@@ -144,6 +144,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
     This members paranoia settings are at tinfoil hat levels!!! <img src="pic/smilies/tinfoilhat.gif" alt="I wear a tin-foil hat!" title="I wear a tin-foil hat!" /></span>');
     die();
     }
+
     //=== delete H&R
     if(isset($_GET['delete_hit_and_run']) && $CURUSER['class'] >= UC_STAFF)
     {
@@ -207,7 +208,8 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
     //==country by pdq
     function countries() {
     global $mc1, $INSTALLER09;
-    if(($ret = $mc1->get_value('countries::arr')) === false) {
+    $ret = $mc1->get_value('countries::arr');
+    if ($ret === false) {
         $res = sql_query("SELECT id, name, flagpic FROM countries ORDER BY name ASC") or sqlerr(__FILE__, __LINE__);
         while ($row = mysqli_fetch_assoc($res))
             $ret[] = $row;
@@ -310,7 +312,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
       }
     
     //== 09 Shitlist by Sir_Snuggles
-    if ($CURUSER['class'] >= UC_STAFF) {
+    if ($CURUSER['class'] >= UC_STAFF){
     $shitty = '';
     if(($shit_list = $mc1->get_value('shit_list_'.$id)) === false) {
     $check_if_theyre_shitty = sql_query("SELECT suspect FROM shit_list WHERE userid=".sqlesc($CURUSER['id'])." AND suspect=".$id) or sqlerr(__FILE__, __LINE__);
@@ -366,7 +368,6 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
             "\n".'href="userdetails.php?id='.$id.'&amp;invincible=yes">Make Invincible</a>)') : '');
     
     $HTMLOUT .= begin_main_frame();
-
     $HTMLOUT .= "<table width='100%' border='1' cellspacing='0' cellpadding='5'>";
     $moodname = (isset($mood['name'][$user['mood']]) ? htmlspecialchars($mood['name'][$user['mood']]) : 'is feeling neutral');
     $moodpic  = (isset($mood['image'][$user['mood']]) ? htmlspecialchars($mood['image'][$user['mood']]) : 'noexpression.gif');
@@ -589,7 +590,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
     if ($CURUSER['class'] >= UC_STAFF && $user["class"] < $CURUSER['class'])
     {
       $HTMLOUT .= begin_frame("Edit User", true);
-      $HTMLOUT .= "<form method='post' action='modtask.php'>\n";
+      $HTMLOUT .= "<form method='post' action='staffpanel.php?tool=modtask'>\n";
       require_once CLASS_DIR.'validator.php';
       $HTMLOUT .= validatorForm('ModTask_'.$user['id']);
       $HTMLOUT .= "<input type='hidden' name='action' value='edituser' />\n";
@@ -641,7 +642,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
 	    </tr>";
       //== we do not want mods to be able to change user classes or amount donated...
       // === Donor mod time based by snuggles
-     if ($CURUSER["class"] == UC_SYSOP) {
+     if ($CURUSER["class"] == UC_MAX) {
      $donor = $user["donor"] == "yes";
      $HTMLOUT .="<tr><td class='rowhead' align='right'><b>{$lang['userdetails_donor']}</b></td><td colspan='2' align='center'>";
      if ($donor) {
@@ -686,7 +687,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
       $HTMLOUT .="<tr><td class='rowhead'>{$lang['userdetails_supportfor']}</td><td colspan='2' align='left'><textarea cols='60' rows='2' name='supportfor'>{$supportfor}</textarea></td></tr>\n";
 
       $modcomment = htmlspecialchars($user_stats["modcomment"]);
-      if ($CURUSER["class"] < UC_MAX) {
+      if ($CURUSER["class"] < UC_SYSOP) {
       $HTMLOUT .="<tr><td class='rowhead'>{$lang['userdetails_comment']}</td><td colspan='2' align='left'><textarea cols='60' rows='6' name='modcomment' readonly='readonly'>$modcomment</textarea></td></tr>\n";
       }
       else {

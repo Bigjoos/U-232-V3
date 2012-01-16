@@ -61,7 +61,6 @@ if (isset($_GET['type'])) {
         }
 }
 /** end comment stuffs by pdq **/
-//$get_hash  = isset($_POST['hash']) ? $_POST['hash'] : (isset($_GET['hash']) ? $_GET['hash'] : '');
 
 if ($action == 'add') {
         
@@ -71,15 +70,10 @@ if ($action == 'add') {
             
         if (!is_valid_id($id))
             stderr("{$lang['comment_error']}", "{$lang['comment_invalid_id']}");
-            
-        //$res_hash = md5($INSTALLER09['salt1'].$CURUSER['id']);
-        //if ($get_hash != $res_hash)
-        //    die('Something went wrong. Please re-submit');
+
        
         $res = sql_query("SELECT $sql_1 WHERE id = $id") or sqlerr(__FILE__,__LINE__);
-  
-        $arr = mysqli_fetch_array($res,  MYSQLI_NUM);
-        //$arr = mysql_fetch_array($res);
+        $arr = mysqli_fetch_array($res);
         if (!$arr)
             stderr("{$lang['comment_error']}", "No $locale with that ID.");
           
@@ -102,13 +96,9 @@ if ($action == 'add') {
         $newid = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
     
         sql_query("UPDATE $table_type SET comments = comments + 1 WHERE id = $id") or sqlerr(__FILE__, __LINE__);
-        //$mc1->delete_value('torrent_comments_'.$id);
-        //if ($locale == 'torrent')
-        //    mysql_query("UPDATE users SET tcomments = tcomments + 1 WHERE id = $CURUSER[id]") or sqlerr(__FILE__, __LINE__);
         if($INSTALLER09['seedbonus_on'] == 1){
         if ($INSTALLER09['karma'] && isset($CURUSER['seedbonus']))
         sql_query("UPDATE users SET seedbonus = seedbonus+3.0 WHERE id = {$CURUSER['id']}") or sqlerr(__FILE__, __LINE__);
-        //$mc1->delete_value('torrent_details_'.$id);
         $update['comments'] = ($arr['comments'] + 1);
         $mc1->begin_transaction('torrent_details_'.$id);
         $mc1->update_row(false, array('comments' => $update['comments']));
@@ -122,7 +112,6 @@ if ($action == 'add') {
         $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
         //===end
         }
-        //$Cache->delete_value('MyUser_'.$_COOKIE['session_key']);
     
         // --- pm if new comment mod---//
         $cpm = sql_query("SELECT commentpm FROM users WHERE id = {$owner}") or sqlerr(__FILE__, __LINE__);
@@ -220,9 +209,6 @@ elseif ($action == "edit") {
             sql_query("UPDATE comments SET text=$text, editedat=$editedat, editedby=$CURUSER[id] WHERE id=$commentid") or sqlerr(__FILE__, __LINE__);
         else
             sql_query("UPDATE comments SET text=$text, editedat=$editedat, editedby=0 WHERE id=$commentid") or sqlerr(__FILE__, __LINE__); 
-            //$mc1->delete_value('torrent_comments_'.$commentid);
-            //$Cache->delete_value('comment_id'.$commentid);	
-
       header("Refresh: 0; url=$locale_link.php?id=$arr[tid]$extra_link&viewcomm=$commentid#comm$commentid");
 		die;
       }
@@ -258,7 +244,6 @@ elseif ($action == "edit") {
       $sure = isset($_GET["sure"]) ? (int)$_GET["sure"] : false;
 
       if (!$sure) {
-        //$referer = $_SERVER["HTTP_REFERER"];
         stderr("{$lang['comment_delete']}", "{$lang['comment_about_delete']}\n" .
           "<a href='comment.php?action=delete&amp;cid=$commentid&amp;tid=$tid&amp;sure=1" .
           ($locale == 'request' ? '&amp;type=request' : '')."'>
@@ -276,14 +261,9 @@ elseif ($action == "edit") {
       sql_query("DELETE FROM comments WHERE id=$commentid") or sqlerr(__FILE__,__LINE__);
 	  if ($id && mysqli_affected_rows($GLOBALS["___mysqli_ston"]) > 0)
 		  sql_query("UPDATE $table_type SET comments = comments - 1 WHERE id = $id");
-	    //$mc1->delete_value('torrent_comments_'.$id);
-    //$Cache->delete_value('comment_id'.$commentid);	
-    //if ($locale == 'torrent')
-    //     mysql_query("UPDATE users SET tcomments = tcomments - 1 WHERE id = $CURUSER[id]") or sqlerr(__FILE__, __LINE__);
     if($INSTALLER09['seedbonus_on'] == 1){
     if ($INSTALLER09['karma'] && isset($CURUSER['seedbonus']))
     sql_query("UPDATE users SET seedbonus = seedbonus-3.0 WHERE id = $CURUSER[id]") or sqlerr(__FILE__, __LINE__);
-    //$mc1->delete_value('torrent_details_'.$id);
     $arr['comments'] = (isset($arr['comments']) ? $arr['comments'] : 0);
     $update['comments'] = ($arr['comments'] - 1);
     $mc1->begin_transaction('torrent_details_'.$id);
@@ -298,7 +278,7 @@ elseif ($action == "edit") {
     $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
     //===end
     }
-    //$Cache->delete_value('MyUser_'.$_COOKIE['session_key']);
+
     header("Refresh: 0; url=$locale_link.php?id=$tid$extra_link");
     die;
     }

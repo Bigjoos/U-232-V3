@@ -119,7 +119,7 @@ loggedinorreturn();
     $torrent['doubleimg'] = '<img src="'.$INSTALLER09['pic_base_url'].'doubleseed.gif" alt="" />';
     $torrent['free_color'] ='#FF0000';
     //==rep user query by pdq
-    if(($torrent_cache['rep'] = $mc1->get_value('user_rep_'.$torrents['owner'])) === false) {             
+    if(($torrent_cache['rep'] = $mc1->get_value('user_rep_'.$torrents['owner'])) === false) {            
     $torrent_cache['rep'] = array();         
     $us = sql_query("SELECT reputation FROM users WHERE id = ".$torrents['owner']) or sqlerr(__FILE__, __LINE__);         
     if (mysqli_num_rows($us)) {             
@@ -681,7 +681,7 @@ href=\''.htmlspecialchars($torrents['youtube']).'\' target=\'_blank\'>'.$lang['d
     $HTMLOUT .= "<h2>{$lang['details_no_comment']}</h2>\n";
     }
     else 
-    {
+    { 
       $perpage = 15;
 		$pager = pager($perpage, $count, "details.php?id=$id&amp;", array('lastpagedefault' => 1));
 		$subres = sql_query("SELECT comments.id, comments.text, comments.user, comments.torrent, comments.added, comments.anonymous, comments.editedby, comments.editedat, users.avatar, users.av_w, users.av_h, users.offavatar, users.warned, users.reputation, users.mood, users.username, users.title, users.class, users.donor FROM comments LEFT JOIN users ON comments.user = users.id WHERE torrent = $id ORDER BY comments.id ".$pager['limit']) or sqlerr(__FILE__, __LINE__);
