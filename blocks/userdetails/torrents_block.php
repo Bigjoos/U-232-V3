@@ -23,7 +23,7 @@ $htmlout = '';
 
  $htmlout .= "<tr>
  <td style='padding: 0px'><img src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/".htmlspecialchars($arr["catimg"])."' alt='".htmlspecialchars($arr["catname"])."' width='42' height='42' /></td>
- <td><a href='details.php?id=$arr[torrentid]'><b>".(strlen($arr["name"]) > 50 ? substr($arr["name"], 0, 50 - 3)."..." : $arr["name"])."</b></a></td>
+ <td><a href='details.php?id=".(int)$arr['torrentid']."'><b>".(strlen($arr["name"]) > 50 ? substr($arr["name"], 0, 50 - 3)."..." : htmlspecialchars($arr["name"]))."</b></a></td>
  <td>".mksize($arr["uploaded"])."</td>
  <td>$upspeed/s</td>
  <td>".mksize($arr["downloaded"])."</td>
@@ -68,7 +68,7 @@ function maketable($res)
       $seeders = number_format($arr["seeders"]);
       $leechers = number_format($arr["leechers"]);
         $htmlout .= "<tr><td style='padding: 0px'>$catimage</td>\n" .
-        "<td><a href='details.php?id=$arr[torrent]&amp;hit=1'><b>" . htmlspecialchars($arr["torrentname"]) .
+        "<td><a href='details.php?id=".(int)$arr['torrent']."&amp;hit=1'><b>" . htmlspecialchars($arr['torrentname']) .
         "</b></a></td><td align='center'>$size</td><td align='right'>$seeders</td><td align='right'>$leechers</td><td align='center'>$uploaded</td>\n" .
         "<td align='center'>$downloaded</td><td align='center'>$ratio</td></tr>\n";
       }

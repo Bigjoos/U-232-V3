@@ -28,7 +28,7 @@
 	  while($arr_invited = mysqli_fetch_assoc($rez_invited))
     {
 	  $inviteted_by_this_member .= '<tr><td>'.($arr_invited['status'] == 'pending' ? htmlspecialchars($arr_invited['username']) : format_username($arr_invited).'<br />'.$arr_invited['ip']).'</td>
-		<td>'.$arr_invited['email'].'</td>
+		<td>'.htmlspecialchars($arr_invited['email']).'</td>
 		<td>'.mksize($arr_invited['uploaded']).'</td>
 		<td>'.mksize($arr_invited['downloaded']).'</td>
 		<td>'.member_ratio($arr_invited['uploaded'], $arr_invited['downloaded']).'</td>
@@ -36,7 +36,7 @@
 		}
 	  $inviteted_by_this_member .= '</table>';
 		}
-    $the_flip_box_5 = '[ <a name="invites"></a><a class="altlink" href="#invites" onclick="javascript:flipBox(\'5\')" name="b_5" title="Open / Close Members Invites">view <img onclick="javascript:flipBox(\'5\')" src="pic/panel_on.gif" name="b_5" style="vertical-align:middle;"  width="8" height="8" alt="Open / Close Members Invitees" title="Open / Close Members Invitees" /></a> ] [ <a class="altlink" href="staffpanel.php?tool=invite_tree&amp;action=invite_tree&amp;id='.$user['id'].'" title="Click to view members invite tree">view invite tree</a> ]';
+    $the_flip_box_5 = '[ <a name="invites"></a><a class="altlink" href="#invites" onclick="javascript:flipBox(\'5\')" name="b_5" title="Open / Close Members Invites">view <img onclick="javascript:flipBox(\'5\')" src="pic/panel_on.gif" name="b_5" style="vertical-align:middle;"  width="8" height="8" alt="Open / Close Members Invitees" title="Open / Close Members Invitees" /></a> ] [ <a class="altlink" href="staffpanel.php?tool=invite_tree&amp;action=invite_tree&amp;id='.(int)$user['id'].'" title="Click to view members invite tree">view invite tree</a> ]';
     $HTMLOUT .= '<tr><td class="rowhead">Invitees</td><td align="left">'.(mysqli_num_rows($rez_invited) > 0 ? $the_flip_box_5.'<div align="left" id="box_5" style="display:none">
     <br />'.$inviteted_by_this_member.'</div>' : 'No invitees yet.').'</td></tr>';
 // End Class

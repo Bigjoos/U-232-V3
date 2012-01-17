@@ -2,8 +2,7 @@
 //==Connectable and port shit
     if  ($user['paranoia'] < 1 || $CURUSER['id'] == $id || $CURUSER['class'] >= UC_STAFF) 
     {
-    $port_data = $mc1->get_value('port_data_'.$id);
-    if ($port_data === false) {
+    if(($port_data = $mc1->get_value('port_data_'.$id)) === false) {
     $q1 = sql_query('SELECT connectable, port,agent FROM peers WHERE userid = '.$id.' LIMIT 1') or sqlerr(__FILE__,__LINE__);
     $port_data = mysqli_fetch_row($q1);
     $mc1->cache_value('port_data_'.$id, $port_data, $INSTALLER09['expires']['port_data']);
