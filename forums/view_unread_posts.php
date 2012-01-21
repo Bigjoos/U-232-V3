@@ -155,7 +155,7 @@ $HTMLOUT .= $the_top_and_bottom.'<table border="0" cellspacing="5" cellpadding="
         $subscriptions = (mysqli_num_rows($sub) > 0 ? 1 : 0);
 	
         $icon = ($arr_unread['icon'] == '' ? '<img src="pic/forums/topic_normal.gif" alt="Topic" title="Topic" />' : '<img src="pic/smilies/'.$arr_unread['icon'].'.gif" alt="'.$arr_unread['icon'].'" title="'.$arr_unread['icon'].'" />');
-        $first_post_text = tool_tip(' <img src="pic/forums/mg.gif" height="14" alt="Preview" title="Preview" />', format_comment($arr_unread['body']), 'Last Post Preview');
+        $first_post_text = tool_tip(' <img src="pic/forums/mg.gif" height="14" alt="Preview" title="Preview" />', format_comment($arr_unread['body'], true, false, false), 'Last Post Preview');
         
         $topic_name = ($sticky ? '<img src="pic/forums/pinned.gif" alt="Pinned" title="Pinned" /> ' : ' ').($topicpoll ? '<img src="pic/forums/poll.gif" alt="Poll" title="Poll" /> ' : ' '). '
         		<a class="altlink" href="?action=view_topic&amp;topic_id='.$arr_unread['topic_id'].'" title="First post in thread">'.htmlentities($arr_unread['topic_name'], ENT_QUOTES).'</a> 

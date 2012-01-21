@@ -314,7 +314,7 @@ if ($oldlink > 0)
        }
     
        $htmlout .= "</tr>\n";
-       $htmlout .="<tr id=\"kdescr{$row["id"]}\" style=\"display:none;\"><td width=\"100%\" colspan=\"12\">".format_comment($descr, false)."</td></tr>\n";
+       $htmlout .="<tr id=\"kdescr".(int)$row["id"]."\" style=\"display:none;\"><td width=\"100%\" colspan=\"12\">".format_comment($descr, false)."</td></tr>\n";
        }
        $htmlout .= "</table><!--</div>-->\n";
        return $htmlout;

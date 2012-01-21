@@ -258,7 +258,7 @@ sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER[
         $thread_starter = ($first_post_arr['username'] !== '' ? print_user_stuff($first_post_arr) : 'Lost ['.$topic_arr['user_id'].']').'<br />'.get_date($first_post_arr['added'],'');
 		
         $icon = ($first_post_arr['icon'] == '' ? '<img src="pic/forums/topic_normal.gif" alt="Topic" title="Topic" />' : '<img src="pic/smilies/'.htmlspecialchars($first_post_arr['icon']).'.gif" alt="'.htmlspecialchars($first_post_arr['icon']).'" />');
-        $first_post_text = tool_tip('<img src="pic/forums/mg.gif" height="14" alt="Preview" title="Preview" />', format_comment($first_post_arr['body'],1,0), 'First Post Preview');
+        $first_post_text = tool_tip('<img src="pic/forums/mg.gif" height="14" alt="Preview" title="Preview" />', format_comment($first_post_arr['body'], true, false, false), 'First Post Preview');
 
 	//=== last post read in topic
         $last_unread_post_res = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.$CURUSER['id'].' AND topic_id='.$topic_id);

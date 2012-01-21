@@ -370,14 +370,6 @@ have gained a 1 to 1 ratio on the selected torrent, and the difference in MB has
 <br /> click to go back to your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Point</a> page.<br /><br />
 </td></tr></table>";
 echo stdhead($CURUSER['username'] . "'s Karma Bonus Points Page", true, $stdhead) . $HTMLOUT . stdfoot();
-
-
-
-
-
-
-
-
 die;
 
 case (isset($_GET['gift_fail'])):
@@ -815,7 +807,7 @@ case 'bounty':
 $thief_id = $CURUSER['id'];
 $thief_name = $CURUSER['username'];
 $thief_rep = (int)$User['reputation'];
-$thief_bonus = (int)$User['seedbonus'];
+$thief_bonus = (float)$User['seedbonus'];
 $rep_to_steal = $points/1000;
 $new_bonus = $thief_bonus-$points;
 
@@ -833,7 +825,21 @@ while($ar = mysqli_fetch_assoc($qr)){
 	$update_users[] = '('.$ar['id'].','.($ar['reputation']-$rep_to_steal).','.$ar['seedbonus'].')';
 	$pms[] = '('.$INSTALLER09['bot_id'].','.$ar['id'].','.TIME_NOW.','.sprintf($pm['subject'],$thief_name).','.sprintf($pm['message'],$thief_id,$thief_name,$new_rep).')';
 	$robbed_users[] = sprintf('[url='.$INSTALLER09['baseurl'].'/userdetails.php?id=%d]%s[/url]',$ar['id'],$ar['username']);
-// end
+   //== cache updates ???
+   $mc1->begin_transaction('MyUser_'.$ar['id']);
+   $mc1->update_row(false, array('reputation' => $ar['reputation']-$rep_to_steal));   
+   $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
+   $mc1->begin_transaction('user'.$ar['id']);
+   $mc1->update_row(false, array('reputation' => $ar['reputation']-$rep_to_steal));   
+   $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
+   
+   $mc1->begin_transaction('userstats_'.$ar['id']);
+   $mc1->update_row(false, array('seedbonus' => $ar['seedbonus']));   
+   $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
+   $mc1->begin_transaction('user_stats_'.$ar['id']);
+   $mc1->update_row(false, array('seedbonus' => $ar['seedbonus']));   
+   $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
+   // end
 }
 if(count($update_users)) {
 	$new_bonus = $thief_bonus-$points;
@@ -842,22 +848,22 @@ if(count($update_users)) {
 	$pms[] = '(0,'.$thief_id.','.TIME_NOW.','.$pm['subject_thief'].','.sprintf($pm['message_thief'],$thief_name,join("\n",$robbed_users),$new_rep,$points).')';
 	sql_query('INSERT INTO users(id,reputation,seedbonus) VALUES '.join(',',$update_users).' ON DUPLICATE KEY UPDATE reputation=values(reputation),seedbonus=values(seedbonus) ') or sqlerr(__FILE__,__LINE__);
 	sql_query('INSERT INTO messages(sender,receiver,added,subject,msg) VALUES '.join(',',$pms)) or sqlerr(__FILE__,__LINE__);
-   /*
-   $mc1->begin_transaction('MyUser_'.$ar['id']);
+   //== cache updates ???
+   $mc1->begin_transaction('MyUser_'.$thief_id);
    $mc1->update_row(false, array('reputation' => $new_rep));   
    $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
-   $mc1->begin_transaction('user'.$ar['id']);
+   $mc1->begin_transaction('user'.$thief_id);
    $mc1->update_row(false, array('reputation' => $new_rep));   
    $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
-   */
-   //$mc1->delete_value('MyUser_'.$userid);
-   //$mc1->delete_value('user'.$userid);
-   //$mc1->delete_value('userstats_'.$userid);
-   //$mc1->delete_value('user_stats_'.$userid);
-   //$mc1->delete_value('inbox_new_'.$CURUSER['id']);
-   //$mc1->delete_value('inbox_new_sb_'.$CURUSER['id']);
-   //$mc1->delete_value('inbox_new_'.$pms);
-   //$mc1->delete_value('inbox_new_sb_'.$pms);
+   
+   $mc1->begin_transaction('userstats_'.$thief_id);
+   $mc1->update_row(false, array('seedbonus' => $new_bonus));   
+   $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
+   $mc1->begin_transaction('user_stats_'.$thief_id);
+   $mc1->update_row(false, array('seedbonus' => $new_bonus));   
+   $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
+   $mc1->delete_value('inbox_new_'.$pms);
+   $mc1->delete_value('inbox_new_sb_'.$pms);
 }
 header("Refresh: 0; url={$INSTALLER09['baseurl']}/mybonus.php?bounty_success=1");
 die;
@@ -918,7 +924,6 @@ write_bonus_log($CURUSER["id"], $donation, $type = "freeleech");
 $msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the freeleech contribution pot and has activated freeleech for 3 days ". $donation ."/".$points.'';
 $mc1->delete_value('shoutbox_');
 autoshout($msg);
-
 header("Refresh: 0; url={$INSTALLER09['baseurl']}//mybonus.php?freeleech_success=1&norefund=$norefund");
 die;
 } else {

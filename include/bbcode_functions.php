@@ -180,89 +180,6 @@ function _strlastpos ($haystack, $needle, $offset = 0)
 	return ($endPos >= 0) ? $endPos : false;
 }
 
-//=== check images for nasty crud by CoLdFuSiOn
-function xss_detect( $html )
-    {
-        /*
-        * check for any nastiness < S r I p T > <    / sc  r  IP t> etc
-        * If you wanted, you can quitely log any finds;)
-        */
-        if (preg_match( "#<(\s+?)?s(\s+?)?c(\s+?)?r(\s+?)?i(\s+?)?p(\s+?)?t#is", $html ))
-            return true;
-        if (preg_match( "#<(\s+?)?/(\s+?)?s(\s+?)?c(\s+?)?r(\s+?)?i(\s+?)?p(\s+?)?t#is", $html ))
-            return true;
-        /*
-        * look for the usual candidates
-        * feel free to add what you need
-        */
-        if( preg_match("/javascript|alert|about|onmouseover|onclick|onload|onsubmit|<body|<html|document\./i" , $html ))
-            return true;
-        /* still here? Must be sort of ok, maybe... */
-        return false;
-    }
-    
-    function check_image($url='')
-    {
-        static $image_count = 0; // do not alter this!
-        $allow_dynamic_img = 0; //You alter this value at your own peril!
-        $max_images = 2000; //Maximum number of images allowed, after which the raw string is returned.
-        $img_ext = 'jpg,gif,png'; //image extension. Careful what you put here!
-        if (!$url) return; //empty? send it back!
-        $url = trim($url);
-        $default = '[img]'.$url.'[/img]'; //this is what is returned after images are exceeded
-        $image_count++;
-        /*
-        * is this true and have we exceeded it?
-        */
-        if ($max_images)
-        {
-            if ($image_count > $max_images)
-            {
-                return $default;
-            }
-        }
-        /*
-        * Check for any dynamic stuff!
-        */
-        if ($allow_dynamic_img != 1)
-        {
-            if (preg_match( "/[?&;]/", $url))
-                return '<img src="pic/imagenotfound.jpg" alt="image not found" />';
-            if (preg_match( "/javascript(\:|\s)/i", $url ))
-                return '<img src="pic/imagenotfound.jpg" alt="image not found" />';
-        }
-        /*
-        * Check the extension
-        */
-        if ($img_ext)
-        {
-            $extension = preg_replace( "#^.*\.(\S+)$#", "\\1", $url );    
-            $extension = strtolower($extension);
-            
-            if ( (! $extension) OR ( preg_match( "#/#", $extension ) ) )
-                return '<img src="pic/imagenotfound.jpg" alt="image not found" />';
-            $img_ext = strtolower($img_ext);
-            
-            if ( ! preg_match( "/".preg_quote($extension, '/')."(,|$)/", $img_ext ))
-                return '<img src="pic/imagenotfound.jpg" alt="image not found" />';
-            //$url = xss_detect($url);
-            if (xss_detect($url))
-                return '<img src="pic/imagenotfound.jpg" alt="image not found" />';
-        }
-        /*
-        * Take a stab at getting a good image url
-        */
-        if (!preg_match( "/^(http|https|ftp):\/\//i", $url )) 
-            return '<img src="pic/imagenotfound.jpg" alt="image not found" />';
-        /*
-        * done all we can at this point!
-        */
-        $url = str_replace(' ', '%20', $url );
-        
-        return '<img src="'.$url.'" alt="'.$url.'" title="'.$url.'" />';
-}
-
-
 //=== new test for BBcode errors from http://codesnippets.joyent.com/posts/show/959 by berto
 function check_BBcode($html) {
 	preg_match_all('#<(?!img|br|hr\b)\b([a-z]+)(?: .*)?(?<![/|/ ])>#iU', $html, $result);
@@ -341,8 +258,7 @@ function check_BBcode($html) {
         return preg_replace_callback("/(\A|[^=\]'\"a-zA-Z0-9])((http|ftp|https|ftps|irc):\/\/[^<>\s]+)/i", "islocal", $s);
         }
 
-
-function format_comment($text, $strip_html = true, $urls = true)
+function format_comment($text, $strip_html = true, $urls = true, $images=true)
 {
 	global $smilies, $staff_smilies, $customsmilies, $INSTALLER09, $CURUSER;
 
@@ -370,7 +286,7 @@ function format_comment($text, $strip_html = true, $urls = true)
 		$s = str_replace( "$"	 , "&#36;", $s );   
   }
   // BBCode to find...
-	$bb_code_in = array( 	 '/\[b\]\s*((\s|.)+?)\s*\[\/b\]/i',	
+	$bb_code_in = array('/\[b\]\s*((\s|.)+?)\s*\[\/b\]/i',	
 					 '/\[i\]\s*((\s|.)+?)\s*\[\/i\]/i',
 					 '/\[u\]\s*((\s|.)+?)\s*\[\/u\]/i',
 					 '/\[email\](.*?)\[\/email\]/i',
@@ -427,7 +343,7 @@ function format_comment($text, $strip_html = true, $urls = true)
 	$s = preg_replace($bb_code_in, $bb_code_out, $s);
    if ($urls)
    $s = format_urls($s);
-   if (stripos($s, '[url') !== false) {
+   if (stripos($s, '[url') !== false && $urls) {
    $s = preg_replace_callback("/\[url=([^()<>\s]+?)\](.+?)\[\/url\]/is", "islocal", $s);
    // [url]http://www.example.com[/url]
    $s = preg_replace_callback("/\[url\]([^()<>\s]+?)\[\/url\]/is", "islocal", $s);
@@ -444,10 +360,9 @@ function format_comment($text, $strip_html = true, $urls = true)
 	$s = preg_replace("/\[nfo\]((\s|.)+?)\[\/nfo\]/i", "<tt><span style=\"white-space: nowrap;\"><font face='MS Linedraw' size='2' style='font-size: 10pt; line-height:" ."10pt'>\\1</font></span></tt>", $s);
    //==Media tag
    if (stripos($s, '[media=') !== false) {
-   $s = preg_replace( "#\[media=(youtube|liveleak|GameTrailers|imdb)\](.+?)\[/media\]#ies", "_MediaTag('\\2','\\1')" , $s );
-   $s = preg_replace( "#\[media=(youtube|liveleak|GameTrailers|vimeo)\](.+?)\[/media\]#ies", "_MediaTag('\\2','\\1')" , $s );
+   $s = preg_replace( "#\[media=(youtube|liveleak|GameTrailers|vimeo|imdb)\](.+?)\[/media\]#ies", "_MediaTag('\\2','\\1')" , $s );
    }
-   if (stripos($s, '[img') !== false) {      
+   if (stripos($s, '[img') !== false && $images) {      
    // [img=http://www/image.gif]
    $s = preg_replace("/\[img\]((http|https):\/\/[^\s'\"<>]+(\.(jpg|gif|png|bmp)))\[\/img\]/i", "<a href=\"\\1\" rel=\"lightbox\"><img src=\"\\1\" border=\"0\" alt=\"\" style=\"max-width: 150px;\" /></a>", $s);
    // [img=http://www/image.gif]
@@ -499,7 +414,7 @@ function format_comment_no_bbcode($text, $strip_html = true)
 		$s = htmlentities($s, ENT_QUOTES, 'UTF-8');
   	// BBCode to find...
   	//=== basically will change this into a sort of strip tags but of bbcode shor of the code tag
-	 $bb_code_in = array( 	 '/\[b\]\s*((\s|.)+?)\s*\[\/b\]/i',	
+	 $bb_code_in = array('/\[b\]\s*((\s|.)+?)\s*\[\/b\]/i',	
 					 '/\[i\]\s*((\s|.)+?)\s*\[\/i\]/i',
 					 '/\[u\]\s*((\s|.)+?)\s*\[\/u\]/i',
 					 '#\[img\](.+?)\[/img\]#ie',
@@ -530,10 +445,10 @@ function format_comment_no_bbcode($text, $strip_html = true)
 					 '/\[hr\]\s?(.*?)\n/i'
 	);
 	// And replace them by...
-	$bb_code_out = array(	 '\1',
+	$bb_code_out = array('\1',
 					 '\1',
 					 '\1',
-					'\1',
+					 '\1',
 					 '\1',
 					 '\1',
 					 '\1',
@@ -558,7 +473,7 @@ function format_comment_no_bbcode($text, $strip_html = true)
 					 '\1',
 					 '\1',
 					 '\1',
-					 '');
+					 '\1');
 	$s = preg_replace($bb_code_in, $bb_code_out, $s);
 	// Linebreaks
 	$s = nl2br($s);
@@ -644,7 +559,7 @@ $bbcodebody =<<<HTML
 HTML;
 if($CURUSER['class'] >= UC_MODERATOR)
 $bbcodebody .=<<<HTML
-	<img class="bb_icon" src="{$INSTALLER09['pic_base_url']}bbcode/php.png" onclick="tag('php')" title="Add php code" alt="Php" /> 
+	<img class="bb_icon" src="{$INSTALLER09['pic_base_url']}bbcode/php.png" onclick="tag('php')" title="Add code" alt="Php" /> 
 	<img class="bb_icon" src="{$INSTALLER09['pic_base_url']}bbcode/modcom.png" onclick="tag('mcom')" title="Mod comment" alt="Mod comment" />
 HTML;
 $bbcodebody .=<<<HTML
