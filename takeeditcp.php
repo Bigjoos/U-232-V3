@@ -425,7 +425,7 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
     $action = "personal";
     } 
     //== Pm stuffs
-    elseif ($action == "pm") {
+    elseif ($action == "default") {
     $acceptpms_choices = array('yes' => 1, 'friends' => 2, 'no' => 3);
     $acceptpms = (isset($_POST['acceptpms']) ? $_POST['acceptpms'] : 'all');
     if (isset($acceptpms_choices[$acceptpms]))
@@ -455,7 +455,7 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
     $curuser_cache['commentpm'] = $commentpm;
     $user_cache['commentpm'] = $commentpm;
     }
-    $action = "pm";
+    $action = "default";
     }
     //== End == then update the sets :)
     if ($curuser_cache) {
