@@ -256,6 +256,16 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
     array($CURUSER['username'], $INSTALLER09['site_name'], $email, $_SERVER['REMOTE_ADDR'], "{$INSTALLER09['baseurl']}/confirmemail.php?uid={$CURUSER['id']}&key=$hash&email=$obemail"),
     $lang['takeeditcp_email_body']);
     mail($email, "$thisdomain {$lang['takeeditcp_confirm']}", $body, "From: {$INSTALLER09['site_email']}");
+    $emailquery = sql_query("SELECT id, username, email FROM users WHERE id={$CURUSER['id']}") or sqlerr(__FILE__, __LINE__);
+    $spm = mysqli_fetch_assoc($emailquery);
+    $dt = TIME_NOW;
+    $subject = sqlesc("Email Alert");
+    $msg = sqlesc("User [url={$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$spm['id']."][b]".htmlspecialchars($spm['username'])."[/b][/url] changed email address : Old email was ".htmlspecialchars($spm['email'])." new email is $email, please check this was for a legitimate reason");
+    $pmstaff = sql_query('SELECT id FROM users WHERE class >= '.UC_STAFF) or sqlerr(__FILE__, __LINE__);
+    while ($arr = mysqli_fetch_assoc($pmstaff))
+    sql_query("INSERT INTO messages(sender, receiver, added, msg, subject) VALUES(0, ".sqlesc($arr['id']).", $dt, $msg, $subject)") or sqlerr(__FILE__, __LINE__);
+    $mc1->delete_value('inbox_new_'.$arr['id']);
+    $mc1->delete_value('inbox_new_sb_'.$arr['id']);
     $urladd .= "&mailsent=1";
     }
     $action = "security";
@@ -404,7 +414,7 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
     $user_cache['website'] = $website;
     }
 
-    if ($CURUSER['birthday'] == "0000-00-00") {
+    if ($CURUSER['birthday'] == '0') {
     $year = isset($_POST["year"]) ? 0 + $_POST["year"] : 0;
     $month = isset($_POST["month"]) ? 0 + $_POST["month"] : 0;
     $day = isset($_POST["day"]) ? 0 + $_POST["day"] : 0;
