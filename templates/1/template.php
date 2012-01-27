@@ -105,19 +105,19 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
         <!-- U-232 Source - Print Navigation -->
         <div id='base_menu'><div id='mover'>
         <ul class='navigation'>
-        <li><a href='index.php'><span class='nav'>HOME</span></a></li>
-        <li><a href='browse.php'><span class='nav'>TORRENTS</span></a></li>
-        <li><a href='requests.php'><span class='nav'>REQUEST</span></a></li>
-        <li><a href='upload.php'><span class='nav'>UPLOAD</span></a></li>
-        <li><a href='casino.php'><span class='nav'>CASINO</span></a></li>
-        <li><a href='blackjack.php'><span class='nav'>CARDS</span></a></li>
-        <li><a href='forums.php'><span class='nav'>FORUMS</span></a></li>
-        <li><a href='chat.php'><span class='nav'>IRC</span></a></li>
-        <li><a href='topten.php'><span class='nav'>STATISTIC</span></a></li>
-        <li><a href='faq.php'><span class='nav'>FAQ</span></a></li>
-        <li><a href='staff.php'><span class='nav'>STAFF</span></a></li>
-        <li><a href='announcement.php'><span class='nav'>ANNOUNCEMENTS</span></a></li>
-	     <li><a href='http://forum.u-232.com'><span class='nav'>SMF</span></a></li>
+        <li><a href='./index.php'><span class='nav'>HOME</span></a></li>
+        <li><a href='./browse.php'><span class='nav'>TORRENTS</span></a></li>
+        <li><a href='./requests.php'><span class='nav'>REQUEST</span></a></li>
+        <li><a href='./upload.php'><span class='nav'>UPLOAD</span></a></li>
+        <li><a href='./casino.php'><span class='nav'>CASINO</span></a></li>
+        <li><a href='./blackjack.php'><span class='nav'>CARDS</span></a></li>
+        <li><a href='./forums.php'><span class='nav'>FORUMS</span></a></li>
+        <li><a href='./chat.php'><span class='nav'>IRC</span></a></li>
+        <li><a href='./topten.php'><span class='nav'>STATISTIC</span></a></li>
+        <li><a href='./faq.php'><span class='nav'>FAQ</span></a></li>
+        <li><a href='./staff.php'><span class='nav'>STAFF</span></a></li>
+        <li><a href='./announcement.php'><span class='nav'>ANNOUNCEMENTS</span></a></li>
+	     <li><a href='./offers.php'><span class='nav'>OFFERS</span></a></li>
         </ul>
         </div></div>
         <!-- U-232 Source - Print Global Messages -->

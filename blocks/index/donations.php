@@ -22,7 +22,7 @@
                 </tr>
                 </table>
                 </div>
-                <br /><br />";
+                <br />";
 //==end
 // End Class
 
