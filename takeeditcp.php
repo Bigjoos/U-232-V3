@@ -342,6 +342,7 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
      $status_archive[] = array('status'=>$CURUSER['last_status'],'date'=>$CURUSER['last_update']);
      sql_query('INSERT INTO ustatus(userid,last_status,last_update,archive) VALUES('.$CURUSER['id'].','.sqlesc($status).','.TIME_NOW.','.sqlesc(serialize($status_archive)).') ON DUPLICATE KEY UPDATE last_status=values(last_status),last_update=values(last_update),archive=values(archive)') or sqlerr(__FILE__,__LINE__);
      $mc1->delete_value('userstatus_'.$CURUSER['id']);
+     $mc1->delete_value('user_status_'.$CURUSER['id']);
      }
     //end status update;
     if (isset($_POST['stylesheet']) && (($stylesheet = (int)$_POST['stylesheet']) != $CURUSER['stylesheet']) && is_valid_id($stylesheet))
