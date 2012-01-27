@@ -16,7 +16,7 @@ function permissioncheck() {
  global $root;
  if(file_exists('step0.lock'))
  header('Location: index.php?step=1');
- $dirs = array($root.'avatars/'=>0,$root.'bitbucket/'=>0,$root.'dir_list/'=>0,$root.'imdb/'=>0,$root.'imdb/cache/'=>0,$root.'imdb/images/'=>0,$root.'cache/'=>0,$root.'torrents/'=>0,$root.'uploads/'=>0,$root.'include/backup/'=>0,$root.'bitbucket/'=>0,$root.'logs/'=>0,$root.'install/'=>0,$root.'install/extra/'=>0,$root.'include/'=>0);
+ $dirs = array($root.'avatars/'=>0,$root.'bitbucket/'=>0,$root.'dir_list/'=>0,$root.'imdb/'=>0,$root.'cache/'=>0,$root.'torrents/'=>0,$root.'uploads/'=>0,$root.'include/backup/'=>0,$root.'bitbucket/'=>0,$root.'logs/'=>0,$root.'install/'=>0,$root.'install/extra/'=>0,$root.'include/'=>0);
  checkdir($dirs);
 
  $continue = true;
