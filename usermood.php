@@ -7,7 +7,7 @@
  *   Project Leaders: Mindless, putyn.
  **/
 // usermood.php for PTF by pdq 2011 
-require_once(__DIR__.DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
+require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 dbconn(false);	
 $HTMLOUT = '';
 $lang = array_merge( load_language('global') );

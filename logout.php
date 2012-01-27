@@ -8,6 +8,12 @@
  **/
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 dbconn();
+$hash_please = (isset($_GET['hash_please']) && htmlspecialchars($_GET['hash_please']));
+$salty = md5("Th15T3xtis5add3dto66uddy6he@water...".$CURUSER['ip']."");
+if (empty($hash_please))
+die("No Hash your up to no good MOFO");
+if ($hash_please != $salty)
+die("Unsecure Logout - Hash mis-match please contact site admin");
 logoutcookie();
 Header("Location: {$INSTALLER09['baseurl']}/");
 ?>

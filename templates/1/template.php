@@ -18,14 +18,14 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
     
     if ($CURUSER)
     {
+    //$INSTALLER09['language'] = isset($CURUSER['language']) ? "{$CURUSER['language']}" : $INSTALLER09['language'];
     $INSTALLER09['stylesheet'] = isset($CURUSER['stylesheet']) ? "{$CURUSER['stylesheet']}.css" : $INSTALLER09['stylesheet'];
     $INSTALLER09['categorie_icon'] = isset($CURUSER['categorie_icon']) ? "{$CURUSER['categorie_icon']}" : $INSTALLER09['categorie_icon'];
     }
     /** ZZZZZZZZZZZZZZZZZZZZZZZZZZip it!
     if (!isset($_NO_COMPRESS))
     if (!ob_start('ob_gzhandler'))
-    ob_start();
-    */
+    ob_start();*/
     //== Include js files needed only for the page being used by pdq
     $js_incl = '';
     $js_incl .= '<!-- javascript goes here or in footer -->';
@@ -116,7 +116,7 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
         <li><a href='topten.php'><span class='nav'>STATISTIC</span></a></li>
         <li><a href='faq.php'><span class='nav'>FAQ</span></a></li>
         <li><a href='staff.php'><span class='nav'>STAFF</span></a></li>
-	     <li><a href='offers.php'><span class='nav'>OFFERS</span></a></li>
+        <li><a href='offers.php'><span class='nav'>OFFERS</span></a></li>
         <li><a href='announcement.php'><span class='nav'>ANNOUNCEMENTS</span></a></li>
         </ul>
         </div></div>
@@ -166,7 +166,6 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
         }
         $htmlout .="</div>     
         <table class='mainouter' width='100%' border='0' cellspacing='0' cellpadding='10'>
-
         <tr><td align='center' class='outer' style='padding-bottom: 10px'>";
         return $htmlout;
         } // stdhead
@@ -272,7 +271,7 @@ global $CURUSER, $INSTALLER09, $start, $query_stat, $mc1, $querytime;
        }
 
     $htmlfoot .="</div>
-    </div> <!-- Ends Footer -->
+    </div><!-- Ends Footer -->
     </body></html>\n";
     return $htmlfoot;
     } 
@@ -311,12 +310,16 @@ function hey()
             default: return "{$lang['gl_stdhey7']}";
         }
     }
+
+
+
 function StatusBar() {
-	global $CURUSER, $INSTALLER09, $lang, $rep_is_on, $mc1, $msgalert;
+	global $CURUSER, $INSTALLER09, $lang, $mc1, $msgalert;
 	if (!$CURUSER)
 	return "";
 	$upped = mksize($CURUSER['uploaded']);
 	$downed = mksize($CURUSER['downloaded']);
+   $salty = md5("Th15T3xtis5add3dto66uddy6he@water...".$CURUSER['ip']."");
    //==Memcache unread pms
 	$PMCount=0;
 	if(($unread1 = $mc1->get_value('inbox_new_sb_'.$CURUSER['id'])) === false) {
@@ -330,7 +333,7 @@ function StatusBar() {
   if(($MyPeersCache = $mc1->get_value('MyPeers_'.$CURUSER['id'])) === false) {
     $seed['yes'] = $seed['no'] = 0;
     $seed['conn'] = 3;
-      $r = sql_query("select count(id) as count, seeder, connectable FROM peers WHERE userid=".$CURUSER['id']." group by seeder") ; 
+      $r = sql_query("SELECT COUNT(id) AS count, seeder, connectable FROM peers WHERE userid=".$CURUSER['id']." GROUP BY seeder") ; 
        while($a = mysqli_fetch_assoc($r)) {
         $key = $a['seeder'] == 'yes' ? 'yes' : 'no'; 
         $seed[$key] = number_format(0+$a['count']);    
@@ -380,12 +383,12 @@ function StatusBar() {
          <div class='slide_head'>:: Personal Stats</div>
          <div class='slide_a'>User Class</div><div class='slide_b'>{$usrclass}</div>
          <div class='slide_c'>Reputation</div><div class='slide_d'>$member_reputation</div>
-         <div class='slide_a'>Invites</div><div class='slide_b'><a href='./invite.php'>{$CURUSER['invites']}</a></div>
-         <div class='slide_c'>Bonus Points</div><div class='slide_d'><a href='./mybonus.php'>{$CURUSER['seedbonus']}</a></div>
+         <div class='slide_a'>Invites</div><div class='slide_b'><a href='./invite.php'>".htmlspecialchars($CURUSER['invites'])."</a></div>
+         <div class='slide_c'>Bonus Points</div><div class='slide_d'><a href='./mybonus.php'>".htmlspecialchars($CURUSER['seedbonus'])."</a></div>
          <div class='slide_head'>:: Torrent Stats</div>
          <div class='slide_a'>Share Ratio</div><div class='slide_b'>".member_ratio($CURUSER['uploaded'], $CURUSER['downloaded'])."</div>
-         <div class='slide_c'>Uploaded</div><div class='slide_d'>$upped</div>
-         <div class='slide_a'>Downloaded</div><div class='slide_b'>$downed</div>
+         <div class='slide_c'>Uploaded</div><div class='slide_d'>".htmlspecialchars($upped)."</div>
+         <div class='slide_a'>Downloaded</div><div class='slide_b'>".htmlspecialchars($downed)."</div>
          <div class='slide_c'>Uploading Files</div><div class='slide_d'>{$seed['yes']}</div>
          <div class='slide_a'>Downloading Files</div><div class='slide_b'>{$seed['no']}</div>
          <div class='slide_c'>Connectable</div><div class='slide_d'>{$connectable}</div>
@@ -411,7 +414,7 @@ function StatusBar() {
          <li><a href='pm_system.php'><img src='templates/1/images/mail_box.png' alt='messages' title='Your Private Messages' /></a></li>
          <li><a href='usercp.php?action=default'><img src='templates/1/images/Profile.png' alt='Settings' title='Personal Settings' /></a></li>
          ".(isset($CURUSER) && $CURUSER['class'] >= UC_STAFF ? "<li><a href='staffpanel.php'><img src='templates/1/images/setting_tools.png' alt='Staff' title='Staffpanel' /></a></li>":"")."
-        <li><a href='logout.php'><img src='templates/1/images/logout.png' alt='Logout' title='SignOut' /></a></li>
+        <li><a href='logout.php?hash_please={$salty}'><img src='templates/1/images/logout.png' alt='Logout' title='SignOut' /></a></li>
         </ul>
        </div>
       </div>";
