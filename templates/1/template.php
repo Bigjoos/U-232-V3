@@ -116,8 +116,8 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
         <li><a href='topten.php'><span class='nav'>STATISTIC</span></a></li>
         <li><a href='faq.php'><span class='nav'>FAQ</span></a></li>
         <li><a href='staff.php'><span class='nav'>STAFF</span></a></li>
-        <li><a href='offers.php'><span class='nav'>OFFERS</span></a></li>
         <li><a href='announcement.php'><span class='nav'>ANNOUNCEMENTS</span></a></li>
+	     <li><a href='http://forum.u-232.com'><span class='nav'>SMF</span></a></li>
         </ul>
         </div></div>
         <!-- U-232 Source - Print Global Messages -->
@@ -362,7 +362,7 @@ function StatusBar() {
 	//////////// REP SYSTEM /////////////
     $member_reputation = get_reputation($CURUSER);
     ////////////// REP SYSTEM END //////////
-    $usrclass="";
+    $usrclass = $clock = '';
     if ($CURUSER['override_class'] != 255) $usrclass = "&nbsp;<b>(".get_user_class_name($CURUSER['class']).")</b>&nbsp;";
     else
     if ($CURUSER['class'] >= UC_STAFF)
@@ -378,7 +378,7 @@ function StatusBar() {
        //]]>
        </script>
       <div id='base_header_fly'>
-       <div id='base_usermenu'>".hey().",&nbsp;".format_username($CURUSER)."<span class='base_usermenu_arrow'><a href='#' onclick='showSlidingDiv(); return false;'><img src='templates/1/images/usermenu_arrow.png' alt='' /></a></span></div>
+       <div id='base_usermenu'>".hey().",&nbsp;".format_username($CURUSER)."&nbsp;&nbsp;Time is:&nbsp;<span id='clock'>{$clock}</span>&nbsp;<span class='base_usermenu_arrow'><a href='#' onclick='showSlidingDiv(); return false;'><img src='templates/1/images/usermenu_arrow.png' alt='' /></a></span></div>
         <div id='slidingDiv'>
          <div class='slide_head'>:: Personal Stats</div>
          <div class='slide_a'>User Class</div><div class='slide_b'>{$usrclass}</div>
@@ -408,6 +408,7 @@ function StatusBar() {
          ".(isset($CURUSER) && $CURUSER['got_blocks'] == 'yes' ? "<div class='slide_head'>:: Site Config</div><div class='slide_a'>My Blocks</div><div class='slide_b'><a href='./user_blocks.php'>Click here</a></div>":"")."
          ".(isset($CURUSER) && $CURUSER['got_moods'] == 'yes' ? "<div class='slide_c'>My Unlocks</div><div class='slide_d'><a href='./user_unlocks.php'>Click here</a></div>":"")."
          <div class='slide_a'>Need seeds</div><div class='slide_b'><a href='./needseed.php?needed=seeders'>Click here</a></div>
+         <div class='slide_c'>Update status</div><div class='slide_d'><a href='javascript:void(0)' onclick='status_showbox()'>Update status</a></div>
          </div>
          <div id='base_icons'>
          <ul class='um_menu'>
@@ -418,6 +419,27 @@ function StatusBar() {
         </ul>
        </div>
       </div>";
+      $StatusBar .='<script type="text/javascript">
+      function refrClock(){
+      var d=new Date();
+      var s=d.getSeconds();
+      var m=d.getMinutes();
+      var h=d.getHours();
+      var day=d.getDay();
+      var date=d.getDate();
+      var month=d.getMonth();
+      var year=d.getFullYear();
+      var am_pm;
+      if (s<10) {s="0" + s}
+      if (m<10) {m="0" + m}
+      if (h>12) {h-=12;am_pm = "Pm"}
+      else {am_pm="Am"}
+      if (h<10) {h="0" + h}
+      document.getElementById("clock").innerHTML=h + ":" + m + ":" + s + " " + am_pm;
+      setTimeout("refrClock()",1000);
+      }
+      refrClock();
+      </script>';
     return $StatusBar;
     }
 ?>
