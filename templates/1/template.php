@@ -108,7 +108,7 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
         <li><a href='index.php'><span class='nav'>HOME</span></a></li>
         <li><a href='browse.php'><span class='nav'>TORRENTS</span></a></li>
         <li><a href='requests.php'><span class='nav'>REQUEST</span></a></li>
-        <li><a href='offers'><span class='nav'>OFFERS</span></a></li>
+        <li><a href='offers.php'><span class='nav'>OFFERS</span></a></li>
         <li><a href='upload.php'><span class='nav'>UPLOAD</span></a></li>
         <li><a href='casino.php'><span class='nav'>CASINO</span></a></li>
         <li><a href='blackjack.php'><span class='nav'>CARDS</span></a></li>
@@ -116,6 +116,7 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
         <li><a href='chat.php'><span class='nav'>IRC</span></a></li>
         <li><a href='topten.php'><span class='nav'>STATISTIC</span></a></li>
         <li><a href='faq.php'><span class='nav'>FAQ</span></a></li>
+        <li><a href='rules.php'><span class='nav'>RULES</span></a></li>
         <li><a href='staff.php'><span class='nav'>STAFF</span></a></li>
         <li><a href='announcement.php'><span class='nav'>ANNOUNCEMENTS</span></a></li>
         </ul>
@@ -405,10 +406,11 @@ function StatusBar() {
          ".(isset($CURUSER) && $CURUSER['class'] >= UC_STAFF ? "<div class='slide_c'>Bug Tracker</div><div class='slide_d'><a href='./bugs.php?action=bugs'>Respond</a></div>":"")."
          ".(isset($CURUSER) && $CURUSER['class'] <= UC_VIP ? "<div class='slide_a'>Uploader App</div><div class='slide_b'><a href='./uploadapp.php'>Send Application</a></div>":"")."
          <div class='slide_a'>Wiki</div><div class='slide_b'><a href='./wiki.php'>Click here</a></div>
+         <div class='slide_c'>Rss Feeds</div><div class='slide_d'><a href='./getrss.php'>Click here</a></div>
          ".(isset($CURUSER) && $CURUSER['got_blocks'] == 'yes' ? "<div class='slide_head'>:: Site Config</div><div class='slide_a'>My Blocks</div><div class='slide_b'><a href='./user_blocks.php'>Click here</a></div>":"")."
          ".(isset($CURUSER) && $CURUSER['got_moods'] == 'yes' ? "<div class='slide_c'>My Unlocks</div><div class='slide_d'><a href='./user_unlocks.php'>Click here</a></div>":"")."
          <div class='slide_a'>Need seeds</div><div class='slide_b'><a href='./needseed.php?needed=seeders'>Click here</a></div>
-         <div class='slide_c'>Update status</div><div class='slide_d'><a href='javascript:void(0)' onclick='status_showbox()'>Update status</a></div>
+         <div class='slide_c'>Update status</div><div class='slide_d'><a href='javascript:void(0)' onclick='status_showbox()'>Click here</a></div>
          </div>
          <div id='base_icons'>
          <ul class='um_menu'>
