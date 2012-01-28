@@ -339,7 +339,7 @@ $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box
    }
     
     if ($CURUSER['id'] == $user['id'])
-    $HTMLOUT.="<h1><a href='{$INSTALLER09['baseurl']}/usercp.php'>Edit My Profile</a></h1>
+    $HTMLOUT.="<h1><a href='{$INSTALLER09['baseurl']}/usercp.php?action=default'>Edit My Profile</a></h1>
  	  <h1><a href='{$INSTALLER09['baseurl']}/view_announce_history.php'>View My Announcements</a></h1>";
     
     if ($CURUSER['class'] >= UC_STAFF)
