@@ -957,24 +957,24 @@ return (strlen($txt)>$len ? substr($txt,0,$len-1) .'...':$txt);
 }
 
     function load_language($file='') {
-    global $INSTALLER09;
+    global $INSTALLER09, $CURUSER;
     if( !isset($GLOBALS['CURUSER']) OR empty($GLOBALS['CURUSER']['language']) )
     {
-    if( !file_exists(LANG_DIR."lang_{$file}.php") )
+    if( !file_exists(LANG_DIR."{$INSTALLER09['language']}/lang_{$file}.php") )
     {
-    stderr('SYSTEM ERROR', 'Can\'t find language files');
-    }   
-    require_once(LANG_DIR."lang_{$file}.php");
+    stderr('System Error', 'Can\'t find language files');
+    }
+    require_once(LANG_DIR."{$INSTALLER09['language']}/lang_{$file}.php");
     return $lang;
     }
-    if( !file_exists(LANG_DIR."lang_{$file}.php") )
+    if( !file_exists(LANG_DIR."{$CURUSER['language']}/lang_{$file}.php") )
     {
-    stderr('SYSTEM ERROR', 'Can\'t find language files');
+    stderr('System Error', 'Can\'t find language files');
     }
     else
     {
-    require_once LANG_DIR."lang_{$file}.php"; 
-    }   
+    require_once LANG_DIR."{$CURUSER['language']}/lang_{$file}.php";
+    }
     return $lang;
 }
 

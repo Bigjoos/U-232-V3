@@ -261,7 +261,7 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
     $dt = TIME_NOW;
     $subject = sqlesc("Email Alert");
     $msg = sqlesc("User [url={$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$spm['id']."][b]".htmlspecialchars($spm['username'])."[/b][/url] changed email address : Old email was ".htmlspecialchars($spm['email'])." new email is $email, please check this was for a legitimate reason");
-    $pmstaff = sql_query('SELECT id FROM users WHERE class >= '.UC_STAFF) or sqlerr(__FILE__, __LINE__);
+    $pmstaff = sql_query('SELECT id FROM users WHERE class = '.UC_ADMINISTRATOR) or sqlerr(__FILE__, __LINE__);
     while ($arr = mysqli_fetch_assoc($pmstaff))
     sql_query("INSERT INTO messages(sender, receiver, added, msg, subject) VALUES(0, ".sqlesc($arr['id']).", $dt, $msg, $subject)") or sqlerr(__FILE__, __LINE__);
     $mc1->delete_value('inbox_new_'.$arr['id']);
@@ -330,11 +330,11 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
     $curuser_cache['title'] = $title;
     $user_cache['title'] = $title;
     }
-    /*
     if (isset($_POST['language']) && (($language = (int)$_POST['language']) != $CURUSER['language'])){
     $updateset[] = 'language = ' . sqlesc($language);
+    $curuser_cache['language'] = $language;
+    $user_cache['language'] = $language;
     }
-    */
     //status update
     if(isset($_POST['status']) && ($status = $_POST['status']) && !empty($status)) {
      $status_archive = ((isset($CURUSER['archive']) && is_array(unserialize($CURUSER['archive']))) ? unserialize($CURUSER['archive']) : array());

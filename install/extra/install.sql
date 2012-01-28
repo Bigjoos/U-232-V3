@@ -1804,6 +1804,7 @@ CREATE TABLE IF NOT EXISTS `shoutbox` (
   `date` int(11) NOT NULL DEFAULT '0',
   `text` text NOT NULL,
   `text_parsed` text NOT NULL,
+  `staff_shout` enum('yes','no') CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'no',
   PRIMARY KEY (`id`),
   KEY `for` (`to_user`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
@@ -2262,6 +2263,7 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `thanks` int(10) NOT NULL DEFAULT '0',
   `description` varchar(120) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `youtube` varchar(42) NOT NULL DEFAULT '',
+  `tags` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `info_hash` (`info_hash`),
   KEY `owner` (`owner`),
@@ -2521,9 +2523,9 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 CREATE TABLE IF NOT EXISTS `user_blocks` (
   `userid` int(10) unsigned NOT NULL,
-  `index_page` int(10) unsigned NOT NULL DEFAULT '585727',
+  `index_page` int(10) unsigned NOT NULL DEFAULT '1634355',
   `global_stdhead` int(10) unsigned NOT NULL DEFAULT '511',
-  `userdetails_page` bigint(20) unsigned NOT NULL DEFAULT '536870911',
+  `userdetails_page` bigint(20) unsigned NOT NULL DEFAULT '4294967295',
   UNIQUE KEY `userid` (`userid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

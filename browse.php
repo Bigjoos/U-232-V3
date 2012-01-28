@@ -26,7 +26,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
     header("Location: {$INSTALLER09['baseurl']}/browse.php");
     }
 
-    $stdfoot = array(/** include js **/'js' => array('java_klappe','wz_tooltip','browse'));
+    $stdfoot = array(/** include js **/'js' => array('java_klappe','wz_tooltip','browse','ajax_details'));
     $stdhead = array(/** include css **/'css' => array('browse'));
     $lang = array_merge( load_language('global'), load_language('browse'), load_language('torrenttable_functions') );
     if (function_exists('parked'))
@@ -308,12 +308,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
     $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
     }
     
-  
-  
     $HTMLOUT .= "<br /><br />
-    <!--<div class='global_icon'><img src='images/global.design/cats.png' alt='' title='Categorys' class='global_image' width='25'/></div>
-    <div class='global_head'>Categorys</div><br />
-    <div class='global_text'><br />-->
     <form method='get' action='browse.php'>";
     $cattable = categories_table($cats, $wherecatina, "browse.php");
     $HTMLOUT .= ($cattable);
@@ -340,8 +335,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
     $HTMLOUT .= $searchin.'&nbsp;'.$deadcheck.'&nbsp;'.$only_free_box;
     $HTMLOUT .= "<input type='submit' value='{$lang['search_search_btn']}' class='btn' />";
     $HTMLOUT .="</p>
-    </td></tr></table></form><br />
-    <!--</div>-->";
+    </td></tr></table></form><br />";
     
     $HTMLOUT .="{$new_button}";
    

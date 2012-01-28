@@ -9,9 +9,9 @@
    $custombutton .="<span style='float:right;'><a href=\"javascript:PopCustomSmiles('shbox','shbox_text')\">{$lang['index_shoutbox_csmilies']}</a></span>";
    if ($CURUSER['class'] >= UC_STAFF){
    $commandbutton = "<span style='float:right;'><a href=\"javascript:popUp('shoutbox_commands.php')\">{$lang['index_shoutbox_commands']}</a></span>\n";}
-   $refreshbutton = "<span style='float:right;'><a href='shoutbox.php' target='sbox'>{$lang['index_shoutbox_refresh']}</a></span>\n";
+   $refreshbutton = "<span style='float:right;'><a href='shoutbox.php' target='shoutbox'>{$lang['index_shoutbox_refresh']}</a></span>\n";
    $smilebutton = "<span style='float:right;'><a href=\"javascript:PopMoreSmiles('shbox','shbox_text')\">{$lang['index_shoutbox_smilies']}</a></span>\n";
-   $HTMLOUT .= "<form action='shoutbox.php' method='get' target='sbox' name='shbox' onsubmit='mysubmit()'>
+   $HTMLOUT .= "<form action='shoutbox.php' method='get' target='shoutbox' name='shbox' onsubmit='mysubmit()'>
    <div class='headline'>
    ShoutBox - General Chit-chat
    <span class='shouthis'>";
@@ -21,7 +21,7 @@
    $HTMLOUT .= "</span>
    </div>
    <div class='headbody'>
-   <iframe src='{$INSTALLER09['baseurl']}/shoutbox.php' width='100%' height='200' frameborder='0' name='sbox' marginwidth='0' marginheight='0'></iframe>
+   <iframe src='{$INSTALLER09['baseurl']}/shoutbox.php' width='100%' height='200' frameborder='0' name='shoutbox' marginwidth='0' marginheight='0'></iframe>
    <br />
 	 <div align='center'>
    <b>{$lang['index_shoutbox_shout']}</b>

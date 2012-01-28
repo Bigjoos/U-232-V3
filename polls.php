@@ -18,7 +18,7 @@ function parse_poll()
                     'allow_result_view' => 1,
                     'allow_poll_tags' => 1); // move this elsewhere later!
  
-      //if (($poll_data = $mc1->get_value('poll_data_')) == false) {
+      if (($poll_data = $mc1->get_value('poll_data_'.$CURUSER['id'])) === false) {
       //$poll_data = array();
       //search for a poll with given ID
       $query = sql_query("SELECT * FROM polls
@@ -26,20 +26,18 @@ function parse_poll()
                             AND poll_voters.user_id = {$CURUSER['id']} 
                             ORDER BY polls.start_date DESC
                             LIMIT 1");
-    
-   
        //Did we find the poll?
-        if ( ! mysqli_num_rows($query) )
+        if (!mysqli_num_rows($query))
         {
         return "";
         }
         
-        while( $row = mysqli_fetch_assoc( $query ) )
+        while($row = mysqli_fetch_assoc($query))
         {
         $poll_data = $row;
         }
-        //$mc1->cache_value('poll_data_', $poll_data, $INSTALLER09['expires']['poll_data']);
-        //}
+        $mc1->cache_value('poll_data_'.$CURUSER['id'], $poll_data, $INSTALLER09['expires']['poll_data']);
+        }
         
         //return $poll_data;
         

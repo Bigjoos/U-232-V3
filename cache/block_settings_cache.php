@@ -4,6 +4,7 @@ $BLOCKS = array(
 	'ie_user_alert' => 1,
 	'news_on' => 1,
 	'shoutbox_on' => 1,
+	'staff_shoutbox_on' => 1,
 	'active_users_on' => 1,
 	'active_24h_users_on' => 1,
 	'active_irc_users_on' => 1,
@@ -61,6 +62,7 @@ $BLOCKS = array(
 	'userdetails_report_user_on' => 1,
 	'userdetails_user_status_on' => 1,
 	'userdetails_user_comments_on' => 1,
+	'userdetails_showfriends_on' => 1,
 
 );
 

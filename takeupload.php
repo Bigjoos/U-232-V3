@@ -14,6 +14,7 @@ dbconn();
 loggedinorreturn();
 ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']); 
 
+
     $lang = array_merge( load_language('global'), load_language('takeupload') );
     $newpage = new page_verify(); 
     $newpage->check('taud');
@@ -29,7 +30,7 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     $bot = array('ip' => '127.0.0.1',
 			     'port' => 35789,
 				 'pass' => 'bWFtYWFyZW1lcmU',
-				 'pidfile'=> 'C:/Windrop/pid.Bert', //path to the pid. file
+				 'pidfile'=> 'usr/share/eggdrop/pid.IoN', //path to the pid. file
 				 'sleep'=>5,
 				);
     if(empty($messages))
@@ -162,14 +163,24 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     $offer = (((isset($_POST['offer']) && is_valid_id($_POST['offer'])) ? intval($_POST['offer']) : 0));
 
     $subs = isset($_POST["subs"]) ? implode(",", $_POST['subs']) : "";	
- 
-    $youtube = '';
-    if(isset($_POST['youtube']) && preg_match($youtube_pattern,$_POST['youtube'],$temp_youtube))
-    $youtube = $temp_youtube[0];
-    
+    //if (empty($subs) && in_array($catid, $INSTALLER09['movie_cats'])) {
+    //stderr ("Error", "Select a subtitle!");
+    //die();
+    //}
 
     $release_group_array =  array('scene' =>1, 'p2p' =>1, 'none' =>1);
     $release_group = isset($_POST['release_group']) && isset($release_group_array[$_POST['release_group']]) ? $_POST['release_group'] : 'none'; 
+
+    $youtube = '';
+    //if(in_array(0+$_POST['type'],$INSTALLER09['movie_cats'])) {
+        if(isset($_POST['youtube']) && preg_match($youtube_pattern,$_POST['youtube'],$temp_youtube))
+          $youtube = $temp_youtube[0];
+        //else
+        //stderr($lang['takeupload_failed'],$lang['takeupload_no_youtube']);
+        //die();
+    //}
+
+    $tags = strip_tags(isset($_POST['tags']) ? trim($_POST['tags']) : '');
 
     if (!validfilename($fname))
       stderr($lang['takeupload_failed'], $lang['takeupload_invalid']);
@@ -272,7 +283,7 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     $dict['value']['announce']=bdec(benc_str($INSTALLER09['announce_urls'][0]));  // change announce url to local
     $dict['value']['info']['value']['private']=bdec('i1e');  // add private tracker flag
     $dict['value']['info']['value']['source']=bdec(benc_str( "{$INSTALLER09['baseurl']} {$INSTALLER09['site_name']}")); // add link for bitcomet users
-    $dict['value']['comment'] = bdec(benc_str("In using this torrent you are bound by the {$INSTALLER09['site_name']} Confidentiality Agreement By Law")); // change torrent comment
+    //$dict['value']['comment'] = bdec(benc_str("In using this torrent you are bound by the {$INSTALLER09['site_name']} Confidentiality Agreement By Law")); // change torrent comment
     unset($dict['value']['announce-list']); // remove multi-tracker capability
     unset($dict['value']['nodes']); // remove cached peers (Bitcomet & Azareus)
     $dict=bdec(benc($dict)); // double up on the becoding solves the occassional misgenerated infohash 
@@ -283,8 +294,8 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     // Replace punctuation characters with spaces
     $torrent = str_replace("_", " ", $torrent);
     $vip = (isset($_POST["vip"]) ? "1" : "0");
-    $ret = sql_query("INSERT INTO torrents (search_text, filename, owner, username, visible, vip, release_group, newgenre, poster, anonymous, allow_comments, info_hash, name, size, numfiles, type, offer, request, url, subs, descr, ori_descr, description, category, free, save_as, youtube, added, last_action, nfo, client_created_by) VALUES (" .
-        implode(",", array_map("sqlesc", array(searchfield("$shortfname $dname $torrent"), $fname, $CURUSER["id"], $CURUSER["username"], "no", $vip, $release_group, $genre, $poster, $anonymous, $allow_comments, $infohash, $torrent, $totallen, count($filelist), $type, $offer, $request, $url, $subs, $descr, $descr, $description, 0 + $_POST["type"], $free, $dname, $youtube))) .
+    $ret = sql_query("INSERT INTO torrents (search_text, filename, owner, username, visible, vip, release_group, newgenre, poster, anonymous, allow_comments, info_hash, name, size, numfiles, type, offer, request, url, subs, descr, ori_descr, description, category, free, save_as, youtube, tags, added, last_action, nfo, client_created_by) VALUES (" .
+        implode(",", array_map("sqlesc", array(searchfield("$shortfname $dname $torrent"), $fname, $CURUSER["id"], $CURUSER["username"], "no", $vip, $release_group, $genre, $poster, $anonymous, $allow_comments, $infohash, $torrent, $totallen, count($filelist), $type, $offer, $request, $url, $subs, $descr, $descr, $description, 0 + $_POST["type"], $free, $dname, $youtube, $tags))) .
         ", " . TIME_NOW . ", " . TIME_NOW . ", $nfo, $tmaker)");
     if (!$ret) {
       if (((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) == 1062)
@@ -386,7 +397,7 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
         "<title>{$INSTALLER09['site_name']}</title>\n<description>Installer09 is the best!</description>\n<link>{$INSTALLER09['baseurl']}/</link>\n";
       @fwrite($fd1, $s);
       @fwrite($fd2, $s);
-      $r = sql_query("SELECT id, name, descr, filename, category FROM torrents ORDER BY added DESC LIMIT 15") or sqlerr(__FILE__, __LINE__);
+      $r = sql_query("SELECT id,name,descr,filename,category FROM torrents ORDER BY added DESC LIMIT 15") or sqlerr(__FILE__, __LINE__);
       while ($a = mysqli_fetch_assoc($r))
       {
         $cat = $cats[$a["category"]];

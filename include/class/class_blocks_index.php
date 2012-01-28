@@ -28,5 +28,6 @@ class block_index {
 	const TORRENTFREAK		        = 0x20000; // 131072      //== exclude
 	const XMAS_GIFT		        = 0x40000; // 262144 //==exclude
 	const ACTIVE_POLL		        = 0x80000; // 524288
+   const STAFF_SHOUT		        = 0x100000; // 1048576
 	}
 ?>

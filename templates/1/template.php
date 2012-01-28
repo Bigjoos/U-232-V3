@@ -18,7 +18,7 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
     
     if ($CURUSER)
     {
-    //$INSTALLER09['language'] = isset($CURUSER['language']) ? "{$CURUSER['language']}" : $INSTALLER09['language'];
+    $INSTALLER09['language'] = isset($CURUSER['language']) ? "{$CURUSER['language']}" : $INSTALLER09['language'];
     $INSTALLER09['stylesheet'] = isset($CURUSER['stylesheet']) ? "{$CURUSER['stylesheet']}.css" : $INSTALLER09['stylesheet'];
     $INSTALLER09['categorie_icon'] = isset($CURUSER['categorie_icon']) ? "{$CURUSER['categorie_icon']}" : $INSTALLER09['categorie_icon'];
     }
@@ -105,19 +105,19 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
         <!-- U-232 Source - Print Navigation -->
         <div id='base_menu'><div id='mover'>
         <ul class='navigation'>
-        <li><a href='./index.php'><span class='nav'>HOME</span></a></li>
-        <li><a href='./browse.php'><span class='nav'>TORRENTS</span></a></li>
-        <li><a href='./requests.php'><span class='nav'>REQUEST</span></a></li>
-        <li><a href='./upload.php'><span class='nav'>UPLOAD</span></a></li>
-        <li><a href='./casino.php'><span class='nav'>CASINO</span></a></li>
-        <li><a href='./blackjack.php'><span class='nav'>CARDS</span></a></li>
-        <li><a href='./forums.php'><span class='nav'>FORUMS</span></a></li>
-        <li><a href='./chat.php'><span class='nav'>IRC</span></a></li>
-        <li><a href='./topten.php'><span class='nav'>STATISTIC</span></a></li>
-        <li><a href='./faq.php'><span class='nav'>FAQ</span></a></li>
-        <li><a href='./staff.php'><span class='nav'>STAFF</span></a></li>
-        <li><a href='./announcement.php'><span class='nav'>ANNOUNCEMENTS</span></a></li>
-	     <li><a href='./offers.php'><span class='nav'>OFFERS</span></a></li>
+        <li><a href='index.php'><span class='nav'>HOME</span></a></li>
+        <li><a href='browse.php'><span class='nav'>TORRENTS</span></a></li>
+        <li><a href='requests.php'><span class='nav'>REQUEST</span></a></li>
+        <li><a href='offers'><span class='nav'>OFFERS</span></a></li>
+        <li><a href='upload.php'><span class='nav'>UPLOAD</span></a></li>
+        <li><a href='casino.php'><span class='nav'>CASINO</span></a></li>
+        <li><a href='blackjack.php'><span class='nav'>CARDS</span></a></li>
+        <li><a href='forums.php'><span class='nav'>FORUMS</span></a></li>
+        <li><a href='chat.php'><span class='nav'>IRC</span></a></li>
+        <li><a href='topten.php'><span class='nav'>STATISTIC</span></a></li>
+        <li><a href='faq.php'><span class='nav'>FAQ</span></a></li>
+        <li><a href='staff.php'><span class='nav'>STAFF</span></a></li>
+        <li><a href='announcement.php'><span class='nav'>ANNOUNCEMENTS</span></a></li>
         </ul>
         </div></div>
         <!-- U-232 Source - Print Global Messages -->
@@ -378,7 +378,7 @@ function StatusBar() {
        //]]>
        </script>
       <div id='base_header_fly'>
-       <div id='base_usermenu'>".hey().",&nbsp;".format_username($CURUSER)."&nbsp;&nbsp;Time is:&nbsp;<span id='clock'>{$clock}</span>&nbsp;<span class='base_usermenu_arrow'><a href='#' onclick='showSlidingDiv(); return false;'><img src='templates/1/images/usermenu_arrow.png' alt='' /></a></span></div>
+       <div id='base_usermenu'>".hey()."&nbsp;".format_username($CURUSER)."&nbsp;<span id='clock'>{$clock}</span>&nbsp;<span class='base_usermenu_arrow'><a href='#' onclick='showSlidingDiv(); return false;'><img src='templates/1/images/usermenu_arrow.png' alt='' /></a></span></div>
         <div id='slidingDiv'>
          <div class='slide_head'>:: Personal Stats</div>
          <div class='slide_a'>User Class</div><div class='slide_b'>{$usrclass}</div>

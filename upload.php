@@ -13,7 +13,7 @@ require_once INCL_DIR.'bbcode_functions.php';
 require_once(INCL_DIR.'function_subcat.php');
 require_once CLASS_DIR.'page_verify.php';
 require_once(CACHE_DIR.'subs.php');
-dbconn(false);
+dbconn(true);
 
 loggedinorreturn();
 
@@ -80,7 +80,7 @@ loggedinorreturn();
     <div align='center'>
     <form name='upload' enctype='multipart/form-data' action='./takeupload.php' method='post'>
     <input type='hidden' name='MAX_FILE_SIZE' value='{$INSTALLER09['max_torrent_size']}' />
-    <p>{$lang['upload_announce_url']}<b><input type=\"text\" size=\"80\" readonly=\"readonly\" value=\"{$INSTALLER09['announce_urls'][0]}\" onclick=\"select()\" /></b></p>";
+    <p>{$lang['upload_announce_url']}<b><input type=\"text\" size=\"80\" readonly=\"readonly\" value=\"".$INSTALLER09['announce_urls'][0]."?passkey=".$CURUSER['passkey']."\" onclick=\"select()\" /></b></p>";
 
     $HTMLOUT .= "<table border='1' cellspacing='0' cellpadding='10'>
     <tr>
@@ -111,7 +111,11 @@ loggedinorreturn();
     <td valign='top' align='left'><input type='text' id='name' name='name' size='80' /><br />({$lang['upload_filename']})</td>
     </tr>
     <tr>
-    <td class='heading' valign='top' align='right'>{$lang['upload_description']}</td>
+    <td class='heading' valign='top' align='right'>{$lang['upload_tags']}</td> 
+    <td valign='top' align='left'><input type='text' name='tags' size='80' /><br />({$lang['upload_tag_info']})</td>
+    </tr>
+    <tr>
+    <td class='heading' valign='top' align='right'>{$lang['upload_small_description']}</td>
     <td valign='top' align='left'><input type='text' name='description' size='80' /><br />({$lang['upload_small_descr']})</td>
     </tr>
     <tr>
@@ -125,7 +129,10 @@ loggedinorreturn();
     </tr>";
 
     $s = "<select name='type'>\n<option value='0'>({$lang['upload_choose_one']})</option>\n";
-
+    //".BBcode($descr, false)."
+    //{$lang['upload_description']}
+    //". textbbcode("upload","descr")."
+    //
     $cats = genrelist2();
     foreach ($cats as $cat)
     {

@@ -104,7 +104,7 @@ loggedinorreturn();
     /*]]>*/
     </script>';
 
-    $possible_actions = array('avatar','signature','security','torrents','personal','default');
+    $possible_actions = array('avatar', 'signature', 'security', 'torrents','personal','default');
 
     $action = isset($_GET["action"]) ? htmlspecialchars(trim($_GET["action"])) : '';
 
@@ -310,14 +310,14 @@ loggedinorreturn();
     $HTMLOUT .="<tr><td class='colhead' colspan='2'  style='height:25px;' ><input type='hidden' name='action' value='personal' />Personal Options</td></tr>"; 
     if ($CURUSER['class'] >= UC_VIP)
     $HTMLOUT .=  tr($lang['usercp_title'], "<input size='50' value='" .htmlspecialchars($CURUSER["title"]) . "' name='title' /><br />", 1);
-    /*
+    
     //==Language
     $HTMLOUT .= tr($lang['usercp_language'],
     "<select name='language'>
     <option value='1'".($CURUSER['language'] == '1' ? " selected='selected'" : "").">En</option>
     <option value='2'".($CURUSER['language'] == '2'  ? " selected='selected'" : "").">Swe</option>
     </select>", $CURUSER['language']);
-    */
+    
     //==status mod
     $CURUSER['archive'] = unserialize($CURUSER['archive']);
     $HTMLOUT .="<tr><td class='rowhead'>Online status</td><td><fieldset><legend><strong>Status update</strong></legend>";
@@ -354,7 +354,7 @@ loggedinorreturn();
     $HTMLOUT .= tr($lang['usercp_tz'], $time_select ,1);
     $HTMLOUT .= tr($lang['usercp_checkdst'], "<input type='checkbox' name='checkdst' id='tz-checkdst' onclick='daylight_show()' value='1' $dst_correction />&nbsp;{$lang['usercp_auto_dst']}<br />
     <div id='tz-checkmanual' style='display: none;'><input type='checkbox' name='manualdst' value='1' $dst_check />&nbsp;{$lang['usercp_is_dst']}</div>",1);
-    $HTMLOUT .= tr($lang['usercp_language'], "English",1);
+    //$HTMLOUT .= tr($lang['usercp_language'], "English",1);
     $HTMLOUT .= tr($lang['usercp_country'], "<select name='country'>\n$countries\n</select>",1);
     $HTMLOUT .= tr($lang['usercp_stylesheet'], "<select name='stylesheet'>\n$stylesheets\n</select>",1);
     $HTMLOUT .= tr($lang['usercp_gender'],
@@ -418,8 +418,8 @@ loggedinorreturn();
     $HTMLOUT .="<tr><td align='center' colspan='2'><input type='submit' value='Submit changes!' style='height: 25px' /></td></tr>";
     $HTMLOUT .= end_table();
     } else {
-    //== Pms
-    if ($action == "default")
+    //== Default Pms
+    if ($action == "default") 
     $HTMLOUT .= begin_table(true);
     $HTMLOUT .= "<tr><td class='colhead' colspan='2'  style='height:25px;' ><input type='hidden' name='action' value='default' />Pm options</td></tr>";
     $HTMLOUT .= tr($lang['usercp_accept_pm'],
@@ -435,7 +435,6 @@ loggedinorreturn();
     $HTMLOUT .= "<tr><td align='center' colspan='2'><input type='submit' value='Submit changes!' style='height: 25px' /></td></tr>";
     $HTMLOUT .= end_table();
     }
-
     $HTMLOUT .="</td><td width='95' valign='top' ><table border='1'>";
     $HTMLOUT .="<tr><td class='colhead' width='95'  style='height:25px;' >".htmlentities($CURUSER["username"], ENT_QUOTES) . "'s Avatar</td></tr>";
     if(!empty($CURUSER['avatar']) && $CURUSER['av_w'] > 5 && $CURUSER['av_h'] > 5)
@@ -465,6 +464,7 @@ loggedinorreturn();
     $HTMLOUT .="<tr><td align='left'><a href='casino.php'>{$INSTALLER09['site_name']} Casino</a></td></tr>";
     }
     $HTMLOUT .="</table></td></tr></table></form></div>";
-
+    
+    
 echo stdhead(htmlentities($CURUSER["username"], ENT_QUOTES)."{$lang['usercp_stdhead']} ", true, $stdhead) . $HTMLOUT . stdfoot($stdfoot);
 ?>

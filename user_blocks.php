@@ -141,6 +141,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     	$setbits_index_page |= block_index::ACTIVE_POLL;
     else
     	$clrbits_index_page |= block_index::ACTIVE_POLL;
+
+   if (isset($_POST['staff_shoutbox']))
+    	$setbits_index_page |= block_index::STAFF_SHOUT;
+    else
+    	$clrbits_index_page |= block_index::STAFF_SHOUT;
     
     //==Stdhead
     if (isset($_POST['stdhead_freeleech']))
@@ -350,6 +355,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     else
     	$clrbits_userdetails_page |= block_userdetails::USERCOMMENTS;
     
+    if (isset($_POST['userdetails_showfriends']))
+    	$setbits_userdetails_page |= block_userdetails::SHOWFRIENDS;
+    else
+    	$clrbits_userdetails_page |= block_userdetails::SHOWFRIENDS;
+
     //== set n clear
     if ($setbits_index_page)
       $updateset[] = 'index_page = (index_page | '.$setbits_index_page.')';
@@ -397,6 +407,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $checkbox_index_torrentfreak = ((curuser::$blocks['index_page'] & block_index::TORRENTFREAK) ? ' checked="checked"' : '');
         $checkbox_index_xmasgift = ((curuser::$blocks['index_page'] & block_index::XMAS_GIFT) ? ' checked="checked"' : '');
         $checkbox_index_active_poll = ((curuser::$blocks['index_page'] & block_index::ACTIVE_POLL) ? ' checked="checked"' : '');
+        $checkbox_index_staffshoutbox = ((curuser::$blocks['index_page'] & block_index::STAFF_SHOUT) ? ' checked="checked"' : '');
         //==Stdhead
         $checkbox_global_freeleech = ((curuser::$blocks['global_stdhead'] & block_stdhead::STDHEAD_FREELEECH) ? ' checked="checked"' : '');
         $checkbox_global_demotion = ((curuser::$blocks['global_stdhead'] & block_stdhead::STDHEAD_DEMOTION) ? ' checked="checked"' : '');
@@ -439,7 +450,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $checkbox_userdetails_report = ((curuser::$blocks['userdetails_page'] & block_userdetails::REPORT_USER) ? ' checked="checked"' : '');
         $checkbox_userdetails_userstatus = ((curuser::$blocks['userdetails_page'] & block_userdetails::USERSTATUS) ? ' checked="checked"' : '');
         $checkbox_userdetails_usercomments = ((curuser::$blocks['userdetails_page'] & block_userdetails::USERCOMMENTS) ? ' checked="checked"' : '');
-        
+        $checkbox_userdetails_showfriends = ((curuser::$blocks['userdetails_page'] & block_userdetails::SHOWFRIENDS) ? ' checked="checked"' : '');         
         $HTMLOUT='';
         $HTMLOUT .= begin_frame();
 
@@ -466,9 +477,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <b>Enable Shoutbox?</b><div><hr style="color:#A83838;" size="1" /></div>
         <div style="color: lightgrey;">Check this option if you want to enable the Shoutbox.</div></td>
         <td width="40%"><div style="width: auto;" align="right"><input type="checkbox" name="shoutbox" value="yes"'.$checkbox_index_shoutbox.' /></div></td>
-        </tr></table>
+        </tr></table>';
 
-        <table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
+        if($CURUSER['class'] >= UC_STAFF) {
+        $HTMLOUT .='<table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
+        <td width="60%">
+        <b>Enable Staff Shoutbox?</b><div><hr style="color:#A83838;" size="1" /></div>
+        <div style="color: lightgrey;">Check this option if you want to enable the Staff Shoutbox.</div></td>
+        <td width="40%"><div style="width: auto;" align="right"><input type="checkbox" name="staff_shoutbox" value="yes"'.$checkbox_index_staffshoutbox.' /></div></td>
+        </tr></table>';
+        }
+
+        $HTMLOUT .='<table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
         <td width="60%">
         <b>Enable Active Users?</b><div><hr style="color:#A83838;" size="1" /></div>
         <div style="color: lightgrey;">Check this option if you want to enable the Active Users.</div></td>
@@ -875,6 +895,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <b>User comments?</b><div><hr style="color:#A83838;" size="1" /></div>
         <div style="color: lightgrey;">Enable user comments</div></td>
         <td width="40%"><div style="width: auto;" align="right"><input type="checkbox" name="userdetails_user_comments" value="yes" '.$checkbox_userdetails_usercomments.' /></div></td>
+        </tr></table>
+
+        <table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
+        <td width="60%">
+        <b>SHow friends?</b><div><hr style="color:#A83838;" size="1" /></div>
+        <div style="color: lightgrey;">Enable your friends block</div></td>
+        <td width="40%"><div style="width: auto;" align="right"><input type="checkbox" name="userdetails_showfriends" value="yes" '.$checkbox_userdetails_showfriends.' /></div></td>
         </tr></table>';
         
         $HTMLOUT.='<input type="submit" name="submit" value="Submit" class="btn" tabindex="2" accesskey="s" /></form>';

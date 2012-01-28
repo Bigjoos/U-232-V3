@@ -30,21 +30,21 @@ header( "Location: " . $_SERVER['HTTP_REFERER'] );
 
 // Delete single shout
 if ( isset( $_GET['del'] ) && $CURUSER['class'] >= UC_STAFF && is_valid_id( $_GET['del'] ) ){
-sql_query("DELETE FROM shoutbox WHERE id=".sqlesc($_GET['del'])) or sqlerr( __FILE__, __LINE__ );
-$mc1->delete_value('shoutbox_');
-//$mc1->delete_value('staff_shoutbox_');
+sql_query("DELETE FROM shoutbox WHERE staff_shout='yes' AND id=".sqlesc($_GET['del'])) or sqlerr( __FILE__, __LINE__ );
+$mc1->delete_value('staff_shoutbox_');
+//$mc1->delete_value('shoutbox_');
 }
 // Empty shout - sysop
 if ( isset( $_GET['delall'] ) && $CURUSER['class'] == UC_MAX ){
 sql_query("TRUNCATE TABLE shoutbox") or sqlerr( __FILE__, __LINE__ );
-$mc1->delete_value('shoutbox_');
-//$mc1->delete_value('staff_shoutbox_');
+$mc1->delete_value('staff_shoutbox_');
+//$mc1->delete_value('shoutbox_');
 }
 
 // Staff edit 
 if (isset($_GET['edit']) && $CURUSER['class'] >= UC_STAFF && is_valid_id($_GET['edit']))
 {	
-$sql = sql_query('SELECT id, text FROM shoutbox WHERE id='.sqlesc($_GET['edit'])) or sqlerr( __FILE__, __LINE__ );
+$sql = sql_query('SELECT id, text FROM shoutbox WHERE staff_shout="yes" AND id='.sqlesc($_GET['edit'])) or sqlerr( __FILE__, __LINE__ );
 $res = mysqli_fetch_assoc($sql);
 unset($sql);
 
@@ -80,7 +80,7 @@ background: #000000 repeat-x left top;
 </style>
 </head>
 <body bgcolor='#F5F4EA' class='date'>
-<form method='post' action='./shoutbox.php'>
+<form method='post' action='./staff_shoutbox.php'>
 <input type='hidden' name='id' value='".(int)$res['id']."' />
 <textarea name='text' rows='3' id='specialbox'>".htmlspecialchars($res['text'])."</textarea>
 <input type='submit' name='save' value='save' class='btn' />
@@ -92,7 +92,7 @@ die;
 // Power Users+ can edit anyones single shouts //== pdq
 if (isset($_GET['edit']) && ($_GET['user'] == $CURUSER['id']) && ($CURUSER['class'] >= UC_POWER_USER && $CURUSER['class'] <= UC_STAFF) && is_valid_id($_GET['edit']))
 {	
-$sql = sql_query('SELECT id, text, userid FROM shoutbox WHERE userid ='.sqlesc($_GET['user']).' AND id='.sqlesc($_GET['edit']))  or sqlerr( __FILE__, __LINE__ );
+$sql = sql_query('SELECT id, text, userid FROM shoutbox WHERE staff_shout="yes" AND userid ='.sqlesc($_GET['user']).' AND id='.sqlesc($_GET['edit']))  or sqlerr( __FILE__, __LINE__ );
 $res = mysqli_fetch_array($sql);
 $HTMLOUT .="<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
 <html xmlns='http://www.w3.org/1999/xhtml'>
@@ -126,7 +126,7 @@ background: #000000 repeat-x left top;
 </style>
 </head>
 <body bgcolor='#F5F4EA' class='date'>
-<form method='post' action='./shoutbox.php'>
+<form method='post' action='./staff_shoutbox.php'>
 <input type='hidden' name='id' value='".(int)$res['id']."' />
 <input type='hidden' name='user' value='".(int)$res['userid']."' />
 <textarea name='text' rows='3' id='specialbox'>".htmlspecialchars($res['text'])."</textarea>
@@ -143,8 +143,8 @@ require_once(INCL_DIR.'bbcode_functions.php');
 $text = trim($_POST['text']);
 $text_parsed = format_comment($text);
 sql_query('UPDATE shoutbox SET text = '.sqlesc($text).', text_parsed = '.sqlesc($text_parsed).' WHERE id='.sqlesc($_POST['id']))  or sqlerr( __FILE__, __LINE__ );
-$mc1->delete_value('shoutbox_');
-//$mc1->delete_value('staff_shoutbox_');
+$mc1->delete_value('staff_shoutbox_');
+//$mc1->delete_value('shoutbox_');
 unset($text, $text_parsed);
 }
 // Power User+ shout edit by pdq
@@ -154,8 +154,8 @@ require_once(INCL_DIR.'bbcode_functions.php');
 $text =  trim($_POST['text']);
 $text_parsed = format_comment($text);
 sql_query('UPDATE shoutbox SET text = '.sqlesc($text).', text_parsed = '.sqlesc($text_parsed).' WHERE userid='.sqlesc($_POST['user']).' AND id='.sqlesc($_POST['id']))  or sqlerr( __FILE__, __LINE__ );
-$mc1->delete_value('shoutbox_');
-//$mc1->delete_value('staff_shoutbox_');
+$mc1->delete_value('staff_shoutbox_');
+//$mc1->delete_value('shoutbox_');
 unset($text, $text_parsed);
 }
 
@@ -164,7 +164,7 @@ $HTMLOUT .="<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http
 <html xmlns='http://www.w3.org/1999/xhtml'>
 <head>
 <title>ShoutBox</title>
-<meta http-equiv='REFRESH' content='60; URL=./shoutbox.php' />
+<meta http-equiv='REFRESH' content='60; URL=./staff_shoutbox.php' />
 <script type='text/javascript' src='./scripts/shout.js'></script>
 <meta http-equiv='Content-Type' content='text/html; charset={$INSTALLER09['char_set']}' />
 <style type='text/css'>
@@ -239,12 +239,12 @@ echo $HTMLOUT;
 exit;
 }
 //=End
-if ( isset( $_GET['sent'] ) && ( $_GET['sent'] == "yes" ) ) {
+if ( isset( $_GET['staff_sent'] ) && ( $_GET['staff_sent'] == "yes" ) ) {
     require_once(INCL_DIR.'bbcode_functions.php');
     $limit = 5;
     $userid = $CURUSER["id"];
     $date = TIME_NOW;
-    $text = (trim( $_GET["shbox_text"] ));
+    $text = (trim( $_GET["staff_shbox_text"] ));
     $text_parsed = format_comment($text);
 	 $system_pattern = '/(^\/system)\s([\w\W\s]+)/is';
 	if(preg_match($system_pattern,$text,$out) && $CURUSER["class"] >= UC_STAFF)
@@ -269,8 +269,8 @@ if ( isset( $_GET['sent'] ) && ( $_GET['sent'] == "yes" ) ) {
                     $what = 'deleted all shouts';
                     $msg = "[b]" . $user . "'s[/b] shouts have been deleted";
                     $query = "DELETE FROM shoutbox where userid = " . $a[0];
-                    $mc1->delete_value('shoutbox_');
-                    //$mc1->delete_value('staff_shoutbox_');
+                    $mc1->delete_value('staff_shoutbox_');
+                    //$mc1->delete_value('shoutbox_');
                     break;
                 case "/GAG" :
                     $what = 'gagged';
@@ -365,9 +365,9 @@ if ( isset( $_GET['sent'] ) && ( $_GET['sent'] == "yes" ) ) {
             }
             if ( sql_query( $query ) )
             autoshout($msg);
-            $mc1->delete_value('shoutbox_');
-            //$mc1->delete_value('staff_shoutbox_');
-            $HTMLOUT .="<script type=\"text/javascript\">parent.document.forms[0].shbox_text.value='';</script>";
+            $mc1->delete_value('staff_shoutbox_');
+            //$mc1->delete_value('shoutbox_');
+            $HTMLOUT .="<script type=\"text/javascript\">parent.document.forms[0].staff_shbox_text.value='';</script>";
             write_log("Shoutbox user " . $user . " has been " . $what . " by " . $CURUSER["username"] );
             unset($text, $text_parsed, $query, $date, $modcomment, $what, $msg, $commands);
         }
@@ -382,22 +382,22 @@ if ( isset( $_GET['sent'] ) && ( $_GET['sent'] == "yes" ) ) {
         if($to_user != 0 && $to_user != $CURUSER['id']) {
 			$text = $vars[2]." - ".$vars[3];
 			$text_parsed = format_comment($text);
-			sql_query( "INSERT INTO shoutbox (userid, date, text, text_parsed, to_user, staff_shout) VALUES (".sqlesc($userid).", $date, " . sqlesc( $text ) . ",".sqlesc( $text_parsed ) .",".sqlesc($to_user).", 'no')") or sqlerr( __FILE__, __LINE__ );
-         $mc1->delete_value('shoutbox_');
-         //$mc1->delete_value('staff_shoutbox_');
+			sql_query( "INSERT INTO shoutbox (userid, date, text, text_parsed, to_user, staff_shout) VALUES (".sqlesc($userid).", $date, " . sqlesc( $text ) . ",".sqlesc( $text_parsed ) .",".sqlesc($to_user).", 'yes')") or sqlerr( __FILE__, __LINE__ );
+         $mc1->delete_value('staff_shoutbox_');
+         //$mc1->delete_value('shoutbox_');
 		}		
-        $HTMLOUT .="<script type=\"text/javascript\">parent.document.forms[0].shbox_text.value='';</script>";
+        $HTMLOUT .="<script type=\"text/javascript\">parent.document.forms[0].staff_shbox_text.value='';</script>";
 	} else {
-        $a = mysqli_fetch_row(sql_query("SELECT userid, date FROM shoutbox WHERE staff_shout='no' ORDER by id DESC LIMIT 1")) or print("First shout or an error :)");
+        $a = mysqli_fetch_row(sql_query("SELECT userid, date FROM shoutbox WHERE staff_shout='yes' ORDER by id DESC LIMIT 1")) or print("First shout or an error :)");
         if ( empty( $text ) || strlen( $text ) == 1 )
             $HTMLOUT .="<font class=\"small\" color=\"red\">Shout can't be empty</font>";
         elseif ( $a[0] == $userid && ( TIME_NOW - $a[1] ) < $limit && $CURUSER['class'] < UC_STAFF )
             $HTMLOUT .="<font class=\"small\" color=\"red\">$limit seconds between shouts <font class=\"small\">Seconds Remaining : (" . ( $limit - ( TIME_NOW - $a[1] ) ) . ")</font></font>";
         else {
-            sql_query( "INSERT INTO shoutbox (id, userid, date, text, text_parsed, staff_shout) VALUES ('id'," . sqlesc( $userid ) . ", $date, " . sqlesc( $text ) . ",".sqlesc( $text_parsed ) .", 'no')" ) or sqlerr( __FILE__, __LINE__ );
-            $mc1->delete_value('shoutbox_');
-            //$mc1->delete_value('staff_shoutbox_');
-            $HTMLOUT .="<script type=\"text/javascript\">parent.document.forms[0].shbox_text.value='';</script>";
+            sql_query( "INSERT INTO shoutbox (id, userid, date, text, text_parsed, staff_shout) VALUES ('id'," . sqlesc( $userid ) . ", $date, " . sqlesc( $text ) . ",".sqlesc( $text_parsed ) .", 'yes')" ) or sqlerr( __FILE__, __LINE__ );
+            $mc1->delete_value('staff_shoutbox_');
+            //$mc1->delete_value('shoutbox_');
+            $HTMLOUT .="<script type=\"text/javascript\">parent.document.forms[0].staff_shbox_text.value='';</script>";
             $trigger_words = array('doing your mom'=>array('im doing your mom too','yeah you\'d wish :P'),
             'good morning'=>array('what morning ? its still night!','Go back to sleep! '.$CURUSER['username'],'Quiet there are still people who sleep'),
             'good night'=>array('[b]Night[/b], what is that ?!'),
@@ -410,18 +410,18 @@ if ( isset( $_GET['sent'] ) && ( $_GET['sent'] == "yes" ) ) {
             $message = $trigger_words[$trigger_key[0]][0];
             sleep(1);
             autoshout($message);
-            $mc1->delete_value('shoutbox_');
-            //$mc1->delete_value('staff_shoutbox_');
+            $mc1->delete_value('staff_shoutbox_');
+            //$mc1->delete_value('shoutbox_');
            }
         }
     }
 }
 //== cache the data
-if(($shouts = $mc1->get_value('shoutbox_')) === false) {
-$res = sql_query( "SELECT s.id, s.userid, s.date, s.text, s.to_user, s.staff_shout, u.username, u.pirate, u.king, u.class, u.donor, u.warned, u.leechwarn, u.enabled, u.chatpost FROM shoutbox AS s LEFT JOIN users AS u ON s.userid=u.id WHERE s.staff_shout ='no' ORDER BY s.id DESC LIMIT 30" ) or sqlerr( __FILE__, __LINE__ );
+if(($shouts = $mc1->get_value('staff_shoutbox_')) === false) {
+$res = sql_query( "SELECT s.id, s.userid, s.date, s.text, s.to_user, s.staff_shout, u.username, u.pirate, u.king, u.class, u.donor, u.warned, u.leechwarn, u.enabled, u.chatpost FROM shoutbox AS s LEFT JOIN users AS u ON s.userid=u.id WHERE s.staff_shout ='yes' ORDER BY s.id DESC LIMIT 30" ) or sqlerr( __FILE__, __LINE__ );
 while($shout = mysqli_fetch_assoc($res))
 $shouts[] = $shout;
-$mc1->cache_value('shoutbox_', $shouts, $INSTALLER09['expires']['shoutbox']);
+$mc1->cache_value('staff_shoutbox_', $shouts, $INSTALLER09['expires']['staff_shoutbox']);
 }
 
 if (count($shouts) > 0)
@@ -442,9 +442,9 @@ if($shout_pm_alert['pms'] > 0 && $gotpm == 0){
 	$private = '';
 	if($arr['to_user'] == $CURUSER['id'] && $arr['to_user'] > 0)
 		  $private = "<a href=\"javascript:private_reply('".htmlspecialchars($arr['username'])."')\"><img src=\"{$INSTALLER09['pic_base_url']}private-shout.png\" alt=\"Private shout\" title=\"Private shout! click to reply to ".htmlspecialchars($arr['username'])."\" width=\"16\" style=\"padding-left:2px;padding-right:2px;\" border=\"0\" /></a>";
-        $edit = ($CURUSER['class'] >= UC_STAFF || ($arr['userid'] == $CURUSER['id']) && ($CURUSER['class'] >= UC_POWER_USER && $CURUSER['class'] <= UC_STAFF) ? "<a href='{$INSTALLER09['baseurl']}/shoutbox.php?edit=".(int)$arr['id']."&amp;user=".(int)$arr['userid']."'><img src='{$INSTALLER09['pic_base_url']}button_edit2.gif' border='0' alt=\"Edit Shout\"  title=\"Edit Shout\" /></a> " : "" );
-        $del = ( $CURUSER['class'] >= UC_STAFF ? "<a href='./shoutbox.php?del=".(int)$arr['id']."'><img src='{$INSTALLER09['pic_base_url']}button_delete2.gif' border='0' alt=\"Delete Single Shout\" title=\"Delete Single Shout\" /></a> " : "" );
-        $delall = ($CURUSER['class'] == UC_MAX ? "<a href='./shoutbox.php?delall' onclick=\"confirm_delete(); return false;\"><img src='{$INSTALLER09['pic_base_url']}del.png' border='0' alt=\"Empty Shout\" title=\"Empty Shout\" /></a> " : "" );      
+        $edit = ($CURUSER['class'] >= UC_STAFF || ($arr['userid'] == $CURUSER['id']) && ($CURUSER['class'] >= UC_POWER_USER && $CURUSER['class'] <= UC_STAFF) ? "<a href='{$INSTALLER09['baseurl']}/staff_shoutbox.php?edit=".(int)$arr['id']."&amp;user=".(int)$arr['userid']."'><img src='{$INSTALLER09['pic_base_url']}button_edit2.gif' border='0' alt=\"Edit Shout\"  title=\"Edit Shout\" /></a> " : "" );
+        $del = ( $CURUSER['class'] >= UC_STAFF ? "<a href='./staff_shoutbox.php?del=".(int)$arr['id']."'><img src='{$INSTALLER09['pic_base_url']}button_delete2.gif' border='0' alt=\"Delete Single Shout\" title=\"Delete Single Shout\" /></a> " : "" );
+        $delall = ($CURUSER['class'] == UC_MAX ? "<a href='./staff_shoutbox.php?delall' onclick=\"confirm_delete(); return false;\"><img src='{$INSTALLER09['pic_base_url']}del.png' border='0' alt=\"Empty Shout\" title=\"Empty Shout\" /></a> " : "" );      
         //$delall 
         $pm = ($CURUSER['id'] != $arr['userid'] ? "<span class='date' style=\"color:$dtcolor\"><a target='_blank' href='./pm_system.php?action=send_message&amp;receiver=".(int)$arr['userid']."'><img src='{$INSTALLER09['pic_base_url']}button_pm2.gif' border='0' alt=\"Pm User\" title=\"Pm User\" /></a></span>\n" : "" );
         $date = get_date($arr["date"], 0,1);

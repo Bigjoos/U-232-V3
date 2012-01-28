@@ -95,7 +95,7 @@ if ($no_log_ip) {
 if (!$no_log_ip) {
    $res = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM ips WHERE ip = '$ip' AND userid = '$userid'") or ann_sqlerr(__FILE__, __LINE__);
    if (mysqli_num_rows($res) == 0 ) {
-      mysqli_query($GLOBALS["___mysqli_ston"], "INSERT LOW_PRIORITY INTO ips (userid, ip, lastannounce, type) VALUES ('$userid', '$ip' ,'".TIME_NOW."','announce')") or ann_sqlerr(__FILE__, __LINE__);
+      mysqli_query($GLOBALS["___mysqli_ston"], "INSERT LOW_PRIORITY INTO ips (userid, ip, lastannounce, type) VALUES ('$userid', '$ip' , ".TIME_NOW.",'announce')") or ann_sqlerr(__FILE__, __LINE__);
       $mc1->delete_value('ip_history_'.$userid);
       $mc1->delete_value('u_passkey_'.$passkey);
    }
@@ -131,7 +131,7 @@ if ($_GET['compact'] != 1) {
     $resp = "d" . benc_str("interval") . "i" . $INSTALLER09['announce_interval'] . "e" . benc_str("private") . 'i1e' . benc_str("peers") . "l";
 }
 else {
-    $resp = "d" . benc_str("interval") . "i" . $INSTALLER09['announce_interval'] ."e" . benc_str("private") . 'i1e'. benc_str("min interval") . "i" . 300 ."e5:"."peers" ;
+    $resp = "d" . benc_str("interval") . "i" . $INSTALLER09['announce_interval'] ."e" . benc_str("private") . 'i1e'. benc_str("min interval") . "i" . 300 ."e5:"."peers";
 }
 
 $peer = array();
@@ -190,6 +190,11 @@ if (!isset($self)) {
 	}
 }
 //// Up/down stats shit////////////////////////////////////////////////////////////
+$useragent = substr($peer_id, 0, 8);
+$agentarray = array("R34", "-AZ21", "-AZ22", "-AZ24", "AZ2500BT", "BS", "exbc", "-TS", "Mbrst", "-BB", "-SZ", "XBT", "turbo", "A301", "A310", "-UT11", "-UT12", "-UT13", "-UT14", "-UT15", "FUTB", "-BC", "LIME", "eX", "-ML", "FRS", "-AG");
+foreach($agentarray as $bannedclient)
+if(strpos($useragent, $bannedclient) !== false) 
+err("Client is banned. Please use uTorrent 1.6 or Azureus 2.5!");
 //== Anti flood by Retro
 $announce_wait = 10;
 if (isset($self) && ($self['prevts'] > ($self['nowts'] - $announce_wait)))
@@ -221,7 +226,8 @@ if (!isset($self))
   }
   /*
   //==Happyhour
-  if(($happy = $mc1->get_value('happyhour_')) === false) {
+  $happy = $mc1->get_value('happyhour_');
+  if ($happy === false) {
   $happy = mysqli_query($GLOBALS["___mysqli_ston"],  "SELECT id, multiplier from happyhour where userid=" . ann_sqlesc( $userid ) . " AND torrentid=" . ann_sqlesc( $torrentid ) . " " ) or ann_sqlerr(__FILE__, __LINE__);
   $happyhour = mysqli_num_rows( $happy ) == 0 ? false : true;
   $happy_multi = mysqli_fetch_row( $happy );
@@ -329,7 +335,7 @@ if (!isset($self))
 	 }
  //==
  $a = 0;
- $res_snatch = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT userid, torrentid, seedtime, uploaded, downloaded, finished, start_date AS start_snatch FROM snatched WHERE torrentid = $torrentid AND userid = $userid") or ann_sqlerr(__FILE__, __LINE__);
+ $res_snatch = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT seedtime, uploaded, downloaded, finished, start_date AS start_snatch FROM snatched WHERE torrentid = $torrentid AND userid = $userid") or ann_sqlerr(__FILE__, __LINE__);
  if (mysqli_num_rows($res_snatch) > 0) {
  $a = mysqli_fetch_assoc($res_snatch);
  }

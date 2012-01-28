@@ -17,7 +17,7 @@
     $connectable = "<img src='{$INSTALLER09['pic_base_url']}cross.png' alt='No' title='Contact Site Staff' style='border:none;padding:2px;' /><font color='red'><b>{$lang['userdetails_no']}</b></font>";
     }
     }else{
-    $connectable = "<img src='{$INSTALLER09['pic_base_url']}smilies/unsure.gif' alt='Unknown' title='Not connected To Peers' style='border:none;padding:2px;' /><font color='blue'><b>{$lang['userdetails_unknown']}</b></font>";
+    $connectable = "<font color='orange'><b>{$lang['userdetails_unknown']}</b></font>";
     }
     $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_connectable']}</td><td align='left'>".$connectable."</td></tr>";
     if (!empty($port))

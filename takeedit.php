@@ -64,7 +64,7 @@ if (!function_exists('is_valid_url')) {
 */
 $nfoaction = '';
 
-$select_torrent = sql_query('SELECT name, descr, category, visible, vip, release_group, poster, url, newgenre, description, anonymous, sticky, owner, allow_comments, nuked, nukereason, filename, save_as, youtube FROM torrents WHERE id = '.sqlesc($id)) or sqlerr(__FILE__, __LINE__);
+$select_torrent = sql_query('SELECT name, descr, category, visible, vip, release_group, poster, url, newgenre, description, anonymous, sticky, owner, allow_comments, nuked, nukereason, filename, save_as, youtube, tags FROM torrents WHERE id = '.sqlesc($id)) or sqlerr(__FILE__, __LINE__);
 $fetch_assoc = mysqli_fetch_assoc($select_torrent) or stderr('Error', 'No torrent with this ID!');
 
 if ($CURUSER['id'] != $fetch_assoc['owner'] && $CURUSER['class'] < MIN_CLASS)
@@ -103,6 +103,12 @@ if ((isset($_POST['nfoaction'])) && ($_POST['nfoaction'] == 'update')) {
         if(empty($x))
         stderr("Error", $lang['takedit_no_data']);
     }
+        if(isset($_POST['youtube']) && preg_match($youtube_pattern,$_POST['youtube'],$temp_youtube)) {
+          if($temp_youtube[0] != $fetch_assoc['youtube'])
+            $updateset[] = "youtube = ".sqlesc($temp_youtube[0]);
+            $torrent_cache['youtube'] = $temp_youtube[0];
+        }
+
     if (isset($_POST['name']) && (($name = $_POST['name']) != $fetch_assoc['name']) && valid_torrent_name($name)){
     $updateset[] = 'name = ' . sqlesc($name);
     $updateset[] = 'search_text = ' . sqlesc(searchfield("$shortfname $dname"));
@@ -113,12 +119,16 @@ if ((isset($_POST['nfoaction'])) && ($_POST['nfoaction'] == 'update')) {
     $updateset[] = 'descr = ' . sqlesc($descr);
     $updateset[] = 'ori_descr = ' . sqlesc($descr);
     $torrent_txt_cache['descr'] = $descr;
-    //$torrent_cache['ori_descr'] = $descr;
     }
     
     if (isset($_POST['description']) && ($smalldescr = $_POST['description']) != $fetch_assoc['description']) {
     $updateset[] = "description = " . sqlesc($smalldescr);
     $torrent_cache['description'] = $smalldescr;
+    }
+
+    if (isset($_POST['tags']) && ($tags = $_POST['tags']) != $fetch_assoc['tags']) {
+    $updateset[] = "tags = " . sqlesc($tags);
+    $torrent_cache['tags'] = $tags;
     }
     
     if (isset($_POST['type']) && (($category = 0 + $_POST['type']) != $fetch_assoc['category']) && is_valid_id($category)){
@@ -152,19 +162,8 @@ if ((isset($_POST['nfoaction'])) && ($_POST['nfoaction'] == 'update')) {
     if (in_array($category, $INSTALLER09['movie_cats']))
     {
     $subs = isset($_POST['subs'])? implode(",", $_POST['subs']) : "" ;
-    //if(empty($subs))
-    //stderr('Updated failed', 'No subtitle for the movie');
     $updateset[] = "subs = " . sqlesc($subs);
     $torrent_cache['subs'] = $subs;
-    }
-    if(in_array(0+$type,$INSTALLER09['movie_cats'])) {
-        if(isset($_POST['youtube']) && preg_match($youtube_pattern,$_POST['youtube'],$temp_youtube)) {
-          if($temp_youtube[0] != $fetch_assoc['youtube'])
-            $updateset[] = "youtube = ".sqlesc($temp_youtube[0]);
-            $torrent_cache['youtube'] = $temp_youtube[0];
-        }
-        else 
-        stderr("Error","".$lang['takedit_youtube']."");
     }
     // ==09 Sticky torrents 
     if (($sticky = (isset($_POST['sticky']) != ''?'yes':'no')) != $fetch_assoc['sticky']){

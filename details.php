@@ -53,7 +53,7 @@ loggedinorreturn();
     foreach($categorie as $key => $value)
     $change[$value['id']] = array('id' => $value['id'], 'name'  => $value['name'], 'image' => $value['image']);
     if(($torrents = $mc1->get_value('torrent_details_'.$id)) === false) {
-    $torrents = mysqli_fetch_assoc(sql_query("SELECT seeders, leechers, banned, thanks, leechers, info_hash, checked_by, filename, search_text, LENGTH(nfo) AS nfosz, name, comments, owner, save_as, visible, size, added, views, hits, id, type, poster, url, numfiles, times_completed, anonymous, points, allow_comments, description, nuked, nukereason, last_reseed, vip, category, subs, username, newgenre, release_group, free, youtube, ratingsum, numratings, IF(numratings < {$INSTALLER09['minvotes']}, NULL, ROUND(ratingsum / numratings, 1)) AS rating FROM torrents WHERE id = ".$id)) or sqlerr(__FILE__, __LINE__);
+    $torrents = mysqli_fetch_assoc(sql_query("SELECT seeders, leechers, banned, thanks, leechers, info_hash, checked_by, filename, search_text, LENGTH(nfo) AS nfosz, name, comments, owner, save_as, visible, size, added, views, hits, id, type, poster, url, numfiles, times_completed, anonymous, points, allow_comments, description, nuked, nukereason, last_reseed, vip, category, subs, username, newgenre, release_group, free, youtube, tags, ratingsum, numratings, IF(numratings < {$INSTALLER09['minvotes']}, NULL, ROUND(ratingsum / numratings, 1)) AS rating FROM torrents WHERE id = ".$id)) or sqlerr(__FILE__, __LINE__);
     $torrents['seeders'] = (int)$torrents['seeders'];
     $torrents['leechers'] = (int)$torrents['leechers'];
     $torrents['points'] = (int)$torrents['points'];
@@ -147,6 +147,17 @@ loggedinorreturn();
 			
 		$spacer = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 
+     if (empty($torrents["tags"])) {
+     $keywords = "No Keywords Specified.";
+     }else{
+     $tags = explode(",", $torrents['tags']);
+     $keywords = "";
+     foreach ($tags as $tag){
+        $keywords .= "<a href='browse.php?search=$tag&amp;searchin=all&amp;incldead=1'>".htmlspecialchars($tag)."</a>,";
+        }
+        $keywords  = substr($keywords, 0, (strlen($keywords) - 1));
+     }  
+ 
 		if (isset($_GET["uploaded"])) {
 			$HTMLOUT .= "<h2>{$lang['details_success']}</h2>\n";
 			$HTMLOUT .= "<p>{$lang['details_start_seeding']}</p>\n";
@@ -258,6 +269,7 @@ loggedinorreturn();
     //==Torrent as zip by putyn
     $HTMLOUT .="<tr><td align=\"right\" class=\"heading\" width=\"1%\">{$lang['details_zip']}</td><td align=\"left\">
     <a class=\"index\" href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."&amp;zip=1\">&nbsp;<u>".htmlspecialchars($torrents["filename"]) . "</u></a>{$freeslot}</td></tr>";
+    $HTMLOUT .="<tr><td align=\"right\" class=\"heading\" width=\"1%\">{$lang['details_tags']}</td><td align=\"left\">".$keywords."</td></tr>";
     /**  Mod by dokty, rewrote by pdq  **/
     $my_points = 0;
     if(($torrent['torrent_points_'] = $mc1->get('coin_points_'.$id)) === false) {   

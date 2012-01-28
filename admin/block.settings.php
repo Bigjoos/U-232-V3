@@ -71,8 +71,9 @@ function get_cache_array()
                        	'active_24h_users_on'              => 1,
                        	'active_irc_users_on'              => 1,
                        	'active_birthday_users_on'              => 1,
-                    	  'disclaimer_on'                => 1,
-                    	  'shoutbox_on'                  => 1,
+                    	   'disclaimer_on'                => 1,
+                    	   'shoutbox_on'                  => 1,
+                        'staff_shoutbox_on'                  => 1,
                         'news_on'                      => 1,
                         'stats_on'                     => 1,
                         'latest_user_on'                     => 1,
@@ -126,6 +127,7 @@ function get_cache_array()
                         'userdetails_report_user_on'          => 1,
                         'userdetails_user_status_on'          => 1,
                         'userdetails_user_comments_on'          => 1,
+                        'userdetails_user_showfriends_on'          => 1
                         );
 	}
 	
@@ -169,6 +171,13 @@ $HTMLOUT .='
     <b>Enable Shoutbox?</b><div><hr style="color:#A83838;" size="1" /></div>
     <div>Set this option to "Yes" if you want to enable the Shoutbox.</div></td>
     <td width="40%"><div style="width: auto;" align="right"><#shoutbox_on#></div></td>
+    </tr></table>
+
+    <table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
+    <td width="60%">
+    <b>Enable Staff Shoutbox?</b><div><hr style="color:#A83838;" size="1" /></div>
+    <div>Set this option to "Yes" if you want to enable the Staff Shoutbox.</div></td>
+    <td width="40%"><div style="width: auto;" align="right"><#staff_shoutbox_on#></div></td>
     </tr></table>
 
     <table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
@@ -572,6 +581,13 @@ $HTMLOUT .='
     <b>Usercomments?</b><div><hr style="color:#A83838;" size="1" /></div>
     <div>Enable usercomments</div></td>
     <td width="40%"><div style="width: auto;" align="right"><#userdetails_user_comments_on#></div></td>
+    </tr></table>
+
+    <table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
+    <td width="60%">
+    <b>Usercomments?</b><div><hr style="color:#A83838;" size="1" /></div>
+    <div>Enable show friends </div></td>
+    <td width="40%"><div style="width: auto;" align="right"><#userdetails_showfriends_on#></div></td>
     </tr></table>
     
 <input type="submit" name="submit" value="Submit" class="btn" tabindex="2" accesskey="s" />

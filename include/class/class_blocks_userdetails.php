@@ -28,7 +28,7 @@ class block_userdetails {
 	const USERCLASS		        = 0x20000; // 131072
 	const GENDER		        = 0x40000; // 262144
 	const FREESTUFFS		        = 0x80000; // 524288
-  const COMMENTS		        = 0x100000; // 1048576
+   const COMMENTS		        = 0x100000; // 1048576
 	const FORUMPOSTS	        = 0x200000; // 2097152
 	const INVITEDBY		        = 0x400000; // 4194304
 	const TORRENTS_BLOCK	        = 0x800000; // 8388608
@@ -39,5 +39,6 @@ class block_userdetails {
 	const REPORT_USER		        = 0x10000000; // 268435456
 	const USERSTATUS		        = 0x20000000; // 536870912
 	const USERCOMMENTS		      = 0x40000000; // 1073741824
+   const SHOWFRIENDS		         = 0x80000000; // 2147483648
 	}
 ?>
