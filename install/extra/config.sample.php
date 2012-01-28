@@ -74,6 +74,7 @@ $INSTALLER09['expires']['user_status'] = 30*84600; // 30x86400 = 30 days
 $INSTALLER09['expires']['user_stats'] = 300; // 300 = 5 min
 $INSTALLER09['expires']['announcement'] = 600; // 600 = 10 min
 $INSTALLER09['expires']['shoutbox'] = 86400; // 86400 = 1 day
+$INSTALLER09['expires']['staff_shoutbox'] = 86400; // 86400 = 1 day
 $INSTALLER09['expires']['forum_posts'] = 0;  
 $INSTALLER09['expires']['torrent_comments'] = 900;  // 900 = 15 min
 $INSTALLER09['expires']['latestposts'] = 0;  // 900 = 15 min
