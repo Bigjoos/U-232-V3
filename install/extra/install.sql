@@ -2377,7 +2377,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `ip` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
   `class` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `override_class` tinyint(3) unsigned NOT NULL DEFAULT '255',
-  `language` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'en',
+  `language` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '1',
   `avatar` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `av_w` smallint(3) unsigned NOT NULL DEFAULT '0',
   `av_h` smallint(3) unsigned NOT NULL DEFAULT '0',
