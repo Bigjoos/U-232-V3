@@ -26,7 +26,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
     header("Location: {$INSTALLER09['baseurl']}/browse.php");
     }
 
-    $stdfoot = array(/** include js **/'js' => array('java_klappe','wz_tooltip','browse','ajax_details'));
+    $stdfoot = array(/** include js **/'js' => array('java_klappe','wz_tooltip','browse'));
     $stdhead = array(/** include css **/'css' => array('browse'));
     $lang = array_merge( load_language('global'), load_language('browse'), load_language('torrenttable_functions') );
     if (function_exists('parked'))
