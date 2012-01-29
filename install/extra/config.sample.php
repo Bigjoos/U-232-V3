@@ -146,7 +146,6 @@ $INSTALLER09['openreg_invites'] = true; //==true=open, false = closed
 $INSTALLER09['failedlogins'] = 5; // Maximum failed logins before ip ban
 $INSTALLER09['flood_time'] = 900; //comment/forum/pm flood limit
 $INSTALLER09['readpost_expiry'] = 14*86400; // 14 days
-$INSTALLER09['language'] = 'en';
 /** define dirs **/
 define('INCL_DIR', dirname(__FILE__).DIRECTORY_SEPARATOR);
 define('ROOT_DIR', realpath(INCL_DIR.'..'.DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR);
