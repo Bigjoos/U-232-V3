@@ -239,6 +239,7 @@ function check_bans($ip, &$reason = '') {
       $row['vipclass_before'] = (int)$row['vipclass_before'];
       $row['passhint'] = (int)$row['passhint'];
       $row['avatarpos'] = (int)$row['avatarpos'];
+      $row['language'] = (int)$row['language'];
       $row['sendpmpos'] = (int)$row['sendpmpos'];
       $row['invitedate'] = (int)$row['invitedate'];
       $row['anonymous_until'] = (int)$row['anonymous_until'];
