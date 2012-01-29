@@ -2497,6 +2497,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `watched_user_reason` text COLLATE utf8_unicode_ci NOT NULL,
   `staff_notes` text COLLATE utf8_unicode_ci NOT NULL,
   `game_access` int(11) NOT NULL DEFAULT '1',
+  `show_staffshout` enum('yes','no') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT 'yes',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `ip` (`ip`),

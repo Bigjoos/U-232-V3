@@ -20,10 +20,10 @@ loggedinorreturn();
 $HTMLOUT = $query = $dellall = $dtcolor = $fontcolor = $bg = $pm = $reply = '';
 header('Content-Type: text/html; charset='.$INSTALLER09['char_set'].'');
 // === added turn on / off shoutbox - sir snuggs
-if ( ( isset( $_GET['show_shout'] ) ) && ( ( $show_shout = $_GET['show'] ) !== $CURUSER['show_shout'] ) ) {
-sql_query("UPDATE users SET show_shout = ".sqlesc($_GET['show'])." WHERE id = {$CURUSER['id']}") or sqlerr( __FILE__, __LINE__ );
+if ( ( isset( $_GET['show_staffshout'] ) ) && ( ( $show_staffshout = $_GET['show_staff'] ) !== $CURUSER['show_staffshout'] ) ) {
+sql_query("UPDATE users SET show_staffshout = ".sqlesc($_GET['show_staff'])." WHERE id = {$CURUSER['id']}") or sqlerr( __FILE__, __LINE__ );
 $mc1->begin_transaction('MyUser_'.$CURUSER['id']);
-$mc1->update_row(false, array('show_shout' => $_GET['show']));
+$mc1->update_row(false, array('show_staffshout' => $_GET['show_staff']));
 $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
 header( "Location: " . $_SERVER['HTTP_REFERER'] );
 }

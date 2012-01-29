@@ -1,6 +1,6 @@
 <?php
-// === shoutbox 09
-   if ($CURUSER['show_shout'] === "yes") {
+// === Staff shoutbox 09
+   if ($CURUSER['show_staffshout'] === "yes") {
    $commandbutton = $refreshbutton = $smilebutton = $custombutton = $staffsmiliebutton = '';
    if ($CURUSER['class'] >= UC_STAFF){
    $staffsmiliebutton .="<span style='float:right;'><a href=\"javascript:PopStaffSmiles('staff_shbox','staff_shbox_text')\">{$lang['index_shoutbox_ssmilies']}</a></span>";
@@ -52,16 +52,16 @@
    <a href=\"javascript:SmileIT(':kiss:','shbox','staff_shbox_text')\"><img border='0' src='{$INSTALLER09['pic_base_url']}smilies/kiss.gif' alt='Kiss' title='Kiss' /></a> 
    <a href=\"javascript:SmileIT(':blink:','shbox','staff_shbox_text')\"><img border='0' src='{$INSTALLER09['pic_base_url']}smilies/blink.gif' alt='Blink' title='Blink' /></a> 
    <a href=\"javascript:SmileIT(':baby:','shbox','staff_shbox_text')\"><img border='0' src='{$INSTALLER09['pic_base_url']}smilies/baby.gif' alt='Baby' title='Baby' /></a>
-   <span class='shoutextra'><a href='{$INSTALLER09['baseurl']}/staff_shoutbox.php?show_shout=1&amp;show=no'>[&nbsp;{$lang['index_shoutbox_close']}&nbsp;]</a>
+   <span class='shoutextra'><a href='{$INSTALLER09['baseurl']}/staff_shoutbox.php?show_staffshout=1&amp;show_staff=no'>[&nbsp;{$lang['index_shoutbox_close']}&nbsp;]</a>
    {$staffsmiliebutton}{$smilebutton}{$custombutton}{$refreshbutton}{$commandbutton}</span>
    </div>
 	 </div>
    </form><br />\n";
    }
-   if ($CURUSER['show_shout'] === "no") {
-   $HTMLOUT .="<div class='headline'><b>{$lang['index_shoutbox']}&nbsp;</b></div><div class='headbody'>[&nbsp;<a href='{$INSTALLER09['baseurl']}/staff_shoutbox.php?show_shout=1&amp;show=yes'>{$lang['index_shoutbox_open']}&nbsp;]</a></div><br />";
+   if ($CURUSER['show_staffshout'] === "no") {
+   $HTMLOUT .="<div class='headline'><b>{$lang['index_shoutbox']}&nbsp;</b></div><div class='headbody'>[&nbsp;<a href='{$INSTALLER09['baseurl']}/staff_shoutbox.php?show_staffshout=1&amp;show_staff=yes'>{$lang['index_shoutbox_open']}&nbsp;]</a></div><br />";
    }
-//==end 09 shoutbox
+//==end 09 Staff shoutbox
 // End Class
 
 // End File

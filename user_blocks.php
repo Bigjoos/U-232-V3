@@ -39,7 +39,7 @@ die;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $updateset = array();
-    $setbits_index_page = $clrbits_index_page = $setbits_global_stdhead = $clrbits_global_stdhead  = $setbits_userdetails_page = $clrbits_userdetails_page = 0;
+    $setbits_index_page = $clrbits_index_page = $setbits_global_stdhead = $clrbits_global_stdhead = $setbits_userdetails_page = $clrbits_userdetails_page = 0;
     
     //==Index
     if (isset($_POST['ie_alert']))
