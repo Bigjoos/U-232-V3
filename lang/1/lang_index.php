@@ -17,6 +17,7 @@ $lang = array(
 'index_shoutbox_close'	=> "Close",
 'index_shoutbox_history'	=> "History",
 'index_shoutbox_open'	=> "Open",
+'index_staff_shoutbox'   => "Staff Shoutbox",
 'index_active_irc' => "Active Irc users",
 'index_active' => "Active users",
 'index_active24' => "Active users in the last 24hrs",

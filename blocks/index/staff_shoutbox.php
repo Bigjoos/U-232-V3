@@ -59,7 +59,7 @@
    </form><br />\n";
    }
    if ($CURUSER['show_staffshout'] === "no") {
-   $HTMLOUT .="<div class='headline'><b>{$lang['index_shoutbox']}&nbsp;</b></div><div class='headbody'>[&nbsp;<a href='{$INSTALLER09['baseurl']}/staff_shoutbox.php?show_staffshout=1&amp;show_staff=yes'>{$lang['index_shoutbox_open']}&nbsp;]</a></div><br />";
+   $HTMLOUT .="<div class='headline'><b>{$lang['index_staff_shoutbox']}&nbsp;</b></div><div class='headbody'>[&nbsp;<a href='{$INSTALLER09['baseurl']}/staff_shoutbox.php?show_staffshout=1&amp;show_staff=yes'>{$lang['index_shoutbox_open']}&nbsp;]</a></div><br />";
    }
 //==end 09 Staff shoutbox
 // End Class

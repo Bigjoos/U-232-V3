@@ -171,7 +171,7 @@ function check_bans($ip, &$reason = '') {
                      'info, acceptpms, ip, class, override_class, language, avatar, av_w, av_h, '.
                      'title, country, notifs, enabled, donor, warned, torrentsperpage, topicsperpage, '.
                      'postsperpage, deletepms, savepms, reputation, time_offset, dst_in_use, auto_correct_dst, '.
-                     'show_shout, shoutboxbg, chatpost, smile_until, vip_added, vip_until, '.
+                     'show_shout, show_staffshout, shoutboxbg, chatpost, smile_until, vip_added, vip_until, '.
                      'freeslots, free_switch, invites, invitedby, invite_rights, anonymous, uploadpos, forumpost, '.
                      'downloadpos, immunity, leechwarn, disable_reason, clear_new_tag_manually, last_browse, sig_w, '.
                      'sig_h, signatures, signature, forum_access, highspeed, hnrwarn, hit_and_run_total, donoruntil, '.
