@@ -18,7 +18,7 @@ require_once(INCL_DIR.'bbcode_functions.php');
 dbconn( false );
 loggedinorreturn();
 $HTMLOUT = $query = $dellall = $dtcolor = $fontcolor = $bg = $pm = $reply = '';
-header('Content-Type: text/html; charset='.$INSTALLER09['char_set'].'');
+header('Content-Type: text/html; charset='.charset());
 // === added turn on / off shoutbox - sir snuggs
 if ( ( isset( $_GET['show_shout'] ) ) && ( ( $show_shout = $_GET['show'] ) !== $CURUSER['show_shout'] ) ) {
 sql_query("UPDATE users SET show_shout = ".sqlesc($_GET['show'])." WHERE id = {$CURUSER['id']}") or sqlerr( __FILE__, __LINE__ );
@@ -54,7 +54,7 @@ $HTMLOUT .="<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http
 <meta http-equiv='Pragma' content='no-cache' />
 <meta http-equiv='expires' content='-1' />
 <html xmlns='http://www.w3.org/1999/xhtml'>
-<meta http-equiv='Content-Type' content='text/html; charset={$INSTALLER09['char_set']}' />
+<meta http-equiv='Content-Type' content='text/html; charset=".charset()."' />
 <script type='text/javascript' src='./scripts/shout.js'></script>
 <style type='text/css'>
 #specialbox{
@@ -100,7 +100,7 @@ $HTMLOUT .="<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http
 <meta http-equiv='Pragma' content='no-cache' />
 <meta http-equiv='expires' content='-1' />
 <html xmlns='http://www.w3.org/1999/xhtml'>
-<meta http-equiv='Content-Type' content='text/html; charset={$INSTALLER09['char_set']}' />
+<meta http-equiv='Content-Type' content='text/html; charset=".charset()."' />
 <script type='text/javascript' src='./scripts/shout.js'></script>
 <style type='text/css'>
 #specialbox{
@@ -166,7 +166,7 @@ $HTMLOUT .="<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http
 <title>ShoutBox</title>
 <meta http-equiv='REFRESH' content='60; URL=./shoutbox.php' />
 <script type='text/javascript' src='./scripts/shout.js'></script>
-<meta http-equiv='Content-Type' content='text/html; charset={$INSTALLER09['char_set']}' />
+<meta http-equiv='Content-Type' content='text/html; charset=".charset()."' />
 <style type='text/css'>
 A {color: #356AA0; font-weight: bold; font-size: 9pt; }
 A:hover {color: #FF0000;}

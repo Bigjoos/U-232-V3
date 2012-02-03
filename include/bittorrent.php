@@ -382,6 +382,19 @@ function check_bans($ip, &$reason = '') {
       get_template();
       $mood = create_moods();
    }
+ 
+   function charset()
+    {
+        global $CURUSER, $INSTALLER09;
+        $lang_charset = $CURUSER['language'];
+        switch ($lang_charset) {
+            case ($lang_charset == 2):
+                return "ISO-8859-1";
+        case ($lang_charset == 3):
+                return "ISO-8859-15";
+            default: return "UTF-8";
+        }
+    }
 
   //== 2010 Tbdev Cleanup Manager by ColdFusion
   function autoclean() {

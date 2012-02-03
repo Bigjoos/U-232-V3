@@ -43,12 +43,12 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
     if (isset($INSTALLER09['xhtml_strict'])) { //== Use strict mime type/doctype
     //== Only if browser/user agent supports xhtml
     if (stristr($_SERVER['HTTP_ACCEPT'],'application/xhtml+xml') && ($INSTALLER09['xhtml_strict'] === 1 || $INSTALLER09['xhtml_strict'] == $CURUSER['username'])) {
-    header('Content-type:application/xhtml+xml; charset='.$INSTALLER09['char_set']);
-    $doctype ='<?xml version="1.0" encoding="'.$INSTALLER09['char_set'].'"?>'.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '.'"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'.'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="'.$INSTALLER09['language'].'">';
+    header('Content-type:application/xhtml+xml; charset='.charset());
+    $doctype ='<?xml version="1.0" encoding="'.charset().'"?>'.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '.'"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'.'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="'.$INSTALLER09['language'].'">';
     }
     }
     if (!isset($doctype)) {
-    header('Content-type:text/html; charset='.$INSTALLER09['char_set']);
+    header('Content-type:text/html; charset='.charset());
     $doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'.'"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'.'<html xmlns="http://www.w3.org/1999/xhtml">';
     }
     $htmlout = $doctype."<head>

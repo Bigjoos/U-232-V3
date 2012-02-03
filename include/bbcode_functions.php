@@ -273,7 +273,7 @@ function format_comment($text, $strip_html = true, $urls = true, $images=true)
 	// fix messed up links
 	$s = str_replace('&amp;', '&', $s);
 	if ($strip_html)
-   $s = htmlentities($s, ENT_QUOTES, 'UTF-8');
+   $s = htmlentities($s, ENT_QUOTES, charset());
    if( preg_match( "#function\s*\((.*?)\|\|#is", $s ) )
    {
 		$s = str_replace( ":"     , "&#58;", $s );
@@ -411,7 +411,7 @@ function format_comment_no_bbcode($text, $strip_html = true)
 	$s = $text;
 	if ($strip_html)
 		//$s = htmlspecialchars($s);
-		$s = htmlentities($s, ENT_QUOTES, 'UTF-8');
+		$s = htmlentities($s, ENT_QUOTES, charset());
   	// BBCode to find...
   	//=== basically will change this into a sort of strip tags but of bbcode shor of the code tag
 	 $bb_code_in = array('/\[b\]\s*((\s|.)+?)\s*\[\/b\]/i',	
