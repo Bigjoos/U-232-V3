@@ -39,7 +39,7 @@ die;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $updateset = array();
-    $setbits_index_page = $clrbits_index_page = $setbits_global_stdhead = $clrbits_global_stdhead = $setbits_userdetails_page = $clrbits_userdetails_page = 0;
+    $setbits_index_page = $clrbits_index_page = $setbits_global_stdhead = $clrbits_global_stdhead  = $setbits_userdetails_page = $clrbits_userdetails_page = 0;
     
     //==Index
     if (isset($_POST['ie_alert']))
@@ -899,7 +899,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
         <td width="60%">
-        <b>SHow friends?</b><div><hr style="color:#A83838;" size="1" /></div>
+        <b>Show friends?</b><div><hr style="color:#A83838;" size="1" /></div>
         <div style="color: lightgrey;">Enable your friends block</div></td>
         <td width="40%"><div style="width: auto;" align="right"><input type="checkbox" name="userdetails_showfriends" value="yes" '.$checkbox_userdetails_showfriends.' /></div></td>
         </tr></table>';

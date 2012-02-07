@@ -11,10 +11,9 @@ function docleanup( $data ) {
     global $INSTALLER09, $queries, $mc1;
     set_time_limit(0);
     ignore_user_abort(1);
-
- //=== delete from now viewing after 15 minutes
+    //=== delete from now viewing after 15 minutes
 	 sql_query('DELETE FROM now_viewing WHERE added < '.(TIME_NOW - 900));
-   //=== fix any messed up counts
+    //=== fix any messed up counts
 	 $forums = sql_query('SELECT f.id, count( DISTINCT t.id ) AS topics, count(p.id) AS posts
                           FROM forums f
                           LEFT JOIN topics t ON f.id = t.forum_id
@@ -25,20 +24,19 @@ function docleanup( $data ) {
 	 $forum['posts'] = $forum['topics'] > 0 ? $forum['posts'] : 0;
 	 sql_query('update forums set post_count = '.$forum['posts'].', topic_count = '.$forum['topics'].' where id='.$forum['id']);
 	 }
+    
+    if($queries > 0)
+    write_log("Forum clean-------------------- Forum cleanup Complete using $queries queries --------------------");
 
-write_log("Forum clean-------------------- Forum cleanup Complete using $queries queries --------------------");
+    if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+    {
+    $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items updated";
+    }
 
-   if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-   {
-   $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items updated";
-   }
-
-   
-   if( $data['clean_log'] )
-   {
-   cleanup_log( $data );
-   }
-        
+    if( $data['clean_log'] )
+    {
+    cleanup_log( $data );
+    }     
    }  
   
 function cleanup_log( $data )

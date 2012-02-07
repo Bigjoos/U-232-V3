@@ -21,13 +21,13 @@ function docleanup( $data ) {
         set_time_limit(1200);
         ignore_user_abort(1);
         //== 09 Auto leech warn by Bigjoos/pdq
-    //== Updated/modified autoleech warning script 
-    $minratio = 0.3; // ratio < 0.4
-    $downloaded = 10 * 1024 * 1024 * 1024; // + 10 GB
-    $length = 3 * 7; // Give 3 weeks to let them sort there shit
-    $res = sql_query("SELECT id, modcomment FROM users WHERE enabled='yes' AND class = ".UC_USER." AND leechwarn = '0' AND uploaded / downloaded < $minratio AND downloaded >= $downloaded AND immunity = '0'") or sqlerr(__FILE__, __LINE__);
-    $msgs_buffer = $users_buffer = array();
-    if (mysqli_num_rows($res) > 0) {
+        //== Updated/modified autoleech warning script 
+        $minratio = 0.3; // ratio < 0.4
+        $downloaded = 10 * 1024 * 1024 * 1024; // + 10 GB
+        $length = 3 * 7; // Give 3 weeks to let them sort there shit
+        $res = sql_query("SELECT id, modcomment FROM users WHERE enabled='yes' AND class = ".UC_USER." AND leechwarn = '0' AND uploaded / downloaded < $minratio AND downloaded >= $downloaded AND immunity = '0'") or sqlerr(__FILE__, __LINE__);
+        $msgs_buffer = $users_buffer = array();
+        if (mysqli_num_rows($res) > 0) {
         $dt = sqlesc(TIME_NOW);
         $subject = "Auto leech warned";
         $msg = "You have been warned and your download rights have been removed due to your low ratio. You need to get a ratio of 0.5 within the next 3 weeks or your Account will be disabled.";
@@ -123,17 +123,17 @@ function docleanup( $data ) {
         unset ($users_buffer, $count);
     }
     //==End
-
-  write_log("Leechwarn Clean -------------------- Leechwarn cleanup Complete using $queries queries --------------------");
+    if($queries > 0)
+    write_log("Leechwarn Clean -------------------- Leechwarn cleanup Complete using $queries queries --------------------");
         
-if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-   {
-   $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
-   }
+    if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+    {
+    $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
+    }
   
-        if( $data['clean_log'] )
-        {
-        cleanup_log( $data );
-        }
+    if( $data['clean_log'] )
+    {
+    cleanup_log( $data );
+    }
 }
 ?>

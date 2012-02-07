@@ -53,17 +53,18 @@ function docleanup( $data ) {
         unset ($users_buffer, $msgs_buffer, $count);
         status_change($arr['id']); //== For Retros announcement mod
     }
-
-  write_log("Karma Vip Clean -------------------- Karma Vip cleanup Complete using $queries queries --------------------");
+    //==
+    if($queries > 0)
+    write_log("Karma Vip Clean -------------------- Karma Vip cleanup Complete using $queries queries --------------------");
         
-if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-   {
-   $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
-   }
+    if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+    {
+    $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
+    }
   
-        if( $data['clean_log'] )
-        {
-        cleanup_log( $data );
-        }
+    if( $data['clean_log'] )
+    {
+    cleanup_log( $data );
+    }
 }
 ?>

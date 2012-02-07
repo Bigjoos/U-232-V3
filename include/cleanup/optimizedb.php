@@ -24,10 +24,10 @@ function docleanup( $data ) {
    $oht = '';
    while( $row = mysqli_fetch_assoc($sql) )
    {
-    if( $row['Data_free'] > 100 )
-    {
-     $oht .= $row['Data_free'].',';
-    }
+   if( $row['Data_free'] > 100 )
+   {
+   $oht .= $row['Data_free'].',';
+   }
   }
   
   $oht = rtrim( $oht, ',');
@@ -35,19 +35,18 @@ function docleanup( $data ) {
   {
   $sql = sql_query( "OPTIMIZE TABLE {$oht}" );
   }
-  
-   write_log("Auto-optimizedb--------------------Auto Optimization Complete using $queries queries --------------------");
    
-	if( $oht != '' )
+  if($queries > 0)
+  write_log("Auto-optimizedb--------------------Auto Optimization Complete using $queries queries --------------------");
+   
+  if( $oht != '' )
   {
-    $data['clean_desc'] = "MySQLCleanup optimized {$oht} table(s)";
+  $data['clean_desc'] = "MySQLCleanup optimized {$oht} table(s)";
   }
-	
-	if( $data['clean_log'] )
-	{
-    cleanup_log( $data );
-	}
 
+  if( $data['clean_log'] )
+  {
+  cleanup_log( $data );
+  }
 }
-
 ?>

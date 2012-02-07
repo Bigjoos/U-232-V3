@@ -7,7 +7,7 @@
  *   Project Leaders: Mindless, putyn.
  **/
 
-function cleanup_log( $data )
+function cleanup_log($data)
 {
   $text = sqlesc($data['clean_title']);
   $added = TIME_NOW;
@@ -22,11 +22,11 @@ function docleanup( $data ) {
         set_time_limit(1200);
         ignore_user_abort(1);
         //== Updated demote power users
-    $minratio = 0.85;
-    $res = sql_query("SELECT id, uploaded, downloaded, modcomment FROM users WHERE class = ".UC_POWER_USER." AND uploaded / downloaded < $minratio") or sqlerr(__FILE__, __LINE__);
-    $subject ="Auto Demotion";
-    $msgs_buffer = $users_buffer = array();
-    if (mysqli_num_rows($res) > 0) {
+        $minratio = 0.85;
+        $res = sql_query("SELECT id, uploaded, downloaded, modcomment FROM users WHERE class = ".UC_POWER_USER." AND uploaded / downloaded < $minratio") or sqlerr(__FILE__, __LINE__);
+        $subject ="Auto Demotion";
+        $msgs_buffer = $users_buffer = array();
+        if (mysqli_num_rows($res) > 0) {
         $msg = "You have been auto-demoted from [b]Power User[/b] to [b]User[/b] because your share ratio has dropped below  $minratio.\n";
         while ($arr = mysqli_fetch_assoc($res)) {
             $ratio = number_format($arr['uploaded'] / $arr['downloaded'], 3);
@@ -57,20 +57,18 @@ function docleanup( $data ) {
         unset ($users_buffer, $msgs_buffer, $count);
         status_change($arr['id']); //== For Retros announcement mod
     }
-  //==End
-
-write_log("Power User Demote Updates -------------------- Power User Demote Updates Clean Complete using $queries queries--------------------");
+    //==End
+    if($queries > 0)
+    write_log("Power User Demote Updates -------------------- Power User Demote Updates Clean Complete using $queries queries--------------------");
        
-
-if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-  {
+    if(false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]))
+    {
     $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
-  }
+    }
           
-        if( $data['clean_log'] )
-        {
-        cleanup_log( $data );
-        }
-        
+    if($data['clean_log'])
+    {
+    cleanup_log($data);
+    }     
 }
 ?>

@@ -53,17 +53,17 @@ function docleanup( $data ) {
         unset ($users_buffer, $msgs_buffer, $count);
     }
     //==End
-
-  write_log("Anonymous Profile Clean -------------------- Anonymous Profile cleanup Complete using $queries queries --------------------");
+    if($queries > 0)
+    write_log("Anonymous Profile Clean -------------------- Anonymous Profile cleanup Complete using $queries queries --------------------");
         
-if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-   {
-   $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
-   }
+    if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+    {
+    $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
+    }
   
-        if( $data['clean_log'] )
-        {
-        cleanup_log( $data );
-        }
+    if( $data['clean_log'] )
+    {
+    cleanup_log( $data );
+    }
 }
 ?>

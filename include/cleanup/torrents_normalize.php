@@ -62,7 +62,8 @@ function docleanup( $data ) {
     }
 	
    } while (0);
-
+   
+   if($queries > 0)
    write_log("Normalize clean-------------------- Normalize cleanup Complete using $queries queries --------------------");
 
    if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
@@ -70,13 +71,11 @@ function docleanup( $data ) {
    $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
    }
 
-   
    if( $data['clean_log'] )
    {
    cleanup_log( $data );
-   }
-        
-   }  
+   }   
+  }  
   
 function cleanup_log( $data )
 {

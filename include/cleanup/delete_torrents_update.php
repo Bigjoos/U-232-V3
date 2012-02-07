@@ -21,12 +21,12 @@ function docleanup( $data ) {
         set_time_limit(1200);
         ignore_user_abort(1);
         //==delete torrents by putyn
-	$days = 30;
-	$dt = (TIME_NOW - ($days * 86400));
-	$res = sql_query("SELECT id, name FROM torrents WHERE added < $dt AND seeders='0' AND leechers='0'");
-	while ($arr = mysqli_fetch_assoc($res))
-	{
-		sql_query("DELETE peers.*, files.*,comments.*,snatched.*, thanks.*, bookmarks.*, coins.*, ratings.*, torrents.* FROM torrents 
+	     $days = 30;
+	     $dt = (TIME_NOW - ($days * 86400));
+	     $res = sql_query("SELECT id, name FROM torrents WHERE added < $dt AND seeders='0' AND leechers='0'");
+	     while ($arr = mysqli_fetch_assoc($res))
+	     {
+		  sql_query("DELETE peers.*, files.*,comments.*,snatched.*, thanks.*, bookmarks.*, coins.*, ratings.*, torrents.* FROM torrents 
 				 LEFT JOIN peers ON peers.torrent = torrents.id
 				 LEFT JOIN files ON files.torrent = torrents.id
 				 LEFT JOIN comments ON comments.torrent = torrents.id
@@ -39,17 +39,18 @@ function docleanup( $data ) {
 				 @unlink("{$INSTALLER09['torrent_dir']}/{$arr['id']}.torrent");
 		write_log("Torrent {$arr['id']} ({$arr['name']}) was deleted by system (older than $days days and no seeders)");
 	}
-
+  
+  if($queries > 0)
   write_log("Delete Old Torrents Clean -------------------- Delete Old Torrents cleanup Complete using $queries queries --------------------");
         
-if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-   {
-   $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
-   }
+  if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+  {
+  $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
+  }
   
-        if( $data['clean_log'] )
-        {
-        cleanup_log( $data );
-        }
+  if( $data['clean_log'] )
+  {
+  cleanup_log( $data );
+  }
 }
 ?>

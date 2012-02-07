@@ -18,10 +18,10 @@ function cleanup_log( $data )
 
 
 function docleanup( $data ) {
-        global $INSTALLER09, $queries, $mc1;
-        set_time_limit(1200);
-        ignore_user_abort(1);
-        //== Delete inactive user accounts
+   global $INSTALLER09, $queries, $mc1;
+   set_time_limit(1200);
+   ignore_user_abort(1);
+   //== Delete inactive user accounts
 	$secs = 350*86400;
 	$dt = (TIME_NOW - $secs);
 	$maxclass = UC_MAX;
@@ -31,6 +31,7 @@ function docleanup( $data ) {
 	$dt = (TIME_NOW - $secs);
 	$maxclass = UC_MAX;
 	sql_query("DELETE FROM users WHERE parked='yes' AND status='confirmed' AND class <= $maxclass AND last_access < $dt");
+   if($queries > 0)
    write_log("Inactive Clean -------------------- Inactive Clean Complete using $queries queries--------------------");
        
    if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )

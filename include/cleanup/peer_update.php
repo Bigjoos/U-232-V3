@@ -22,38 +22,36 @@ function docleanup( $data ) {
     $seed = $dead_peer['seeder'] === 'yes'; // you use 'yes' i thinks :P
     sql_query('DELETE FROM peers WHERE torrent = '.$torrentid.' AND peer_id = '.sqlesc($dead_peer['peer_id']));
 
-   if (!isset($torrent_seeds[$torrentid]))
-   $torrent_seeds[$torrentid] = $torrent_leeches[$torrentid] = 0;
+    if (!isset($torrent_seeds[$torrentid]))
+    $torrent_seeds[$torrentid] = $torrent_leeches[$torrentid] = 0;
 
-   if ($seed)
-   $torrent_seeds[$torrentid]++;
-   else
-   $torrent_leeches[$torrentid]++;
-   }
+    if ($seed)
+    $torrent_seeds[$torrentid]++;
+    else
+    $torrent_leeches[$torrentid]++;
+    }
 
-   foreach (array_keys($torrent_seeds) as $tid) {
-   $update = array();
-   adjust_torrent_peers($tid, -$torrent_seeds[$tid], -$torrent_leeches[$tid], 0);
-   if ($torrent_seeds[$tid])
-   $update[] = 'seeders = (seeders - '.$torrent_seeds[$tid].')';
-   if ($torrent_leeches[$tid])
-   $update[] = 'leechers = (leechers - '.$torrent_leeches[$tid].')';
-   sql_query('UPDATE torrents SET '.implode(', ', $update).' WHERE id = '.$tid);
-   }
+    foreach (array_keys($torrent_seeds) as $tid) {
+    $update = array();
+    adjust_torrent_peers($tid, -$torrent_seeds[$tid], -$torrent_leeches[$tid], 0);
+    if ($torrent_seeds[$tid])
+    $update[] = 'seeders = (seeders - '.$torrent_seeds[$tid].')';
+    if ($torrent_leeches[$tid])
+    $update[] = 'leechers = (leechers - '.$torrent_leeches[$tid].')';
+    sql_query('UPDATE torrents SET '.implode(', ', $update).' WHERE id = '.$tid);
+    }
+    if($queries > 0)
+    write_log("Peers clean-------------------- Peer cleanup Complete using $queries queries --------------------");
 
-   write_log("Peers clean-------------------- Peer cleanup Complete using $queries queries --------------------");
+    if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+    {
+    $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
+    }
 
-   if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-   {
-   $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
-   }
-
-   
-   if( $data['clean_log'] )
-   {
-   cleanup_log( $data );
-   }
-        
+    if( $data['clean_log'] )
+    {
+    cleanup_log( $data );
+    }    
    }  
   
 function cleanup_log( $data )

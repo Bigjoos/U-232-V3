@@ -29,6 +29,7 @@ function docleanup( $data ) {
         unset ($Free_buffer, $count);
     }
    //==End
+   if($queries > 0)
    write_log("Free clean-------------------- Free Torrents cleanup Complete using $queries queries --------------------");
 
    if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )

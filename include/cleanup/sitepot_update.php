@@ -22,21 +22,20 @@ function docleanup( $data ) {
         set_time_limit(1200);
         ignore_user_abort(1);
         //== sitepot
-       sql_query("UPDATE avps SET value_i = 0, value_s = '0' WHERE arg = 'sitepot' AND value_u < ".TIME_NOW." AND value_s = '1'") or sqlerr(__file__, __line__);
-       $mc1->delete_value('Sitepot_');
-  write_log("Sitepot -------------------- Sitepot CLean Complete using $queries queries--------------------");
+        sql_query("UPDATE avps SET value_i = 0, value_s = '0' WHERE arg = 'sitepot' AND value_u < ".TIME_NOW." AND value_s = '1'") or sqlerr(__file__, __line__);
+        $mc1->delete_value('Sitepot_');
+        $mc1->delete_value('shoutbox_');
+        if($queries > 0)
+        write_log("Sitepot -------------------- Sitepot CLean Complete using $queries queries--------------------");
        
-
-if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-  {
-    $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
-  }
+        if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+        {
+        $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
+        }
           
         if( $data['clean_log'] )
         {
         cleanup_log( $data );
         }
-        
 }
-
 ?>

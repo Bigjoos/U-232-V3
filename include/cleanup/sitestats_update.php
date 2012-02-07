@@ -8,10 +8,10 @@
  **/
 
 function docleanup( $data ) {
-    global $INSTALLER09, $queries;
-    set_time_limit(0);
-    ignore_user_abort(1);
-//== 09 Stats
+   global $INSTALLER09, $queries;
+   set_time_limit(0);
+   ignore_user_abort(1);
+   //== 09 Stats
    $registered = get_row_count('users');
    $unverified = get_row_count('users', "WHERE status='pending'");
    $torrents = get_row_count('torrents');
@@ -35,14 +35,14 @@ function docleanup( $data ) {
    $administrators = get_row_count('users', "WHERE class='5'");
    $sysops = get_row_count('users', "WHERE class='6'");
    sql_query("UPDATE stats SET regusers = '$registered', unconusers = '$unverified', torrents = '$torrents', seeders = '$seeders', leechers = '$leechers', unconnectables = '$unconnectables', torrentstoday = '$torrentstoday', donors = '$donors', forumposts = '$forumposts', forumtopics = '$forumtopics', numactive = '$numactive', torrentsmonth = '$torrentsmonth', gender_na = '$gender_na', gender_male = '$gender_male', gender_female = '$gender_female', powerusers = '$powerusers', disabled = '$disabled', uploaders = '$uploaders', moderators = '$moderators', administrators = '$administrators', sysops = '$sysops' WHERE id = '1' LIMIT 1");
-write_log("Stats clean-------------------- Stats cleanup Complete using $queries queries --------------------");
+   if($queries > 0)
+   write_log("Stats clean-------------------- Stats cleanup Complete using $queries queries --------------------");
 
    if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
    {
    $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items updated";
    }
 
-   
    if( $data['clean_log'] )
    {
    cleanup_log( $data );

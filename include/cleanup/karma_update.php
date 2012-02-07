@@ -11,10 +11,10 @@ function docleanup( $data ) {
     global $INSTALLER09, $queries, $mc1;
     set_time_limit(0);
     ignore_user_abort(1);
-//=== Update karma seeding bonus... made nicer by devinkray :D
-      //==   Updated and optimized by pdq :)
-      //=== Using this will work for multiple torrents UP TO 5!... change the 5 to whatever... 1 to give the karma for only 1 torrent at a time, or 100 to make it unlimited (almost) your choice :P
-      ///====== Seeding bonus per torrent
+     //=== Update karma seeding bonus... made nicer by devinkray :D
+     //==   Updated and optimized by pdq :)
+     //=== Using this will work for multiple torrents UP TO 5!... change the 5 to whatever... 1 to give the karma for only 1 torrent at a time, or 100 to make it unlimited (almost) your choice :P
+     ///====== Seeding bonus per torrent
       $res = sql_query('SELECT COUNT(torrent) As tcount, userid, seedbonus FROM peers LEFT JOIN users ON users.id = userid WHERE seeder = "yes" AND connectable = "yes" GROUP BY userid') or sqlerr(__FILE__, __LINE__);
       if (mysqli_num_rows($res) > 0) {
         while ($arr = mysqli_fetch_assoc($res)) {
@@ -37,21 +37,20 @@ function docleanup( $data ) {
         unset ($users_buffer, $update, $count);
     }
   //== End
+  if($queries > 0)
+  write_log("Karma clean-------------------- Karma cleanup Complete using $queries queries --------------------");
 
- write_log("Karma clean-------------------- Karma cleanup Complete using $queries queries --------------------");
-
-   if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-   {
-   $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items updated";
-   }
+  if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+  {
+  $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items updated";
+  }
 
    
-   if( $data['clean_log'] )
-   {
-   cleanup_log( $data );
-   }
-        
-   }  
+  if( $data['clean_log'] )
+  {
+  cleanup_log( $data );
+  }     
+ }  
   
 function cleanup_log( $data )
 {

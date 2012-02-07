@@ -14,8 +14,8 @@ loggedinorreturn();
 
 $lang = array_merge( load_language('global') );
 
-$radio = array('host'=>'',
-			   'port'=>'','password'=>'');
+$radio = array('host'=>'127.0.0.1',
+			   'port'=>'666','password'=>'al_kickyercuntin');
 
 $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
               'SERVERTITLE'=>'Server: <b>%s</b>',
@@ -45,7 +45,7 @@ $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
                 preg_match_all('/\<(TITLE|PLAYEDAT)>(.*?)<\/\\1\>/i',$temph2,$temph3,PREG_PATTERN_ORDER);
                 $history[] = '<b>&nbsp;'.$temph3[2][1].'</b> <sub>('.get_date(TIME_NOW, 'DATE' ,$temph3[2][0]).')</sub>';
         }
-        
+        $data = 0;
         if($data['STREAMSTATUS'] == 0)
                 return 'Sorry '.$CURUSER['username'].'... : Server '.$radio['host'].' is online but there is no stream';
         else {

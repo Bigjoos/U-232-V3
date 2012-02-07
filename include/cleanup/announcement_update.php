@@ -17,24 +17,24 @@ function cleanup_log( $data )
 }
 
 function docleanup( $data ) {
-        global $INSTALLER09, $queries, $mc1;
-        set_time_limit(1200);
-        ignore_user_abort(1);
-        //== Delete expired announcements and processors
-  sql_query("DELETE announcement_process FROM announcement_process LEFT JOIN users ON announcement_process.user_id = users.id WHERE users.id IS NULL");
-  sql_query("DELETE FROM announcement_main WHERE expires < ".TIME_NOW);
-  sql_query("DELETE announcement_process FROM announcement_process LEFT JOIN announcement_main ON announcement_process.main_id = announcement_main.main_id WHERE announcement_main.main_id IS NULL");
-
-  write_log("Announcement Clean -------------------- Announcement cleanup Complete using $queries queries --------------------");
+   global $INSTALLER09, $queries, $mc1;
+   set_time_limit(1200);
+   ignore_user_abort(1);
+   //== Delete expired announcements and processors
+   sql_query("DELETE announcement_process FROM announcement_process LEFT JOIN users ON announcement_process.user_id = users.id WHERE users.id IS NULL");
+   sql_query("DELETE FROM announcement_main WHERE expires < ".TIME_NOW);
+   sql_query("DELETE announcement_process FROM announcement_process LEFT JOIN announcement_main ON announcement_process.main_id = announcement_main.main_id WHERE announcement_main.main_id IS NULL");
+   if($queries > 0)
+   write_log("Announcement Clean -------------------- Announcement cleanup Complete using $queries queries --------------------");
         
-if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+   if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
    {
    $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
    }
   
-        if( $data['clean_log'] )
-        {
-        cleanup_log( $data );
-        }
+   if( $data['clean_log'] )
+   {
+   cleanup_log( $data );
+   }
 }
 ?>

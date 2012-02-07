@@ -7,7 +7,7 @@
  *   Project Leaders: Mindless, putyn.
  **/
 
-function cleanup_log( $data )
+function cleanup_log($data)
 {
   $text = sqlesc($data['clean_title']);
   $added = TIME_NOW;
@@ -22,12 +22,12 @@ function docleanup( $data ) {
         set_time_limit(1200);
         ignore_user_abort(1);
         //== Updated promote power users
-  $limit = 25*1024*1024*1024;
-	$minratio = 1.05;
-	$maxdt = (TIME_NOW - 86400*28);
-    $res = sql_query("SELECT id, uploaded, downloaded, invites, modcomment FROM users WHERE class = ".UC_USER." AND uploaded >= $limit AND uploaded / downloaded >= $minratio AND enabled='yes' AND added < $maxdt") or sqlerr(__FILE__, __LINE__);
-    $msgs_buffer = $users_buffer = array();
-    if (mysqli_num_rows($res) > 0) {
+        $limit = 25*1024*1024*1024;
+	     $minratio = 1.05;
+	     $maxdt = (TIME_NOW - 86400*28);
+        $res = sql_query("SELECT id, uploaded, downloaded, invites, modcomment FROM users WHERE class = ".UC_USER." AND uploaded >= $limit AND uploaded / downloaded >= $minratio AND enabled='yes' AND added < $maxdt") or sqlerr(__FILE__, __LINE__);
+        $msgs_buffer = $users_buffer = array();
+        if (mysqli_num_rows($res) > 0) {
         $subject ="Auto Promotion";
         $msg = "Congratulations, you have been Auto-Promoted to [b]Power User[/b]. :)\n You get one extra invite.\n";
         while ($arr = mysqli_fetch_assoc($res)) {
@@ -59,19 +59,18 @@ function docleanup( $data ) {
         unset ($users_buffer, $msgs_buffer, $update, $count);
         status_change($arr['id']); //== For Retros announcement mod
     }
-
-write_log("Power User Updates -------------------- Power User Updates Clean Complete using $queries queries--------------------");
+    //==
+    if($queries > 0)
+    write_log("Power User Updates -------------------- Power User Updates Clean Complete using $queries queries--------------------");
        
-
-if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-  {
+    if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+    {
     $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
-  }
+    }
           
-        if( $data['clean_log'] )
-        {
-        cleanup_log( $data );
-        }
-        
+    if($data['clean_log'])
+    {
+    cleanup_log($data);
+    }   
 }
 ?>

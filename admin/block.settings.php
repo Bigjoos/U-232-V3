@@ -585,7 +585,7 @@ $HTMLOUT .='
 
     <table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
     <td width="60%">
-    <b>Usercomments?</b><div><hr style="color:#A83838;" size="1" /></div>
+    <b>Show friends?</b><div><hr style="color:#A83838;" size="1" /></div>
     <div>Enable show friends </div></td>
     <td width="40%"><div style="width: auto;" align="right"><#userdetails_showfriends_on#></div></td>
     </tr></table>

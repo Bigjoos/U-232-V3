@@ -13,8 +13,8 @@ require_once(INCL_DIR.'html_functions.php');
 dbconn(false);
 loggedinorreturn();
 
-$radio = array('host'=>'',
-			   'port'=>'','password'=>'');
+$radio = array('host'=>'127.0.0.1',
+			   'port'=>'666','password'=>'al_kickyercuntin');
 
 $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
               'SERVERTITLE'=>'Server: <b>%s</b>',
@@ -47,7 +47,7 @@ $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
         preg_match_all('/\<HOSTNAME>(.*?)<\/HOSTNAME>/',$xml,$temph);
         if(count($temph[1]))
           $users_ip = join(', ',array_map('sqlesc',$temph[1]));
-        
+        $data = 0;
         if($data['STREAMSTATUS'] == 0)
                 return 'Sorry '.$CURUSER['username'].'... : Server '.$radio['host'].' is online but there is no stream';
         else {

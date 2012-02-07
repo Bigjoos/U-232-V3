@@ -58,17 +58,17 @@ global $INSTALLER09, $queries, $bdir;
     
     $ext = "db_".date("m_d_y",TIME_NOW).".sql.bz2";
     sql_query("INSERT INTO dbbackup (name, added, userid) VALUES (".sqlesc($ext).", ".TIME_NOW.", ".$INSTALLER09['site']['owner'].")") or sqlerr(__FILE__, __LINE__);
+    if($queries > 0)
     write_log("Auto-dbbackup----------------------Auto Back Up Complete using $queries queries---------------------");
           
-if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-   {
-   $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
-   }
+    if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+    {
+    $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
+    }
      
-        if( $data['clean_log'] )
-        {
-        cleanup_log( $data );
-        }
-        }
-
+    if( $data['clean_log'] )
+    {
+    cleanup_log( $data );
+    }
+}
 ?>

@@ -22,7 +22,7 @@ function docleanup( $data ) {
         set_time_limit(1200);
         ignore_user_abort(1);
         //===09 hnr by sir_snugglebunny
-    //=== hit and run part... after 3 days, add the mark of Cain... adjust $secs value if you wish
+        //=== hit and run part... after 3 days, add the mark of Cain... adjust $secs value if you wish
           $secs = 3 * 86400;
           $hnr = TIME_NOW - $secs;
           $res = sql_query('SELECT id FROM snatched WHERE hit_and_run <> \'0\' AND hit_and_run < '.sqlesc($hnr).'') or sqlerr(__FILE__, __LINE__);    
@@ -30,7 +30,7 @@ function docleanup( $data ) {
           {
           sql_query('UPDATE snatched SET mark_of_cain = \'yes\' WHERE id='.sqlesc($arr['id'])) or sqlerr(__FILE__, __LINE__);
           }
-    //=== hit and run... disable Downloading rights if they have 3 marks of cain 
+         //=== hit and run... disable Downloading rights if they have 3 marks of cain 
           $res_fuckers = sql_query('SELECT COUNT(*) AS poop, snatched.userid, users.username, users.modcomment, users.hit_and_run_total, users.downloadpos FROM snatched LEFT JOIN users ON snatched.userid = users.id WHERE snatched.mark_of_cain = \'yes\' AND users.hnrwarn = \'no\' AND users.immunity = \'0\' GROUP BY snatched.userid') or sqlerr(__FILE__, __LINE__);     
           while ($arr_fuckers = mysqli_fetch_assoc($res_fuckers))
           {
@@ -88,19 +88,17 @@ function docleanup( $data ) {
                 }
           }
           //==End
-
-write_log("Hit And Run Clean -------------------- Hit And Run Complete using $queries queries--------------------");
+          if($queries > 0)
+          write_log("Hit And Run Clean -------------------- Hit And Run Complete using $queries queries--------------------");
        
-
-if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-  {
-    $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
-  }
+          if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+          {
+          $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
+          }
           
-        if( $data['clean_log'] )
-        {
-        cleanup_log( $data );
-        }
-        
+          if( $data['clean_log'] )
+          {
+          cleanup_log( $data );
+          }  
 }
 ?>

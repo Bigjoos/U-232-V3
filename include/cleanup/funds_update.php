@@ -17,10 +17,10 @@ function cleanup_log( $data )
 }
 
 function docleanup( $data ) {
-        global $INSTALLER09, $queries, $mc1;
-        set_time_limit(1200);
-        ignore_user_abort(1);
-        // ===Clear funds after one month
+    global $INSTALLER09, $queries, $mc1;
+    set_time_limit(1200);
+    ignore_user_abort(1);
+    // ===Clear funds after one month
     $secs = 30 * 86400;
     $dt = sqlesc(TIME_NOW - $secs);
     sql_query("DELETE FROM funds WHERE added < $dt");
@@ -62,17 +62,17 @@ function docleanup( $data ) {
         unset ($users_buffer, $msgs_buffer, $update, $count);
     }
     //===End===//
-
-  write_log("Delete Old Funds Clean -------------------- Delete Old Funds cleanup Complete using $queries queries --------------------");
+    if($queries > 0)
+    write_log("Delete Old Funds Clean -------------------- Delete Old Funds cleanup Complete using $queries queries --------------------");
         
-if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
-   {
-   $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
-   }
+    if( false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"]) )
+    {
+    $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
+    }
   
-        if( $data['clean_log'] )
-        {
-        cleanup_log( $data );
-        }
+    if( $data['clean_log'] )
+    {
+    cleanup_log( $data );
+    }
 }
 ?>
