@@ -272,7 +272,9 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
         $HTMLOUT .= "</td></tr></table><br />";
         }
         $h1_thingie = ((isset($_GET['sn']) || isset($_GET['wu'])) ? '<h1>Member Updated</h1>' : '');
+        if($CURUSER["id"] <> $user["id"] && $CURUSER['class'] >= UC_STAFF) 
         $suspended .= ($user['suspended'] == 'yes' ? '&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" alt="Suspended" title="Suspended" />&nbsp;<b>This account has been suspended</b>&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" alt="Suspended" title="Suspended" />' : '');
+        if($CURUSER["id"] <> $user["id"] && $CURUSER['class'] >= UC_STAFF) 
         $watched_user .=  ($user['watched_user'] == 0 ? '' : '&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" align="middle" alt="Watched User" title="Watched User" /> <b>This account is currently on the <a href="staffpanel.php?tool=watched_users" >watched user list</a></b> <img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" align="middle" alt="Watched User" title="Watched User" />');
         $perms .= (($user['perms'] & bt_options::PERMS_NO_IP) ? '&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/super.gif" alt="Invincible!"  title="Invincible!" />' : '');
         $enabled = $user["enabled"] == 'yes';
