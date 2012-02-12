@@ -354,12 +354,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     	$setbits_userdetails_page |= block_userdetails::USERCOMMENTS;
     else
     	$clrbits_userdetails_page |= block_userdetails::USERCOMMENTS;
-    
-    //if (isset($_POST['userdetails_showfriends']))
-    	//$setbits_userdetails_page |= block_userdetails::SHOWFRIENDS;
-    //else
-    	//$clrbits_userdetails_page |= block_userdetails::SHOWFRIENDS;
-
+  
     //== set n clear
     if ($setbits_index_page)
       $updateset[] = 'index_page = (index_page | '.$setbits_index_page.')';
@@ -449,8 +444,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $checkbox_userdetails_showpm = ((curuser::$blocks['userdetails_page'] & block_userdetails::SHOWPM) ? ' checked="checked"' : '');
         $checkbox_userdetails_report = ((curuser::$blocks['userdetails_page'] & block_userdetails::REPORT_USER) ? ' checked="checked"' : '');
         $checkbox_userdetails_userstatus = ((curuser::$blocks['userdetails_page'] & block_userdetails::USERSTATUS) ? ' checked="checked"' : '');
-        $checkbox_userdetails_usercomments = ((curuser::$blocks['userdetails_page'] & block_userdetails::USERCOMMENTS) ? ' checked="checked"' : '');
-        //$checkbox_userdetails_showfriends = ((curuser::$blocks['userdetails_page'] & block_userdetails::SHOWFRIENDS) ? ' checked="checked"' : '');         
+        $checkbox_userdetails_usercomments = ((curuser::$blocks['userdetails_page'] & block_userdetails::USERCOMMENTS) ? ' checked="checked"' : '');       
         $HTMLOUT='';
         $HTMLOUT .= begin_frame();
 
@@ -895,14 +889,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <b>User comments?</b><div><hr style="color:#A83838;" size="1" /></div>
         <div style="color: lightgrey;">Enable user comments</div></td>
         <td width="40%"><div style="width: auto;" align="right"><input type="checkbox" name="userdetails_user_comments" value="yes" '.$checkbox_userdetails_usercomments.' /></div></td>
-        </tr></table>
-
-        <!--<table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
-        <td width="60%">
-        <b>Show friends?</b><div><hr style="color:#A83838;" size="1" /></div>
-        <div style="color: lightgrey;">Enable your friends block</div></td>
-        <td width="40%"><div style="width: auto;" align="right"><input type="checkbox" name="userdetails_showfriends" value="yes" '.$checkbox_userdetails_showfriends.' /></div></td>
-        </tr></table>-->';
+        </tr></table>';
         
         $HTMLOUT.='<input type="submit" name="submit" value="Submit" class="btn" tabindex="2" accesskey="s" /></form>';
     
