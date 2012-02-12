@@ -3,7 +3,7 @@ function usercommenttable($rows)
 {
     $htmlout='';
     global $CURUSER, $INSTALLER09, $userid;
-    $htmlout .= "<table class='main' width='790' border='0' cellspacing='0' cellpadding='0'>" .
+    $htmlout .= "<table class='main' width='750' border='0' cellspacing='0' cellpadding='0'>" .
     "<tr><td class='embedded'>";
     $htmlout .= begin_frame();
     $count = 0;
