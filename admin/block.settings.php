@@ -126,8 +126,8 @@ function get_cache_array()
                         'userdetails_showpm_on'          => 1,
                         'userdetails_report_user_on'          => 1,
                         'userdetails_user_status_on'          => 1,
-                        'userdetails_user_comments_on'          => 1,
-                        'userdetails_user_showfriends_on'          => 1
+                        'userdetails_user_comments_on'          => 1
+                        /*'userdetails_user_showfriends_on'          => 1*/
                         );
 	}
 	
@@ -583,12 +583,12 @@ $HTMLOUT .='
     <td width="40%"><div style="width: auto;" align="right"><#userdetails_user_comments_on#></div></td>
     </tr></table>
 
-    <table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
+    <!--<table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
     <td width="60%">
     <b>Show friends?</b><div><hr style="color:#A83838;" size="1" /></div>
     <div>Enable show friends </div></td>
     <td width="40%"><div style="width: auto;" align="right"><#userdetails_showfriends_on#></div></td>
-    </tr></table>
+    </tr></table>-->
     
 <input type="submit" name="submit" value="Submit" class="btn" tabindex="2" accesskey="s" />
 </form>
