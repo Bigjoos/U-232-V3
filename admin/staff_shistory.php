@@ -34,12 +34,12 @@ $lang = array_merge( $lang );
 $HTMLOUT ='';
 
 // //////////////////////
-$count1 = get_row_count('shoutbox', "WHERE staff_shout='no'");
+$count1 = get_row_count('shoutbox', "WHERE staff_shout='yes'");
 $perpage = 15;
-$pager = pager($perpage, $count1, 'staffpanel.php?tool=shistory&amp;');
+$pager = pager($perpage, $count1, 'staffpanel.php?tool=staff_shistory&amp;');
 
 
-$res = sql_query( "SELECT s.id, s.userid, s.date , s.text, s.to_user, u.username, u.pirate, u.king, u.enabled, u.class, u.donor, u.warned, u.leechwarn, u.chatpost FROM shoutbox as s LEFT JOIN users as u ON s.userid=u.id WHERE staff_shout='no' ORDER BY s.date DESC ".$pager['limit']."" ) or sqlerr( __FILE__, __LINE__ );
+$res = sql_query( "SELECT s.id, s.userid, s.date , s.text, s.to_user, u.username, u.pirate, u.king, u.enabled, u.class, u.donor, u.warned, u.leechwarn, u.chatpost FROM shoutbox as s LEFT JOIN users as u ON s.userid=u.id WHERE staff_shout='yes' ORDER BY s.date DESC ".$pager['limit']."" ) or sqlerr( __FILE__, __LINE__ );
 
 if ($count1 > $perpage)
 $HTMLOUT .= $pager['pagertop'];
@@ -47,7 +47,7 @@ $HTMLOUT .= $pager['pagertop'];
 $HTMLOUT .= begin_main_frame();
 
   if ( mysqli_num_rows( $res ) == 0 )
-  $HTMLOUT .="No shouts here";
+  $HTMLOUT .="No staff shouts here";
   else {
   $HTMLOUT .="<table align='center' border='0' cellspacing='0' cellpadding='2' width='100%' class='small'>\n";
   while ( $arr = mysqli_fetch_assoc( $res ) ) {
@@ -70,5 +70,5 @@ $HTMLOUT .= $pager['pagerbottom'];
 
 $HTMLOUT .= end_main_frame();
 
-echo stdhead('Shout History') . $HTMLOUT . stdfoot();
+echo stdhead('Staff Shout History') . $HTMLOUT . stdfoot();
 ?>

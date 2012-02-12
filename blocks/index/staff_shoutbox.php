@@ -9,7 +9,7 @@
    $custombutton .="<span style='float:right;'><a href=\"javascript:PopCustomSmiles('staff_shbox','staff_shbox_text')\">{$lang['index_shoutbox_csmilies']}</a></span>";
    if ($CURUSER['class'] >= UC_STAFF){
    $commandbutton = "<span style='float:right;'><a href=\"javascript:popUp('shoutbox_commands.php')\">{$lang['index_shoutbox_commands']}</a></span>\n";}
-   $refreshbutton = "<span style='float:right;'><a href='shoutbox.php' target='staff_shoutbox'>{$lang['index_shoutbox_refresh']}</a></span>\n";
+   $refreshbutton = "<span style='float:right;'><a href='staff_shoutbox.php' target='staff_shoutbox'>{$lang['index_shoutbox_refresh']}</a></span>\n";
    $smilebutton = "<span style='float:right;'><a href=\"javascript:PopMoreSmiles('staff_shbox','staff_shbox_text')\">{$lang['index_shoutbox_smilies']}</a></span>\n";
    $HTMLOUT .= "<form action='staff_shoutbox.php' method='get' target='staff_shoutbox' name='staff_shbox' onsubmit='mysubmit()'>
    <div class='headline'>

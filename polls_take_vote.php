@@ -93,7 +93,7 @@ loggedinorreturn();
 															 ".sqlesc($CURUSER['ip']).",
 															 {$poll_data['pid']},
 															 ".TIME_NOW.")" );
-					 //$mc1->delete_value('poll_data_');
+					 $mc1->delete_value('poll_data_'.$CURUSER['id']);
                 /*
                 $update['votes'] = ($poll_data['votes'] + 1);
                 $mc1->begin_transaction('poll_data_'.$CURUSER['id']);
@@ -133,7 +133,7 @@ loggedinorreturn();
                 ({$CURUSER['id']}, ".sqlesc($CURUSER['ip']).", {$poll_data['pid']},
 								".TIME_NOW.")"
                 );
-                //$mc1->delete_value('poll_data_');
+                $mc1->delete_value('poll_data_'.$CURUSER['id']);
                 /*
                 $update['votes'] = ($poll_data['votes'] + 1);
                 $mc1->begin_transaction('poll_data_'.$CURUSER['id']);

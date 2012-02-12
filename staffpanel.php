@@ -147,6 +147,7 @@ $class_color = (function_exists('get_user_class_color') ? true : false);
                         'hit_and_run'   => 'hit_and_run',
                         'uploadapps'   => 'uploadapps',
                         'modtask'   => 'modtask',
+                        'staff_shistory'   => 'staff_shistory',
                         'cloudview'   => 'cloudview'
                         );
     
@@ -381,7 +382,7 @@ $class_color = (function_exists('get_user_class_color') ? true : false);
       ".htmlspecialchars($arr['page_name'])."</a><br /><font class='small'>".htmlspecialchars($arr['description'])."</font>
 			</td>
       <td>
-		  <a href='userdetails.php?id=".(int)$arr['added_by']."'>{$arr['username']}</a>
+		  <a href='userdetails.php?id=".(int)$arr['added_by']."'>".htmlspecialchars($arr['username'])."</a>
       </td>
       <td>
       <span style='white-space: nowrap;'>".get_date($arr['added'], 'LONG',0,1)."<br /></span>

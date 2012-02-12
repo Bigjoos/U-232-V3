@@ -18,7 +18,6 @@ define('BUNNY_PM_SYSTEM', TRUE);
 /*********************************************************
 - Pm system by snuggles
 - write up some credits... based on Tux mailbox mod, using code from Retro
-
 *******************************************************/
 // Define constants
 define('PM_DELETED',0); // Message was deleted
@@ -223,48 +222,49 @@ $mailbox_name = ($mailbox === PM_INBOX ? 'Inbox' : ($mailbox === PM_SENTBOX ? 'S
     }
 
 //=== get all PM boxes
-
 function get_all_boxes() 
     {
-    global $CURUSER;
-       $res = sql_query('SELECT boxnumber, name FROM pmboxes WHERE userid='.sqlesc($CURUSER['id']). ' ORDER BY boxnumber') or sqlerr(__FILE__,__LINE__);
-            $get_all_boxes = '<select name="box">
+    global $CURUSER, $mc1, $INSTALLER09;
+    if(($get_all_boxes = $mc1->get_value('get_all_boxes'.$CURUSER['id'])) === false) {
+    $res = sql_query('SELECT boxnumber, name FROM pmboxes WHERE userid='.sqlesc($CURUSER['id']). ' ORDER BY boxnumber') or sqlerr(__FILE__,__LINE__);
+    $get_all_boxes = '<select name="box">
                                             <option class="body" value="1">Inbox</option>
                                             <option class="body" value="-1">Sentbox</option>
                                             <option class="body" value="-2">Drafts</option>';
             
-            while ($row = mysqli_fetch_assoc($res))
-            {
-              $get_all_boxes .= '<option class="body" value="'.(int)$row['boxnumber'].'">'.htmlspecialchars($row['name']).'</option>';
-            }
-        $get_all_boxes .= '</select>';
-        
+    while ($row = mysqli_fetch_assoc($res))
+    {
+    $get_all_boxes .= '<option class="body" value="'.(int)$row['boxnumber'].'">'.htmlspecialchars($row['name']).'</option>';
+    }
+    $get_all_boxes .= '</select>';
+    $mc1->cache_value('get_all_boxes'.$CURUSER['id'], $get_all_boxes, 86400);
     return $get_all_boxes;
     }
-
+    return $get_all_boxes;
+    }
 //=== insert jump to box
 function insertJumpTo($mailbox)
     {
-    global $CURUSER;
-    
-        $insertJumpTo = '<form action="pm_system.php" method="get">
+    global $CURUSER, $mc1, $INSTALLER09;
+    if(($insertJumpTo = $mc1->get_value('insertJumpTo'.$CURUSER['id'])) === false) {                     
+    $res = sql_query('SELECT boxnumber,name FROM pmboxes WHERE userid='.sqlesc($CURUSER['id']). ' ORDER BY boxnumber') or sqlerr(__FILE__,__LINE__);
+    $insertJumpTo = '<form action="pm_system.php" method="get">
                                     <input type="hidden" name="action" value="view_mailbox" />
                                     <select name="box" onchange="location = this.options[this.selectedIndex].value;">
                                     <option class="head" value="">Jump to:</option>
                                     <option class="body" value="pm_system.php?action=view_mailbox&amp;box=1" '.($mailbox == '1' ?  'selected="selected"' : '').'>Inbox</option>
                                     <option class="body" value="pm_system.php?action=view_mailbox&amp;box=-1" '.($mailbox == '-1' ? 'selected="selected"' : '').'>Sentbox</option>
                                     <option class="body" value="pm_system.php?action=view_mailbox&amp;box=-2" '.($mailbox == '-2' ? 'selected="selected"' : '').'>Drafts</option>';
-                                    
-   $res = sql_query('SELECT boxnumber,name FROM pmboxes WHERE userid='.sqlesc($CURUSER['id']). ' ORDER BY boxnumber') or sqlerr(__FILE__,__LINE__);
 
-    while ($row = mysqli_fetch_assoc($res))
-        {
-        $insertJumpTo .= '<option class="body" value="pm_system.php?action=view_mailbox&amp;box='.(int)$row['boxnumber'].'" '.((int)$row['boxnumber'] == $mailbox ? 'selected="selected"' : '').'>'.htmlspecialchars($row['name']).'</option>';
-        }
-            $insertJumpTo .= '</select></form>';
-                                    
-            return $insertJumpTo;
-        }
-
+     while ($row = mysqli_fetch_assoc($res))
+     {
+     $insertJumpTo .= '<option class="body" value="pm_system.php?action=view_mailbox&amp;box='.(int)$row['boxnumber'].'" '.((int)$row['boxnumber'] == $mailbox ? 'selected="selected"' : '').'>'.htmlspecialchars($row['name']).'</option>';
+     }
+     $insertJumpTo .= '</select></form>';
+     $mc1->cache_value('insertJumpTo'.$CURUSER['id'], $insertJumpTo, 86400);                 
+     return $insertJumpTo;
+     }
+     return $insertJumpTo;
+     }
 echo stdhead('Mailbox', true, $stdhead) . $HTMLOUT . stdfoot($stdfoot);
 ?>

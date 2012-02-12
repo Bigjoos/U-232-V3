@@ -1,32 +1,32 @@
-    <?php
-    /**
-     *   https://github.com/Bigjoos/
-     *   Licence Info: GPL
-     *   Copyright (C) 2010 U-232 v.3
-     *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
-     *   Project Leaders: Mindless, putyn.
-     **/
-    require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
-    require_once CLASS_DIR.'page_verify.php';
-    require_once(INCL_DIR.'user_functions.php');
-    require_once INCL_DIR.'bbcode_functions.php';
-    require_once INCL_DIR.'html_functions.php';
-    require_once(INCL_DIR.'function_onlinetime.php');
-    dbconn(false);
-    loggedinorreturn();
-    $lang = array_merge( load_language('global'), load_language('userdetails') );
+<?php
+/**
+*   https://github.com/Bigjoos/
+*   Licence Info: GPL
+*   Copyright (C) 2010 U-232 v.3
+*   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
+*   Project Leaders: Mindless, putyn.
+**/
+require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
+require_once CLASS_DIR.'page_verify.php';
+require_once(INCL_DIR.'user_functions.php');
+require_once INCL_DIR.'bbcode_functions.php';
+require_once INCL_DIR.'html_functions.php';
+require_once(INCL_DIR.'function_onlinetime.php');
+dbconn(false);
+loggedinorreturn();
+$lang = array_merge( load_language('global'), load_language('userdetails') );
      
-    if (function_exists('parked'))
-    parked();
+if (function_exists('parked'))
+parked();
      
-    $newpage = new page_verify();
-    $newpage->create('mdk1@@9');
-    $stdhead = array(/** include css **/'css' => array('jquery-ui'));
-    $stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box','jquery-ui-personalized-1.5.2.packed','sprinkle','flush_torrents'));
+$newpage = new page_verify();
+$newpage->create('mdk1@@9');
+$stdhead = array(/** include css **/'css' => array('jquery-ui'));
+$stdfoot = array(/** include js **/'js' => array('popup','java_klappe','flip_box','jquery-ui-personalized-1.5.2.packed','sprinkle','flush_torrents'));
      
-        $id = 0 + $_GET["id"];
-        if (!is_valid_id($id))
-        stderr("Error", "{$lang['userdetails_bad_id']}");
+$id = 0 + $_GET["id"];
+if (!is_valid_id($id))
+stderr("Error", "{$lang['userdetails_bad_id']}");
        
         $user_fields = 'id, username, passhash, secret, passkey, email, status, added, '.
                          'last_login, last_access, curr_ann_last_check, curr_ann_id, editsecret, privacy, stylesheet, '.
@@ -374,7 +374,7 @@
        <li><a href='#activity'>Activity</a></li>
        <li><a href='#comments'>User Comments</a></li>";
      
-    if ($CURUSER['class'] >= UC_MODERATOR && $user["class"] < $CURUSER['class'])
+    if ($CURUSER['class'] >= UC_STAFF && $user["class"] < $CURUSER['class'])
     {
     $HTMLOUT .= '<li><a href="#edit">Edit User</a></li>';
     }
@@ -413,15 +413,16 @@
               if (curuser::$blocks['userdetails_page'] & block_userdetails::CONNECTABLE_PORT && $BLOCKS['userdetails_connectable_port_on']){
               require_once(BLOCK_DIR.'userdetails/connectable.php');
               }
-              $HTMLOUT .="</table></div>";
+                $HTMLOUT .="</table></div>";
+     
               $HTMLOUT .= "<div id='general'> ";
               $HTMLOUT .= "<table align='center' width='100%' border='1' cellspacing='0' cellpadding='5'>\n";
-              // === make sure prople can't see their own naughty history by snuggles
-              if (($CURUSER['id'] !== $user['id']) && ($CURUSER['class'] >= UC_STAFF))
-              {
-              //=== watched user stuff
-              $the_flip_box = '[ <a name="watched_user"></a><a class="altlink" href="#watched_user" onclick="javascript:flipBox(\'3\')" title="Add - Edit - View Watched User">'.($user['watched_user'] > 0 ? 'Add - Edit - View ' : 'Add - View ').'<img onclick="javascript:flipBox(\'3\')" src="pic/panel_on.gif" name="b_3" style="vertical-align:middle;"   width="8" height="8" alt="Add - Edit - View Watched User" title="Add - Edit - View Watched User" /></a> ]';
-              $HTMLOUT .= '<tr><td class="rowhead">Watched User</td>
+       // === make sure prople can't see their own naughty history by snuggles
+        if (($CURUSER['id'] !== $user['id']) && ($CURUSER['class'] >= UC_STAFF))
+        {
+        //=== watched user stuff
+        $the_flip_box = '[ <a name="watched_user"></a><a class="altlink" href="#watched_user" onclick="javascript:flipBox(\'3\')" title="Add - Edit - View Watched User">'.($user['watched_user'] > 0 ? 'Add - Edit - View ' : 'Add - View ').'<img onclick="javascript:flipBox(\'3\')" src="pic/panel_on.gif" name="b_3" style="vertical-align:middle;"   width="8" height="8" alt="Add - Edit - View Watched User" title="Add - Edit - View Watched User" /></a> ]';
+          $HTMLOUT .= '<tr><td class="rowhead">Watched User</td>
                             <td align="left">'.($user['watched_user'] > 0 ? 'Currently being watched since  '.get_date( $user['watched_user'],'').' ' : ' Not currently being watched ').
                             $the_flip_box.'
                             <div align="left" id="box_3" style="display:none">
@@ -437,8 +438,8 @@
                             <input id="watched_user_button" type="submit" value="Submit!" class="btn" name="watched_user_button" />
                             </form></div> </td></tr>';
              //=== staff Notes
-             $the_flip_box_4 = '[ <a name="staff_notes"></a><a class="altlink" href="#staff_notes" onclick="javascript:flipBox(\'4\')" name="b_4" title="Open / Close Staff Notes">view <img onclick="javascript:flipBox(\'4\')" src="pic/panel_on.gif" name="b_4" style="vertical-align:middle;" width="8" height="8" alt="Open / Close Staff Notes" title="Open / Close Staff Notes" /></a> ]';
-             $HTMLOUT .= '<tr><td class="rowhead">Staff Notes</td><td align="left">           
+          $the_flip_box_4 = '[ <a name="staff_notes"></a><a class="altlink" href="#staff_notes" onclick="javascript:flipBox(\'4\')" name="b_4" title="Open / Close Staff Notes">view <img onclick="javascript:flipBox(\'4\')" src="pic/panel_on.gif" name="b_4" style="vertical-align:middle;" width="8" height="8" alt="Open / Close Staff Notes" title="Open / Close Staff Notes" /></a> ]';
+          $HTMLOUT .= '<tr><td class="rowhead">Staff Notes</td><td align="left">           
                             <a class="altlink" href="#staff_notes" onclick="javascript:flipBox(\'6\')" name="b_6" title="Add - Edit - View staff note">'.($user['staff_notes'] !== '' ? 'View - Add - Edit ' : 'Add ').'<img onclick="javascript:flipBox(\'6\')" src="pic/panel_on.gif" name="b_6" style="vertical-align:middle;" width="8" height="8" alt="Add - Edit - View staff note" title="Add - Edit - View staff note" /></a>
                             <div align="left" id="box_6" style="display:none">
                             <form method="post" action="member_input.php" name="notes_for_staff">
@@ -448,16 +449,15 @@
                             <br /><input id="staff_notes_button" type="submit" value="Submit!" class="btn" name="staff_notes_button"/>
                             </form>
                             </div> </td></tr>';
-             //=== system comments
-             $the_flip_box_7 = '[ <a name="system_comments"></a><a class="altlink" href="#system_comments" onclick="javascript:flipBox(\'7\')"  name="b_7" title="Open / Close System Comments">view <img onclick="javascript:flipBox(\'7\')" src="pic/panel_on.gif" name="b_7" style="vertical-align:middle;" width="8" height="8" alt="Open / Close System Comments" title="Open / System Comments" /></a> ]';
-             if(!empty($user_stats['modcomment']))
-             $HTMLOUT .= "<tr><td class='rowhead'>System Comments</td><td align='left'>".($user_stats['modcomment'] != '' ? $the_flip_box_7.'<div align="left" id="box_7" style="display:none"><hr />'.format_comment($user_stats['modcomment']).'</div>' : '')."</td></tr>\n";
-             }  
-             //==Begin blocks
-
-             if (curuser::$blocks['userdetails_page'] & block_userdetails::SHOWFRIENDS && $BLOCKS['userdetails_showfriends_on']){
+          //=== system comments
+          $the_flip_box_7 = '[ <a name="system_comments"></a><a class="altlink" href="#system_comments" onclick="javascript:flipBox(\'7\')"  name="b_7" title="Open / Close System Comments">view <img onclick="javascript:flipBox(\'7\')" src="pic/panel_on.gif" name="b_7" style="vertical-align:middle;" width="8" height="8" alt="Open / Close System Comments" title="Open / System Comments" /></a> ]';
+          if(!empty($user_stats['modcomment']))
+          $HTMLOUT .= "<tr><td class='rowhead'>System Comments</td><td align='left'>".($user_stats['modcomment'] != '' ? $the_flip_box_7.'<div align="left" id="box_7" style="display:none"><hr />'.format_comment($user_stats['modcomment']).'</div>' : '')."</td></tr>\n";
+         }  
+         //==Begin blocks
+             //if (curuser::$blocks['userdetails_page'] & block_userdetails::SHOWFRIENDS && $BLOCKS['userdetails_showfriends_on']){
               require_once(BLOCK_DIR.'userdetails/showfriends.php');
-              }
+              //}
      
               if (curuser::$blocks['userdetails_page'] & block_userdetails::LOGIN_LINK && $BLOCKS['userdetails_login_link_on']){
               require_once(BLOCK_DIR.'userdetails/loginlink.php');
@@ -566,7 +566,7 @@
         $HTMLOUT .="</div>";
      
         $HTMLOUT .= "<div id='edit'>";
-        //==end blocks
+         //==end blocks
         $HTMLOUT .="<script type='text/javascript'>
        /*<![CDATA[*/
        function togglepic(bu, picid, formid){
@@ -586,6 +586,7 @@
      
         if ($CURUSER['class'] >= UC_STAFF && $user["class"] < $CURUSER['class'])
         {
+          //$HTMLOUT .= begin_frame("Edit User", true);
           $HTMLOUT .= "<form method='post' action='staffpanel.php?tool=modtask'>\n";
           require_once CLASS_DIR.'validator.php';
           $HTMLOUT .= validatorForm('ModTask_'.$user['id']);
@@ -636,8 +637,8 @@
                       <td class='rowhead'>Website</td>
                       <td colspan='2' align='left'><input type='text' size='60' name='website' value='".htmlspecialchars($user['website'])."' /></td>
                 </tr>";
-         //== we do not want mods to be able to change user classes or amount donated...
-         // === Donor mod time based by snuggles
+          //== we do not want mods to be able to change user classes or amount donated...
+          // === Donor mod time based by snuggles
          if ($CURUSER["class"] == UC_MAX) {
          $donor = $user["donor"] == "yes";
          $HTMLOUT .="<tr><td class='rowhead' align='right'><b>{$lang['userdetails_donor']}</b></td><td colspan='2' align='center'>";
@@ -664,7 +665,8 @@
          $HTMLOUT .="</td></tr>\n";
          }
          // ====End
-         if ($CURUSER['class'] == UC_STAFF && $user["class"] > UC_VIP)
+         
+          if ($CURUSER['class'] == UC_STAFF && $user["class"] > UC_VIP)
             $HTMLOUT .= "<input type='hidden' name='class' value='{$user['class']}' />\n";
           else
           {
@@ -1051,5 +1053,5 @@
           $HTMLOUT .= "</div></div></div>";
           $HTMLOUT .= end_main_frame();
      
-    echo stdhead("{$lang['userdetails_details']} " . $user["username"], true, $stdhead) . $HTMLOUT . stdfoot($stdfoot);
-    ?>
+echo stdhead("{$lang['userdetails_details']} " . $user["username"], true, $stdhead) . $HTMLOUT . stdfoot($stdfoot);
+?>

@@ -2005,8 +2005,8 @@ INSERT INTO `staffpanel` (`id`, `page_name`, `file_name`, `description`, `av_cla
 (81, 'Hit And Runs', 'staffpanel.php?tool=hit_and_run', 'View All Hit And Runs', 5, 1, 1312682819),
 (82, 'View Possible Cheats', 'staffpanel.php?tool=cheaters', 'View All Cheat Information', 5, 1, 1312682871),
 (83, 'Cleanup Manager', 'staffpanel.php?tool=cleanup_manager', 'Clean up interval manager', 6, 1, 1315001255),
-(84, 'Uploader Applications', 'staffpanel.php?tool=uploadapps&action=app', 'Manage Uploader Applications', 4, 1, 1325807155);
-
+(84, 'Uploader Applications', 'staffpanel.php?tool=uploadapps&action=app', 'Manage Uploader Applications', 4, 1, 1325807155),
+(85, 'Staff Shout History', 'staffpanel.php?tool=staff_shistory', 'View staff shoutbox history', 4, 1, 1328723553);
 -- --------------------------------------------------------
 
 --
@@ -2526,7 +2526,7 @@ CREATE TABLE IF NOT EXISTS `user_blocks` (
   `userid` int(10) unsigned NOT NULL,
   `index_page` int(10) unsigned NOT NULL DEFAULT '1634355',
   `global_stdhead` int(10) unsigned NOT NULL DEFAULT '511',
-  `userdetails_page` bigint(20) unsigned NOT NULL DEFAULT '4294967295',
+  `userdetails_page` bigint(20) unsigned NOT NULL DEFAULT '268439084',
   UNIQUE KEY `userid` (`userid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
