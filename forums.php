@@ -26,7 +26,7 @@ loggedinorreturn();
 
 $lang = array_merge( load_language('global'), load_language('forums') );
 
-$stdhead = array(/** include css **/'css' => array('forums','jquery.lightbox-0.5','style','style2'));
+$stdhead = array(/** include css **/'css' => array('forums','jquery.lightbox-0.5','style','style2','bbcode'));
 
 $stdfoot = array(/** include js **/'js' => array('popup','jquery.lightbox-0.5.min','lightbox'));
 

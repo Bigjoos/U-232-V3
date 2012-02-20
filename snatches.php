@@ -100,8 +100,8 @@ while ($arr = mysqli_fetch_assoc($res)) {
   <td align='center'>".get_date($arr["last_action"], '',0,1)."</td>
   <td align='center'>".get_date($arr["complete_date"], '',0,1)."</td>
   <td align='center'>".htmlspecialchars($arr["agent"])."</td>
-  <td align='center'>".htmlspecialchars($arr["port"])."</td>
-  <td align='center'>".htmlspecialchars($arr["timesann"])."</td>
+  <td align='center'>".(int)$arr["port"]."</td>
+  <td align='center'>".(int)$arr["timesann"]."</td>
   </tr>\n";
 }
 //}

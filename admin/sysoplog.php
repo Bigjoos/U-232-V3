@@ -60,7 +60,7 @@ $HTMLOUT = '';
 			 <input type='submit' value='Search' style='height: 20px' />\n
 			 </form></td></tr></table>";
     
-   // if ($count > $perpage)
+    if ($count > $perpage)
     $HTMLOUT .= $pager['pagertop'];
     
 	if (mysqli_num_rows($res) == 0)
@@ -117,7 +117,7 @@ $HTMLOUT .="<tr class='tableb'><td style='background-color:$color'><font color='
 }
 $HTMLOUT .="</table>";
 }
-//if ($count > $perpage)
+if ($count > $perpage)
 $HTMLOUT .= $pager['pagerbottom'];
 
 $HTMLOUT .="<p>Times are in GMT.</p>\n";
