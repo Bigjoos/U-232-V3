@@ -26,7 +26,7 @@ $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
               'PEAKLISTENERS'=>'Peak listeners: <b>%d</b>',
             );
 
-  function radioinfo($radio) {
+    function radioinfo($radio) {
     global $langs, $INSTALLER09, $mc1, $CURUSER;    
     $xml = $html = $history = '';        
     if($hand = @fsockopen($radio['host'],$radio['port'],$errno,$errstr,30)) {
@@ -40,11 +40,14 @@ $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
         unset($tempdata);
         preg_match_all('/\<SONG>(.*?)<\/SONG\>/',$xml,$temph);
         unset($temph[0][0],$temph[1]);
-        $history = array(); 
+        $history = array();
         foreach($temph[0] as $temph2) {
                 preg_match_all('/\<(TITLE|PLAYEDAT)>(.*?)<\/\\1\>/i',$temph2,$temph3,PREG_PATTERN_ORDER);
                 $history[] = '<b>&nbsp;'.$temph3[2][1].'</b> <sub>('.get_date(TIME_NOW, 'DATE' ,$temph3[2][0]).')</sub>';
         }
+        preg_match_all('/\<HOSTNAME>(.*?)<\/HOSTNAME>/',$xml,$temph);
+        if(count($temph[1]))
+          $users_ip = join(', ',array_map('sqlesc',$temph[1]));
         $data = 0;
         if($data['STREAMSTATUS'] == 0)
                 return 'Sorry '.$CURUSER['username'].'... : Server '.$radio['host'].' is online but there is no stream';
@@ -54,15 +57,25 @@ $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
                 $current_song = $mc1->get('current_radio_song');
                 if($current_song === false || $current_song != $md5_current_song) {
                    //autoshout(str_replace(array('<','>'),array('[',']'),$data['SONGTITLE'].' playing on '.strtolower($data['SERVERTITLE']).' - '.strtolower($data['SERVERURL'])));
-                   $mc1->cache_value('current_radio_song',$md5_current_song,0);
-
+                  $mc1->cache_value('current_radio_song',$md5_current_song,0);
                 }
                 $html = '<fieldset>
                 <legend>'.$INSTALLER09['site_name'].' radio</legend><ul>';
                 foreach($data as $d)
                         $html .= '<li><b>'.$d.'</b></li>';
-                        $html .= '<li><b>Playlist history: '.(count($history) > 0 ? join(', ',$history) : 'No playlist history');
-                $html .= '</b></li></ul></fieldset>';
+                        $html .= '<li><b>Playlist history: </b> '.(count($history) > 0 ? join(', ',$history) : 'No playlist history').'</li>'; 
+                if(empty($users_ip) === false) {
+                   $q1 = sql_query('SELECT id, username FROM users WHERE ip IN ('.$users_ip.') ORDER BY username ASC') or sqlerr(__FILE__,__LINE__);
+                   if(mysqli_num_rows($q1) == 0)
+                      $html .= '<li><b>Listeners</b>: currently no listener from site </li>';
+                   else {
+                        $users = array();
+                      while($a1 = mysqli_fetch_assoc($q1))
+                        $users[] = sprintf('<a href="/userdetails.php?id=%d">%s</a>',$a1['id'],$a1['username']);
+                      $html .= '<li><b>Listeners</b>: '.join(', ',$users).'</li>';
+                   }
+                }
+                $html .= '</ul></fieldset>';
                 return $html;
         }
         } 

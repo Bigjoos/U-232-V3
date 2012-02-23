@@ -70,7 +70,7 @@ $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
                    else {
                         $users = array();
                       while($a1 = mysqli_fetch_assoc($q1))
-                        $users[] = sprintf('<a href="/userdetails.php?id=%d">%s</a>',$a1['id'],$a2['username']);
+                        $users[] = sprintf('<a href="/userdetails.php?id=%d">%s</a>',$a1['id'],$a1['username']);
                       $html .= '<li><b>Listeners</b>: '.join(', ',$users).'</li>';
                    }
                 }
