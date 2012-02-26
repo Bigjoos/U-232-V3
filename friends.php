@@ -27,7 +27,7 @@ loggedinorreturn();
    if (!is_valid_id($targetid))
 	stderr("Error", "Invalid ID.");
    if ($CURUSER['id'] == $targetid) {
-   stderr("error","Ye cant add yerself nugget.");
+   stderr("Error","Ye cant add yerself nugget.");
    }
    if ($type == 'friend')
    {
@@ -179,20 +179,20 @@ loggedinorreturn();
   if(mysqli_num_rows($res) == 0)
   $friendsp = "<em>{$lang['friends_pending_empty']}.</em>";
   else
-  while ($friend = mysqli_fetch_assoc($res))
+  while ($friendp = mysqli_fetch_assoc($res))
   {
   $dt = TIME_NOW - 180;
-  $online = ($friend["last_access"] >= $dt ? '&nbsp;<img src="'.$INSTALLER09['baseurl'].'/images/staff/online.png" border="0" alt="Online" title="Online" />' : '<img src="'.$INSTALLER09['baseurl'].'/images/staff/offline.png" border="0" alt="Offline" title="Offline" />');
-  $title = htmlspecialchars($friend["title"]);
+  $online = ($friendp["last_access"] >= $dt ? '&nbsp;<img src="'.$INSTALLER09['baseurl'].'/images/staff/online.png" border="0" alt="Online" title="Online" />' : '<img src="'.$INSTALLER09['baseurl'].'/images/staff/offline.png" border="0" alt="Offline" title="Offline" />');
+  $title = htmlspecialchars($friendp["title"]);
   if (!$title)
-  $title = get_user_class_name($friend["class"]);
-  $linktouser = "<a href='userdetails.php?id=".(int)$friend['id']."'><b>".format_username($friend)."</b></a>($title)<br />{$lang['friends_last_seen']} ".get_date($friend['last_access'],'');
-  $confirm ="<br /><span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=confirm&amp;type=friend&amp;targetid=".(int)$friend['id']."'>Confirm</a></span>";
-  $block = "&nbsp;<span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?action=add&amp;type=block&amp;targetid=".(int)$friend['id']."'>Block</a></span>";
-  $avatar = ($CURUSER["avatars"] == "yes" ? htmlspecialchars($friend["avatar"]) : "");
+  $title = get_user_class_name($friendp["class"]);
+  $linktouser = "<a href='userdetails.php?id=".(int)$friendp['id']."'><b>".format_username($friend)."</b></a>($title)<br />{$lang['friends_last_seen']} ".get_date($friendp['last_access'],'');
+  $confirm ="<br /><span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=confirm&amp;type=friend&amp;targetid=".(int)$friendp['id']."'>Confirm</a></span>";
+  $block = "&nbsp;<span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?action=add&amp;type=block&amp;targetid=".(int)$friendp['id']."'>Block</a></span>";
+  $avatar = ($CURUSER["avatars"] == "yes" ? htmlspecialchars($friendp["avatar"]) : "");
   if (!$avatar)
   $avatar = "{$INSTALLER09['pic_base_url']}default_avatar.gif";
-  $reject = "&nbsp;<span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=delpending&amp;type=friend&amp;targetid=".(int)$friend['id']."'>{$lang['friends_reject']}</a></span>";
+  $reject = "&nbsp;<span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=delpending&amp;type=friend&amp;targetid=".(int)$friendp['id']."'>{$lang['friends_reject']}</a></span>";
   $friendsp .= "<div style='border: 1px solid black;padding:5px;'>".($avatar ? "<img width='50px' src='$avatar' style='float:right;' alt='Avatar' />" : ""). "<p >{$linktouser}<br /><br />{$confirm}{$block}{$reject}</p></div><br />";
   }
   //== Pending ends
@@ -205,11 +205,11 @@ loggedinorreturn();
   {
   $i = 0;
   $friendreqs = "<table width='100%' cellspacing='0' cellpadding='0'>";
-  while ($friend = mysqli_fetch_assoc($res))
+  while ($friendreq = mysqli_fetch_assoc($res))
   {
   if ($i % 6 == 0)
   $friendreqs .= "<tr>";
-  $friendreqs .= "<td style='border: none; padding: 4px; spacing: 0px;'><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$friend['id']."'><b>".format_username($friend)."</b></a></td></tr>";
+  $friendreqs .= "<td style='border: none; padding: 4px; spacing: 0px;'><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$friendreq['id']."'><b>".format_username($friendreq)."</b></a></td></tr>";
   if ($i % 6 == 5)
   $friendreqs .= "</tr>";
   $i++;
@@ -219,7 +219,7 @@ loggedinorreturn();
   //== Awaiting ends
   //== Friends block
   $i = 0;
-  $res = sql_query("SELECT f.friendid as id, u.username, u.class, u.avatar, u.title, u.donor, u.warned, u.enabled, u.leechwarn, u.chatpost, u.pirate, u.king, u.last_access FROM friends AS f LEFT JOIN users as u ON f.friendid = u.id WHERE userid=".sqlesc($userid)." AND f.confirmed='yes' ORDER BY username") or sqlerr(__FILE__, __LINE__);
+  $res = sql_query("SELECT f.friendid as id, u.username, u.class, u.avatar, u.title, u.donor, u.warned, u.enabled, u.leechwarn, u.chatpost, u.pirate, u.king, u.last_access, u.uploaded, u.downloaded, u.country FROM friends AS f LEFT JOIN users as u ON f.friendid = u.id WHERE userid=".sqlesc($userid)." AND f.confirmed='yes' ORDER BY username") or sqlerr(__FILE__, __LINE__);
   $friends = '';
   if(mysqli_num_rows($res) == 0)
   $friends = "<em>Your friends list is empty.</em>";
@@ -231,12 +231,14 @@ loggedinorreturn();
   $title = htmlspecialchars($friend["title"]);
   if (!$title)
   $title = get_user_class_name($friend["class"]);
-  $linktouser = "<a href='userdetails.php?id=".(int)$friend['id']."'><b>".format_username($friend)."</b></a>($title)<br />{$lang['friends_last_seen']} ".get_date($friend['last_access'],'');
+  $ratio = member_ratio($friend['uploaded'], $friend['downloaded'],2);
+  $linktouser = "<a href='userdetails.php?id=".(int)$friend['id']."'><b>".format_username($friend)."</b></a>[$title]&nbsp;[$ratio]<br />{$lang['friends_last_seen']} ".get_date($friend['last_access'],'');
   $delete = "<span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=delete&amp;type=friend&amp;targetid=".(int)$friend['id']."'>{$lang['friends_remove']}</a></span>";
   $pm_link = "&nbsp;<span class='btn'><a href='{$INSTALLER09['baseurl']}/pm_system.php?action=send_message&amp;receiver=".(int)$friend['id']."'>{$lang['friends_pm']}</a></span>";
   $avatar = ($CURUSER["avatars"] == "yes" ? htmlspecialchars($friend["avatar"]) : "");
   if (!$avatar)
   $avatar = "{$INSTALLER09['pic_base_url']}default_avatar.gif";
+ 
   $friends .= "<div style='border: 1px solid black;padding:5px;'>".($avatar ? "<img width='50px' src='$avatar' style='float:right;' alt='' />" : ""). "<p >{$linktouser}&nbsp;{$online}<br /><br />{$delete}{$pm_link}</p></div><br />";
   }
   //== Friends block end
@@ -258,9 +260,28 @@ loggedinorreturn();
   }
   // Enemies block end
   //== OUput the shits \0/
+  //==country by pdq
+  function countries() {
+  global $mc1, $INSTALLER09;
+  if(($ret = $mc1->get_value('countries::arr')) === false) {
+  $res = sql_query("SELECT id, name, flagpic FROM countries ORDER BY name ASC") or sqlerr(__FILE__, __LINE__);
+  while ($row = mysqli_fetch_assoc($res))
+  $ret[] = $row;
+  $mc1->cache_value('countries::arr', $ret, $INSTALLER09['expires']['user_flag']);
+  }
+  return $ret;
+  }
+       
+  $country = '';
+  $countries = countries();
+  foreach ($countries as $cntry)
+  if ($cntry['id'] == $user['country']) {
+  $country = "<img src=\"{$INSTALLER09['pic_base_url']}flag/{$cntry['flagpic']}\" alt=\"". htmlspecialchars($cntry['name']) ."\" style='margin-left: 8pt' />";
+  break;
+  }
   $HTMLOUT .= "<br />
   <table class='main' border='0' cellspacing='0' cellpadding='0'>
-  <tr><td class='embedded'><h1 style='margin:0px'>&nbsp;{$lang['friends_personal']}&nbsp;".htmlentities($user['username'], ENT_QUOTES)."</h1></td></tr></table>
+  <tr><td class='embedded'><h1 style='margin:0px'>&nbsp;{$lang['friends_personal']}&nbsp;".htmlentities($user['username'], ENT_QUOTES)."&nbsp;$country</h1></td></tr></table>
   <br /><table class='main' width='750' border='0' cellspacing='0' cellpadding='0'>
   <tr>
   <td class='colhead'><h2 align='left' style='width:50%;'><a name='friends'>&nbsp;{$lang['friends_friends_list']}</a></h2></td>
