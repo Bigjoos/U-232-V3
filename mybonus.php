@@ -839,6 +839,8 @@ while($ar = mysqli_fetch_assoc($qr)){
    $mc1->begin_transaction('user_stats_'.$ar['id']);
    $mc1->update_row(false, array('seedbonus' => $ar['seedbonus']));   
    $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
+   $mc1->delete_value('inbox_new_'.$pms);
+   $mc1->delete_value('inbox_new_sb_'.$pms);
    // end
 }
 if(count($update_users)) {
@@ -920,6 +922,9 @@ $mc1->begin_transaction('user_stats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus, 'bonuscomment' => $bonuscomment));
 $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
 $mc1->delete_value('freecontribution_');
+$mc1->delete_value('top_donators_');
+$mc1->delete_value('freeleech_counter');
+$mc1->delete_value('freecontribution_datas_');
 write_bonus_log($CURUSER["id"], $donation, $type = "freeleech");
 $msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the freeleech contribution pot and has activated freeleech for 3 days ". $donation ."/".$points.'';
 $mc1->delete_value('shoutbox_');
@@ -938,6 +943,9 @@ $mc1->begin_transaction('user_stats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus, 'bonuscomment' => $bonuscomment));
 $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
 $mc1->delete_value('freecontribution_');
+$mc1->delete_value('top_donators_');
+$mc1->delete_value('freeleech_counter');
+$mc1->delete_value('freecontribution_datas_');
 write_bonus_log($CURUSER["id"], $donation, $type = "freeleech");
 $Remaining = ($arr_points['points'] - $arr_points['pointspool'] - $donation);
 $msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the freeleech contribution pot ! * Only [b]".htmlspecialchars($Remaining)."[/b] more karma point".($Remaining > 1?'s':'')." to go! * [color=green][b]Freeleech contribution:[/b][/color] [url={$INSTALLER09['baseurl']}/mybonus.php]". $donation ."/".$points.'[/url]';
@@ -976,6 +984,9 @@ $mc1->begin_transaction('user_stats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus, 'bonuscomment' => $bonuscomment));
 $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
 $mc1->delete_value('freecontribution_');
+$mc1->delete_value('top_donators2_');
+$mc1->delete_value('doubleupload_counter');
+$mc1->delete_value('freecontribution_datas_');
 write_bonus_log($CURUSER["id"], $donation, $type = "doubleupload");
 $msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the double upload contribution pot and has activated Double Upload for 3 days ". $donation ."/".$points.'';
 $mc1->delete_value('shoutbox_');
@@ -994,6 +1005,9 @@ $mc1->begin_transaction('user_stats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus, 'bonuscomment' => $bonuscomment));
 $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
 $mc1->delete_value('freecontribution_');
+$mc1->delete_value('top_donators2_');
+$mc1->delete_value('doubleupload_counter');
+$mc1->delete_value('freecontribution_datas_');
 write_bonus_log($CURUSER["id"], $donation, $type = "doubleupload");
 $Remaining = ($arr_points['points'] - $arr_points['pointspool'] - $donation);
 $msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the double upload contribution pot ! * Only [b]".htmlspecialchars($Remaining)."[/b] more karma point".($Remaining > 1?'s':'')." to go! * [color=green][b]Double upload contribution:[/b][/color] [url={$INSTALLER09['baseurl']}/mybonus.php]". $donation ."/".$points.'[/url]';
@@ -1032,6 +1046,9 @@ $mc1->begin_transaction('user_stats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus, 'bonuscomment' => $bonuscomment));
 $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
 $mc1->delete_value('freecontribution_');
+$mc1->delete_value('top_donators3_');
+$mc1->delete_value('halfdownload_counter');
+$mc1->delete_value('freecontribution_datas_');
 write_bonus_log($CURUSER["id"], $donation, $type = "halfdownload");
 $msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the half download contribution pot and has activated half download for 3 days ". $donation ."/".$points.'';
 $mc1->delete_value('shoutbox_');
@@ -1050,6 +1067,9 @@ $mc1->begin_transaction('user_stats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus, 'bonuscomment' => $bonuscomment));
 $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
 $mc1->delete_value('freecontribution_');
+$mc1->delete_value('top_donators3_');
+$mc1->delete_value('halfdownload_counter');
+$mc1->delete_value('freecontribution_datas_');
 write_bonus_log($CURUSER["id"], $donation, $type = "halfdownload");
 $Remaining = ($arr_points['points'] - $arr_points['pointspool'] - $donation);
 $msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the half download contribution pot ! * Only [b]".htmlspecialchars($Remaining)."[/b] more karma point".($Remaining > 1?'s':'')." to go! * [color=green][b]Half download contribution:[/b][/color] [url={$INSTALLER09['baseurl']}/mybonus.php]". $donation ."/".$points.'[/url]';
@@ -1102,7 +1122,7 @@ $mc1->begin_transaction('user_stats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus, 'bonuscomment' => $bonuscomment));
 $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
 $mc1->begin_transaction('torrent_details_'.$torrent_number);
-$mc1->update_row(false, array('added' => TIME_NOW, 'bump' => 'yes'));
+$mc1->update_row(false, array('added' => TIME_NOW, 'bump' => 'yes', 'free' => $free_time));
 $mc1->commit_transaction(0);
 header("Refresh: 0; url={$INSTALLER09['baseurl']}/mybonus.php?bump_success=1&t_name={$torrent_number}");
 die;
@@ -1187,7 +1207,7 @@ break;
 
 case 'invite':
 //=== trade for invites
-$invites = $User['invites'];
+$invites = (int)$User['invites'];
 $inv = $invites + 3;
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for invites.\n " .$bonuscomment;
 sql_query("UPDATE users SET invites = ".sqlesc($inv).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
@@ -1322,8 +1342,11 @@ function write_bonus_log($userid, $amount, $type){
   $donation_type = $type;
   sql_query("INSERT INTO bonuslog (id, donation, type, added_at) VALUES('$userid', '$amount', '$donation_type', $added)") or sqlerr(__FILE__, __LINE__);
 }
-    
+    if(($scheduled_events = $mc1->get_value('freecontribution_datas_')) === false) {
     $scheduled_events = mysql_fetch_all("SELECT * from `events` ORDER BY `startTime` DESC LIMIT 3;", array());
+    $mc1->cache_value('freecontribution_datas_', $scheduled_events, 3 * 86400);
+    }
+
     if (is_array($scheduled_events)){
         foreach ($scheduled_events as $scheduled_event) {
             if (is_array($scheduled_event) && array_key_exists('startTime', $scheduled_event) &&
@@ -1361,104 +1384,228 @@ function write_bonus_log($userid, $amount, $type){
                         }
                         }
                         }
-
-    $res = sql_query("SELECT `pointspool`, `points` FROM `bonus` WHERE `art` = 'freeleech' OR `art` = 'doubleup' OR `art` = 'halfdown'") or sqlerr(__FILE__, __LINE__);
-    $row = mysqli_fetch_assoc($res);
-    $row2 = mysqli_fetch_assoc($res);
-    $row3 = mysqli_fetch_assoc($res);
-    $fpointspool = (int)$row["pointspool"];
-    $dpointspool = (int)$row2["pointspool"];
-    $hpointspool = (int)$row3["pointspool"];
-    if($fpoints == 0) $fpoints = 1;
-    if($dpoints == 0) $dpoints = 1;
-    if($hpoints == 0) $hpoints = 1;
-    $free_leech_percentage = round(($fpointspool / $fpoints) / 300, 0); // 300 is for 30'000
-    $double_upload_percentage = round(($dpointspool / $dpoints) / 300, 0); // 300 is for 30'000 
-    $half_down_open_percentage = round(($hpointspool / $hpoints) / 300, 0); // 300 is for 30'000
-    //== Make this code more DRY! put it in a function somewhere and then call it for each of the percentages ???
-        if($free_leech_percentage <= 25){
-            $fcolor = "red";    
-        } elseif($free_leech_percentage <= 50) {
-            $fcolor = "#da00e0";
-        } else {
-            $fcolor = "darkgreen";
-        }
-        if($double_upload_percentage <= 25){
-            $dcolor = "red";    
-        } elseif($double_upload_percentage <= 50) {
-            $dcolor = "#da00e0";
-        } else {
-            $dcolor = "darkgreen";
-        }
-        if($half_down_open_percentage <= 25){
-            $hcolor = "red";    
-        } elseif($half_down_open_percentage <= 50) {
-            $hcolor = "#da00e0";
-        } else {
-            $hcolor = "darkgreen";
-        }
+//=== freeleech contribution meter
+$target_fl = 30000;
+//=== get total points
+if(($freeleech_counter = $mc1->get_value('freeleech_counter')) === false) {
+	$total_fl = sql_query('SELECT SUM(pointspool) AS points FROM bonus WHERE id =11');
+	$fl_total_row = mysqli_fetch_assoc($total_fl);
+    $percent_fl = number_format($fl_total_row['points'] / $target_fl * 100, 2);
+    $mc1->cache_value('freeleech_counter', $percent_fl, 0);
+    } else
+    $percent_fl = $freeleech_counter;
+			switch ($percent_fl)
+			{
+	   			case $percent_fl >= 100:
+			$font_color_fl = '<strong><font color="green">'.number_format($percent_fl).' %</font></strong>';
+				break; 
+				   case $percent_fl >= 80:
+			$font_color_fl = '<strong><font color="lightgreen">'.number_format($percent_fl).' %</font></strong>';
+				break;
+				   case $percent_fl >= 70:
+			$font_color_fl = '<strong><font color="jade">'.number_format($percent_fl).' %</font></strong>';
+				break;
+				   case $percent_fl >= 50:
+			$font_color_fl = '<strong><font color="turquoise">'.number_format($percent_fl).' %</font></strong>';
+				break;
+				   case $percent_fl >= 40:
+			$font_color_fl  = '<strong><font color="lightblue">'.number_format($percent_fl).' %</font></strong>';
+				break;
+				   case $percent_fl >= 30:
+			$font_color_fl = '<strong><font color="yellow">'.number_format($percent_fl).' %</font></strong>';
+				break;
+				   case $percent_fl >= 20:
+			$font_color_fl = '<strong><font color="orange">'.number_format($percent_fl).' %</font></strong>';
+				break;				
+				   case $percent_fl < 20:
+			$font_color_fl = '<strong><font color="red">'.number_format($percent_fl).' %</font></strong>';
+				break;
+			}
+//=== get total points
+$target_du = 30000;
+if(($doubleupload_counter = $mc1->get_value('doubleupload_counter')) === false) {
+	$total_du = sql_query('SELECT SUM(pointspool) AS points FROM bonus WHERE id =12');
+	$du_total_row = mysqli_fetch_assoc($total_du);
+    $percent_du = number_format($du_total_row['points'] / $target_du * 100, 2);
+    $mc1->cache_value('doubleupload_counter', $percent_du, 0);
+    } else
+    $percent_du = $doubleupload_counter;
+        switch ($percent_du)
+			{
+	   			case $percent_du >= 100:
+			$font_color_du = '<strong><font color="green">'.number_format($percent_du).' %</font></strong>';
+				break; 
+				   case $percent_du >= 80:
+			$font_color_du = '<strong><font color="lightgreen">'.number_format($percent_du).' %</font></strong>';
+				break;
+				   case $percent_du >= 70:
+			$font_color_du = '<strong><font color="jade">'.number_format($percent_du).' %</font></strong>';
+				break;
+				   case $percent_du >= 50:
+			$font_color_du = '<strong><font color="turquoise">'.number_format($percent_du).' %</font></strong>';
+				break;
+				   case $percent_du >= 40:
+			$font_color_du  = '<strong><font color="lightblue">'.number_format($percent_du).' %</font></strong>';
+				break;
+				   case $percent_du >= 30:
+			$font_color_du = '<strong><font color="yellow">'.number_format($percent_du).' %</font></strong>';
+				break;
+				   case $percent_du >= 20:
+			$font_color_du = '<strong><font color="orange">'.number_format($percent_du).' %</font></strong>';
+				break;				
+				   case $percent_du < 20:
+			$font_color_du = '<strong><font color="red">'.number_format($percent_du).' %</font></strong>';
+            break;
+			}
+//=== get total points
+$target_hd = 30000;
+if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) {
+	$total_hd = sql_query('SELECT SUM(pointspool) AS points FROM bonus WHERE id =13');
+	$hd_total_row = mysqli_fetch_assoc($total_hd);
+    $percent_hd = number_format($hd_total_row['points'] / $target_hd * 100, 2);
+    $mc1->cache_value('halfdownload_counter', $percent_hd, 0);
+    } else
+    $percent_hd = $halfdownload_counter;
+        switch ($percent_hd)
+			{
+	   			case $percent_hd >= 100:
+			$font_color_hd = '<strong><font color="green">'.number_format($percent_hd).'&nbsp;%</font></strong>';
+				break; 
+				   case $percent_hd >= 80:
+			$font_color_hd = '<strong><font color="lightgreen">'.number_format($percent_hd).'&nbsp;%</font></strong>';
+				break;
+				   case $percent_hd >= 70:
+			$font_color_hd = '<strong><font color="jade">'.number_format($percent_hd).'&nbsp;%</font></strong>';
+				break;
+				   case $percent_hd >= 50:
+			$font_color_hd = '<strong><font color="turquoise">'.number_format($percent_hd).'&nbsp;%</font></strong>';
+				break;
+				   case $percent_hd >= 40:
+			$font_color_hd  = '<strong><font color="lightblue">'.number_format($percent_hd).'&nbsp;%</font></strong>';
+				break;
+				   case $percent_hd >= 30:
+			$font_color_hd = '<strong><font color="yellow">'.number_format($percent_hd).'&nbsp;%</font></strong>';
+				break;
+				   case $percent_hd >= 20:
+			$font_color_hd = '<strong><font color="orange">'.number_format($percent_hd).'&nbsp;%</font></strong>';
+				break;				
+				   case $percent_hd < 20:
+			$font_color_hd = '<strong><font color="red">'.number_format($percent_hd).'&nbsp;%</font></strong>';
+            break;
+			}
+ 
     if($freeleech_enabled){
-        $fstatus = "<strong><font color=\"green\">&nbsp;ON&nbsp;</font></strong>";
+        $fstatus = "<strong><font color='green'>&nbsp;ON&nbsp;</font></strong>";
     } else {
-        $fstatus = $free_leech_percentage ."&nbsp;%";
+        $fstatus = $font_color_fl ."";
     }
     if($double_upload_enabled){
-        $dstatus = "<strong><font color=\"green\">&nbsp;ON&nbsp;</font></strong>";
+        $dstatus = "<strong><font color='green'>&nbsp;ON&nbsp;</font></strong>";
     } else {
-        $dstatus = $double_upload_percentage ."&nbsp;%";
+        $dstatus = $font_color_du ."";
     }
     if($half_down_enabled){
-        $hstatus = "<strong><font color=\"green\">&nbsp;ON&nbsp;</font></strong>";
+        $hstatus = "<strong><font color='green'>&nbsp;ON&nbsp;</font></strong>";
     } else {
-        $hstatus = $half_down_open_percentage ."&nbsp;%";
+        $hstatus = $font_color_hd ."";
     }
-    //==09 Ezeros freeleech contribution top 10 - pdq.Bigjoos  
-    $res1 = sql_query("SELECT bonuslog.id, SUM(bonuslog.donation) as total, users.username FROM bonuslog left join users ON bonuslog.id=users.id WHERE bonuslog.type = 'freeleech' GROUP BY bonuslog.id ORDER BY total DESC LIMIT 10;") or sqlerr(__FILE__, __LINE__);
-    while($row = mysqli_fetch_assoc($res1)){
-    $top_donators_id = (int)$row["id"];
-    $damount_donated = (int)$row["total"];
-    $top_donators_username = htmlspecialchars($row['username']);
-    $top_donators .= "<li><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators_id'>" . $top_donators_username . "</a> ( $damount_donated )</li>";
+    
+    //==09 Ezeros freeleech contribution top 10 - pdq.Bigjoos
+    if(($top_donators = $mc1->get_value('top_donators_')) === false) {
+    $a = sql_query("SELECT bonuslog.id, SUM(bonuslog.donation) as total, users.username FROM bonuslog left join users ON bonuslog.id=users.id WHERE bonuslog.type = 'freeleech' GROUP BY bonuslog.id ORDER BY total DESC LIMIT 10;") or sqlerr(__FILE__, __LINE__);
+    while($top_donator = mysqli_fetch_assoc($a))
+    $top_donators[] = $top_donator;
+    $mc1->cache_value('top_donators_', $top_donators, 0);
     }
-
-    $res2 = sql_query("SELECT bonuslog.id, SUM(bonuslog.donation) as total, users.username FROM bonuslog left join users ON bonuslog.id=users.id WHERE bonuslog.type = 'doubleupload' GROUP BY bonuslog.id ORDER BY total DESC LIMIT 10;") or sqlerr(__FILE__, __LINE__);
-    while($row = mysqli_fetch_assoc($res2)){
-    $top_donators_id = (int)$row["id"];
-    $damount_donated = (int)$row["total"];
-    $top_donators_username = htmlspecialchars($row['username']);
-    $top_donators2 .= "<li><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators_id'>" . $top_donators_username . "</a> ( $damount_donated )</li>";
+    if (count($top_donators) > 0)
+    {
+    $top_donator = "<h4>Top 10 Contributors </h4>\n";
+    if ($top_donators)
+    {
+    foreach($top_donators as $a) {
+    $top_donators_id = (int)$a["id"];
+    $damount_donated = (int)$a["total"];
+    $top_donators_username = htmlspecialchars($a['username']);
+    $top_donator .= "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators_id'>" . $top_donators_username . "</a> [$damount_donated]<br />";
     }
-
-    $res3 = sql_query("SELECT bonuslog.id, SUM(bonuslog.donation) as total, users.username FROM bonuslog left join users ON bonuslog.id=users.id WHERE bonuslog.type = 'halfdownload' GROUP BY bonuslog.id ORDER BY total DESC LIMIT 10;") or sqlerr(__FILE__, __LINE__);
-    while($row = mysqli_fetch_assoc($res3)){
-    $top_donators_id = (int)$row["id"];
-    $damount_donated = (int)$row["total"];
-    $top_donators_username = htmlspecialchars($row['username']);
-    $top_donators3 .= "<li><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators_id'>" . $top_donators_username . "</a> ( $damount_donated )</li>";
+    } else {
+    //== If there are no donators
+    if (empty($top_donators))
+    $top_donator .= "Nobodys contibuted yet !!";
+    }
+    }
+    //==
+    if(($top_donators2 = $mc1->get_value('top_donators2_')) === false) {
+    $b = sql_query("SELECT bonuslog.id, SUM(bonuslog.donation) as total, users.username FROM bonuslog left join users ON bonuslog.id=users.id WHERE bonuslog.type = 'doubleupload' GROUP BY bonuslog.id ORDER BY total DESC LIMIT 10;") or sqlerr(__FILE__, __LINE__);
+    while($top_donator2 = mysqli_fetch_assoc($b))
+    $top_donators2[] = $top_donator2;
+    $mc1->cache_value('top_donators2_', $top_donators2, 0);
+    }
+    if (count($top_donators2) > 0)
+    {
+    $top_donator2 = "<h4>Top 10 Contributors </h4>\n";
+    if ($top_donators2)
+    {
+    foreach($top_donators2 as $b) {
+    $top_donators2_id = (int)$b["id"];
+    $damount_donated2 = (int)$b["total"];
+    $top_donators2_username = htmlspecialchars($b['username']);
+    $top_donator2 .= "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators2_id'>" . $top_donators2_username . "</a> [$damount_donated2]<br />";
+    }
+    } else {
+    //== If there are no donators
+    if (empty($top_donators2))
+    $top_donator2 .= "Nobodys contibuted yet !!";
+    }
+    }
+    //==
+    if(($top_donators3 = $mc1->get_value('top_donators3_')) === false) {
+    $c = sql_query("SELECT bonuslog.id, SUM(bonuslog.donation) as total, users.username FROM bonuslog left join users ON bonuslog.id=users.id WHERE bonuslog.type = 'halfdownload' GROUP BY bonuslog.id ORDER BY total DESC LIMIT 10;") or sqlerr(__FILE__, __LINE__);
+    while($top_donator3 = mysqli_fetch_assoc($c))
+    $top_donators3[] = $top_donator3;
+    $mc1->cache_value('top_donators3_', $top_donators3, 0);
+    }
+    if (count($top_donators3) > 0)
+    {
+    $top_donator3 = "<h4>Top 10 Contributors </h4>\n";
+    if ($top_donators3)
+    {
+    foreach($top_donators3 as $c) {
+    $top_donators3_id = (int)$c["id"];
+    $damount_donated3 = (int)$c["total"];
+    $top_donators3_username = htmlspecialchars($c['username']);
+    $top_donator3 .= "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators3_id'>" . $top_donators3_username . "</a> [$damount_donated3]<br />";
+    }
+    } else {
+    //== If there are no donators
+    if (empty($top_donators3))
+    $top_donator3 .= "Nobodys contibuted yet !!";
+    }
     }
     //==End
+
             //== Show the percentages
             $HTMLOUT .="<div align='center' style='background:transparent;height:25px;'>&nbsp;FreeLeech&nbsp;[&nbsp;";
             if($freeleech_enabled){
-            $HTMLOUT .="<font color=\"yellow\"><strong>&nbsp;ON</strong></font>&nbsp;".get_date($freeleech_start_time, 'DATE') . "&nbsp;-&nbsp;" .get_date($freeleech_end_time, 'DATE');
+            $HTMLOUT .="<font color=\"green\"><strong>&nbsp;ON</strong></font>&nbsp;".get_date($freeleech_start_time, 'DATE') . "&nbsp;-&nbsp;" .get_date($freeleech_end_time, 'DATE');
             } else {
-            $HTMLOUT .="<font color=\"{$fcolor}\"><strong>{$fstatus}</strong></font>";
+            $HTMLOUT .="<strong>{$fstatus}</strong>";
             }
             $HTMLOUT .="&nbsp;]";
     
             $HTMLOUT .="&nbsp;DoubleUpload&nbsp;[&nbsp;";
             if($double_upload_enabled){
-            $HTMLOUT .="<font color=\"yellow\"><strong>&nbsp;ON</strong></font>&nbsp;".get_date($double_upload_start_time, 'DATE') . "&nbsp;-&nbsp;" .get_date($double_upload_end_time, 'DATE');
+            $HTMLOUT .="<font color=\"green\"><strong>&nbsp;ON</strong></font>&nbsp;".get_date($double_upload_start_time, 'DATE') . "&nbsp;-&nbsp;" .get_date($double_upload_end_time, 'DATE');
             } else {
-            $HTMLOUT .="<font color=\"{$dcolor}\"><strong>{$dstatus}</strong></font>";
+            $HTMLOUT .="<strong>{$dstatus}</strong>";
             }
             $HTMLOUT .="&nbsp;]";
             
             $HTMLOUT .="&nbsp;Half Download&nbsp;[&nbsp;";
             if($half_down_enabled){
-            $HTMLOUT .="<font color=\"yellow\"><strong>&nbsp;ON</strong></font>&nbsp;".get_date($half_down_start_time, 'DATE') . "&nbsp;-&nbsp;" .get_date($half_down_end_time, 'DATE');
+            $HTMLOUT .="<font color=\"green\"><strong>&nbsp;ON</strong></font>&nbsp;".get_date($half_down_start_time, 'DATE') . "&nbsp;-&nbsp;" .get_date($half_down_end_time, 'DATE');
             } else {
-            $HTMLOUT .="<font color=\"{$hcolor}\"><strong>{$hstatus}</strong></font>";
+            $HTMLOUT .="<strong>{$hstatus}</strong>";
             }
             $HTMLOUT .="&nbsp;]</div>";
             //==End
@@ -1512,13 +1659,13 @@ function write_bonus_log($userid, $amount, $type){
   $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."<br /><br />Enter the <b>ID number of the Torrent:</b> <input type='text' name='torrent_id' size='4' maxlength='8' /> you would like to buy a 1 to 1 ratio on.</td><td align='center' class='".$class."'>min.<br />".htmlspecialchars($gets['points'])."</td>";
   break;
   case ($gets['id'] == 11):
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color=\"#000000\">".htmlspecialchars($gets["bonusname"])."</font></h1>".htmlspecialchars($gets['description'])."<br /><h4>Top 10 Contributors </h4> <ol>".$top_donators." </ol> <br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .htmlspecialchars($gets['minpoints'])." <br /></td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color=\"#000000\">".htmlspecialchars($gets["bonusname"])."</font></h1>".htmlspecialchars($gets['description'])."<br />".$top_donator."<br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .htmlspecialchars($gets['minpoints'])." <br /></td>";
   break;
   case ($gets['id'] == 12):
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color=\"#000000\">".htmlspecialchars($gets["bonusname"])."</font></h1>".htmlspecialchars($gets['description'])."<br /><h4>Top 10 Contributors </h4> <ol>".$top_donators2." </ol> <br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .htmlspecialchars($gets['minpoints'])." <br /></td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color=\"#000000\">".htmlspecialchars($gets["bonusname"])."</font></h1>".htmlspecialchars($gets['description'])."<br />".$top_donator2."<br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .htmlspecialchars($gets['minpoints'])." <br /></td>";
   break;
   case ($gets['id'] == 13):
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color=\"#000000\">".htmlspecialchars($gets["bonusname"])."</font></h1>".htmlspecialchars($gets['description'])."<br /><h4>Top 10 Contributors </h4> <ol>".$top_donators3." </ol> <br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .htmlspecialchars($gets['minpoints'])." <br /></td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color=\"#000000\">".htmlspecialchars($gets["bonusname"])."</font></h1>".htmlspecialchars($gets['description'])."<br />".$top_donator3."<br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .htmlspecialchars($gets['minpoints'])." <br /></td>";
   break;
   case ($gets['id'] == 34):
   $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."<br /><br />Enter the <b>ID number of the Torrent:</b> <input type='text' name='torrent_id' size='4' maxlength='8' /> you would like to bump.</td><td align='center' class='".$class."'>min.<br />".htmlspecialchars($gets['points'])."</td>";
@@ -1596,6 +1743,6 @@ function write_bonus_log($userid, $amount, $type){
   <div align='center'><br />
   <a class='altlink' href='{$INSTALLER09['baseurl']}/index.php'><b>Back to homepage</b></a></div>
   </td></tr></table></div>";
-  
+ 
 echo stdhead($CURUSER['username'] . "'s Karma Bonus Points Page", true, $stdhead) . $HTMLOUT . stdfoot();
 ?>
