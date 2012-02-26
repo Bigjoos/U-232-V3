@@ -58,9 +58,12 @@ if (!isset($_FILES['file'])) {
     }
 
     if (isset($_GET["avatar"]) && $_GET["avatar"] != '' && (($_GET["avatar"]) != $CURUSER["avatar"])) {
-        $type = ((isset($_GET["type"]) && $_GET["type"] == 1)?1:2);
-        if (!preg_match("/^http:\/\/[^\s'\"<>]+\.(jpg|gif|png)$/i", $_GET["avatar"]))
-            stderr($lang['bitbucket_error'], "{$lang['bitbucket_mustbe']}Avatar MUST be in jpg, gif or png format. Make sure you include http:// in the URL.");
+        $type = ((isset($_GET["type"]) && $_GET["type"] == 1) ? 1 : 2);
+        if (preg_match("/^http:\/\/$/i", $_GET["avatar"])
+        OR preg_match( "/[?&;]/", $_GET["avatar"] ) 
+        OR preg_match("#javascript:#is", $_GET["avatar"] ) 
+        OR !preg_match("#^https?://(?:[^<>*\"]+|[a-z0-9/\._\-!]+)$#iU", $_GET["avatar"] ))
+        stderr($lang['bitbucket_error'], "{$lang['bitbucket_mustbe']}Avatar MUST be in jpg, gif or png format. Make sure you include http:// in the URL.");
         $avatar = sqlesc($_GET['avatar']);
         sql_query("UPDATE users SET avatar = $avatar WHERE id = {$CURUSER['id']}") or sqlerr(__FILE__, __LINE__);
         $mc1->begin_transaction('MyUser_'.$CURUSER['id']);
@@ -185,7 +188,7 @@ $HTMLOUT .="<p>{$lang['bitbucket_directlink']}<br />
 <input style=\"font-size: 9pt;text-align: center;\" id=\"direct\" onclick=\"SelectAll('direct');\" type=\"text\" size=\"70\" value=\"".$address . $path."\" readonly=\"readonly\" /></p>
 <p align=\"center\">{$lang['bitbucket_tags']}
 <input style=\"font-size: 9pt;text-align: center;\" id=\"tag\" onclick=\"SelectAll('tag');\" type=\"text\" size=\"70\" value=\"[img]".$address . $path."[/img]\" readonly=\"readonly\" /></p>
-".(isset($_POST['avy']) ? "<p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.php?type=2&amp;avatar=".$address.$path."\">{$lang['bitbucket_maketma']}</a></p>" : "")."
+".(isset($_POST['avy']) ? "<p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.php?type=2&amp;avatar=".$address . $path."\">{$lang['bitbucket_maketma']}</a></p>" : "")."
 <p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.php?images=1\">{$lang['bitbucket_viewmyi']}</a></p>
 <p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.php?images=2\">{$lang['bitbucket_viewmya']}</a></p>
 </td>
