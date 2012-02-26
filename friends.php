@@ -9,7 +9,6 @@
 //== Manage friends by pdq
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
-//require_once(INCL_DIR.'pager_functions.php');
 dbconn(false);
 loggedinorreturn();
 
@@ -170,13 +169,6 @@ loggedinorreturn();
   die;
   }
   //== Main body shit
-  //$counts = sql_query("SELECT COUNT(id) FROM friends WHERE userid=".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
-  //$row = mysqli_fetch_row($counts);
-  //$count = $row[0];
-  //$perpage = 5;
-  //$pager = pager($perpage, $count, "friends.php?userid=$userid&amp;");
-  //{$pager['limit']}
-
   $res = sql_query("SELECT * FROM users WHERE id=".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
   $user = mysqli_fetch_assoc($res) or stderr($lang['friends_error'], $lang['friends_no_user']);
   $HTMLOUT = '';
@@ -260,17 +252,12 @@ loggedinorreturn();
   while ($block = mysqli_fetch_assoc($res))
   {
   $blocks .= "<div style='border: 1px solid black;padding:5px;'>";
-  //$avatar = ($CURUSER["avatars"] == "yes" ? htmlspecialchars($friend["avatar"]) : "");
-  //if (!$avatar)
-  //$avatar = "{$INSTALLER09['pic_base_url']}default_avatar.gif";
   $blocks .= "<span class='btn' style='float:right;'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=delete&amp;type=block&amp;targetid=".(int)$block['id']."'>{$lang['friends_delete']}</a></span><br />";
   $blocks .= "<p><a href='userdetails.php?id=".(int)$block['id']."'><b>".format_username($block)."</b></a></p></div><br />";
   }
   }
   // Enemies block end
   //== OUput the shits \0/
-  //if ($count > $perpage)
-  //$HTMLOUT .= $pager['pagertop'];
   $HTMLOUT .= "<br />
   <table class='main' border='0' cellspacing='0' cellpadding='0'>
   <tr><td class='embedded'><h1 style='margin:0px'>&nbsp;{$lang['friends_personal']}&nbsp;".htmlentities($user['username'], ENT_QUOTES)."</h1></td></tr></table>
@@ -295,7 +282,5 @@ loggedinorreturn();
   <td style='padding:10px;background-color:#777777;' valign='top'>$friendreqs</td>
   </tr>
   </table><p><a href='users.php'><b>{$lang['friends_user_list']}</b></a></p>";
-  //if ($count > $perpage)
-  //$HTMLOUT .= $pager['pagertop'];
 echo stdhead("{$lang['friends_stdhead']} ".htmlentities($user['username'])) . $HTMLOUT . stdfoot();
 ?>
