@@ -968,6 +968,7 @@ CREATE TABLE IF NOT EXISTS `friends` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `userid` int(10) unsigned NOT NULL DEFAULT '0',
   `friendid` int(10) unsigned NOT NULL DEFAULT '0',
+  `confirmed` enum('yes','no') COLLATE utf8_bin NOT NULL DEFAULT 'no',
   PRIMARY KEY (`id`),
   UNIQUE KEY `userfriend` (`userid`,`friendid`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
