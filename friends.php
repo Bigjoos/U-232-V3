@@ -186,7 +186,7 @@ loggedinorreturn();
   $title = htmlspecialchars($friendp["title"]);
   if (!$title)
   $title = get_user_class_name($friendp["class"]);
-  $linktouser = "<a href='userdetails.php?id=".(int)$friendp['id']."'><b>".format_username($friend)."</b></a>($title)<br />{$lang['friends_last_seen']} ".get_date($friendp['last_access'],'');
+  $linktouser = "<a href='userdetails.php?id=".(int)$friendp['id']."'><b>".format_username($friendp)."</b></a>($title)<br />{$lang['friends_last_seen']} ".get_date($friendp['last_access'],'');
   $confirm ="<br /><span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=confirm&amp;type=friend&amp;targetid=".(int)$friendp['id']."'>Confirm</a></span>";
   $block = "&nbsp;<span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?action=add&amp;type=block&amp;targetid=".(int)$friendp['id']."'>Block</a></span>";
   $avatar = ($CURUSER["avatars"] == "yes" ? htmlspecialchars($friendp["avatar"]) : "");
