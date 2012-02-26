@@ -185,7 +185,7 @@ $HTMLOUT .="<p>{$lang['bitbucket_directlink']}<br />
 <input style=\"font-size: 9pt;text-align: center;\" id=\"direct\" onclick=\"SelectAll('direct');\" type=\"text\" size=\"70\" value=\"".$address . $path."\" readonly=\"readonly\" /></p>
 <p align=\"center\">{$lang['bitbucket_tags']}
 <input style=\"font-size: 9pt;text-align: center;\" id=\"tag\" onclick=\"SelectAll('tag');\" type=\"text\" size=\"70\" value=\"[img]".$address . $path."[/img]\" readonly=\"readonly\" /></p>
-<p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.php?type=2&amp;avatar=".$address . $path."\">{$lang['bitbucket_maketma']}</a></p>
+".(isset($_POST['avy']) ? "<p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.php?type=2&amp;avatar=".$address.$path."\">{$lang['bitbucket_maketma']}</a></p>" : "")."
 <p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.php?images=1\">{$lang['bitbucket_viewmyi']}</a></p>
 <p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.php?images=2\">{$lang['bitbucket_viewmya']}</a></p>
 </td>
