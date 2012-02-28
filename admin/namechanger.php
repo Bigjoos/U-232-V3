@@ -38,29 +38,35 @@ if (isset($mode) && $mode == 'change') {
 
     if ($_POST["uname"] == "" || $_POST["uid"] == "")
         stderr("Error", "UserName or ID missing");
-
-    $change = sql_query("UPDATE users SET username=".sqlesc($uname)." WHERE id=".sqlesc($uid)) or sqlerr(__FILE__, __LINE__);
-    
-    $mc1->begin_transaction('MyUser_'.$uid);
-    $mc1->update_row(false, array('username' => $uname));
-    $mc1->commit_transaction(900); // 15 mins
-    $mc1->begin_transaction('user'.$uid);
-    $mc1->update_row(false, array('username' => $uname));
-    $mc1->commit_transaction(900); // 15 mins
-    
-    $added = TIME_NOW;
-    $changed = sqlesc("Your Username Has Been Changed To $uname");
-    $subject = sqlesc("Username changed");
-    if (!$change) {
-        if (((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) == 1062)
-            stderr("Borked", "Username already exists!");
-    }
-
-    sql_query("INSERT INTO messages (sender, receiver, msg, subject, added) VALUES(0, $uid, $changed, $subject, $added)") or sqlerr(__FILE__, __LINE__);
-    header("Refresh: 2; url=staffpanel.php?tool=namechanger&amp;action=namechanger");
-    stderr("Success","Username Has Been Changed To ".htmlspecialchars($uname)." please wait while you are redirected");
+   
+    $nc_sql = sql_query("SELECT class FROM users WHERE id = ".$uid) or sqlerr(__FILE__, __LINE__);
+    if (mysql_num_rows($nc_sql)) {
+	    $classuser = mysql_fetch_assoc($nc_sql);
+	    if ($classuser['class'] >= UC_STAFF)
+	        	stderr("Error", "Cannot rename staff accounts, contact coder.");
+	
+	    $change = sql_query("UPDATE users SET username=".sqlesc($uname)." WHERE id=".sqlesc($uid)) or sqlerr(__FILE__, __LINE__);
+	    
+	    $mc1->begin_transaction('MyUser_'.$uid);
+	    $mc1->update_row(false, array('username' => $uname));
+	    $mc1->commit_transaction(900); // 15 mins
+	    $mc1->begin_transaction('user'.$uid);
+	    $mc1->update_row(false, array('username' => $uname));
+	    $mc1->commit_transaction(900); // 15 mins
+	    
+	    $added = TIME_NOW;
+	    $changed = sqlesc("Your Username Has Been Changed To $uname");
+	    $subject = sqlesc("Username changed");
+	    if (!$change) {
+	        if (((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) == 1062)
+	            stderr("Borked", "Username already exists!");
+	    }
+	
+	    sql_query("INSERT INTO messages (sender, receiver, msg, subject, added) VALUES(0, $uid, $changed, $subject, $added)") or sqlerr(__FILE__, __LINE__);
+	    header("Refresh: 2; url=staffpanel.php?tool=namechanger&amp;action=namechanger");
+	    stderr("Success","Username Has Been Changed To ".htmlspecialchars($uname)." please wait while you are redirected");
+	}
 }
-
 $HTMLOUT.="
 <h1>Change UserName</h1>
 <form method='post' action='staffpanel.php?tool=namechanger&amp;action=namechanger&amp;mode=change'>
