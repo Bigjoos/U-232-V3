@@ -76,7 +76,7 @@ if (!isset($_FILES['file'])) {
     }
     
     if (isset($_GET["updated"]) && $_GET["updated"] == 'avatar') {
-    $HTMLOUT .="<h3>{$lang['bitbucket_updated']}<p><img src='".htmlspecialchars($CURUSER['avatar'])."' border='0' alt='' /></p></h3>";
+    $HTMLOUT .="<h3>{$lang['bitbucket_updated']}<img src='".htmlspecialchars($CURUSER['avatar'])."' border='0' alt='' /></h3>";
     }
 
     $HTMLOUT .="<form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\" enctype=\"multipart/form-data\">

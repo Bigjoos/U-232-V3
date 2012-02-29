@@ -102,7 +102,6 @@ $directories[] = './avatars/';
 $directories[] = './templates/';
 $directories[] = './include/settings/';
 $directories[] = './cache/';
-$directories[] = './dictbreaker/';
 $directories[] = './logs/';
 //$directories[] = './torrents/';  //== watch this fella if you have 1000's of torrents it will timeout
 $directories[] = './admin/';
