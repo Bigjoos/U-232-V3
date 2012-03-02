@@ -147,17 +147,16 @@ function write_staffs()
       //==ids
 		$t = '$INSTALLER09';
       $iconfigfile = "<"."?php\n/**\nThis file created on ".date('M d Y H:i:s').".\nSite Config staff mod by pdq/U-232.\n**/\n";
-		$ri = sql_query("SELECT id, class FROM users WHERE class BETWEEN ".UC_STAFF." AND ".UC_MAX." ORDER BY id DESC") or sqlerr(__file__, __line__); 
+		$ri = sql_query("SELECT id, class FROM users WHERE class BETWEEN ".UC_STAFF." AND ".UC_MAX." ORDER BY id ASC") or sqlerr(__file__, __line__); 
 		$iconfigfile .= "".$t."['allowed_staff']['id'] = array(";
       while ($ai = mysqli_fetch_assoc($ri))
 		{
 	   $ids[] = $ai['id'];
-      $iconfigfile .= "".$ai['id'].",\n";
-      //$iconfigfile .= "".join("," , $ids);
       }
+      $iconfigfile .= "".join("," , $ids);
       $iconfigfile .= ");";
-      $iconfigfile .= "?".">";
-      $filenum = fopen('./cache/staff_settings.php', 'w');
+      $iconfigfile .= "\n?".">";
+      $filenum = fopen('./cache/staff_settings_test.php', 'w');
       ftruncate($filenum, 0);
       fwrite($filenum, $iconfigfile);
       fclose($filenum);
@@ -168,12 +167,12 @@ function write_staffs()
 		$nconfigfile .= "".$t."['staff']['allowed'] = array(";
       while ($an = mysqli_fetch_assoc($rn))
 		{
-	   $username[] = $an["username"];
-      $nconfigfile .= "'".$an['username']."' => 1,\n";
+	   $username[] = "'".$an["username"]."' => 1";
       }
+      $nconfigfile .= "".join("," , $username);
       $nconfigfile .= ");";
-      $nconfigfile .= "?".">";
-      $filenum = fopen('./cache/staff_settings2.php', 'w');
+      $nconfigfile .= "\n?".">";
+      $filenum = fopen('./cache/staff_settings2_test.php', 'w');
       ftruncate($filenum, 0);
       fwrite($filenum, $nconfigfile);
       fclose($filenum);
