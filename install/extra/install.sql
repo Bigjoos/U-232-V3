@@ -502,7 +502,7 @@ INSERT INTO `cleanup` (`clean_id`, `clean_title`, `clean_file`, `clean_time`, `c
 (17, 'Visible', 'visible_update.php', 1322223676, 900, '77c523eab12be5d0342e4606188cd2ca', 0, 'Torrents visible update', 1),
 (18, 'Announcements', 'announcement_update.php', 1322235510, 86400, 'b73c139b4defbc031e201b91fef29a4c', 1, 'Old announcement updates', 1),
 (19, 'Readposts', 'readpost_update.php', 1322237616, 86400, '3e0c8bc6b6e6cc61fdfe8b26f8268b77', 1, 'Old Readposts updates', 1),
-(20, 'Happyhour', 'happyhour_update.php', 1316047921, 43200, 'a7c422bc9f17b3fba5dab2d0129acd32', 1, 'HappyHour Updates', 0),
+(20, 'Happyhour', 'happyhour_update.php', 1316047921, 43200, 'a7c422bc9f17b3fba5dab2d0129acd32', 1, 'HappyHour Updates', 1),
 (21, 'Customsmilies', 'customsmilie_update.php', 1322237624, 86400, '9e8a41be2b0a56d83e0d0c0b00639f66', 1, 'Custom Smilie Update', 1),
 (22, 'Karma Vips', 'karmavip_update.php', 1322241313, 86400, 'c444f13b95998c98a851714673ff6b84', 1, 'Karma VIp Updates', 1),
 (23, 'Anonymous Profile', 'anonymous_update.php', 1322248387, 86400, '25146aec76a7b163ac6955685ff667d9', 1, 'Anonymous Profile Updates', 1),

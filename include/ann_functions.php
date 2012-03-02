@@ -188,6 +188,26 @@ function adjust_torrent_peers($id, $seeds = 0, $leechers = 0, $completed = 0) {
    return (bool)$adjust;
 }
 
+// happyhour by putyn
+function get_happy($torrentid, $userid) {
+    global $mc1;
+    $keys['happyhour'] = $userid.'_happy';
+    if(($happy = $mc1->get_value($keys['happyhour'])) === false) {  
+       $res_happy = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id, userid, torrentid, multiplier from happyhour where userid=".ann_sqlesc($userid)) or ann_sqlerr(__FILE__, __LINE__);
+        $happy = array();
+         if (mysqli_num_rows($res_happy)) {
+              while ($rowhappy = mysqli_fetch_assoc($res_happy))
+                $happy[$rowhappy['torrentid']] = $rowhappy['multiplier'];
+        }
+       $mc1->add_value($userid.'_happy', $happy, 0);
+   }
+   
+   if (!empty($happy) && isset($happy[$torrentid]))
+         return $happy[$torrentid];
+ 
+   return 0;
+}
+
 // freeslots by pdq
 function get_slots($torrentid, $userid) {
     global $mc1;

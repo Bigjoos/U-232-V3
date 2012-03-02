@@ -115,6 +115,8 @@ $torrentid = (int)$torrent["id"];
 $torrent_modifier      = get_slots($torrentid, $userid);
 $torrent['freeslot']   = $torrent_modifier['freeslot'];
 $torrent['doubleslot'] = $torrent_modifier['doubleslot'];
+$happy_multiplier      = get_happy($torrentid, $userid);
+
 $fields = 'seeder, peer_id, ip, port, uploaded, downloaded, userid, ('. TIME_NOW .' - last_action) AS announcetime, last_action AS ts, '. TIME_NOW .' AS nowts, prev_action AS prevts';
 //== Wantseeds - Retro
 $limit = '';
@@ -224,26 +226,12 @@ if (!isset($self))
   {
   $downthis = 0;
   }
-  /*
-  //==Happyhour
-  $happy = $mc1->get_value('happyhour_');
-  if ($happy === false) {
-  $happy = mysqli_query($GLOBALS["___mysqli_ston"],  "SELECT id, multiplier from happyhour where userid=" . ann_sqlesc( $userid ) . " AND torrentid=" . ann_sqlesc( $torrentid ) . " " ) or ann_sqlerr(__FILE__, __LINE__);
-  $happyhour = mysqli_num_rows( $happy ) == 0 ? false : true;
-  $happy_multi = mysqli_fetch_row( $happy );
-  $multiplier = $happy_multi["multiplier"];
-  $happy['id'] = (int)$happy['id'];
-  $happy['userid'] = (int)$happy['userid'];
-  $happy['torrentid'] = (int)$happy['torrentid'];
-  //$happy['multiplier'] = (int)$happy['multiplier'];
-  $mc1->cache_value('happyhour_', $happy, $INSTALLER09['expires']['happyhour']);
+  
+  if ($happy_multiplier) {
+        $upthis = $upthis * $happy_multiplier;
+        $downthis = 0;
   }
 
-  if ( $happyhour ) {
-  $upthis = $upthis * $multiplier;
-  $downthis = 0;
-  }
-  */
   //==Karma contribution system by ezero
   //==updates putyn/Mindless
   if(($contribution = $mc1->get_value('freecontribution_')) === false) {
