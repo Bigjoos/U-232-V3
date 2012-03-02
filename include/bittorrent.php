@@ -11,6 +11,8 @@ $start = microtime(true);
 //==End
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'config.php');
 require_once(CACHE_DIR.'free_cache.php');
+require_once(CACHE_DIR.'site_settings.php');
+require_once(CACHE_DIR.'staff_settings.php');
 //==Start memcache
 require_once(CLASS_DIR.'class_cache.php');
 //== tpl

@@ -52,7 +52,7 @@ if (!defined('TBVERSION')) { //cannot access this file directly
 
 function class_check($class = 0, $staff = true, $pin = false) {
     global $CURUSER, $INSTALLER09, $mc1;
-
+    require_once('./cache/staff_settings2.php');
     /** basic checking **/
     if (!$CURUSER) {
   	    require_once '404.html';

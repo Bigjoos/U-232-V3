@@ -142,6 +142,43 @@ function get_reputation($user, $mode = '', $rep_is_on = TRUE)
 }
 //== End
 
+function write_staffs()
+	{
+      //==ids
+		$t = '$INSTALLER09';
+      $iconfigfile = "<"."?php\n/**\nThis file created on ".date('M d Y H:i:s').".\nSite Config staff mod by pdq/U-232.\n**/\n";
+		$ri = sql_query("SELECT id, class FROM users WHERE class BETWEEN ".UC_STAFF." AND ".UC_MAX." ORDER BY id DESC") or sqlerr(__file__, __line__); 
+		$iconfigfile .= "".$t."['allowed_staff']['id'] = array(";
+      while ($ai = mysqli_fetch_assoc($ri))
+		{
+	   $ids[] = $ai['id'];
+      $iconfigfile .= "".$ai['id'].",\n";
+      //$iconfigfile .= "".join("," , $ids);
+      }
+      $iconfigfile .= ");";
+      $iconfigfile .= "?".">";
+      $filenum = fopen('./cache/staff_settings.php', 'w');
+      ftruncate($filenum, 0);
+      fwrite($filenum, $iconfigfile);
+      fclose($filenum);
+      //==names
+      $t = '$INSTALLER09';
+      $nconfigfile = "<"."?php\n/**\nThis file created on ".date('M d Y H:i:s').".\nSite Config staff mod by pdq/U-232.\n**/\n";
+		$rn = sql_query("SELECT id, username, class FROM users WHERE class BETWEEN ".UC_STAFF." AND ".UC_MAX." ORDER BY username ASC") or sqlerr(__file__, __line__); 
+		$nconfigfile .= "".$t."['staff']['allowed'] = array(";
+      while ($an = mysqli_fetch_assoc($rn))
+		{
+	   $username[] = $an["username"];
+      $nconfigfile .= "'".$an['username']."' => 1,\n";
+      }
+      $nconfigfile .= ");";
+      $nconfigfile .= "?".">";
+      $filenum = fopen('./cache/staff_settings2.php', 'w');
+      ftruncate($filenum, 0);
+      fwrite($filenum, $nconfigfile);
+      fclose($filenum);
+      }
+
 function get_ratio_color($ratio)
   {
     if ($ratio < 0.1) return "#ff0000";

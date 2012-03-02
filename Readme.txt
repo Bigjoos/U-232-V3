@@ -9,4 +9,4 @@
 
 Set Up Instructions :
 First extract pic.rar - javairc.rar and GeoIp.rar and ensure there not inside an extra folder from being archived then upload the code to your server and chmod - root - avatars - backup - bitbucket - cache and all nested files and folders - dir_list - uploads - uploadsubs - imdb imdb/cache imdb/images - include - include/settings settings.txt  install/config.sample.php install/ann_config.sample.php - logs - torrents.
-Create a new database user and password via phpmyadmin - Point to http://yoursite.com/install/index.php - fill in all the required data - log in - Create a new user on entry named System ensure its userid2 so you dont need to alter the autoshout function on include/user_functions.php.
+Create a new database user and password via phpmyadmin - Point to http://yoursite.com/install/index.php - fill in all the required data - log in - Create a new user on entry named System ensure its userid2 so you dont need to alter the autoshout function on include/user_functions.php and promote it before entering staffpanels.

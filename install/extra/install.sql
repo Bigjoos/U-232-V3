@@ -1855,7 +1855,9 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('openreg', 'true'),
 ('forums_online', '1'),
 ('maxusers', '10000'),
-('invites', '5000');
+('invites', '5000'),
+('openreg_invites', 'true'),
+('failedlogins', '5');
 
 -- --------------------------------------------------------
 

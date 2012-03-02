@@ -147,7 +147,7 @@ switch (true){
 case (isset($_GET['up_success'])):
 I_smell_a_rat($_GET['up_success']);
 
-$amt = (int)$_GET['amt'];
+$amt = (float)$_GET['amt'];
 
 switch ($amt) {
 case $amt == 275.0:
@@ -279,13 +279,13 @@ case (isset($_GET['dload_success']));{
 I_smell_a_rat($_GET['dload_success']);
 }
 
-$amt = (int)$_GET['amt'];
+$amt = (float)$_GET['amt'];
 
 switch ($amt) {
-case $amt == 75.0:
+case $amt == 150.0:
     $amt = '1 GB';
     break;
-case $amt == 150.0:
+case $amt == 300.0:
     $amt = '2.5 GB';
     break;
 default:
@@ -674,10 +674,10 @@ stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faul
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for download credit removal.\n " .$bonuscomment;
 sql_query("UPDATE users SET downloaded = ".sqlesc($download - $arr_points['menge']).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('userstats_'.$userid);
-$mc1->update_row(false, array('downloaded' => $download+$arr_points['menge'], 'seedbonus' => $seedbonus));
+$mc1->update_row(false, array('downloaded' => $download - $arr_points['menge'], 'seedbonus' => $seedbonus));
 $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
 $mc1->begin_transaction('user_stats_'.$userid);
-$mc1->update_row(false, array('downloaded' => $download+$arr_points['menge'], 'seedbonus' => $seedbonus, 'bonuscomment' => $bonuscomment));
+$mc1->update_row(false, array('downloaded' => $download - $arr_points['menge'], 'seedbonus' => $seedbonus, 'bonuscomment' => $bonuscomment));
 $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
 header("Refresh: 0; url={$INSTALLER09['baseurl']}/mybonus.php?dload_success=1&amt=$points");
 die;
@@ -1384,6 +1384,7 @@ function write_bonus_log($userid, $amount, $type){
                         }
                         }
                         }
+//$mc1->delete_value('freecontribution_datas_');
 //=== freeleech contribution meter
 $target_fl = 30000;
 //=== get total points
@@ -1396,7 +1397,7 @@ if(($freeleech_counter = $mc1->get_value('freeleech_counter')) === false) {
     $percent_fl = $freeleech_counter;
 			switch ($percent_fl)
 			{
-	   			case $percent_fl >= 100:
+	   			case $percent_fl >= 90:
 			$font_color_fl = '<strong><font color="green">'.number_format($percent_fl).' %</font></strong>';
 				break; 
 				   case $percent_fl >= 80:
@@ -1421,6 +1422,7 @@ if(($freeleech_counter = $mc1->get_value('freeleech_counter')) === false) {
 			$font_color_fl = '<strong><font color="red">'.number_format($percent_fl).' %</font></strong>';
 				break;
 			}
+//$mc1->delete_value('freeleech_counter');
 //=== get total points
 $target_du = 30000;
 if(($doubleupload_counter = $mc1->get_value('doubleupload_counter')) === false) {
@@ -1432,7 +1434,7 @@ if(($doubleupload_counter = $mc1->get_value('doubleupload_counter')) === false) 
     $percent_du = $doubleupload_counter;
         switch ($percent_du)
 			{
-	   			case $percent_du >= 100:
+	   			case $percent_du >= 90:
 			$font_color_du = '<strong><font color="green">'.number_format($percent_du).' %</font></strong>';
 				break; 
 				   case $percent_du >= 80:
@@ -1468,7 +1470,7 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
     $percent_hd = $halfdownload_counter;
         switch ($percent_hd)
 			{
-	   			case $percent_hd >= 100:
+	   			case $percent_hd >= 90:
 			$font_color_hd = '<strong><font color="green">'.number_format($percent_hd).'&nbsp;%</font></strong>';
 				break; 
 				   case $percent_hd >= 80:
@@ -1512,7 +1514,7 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
     
     //==09 Ezeros freeleech contribution top 10 - pdq.Bigjoos
     if(($top_donators = $mc1->get_value('top_donators_')) === false) {
-    $a = sql_query("SELECT bonuslog.id, SUM(bonuslog.donation) as total, users.username FROM bonuslog left join users ON bonuslog.id=users.id WHERE bonuslog.type = 'freeleech' GROUP BY bonuslog.id ORDER BY total DESC LIMIT 10;") or sqlerr(__FILE__, __LINE__);
+    $a = sql_query("SELECT bonuslog.id, SUM(bonuslog.donation) AS total, users.username, users.id AS userid, users.pirate, users.king, users.class, users.donor, users.warned, users.leechwarn, users.enabled, users.chatpost FROM bonuslog LEFT JOIN users ON bonuslog.id=users.id WHERE bonuslog.type = 'freeleech' GROUP BY bonuslog.id ORDER BY total DESC LIMIT 10;") or sqlerr(__FILE__, __LINE__);
     while($top_donator = mysqli_fetch_assoc($a))
     $top_donators[] = $top_donator;
     $mc1->cache_value('top_donators_', $top_donators, 0);
@@ -1525,8 +1527,10 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
     foreach($top_donators as $a) {
     $top_donators_id = (int)$a["id"];
     $damount_donated = (int)$a["total"];
-    $top_donators_username = htmlspecialchars($a['username']);
-    $top_donator .= "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators_id'>" . $top_donators_username . "</a> [$damount_donated]<br />";
+    //$top_donators_username = htmlspecialchars($a['username']);
+    $user_stuff = $a;
+    $user_stuff['id'] = (int)$a['userid'];
+    $top_donator .= "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators_id'>" . format_username($user_stuff) . "</a> [$damount_donated]<br />";
     }
     } else {
     //== If there are no donators
@@ -1534,9 +1538,10 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
     $top_donator .= "Nobodys contibuted yet !!";
     }
     }
+    //$mc1->delete_value('top_donators_');
     //==
     if(($top_donators2 = $mc1->get_value('top_donators2_')) === false) {
-    $b = sql_query("SELECT bonuslog.id, SUM(bonuslog.donation) as total, users.username FROM bonuslog left join users ON bonuslog.id=users.id WHERE bonuslog.type = 'doubleupload' GROUP BY bonuslog.id ORDER BY total DESC LIMIT 10;") or sqlerr(__FILE__, __LINE__);
+    $b = sql_query("SELECT bonuslog.id, SUM(bonuslog.donation) AS total, users.username, users.id AS userid, users.pirate, users.king, users.class, users.donor, users.warned, users.leechwarn, users.enabled, users.chatpost FROM bonuslog LEFT JOIN users ON bonuslog.id=users.id WHERE bonuslog.type = 'doubleupload' GROUP BY bonuslog.id ORDER BY total DESC LIMIT 10;") or sqlerr(__FILE__, __LINE__);
     while($top_donator2 = mysqli_fetch_assoc($b))
     $top_donators2[] = $top_donator2;
     $mc1->cache_value('top_donators2_', $top_donators2, 0);
@@ -1549,8 +1554,10 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
     foreach($top_donators2 as $b) {
     $top_donators2_id = (int)$b["id"];
     $damount_donated2 = (int)$b["total"];
-    $top_donators2_username = htmlspecialchars($b['username']);
-    $top_donator2 .= "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators2_id'>" . $top_donators2_username . "</a> [$damount_donated2]<br />";
+    //$top_donators2_username = htmlspecialchars($b['username']);
+    $user_stuff = $b;
+    $user_stuff['id'] = (int)$b['userid'];
+    $top_donator2 .= "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators2_id'>" . format_username($user_stuff) . "</a> [$damount_donated2]<br />";
     }
     } else {
     //== If there are no donators
@@ -1558,9 +1565,10 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
     $top_donator2 .= "Nobodys contibuted yet !!";
     }
     }
+    //$mc1->delete_value('top_donators2_');
     //==
     if(($top_donators3 = $mc1->get_value('top_donators3_')) === false) {
-    $c = sql_query("SELECT bonuslog.id, SUM(bonuslog.donation) as total, users.username FROM bonuslog left join users ON bonuslog.id=users.id WHERE bonuslog.type = 'halfdownload' GROUP BY bonuslog.id ORDER BY total DESC LIMIT 10;") or sqlerr(__FILE__, __LINE__);
+    $c = sql_query("SELECT bonuslog.id, SUM(bonuslog.donation) AS total, users.username, users.id AS userid, users.pirate, users.king, users.class, users.donor, users.warned, users.leechwarn, users.enabled, users.chatpost FROM bonuslog LEFT JOIN users ON bonuslog.id=users.id WHERE bonuslog.type = 'halfdownload' GROUP BY bonuslog.id ORDER BY total DESC LIMIT 10;") or sqlerr(__FILE__, __LINE__);
     while($top_donator3 = mysqli_fetch_assoc($c))
     $top_donators3[] = $top_donator3;
     $mc1->cache_value('top_donators3_', $top_donators3, 0);
@@ -1573,8 +1581,10 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
     foreach($top_donators3 as $c) {
     $top_donators3_id = (int)$c["id"];
     $damount_donated3 = (int)$c["total"];
-    $top_donators3_username = htmlspecialchars($c['username']);
-    $top_donator3 .= "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators3_id'>" . $top_donators3_username . "</a> [$damount_donated3]<br />";
+    //$top_donators3_username = htmlspecialchars($c['username']);
+    $user_stuff = $c;
+    $user_stuff['id'] = (int)$c['userid'];
+    $top_donator3 .= "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators3_id'>" . format_username($user_stuff) . "</a> [$damount_donated3]<br />";
     }
     } else {
     //== If there are no donators
@@ -1582,6 +1592,7 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
     $top_donator3 .= "Nobodys contibuted yet !!";
     }
     }
+    //$mc1->delete_value('top_donators3_');
     //==End
 
             //== Show the percentages
@@ -1610,7 +1621,8 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
             $HTMLOUT .="&nbsp;]</div>";
             //==End
 
-            $HTMLOUT .="<table align='center' width='100%' border='1' cellspacing='0' cellpadding='5'>
+            $HTMLOUT .="
+            <table align='center' width='100%' border='1' cellspacing='0' cellpadding='5'>
             <tr>
             <td align='center' colspan='4' style='background:transparent;height:25px;'>
             Exchange your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Points</a> [ current ".$bonus." ] for goodies!
@@ -1626,11 +1638,10 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
             //=======change colors
             $count1= (++$count1)%2;
             $class = ($count1 == 0 ? 'one':'two');
-            $otheroption = "<table align='center' width='100%'>
-            <tr>
-            <td class='".$class."'><b>Username:</b>
-            <input type='text' name='username' size='20' maxlength='24' /></td>
-            <td class='".$class."'> <b>to be given: </b>
+            $otheroption = "
+            <div class='".$class."'><b>Username:</b>
+            <input type='text' name='username' size='20' maxlength='24' /></div>
+            <div class='".$class."'> <b>to be given: </b>
             <select name='bonusgift'> 
             <option value='100.0'> 100.0</option> 
             <option value='200.0'> 200.0</option> 
@@ -1643,11 +1654,11 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
             <option value='20000.0'> 20000.0</option>
             <option value='50000.0'> 50000.0</option>
             <option value='100000.0'> 100000.0</option>
-            </select> Karma points!</td></tr></table>";
+            </select> Karma points!</div>";
 
   switch (true){
  	case ($gets['id'] == 5):
- 	$HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."<br /><br />Enter the <b>Special Title</b> you would like to have <input type='text' name='title' size='30' maxlength='30' /> click Exchange! </td><td align='center' class='".$class."'>".htmlspecialchars($gets['points'])."</td>";
+ 	$HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /><input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."<br /><br />Enter the <b>Special Title</b> you would like to have <input type='text' name='title' size='30' maxlength='30' /> click Exchange! </td><td align='center' class='".$class."'>".htmlspecialchars($gets['points'])."</td>";
   break;
   case ($gets['id'] == 7):
   $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."<br /><br />Enter the <b>username</b> of the person you would like to send karma to, and select how many points you want to send and click Exchange!<br />".$otheroption."</td><td align=center class='".$class."'>min.<br />".htmlspecialchars($gets['points'])."<br />max.<br />100000.0</td>";
@@ -1665,13 +1676,13 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
   $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color=\"#000000\">".htmlspecialchars($gets["bonusname"])."</font></h1>".htmlspecialchars($gets['description'])."<br />".$top_donator2."<br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .htmlspecialchars($gets['minpoints'])." <br /></td>";
   break;
   case ($gets['id'] == 13):
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color=\"#000000\">".htmlspecialchars($gets["bonusname"])."</font></h1>".htmlspecialchars($gets['description'])."<br />".$top_donator3."<br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .htmlspecialchars($gets['minpoints'])." <br /></td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /><input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color=\"#000000\">".htmlspecialchars($gets["bonusname"])."</font></h1>".htmlspecialchars($gets['description'])."<br />".$top_donator3."<br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .htmlspecialchars($gets['minpoints'])." <br /></td>";
   break;
   case ($gets['id'] == 34):
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."<br /><br />Enter the <b>ID number of the Torrent:</b> <input type='text' name='torrent_id' size='4' maxlength='8' /> you would like to bump.</td><td align='center' class='".$class."'>min.<br />".htmlspecialchars($gets['points'])."</td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /><input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."<br /><br />Enter the <b>ID number of the Torrent:</b> <input type='text' name='torrent_id' size='4' maxlength='8' /> you would like to bump.</td><td align='center' class='".$class."'>min.<br />".htmlspecialchars($gets['points'])."</td>";
   break;
   default:
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."</td><td align='center' class='".$class."'>".htmlspecialchars($gets['points'])."</td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /><input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."</td><td align='center' class='".$class."'>".htmlspecialchars($gets['points'])."</td>";
   }
 
 
@@ -1694,7 +1705,7 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
   }
   }
   else 
-  $HTMLOUT .="<td class='".$class."' align='center'><b>Not Enough Karma</b></td></form>";
+  $HTMLOUT .="<td class='".$class."' align='center'><b>Not Enough Karma</b></td>";
   }
 
   $HTMLOUT .="</tr></table>
@@ -1735,6 +1746,12 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
   <br />&#186;&nbsp;Freeleech for a year
   <br />&#186;&nbsp;Pirate or King status
   <br />&#186;&nbsp;Unlocking parked option
+  <br />&#186;&nbsp;Pirates bounty
+  <br />&#186;&nbsp;Reputation points
+  <br />&#186;&nbsp;Userblocks
+  <br />&#186;&nbsp;Bump a torrent
+  <br />&#186;&nbsp;User immuntiy
+  <br />&#186;&nbsp;User unlocks
   <br />&#186;&nbsp;But keep in mind that everything that can get you karma can also be lost...<br /><br />
   Ie : if you up a torrent then delete it, you will gain and then lose 15 points, making a post and having it deleted will do the same... and there are other hidden bonus karma points all 
   over the site which is another way to help out your ratio ! 
@@ -1743,6 +1760,6 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
   <div align='center'><br />
   <a class='altlink' href='{$INSTALLER09['baseurl']}/index.php'><b>Back to homepage</b></a></div>
   </td></tr></table></div>";
- 
+
 echo stdhead($CURUSER['username'] . "'s Karma Bonus Points Page", true, $stdhead) . $HTMLOUT . stdfoot();
 ?>

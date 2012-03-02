@@ -1211,9 +1211,12 @@ $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
     if (sizeof($updateset)>0) 
     sql_query("UPDATE users SET " . implode(", ", $updateset) . " WHERE id=".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
     status_change($userid);
+    if ((isset($_POST['class'])) && (($class = $_POST['class']) != $user['class']))
+    {
+    write_staffs();
+    }
     //== 09 Updated Sysop log - thanks to pdq
      write_info("User account $userid (<a href='userdetails.php?id=$userid'>$user[username]</a>)\nThings edited: ".join(', ', $useredit['update'])." by <a href='userdetails.php?id=$CURUSER[id]'>$CURUSER[username]</a>");
-    
     $returnto = htmlentities($_POST["returnto"]);
     header("Location: {$INSTALLER09['baseurl']}/$returnto");
     stderr("{$lang['modtask_user_error']}", "{$lang['modtask_try_again']}");

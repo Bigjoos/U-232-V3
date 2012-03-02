@@ -219,9 +219,6 @@ define('UC_MAX', 6);   // maximum class
 define('UC_STAFF', 4); // start of staff classes
 //==View source code
 $INSTALLER09['staff_viewcode_on'] = false;
-//==Important security settings below
-//==Add all your Staff ids
-$INSTALLER09['allowed_staff']['id'] = array(1,2);
 //==Class check by pdq
 $INSTALLER09['site']['owner'] = 1;
 //== Salt - change this
@@ -232,10 +229,6 @@ $INSTALLER09['staff']['staff_pin'] = 'uFie0y3Iuklij8'; // should be mix of u/l c
 $INSTALLER09['staff']['owner_pin'] = 'jjko4kIufqhjj0'; // should be mix of u/l case and min 12 chars length
 //== Staff forum ID for autopost
 $INSTALLER09['staff']['forumid'] = 2; // this forum ID should exist and be a staff forum
-//== Add ALL staff names before promote them
-$INSTALLER09['staff']['allowed'] = array( 'Admin'       => 1,
-                                    'System'    => 1
-                                    );
-                                 
+
 define ('TBVERSION','U-232_V3');
 ?>
