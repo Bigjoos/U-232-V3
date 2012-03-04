@@ -480,60 +480,60 @@ CREATE TABLE IF NOT EXISTS `cleanup` (
   `clean_on` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`clean_id`),
   KEY `clean_time` (`clean_time`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=40 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=48 ;
 
 --
 -- Dumping data for table `cleanup`
 --
 
 INSERT INTO `cleanup` (`clean_id`, `clean_title`, `clean_file`, `clean_time`, `clean_increment`, `clean_cron_key`, `clean_log`, `clean_desc`, `clean_on`) VALUES
-(4, 'Lottery Autoclean', 'lotteryclean.php', 1322336888, 259200, 'd6704d582b136ea1ed13635bb9059f57', 1, 'Lottery Autoclean - Lottery clean up here every 3 days', 1),
-(5, 'Optimze Db Auto', 'optimizedb.php', 1322356284, 172800, 'd6704d582b136ea1ed13635bb9059f57', 1, 'Auto Optimize - Runs every 2 days', 1),
-(6, 'Auto Backup Db', 'backupdb.php', 1322227809, 86400, 'd6704d582b136ea1ed13635bb9059f57', 1, 'Auto Backup - Runs every 1 day', 1),
-(8, 'Irc bonus', 'irc_update.php', 1322224621, 1800, 'c06a074cd6403bcc1f292ce864c3cdd5', 1, 'Irc idle bonus update', 1),
-(9, 'Statistics', 'sitestats_update.php', 1322224030, 3600, '2a2afb82d82cc4ddcb6ff1753a40dfe9', 1, 'SIte statistics update', 1),
-(10, 'Karma Bonus', 'karma_update.php', 1322224833, 1800, 'd0df8a38cfba26ece2c285189a656ad0', 0, 'Seedbonus award update', 1),
-(11, 'Forums', 'forum_update.php', 1322223364, 900, 'c9c58a0d43b02cd5358115673bc04c9e', 0, 'Forum online and count update', 1),
-(12, 'Torrents', 'torrents_update.php', 1322223716, 900, '81875d0e7b63771ae2a59f2a48755da4', 1, 'Torrents update', 1),
-(13, 'Normalize', 'torrents_normalize.php', 1322223925, 900, '1274dd2d9ffd203e6d489db25d0f28fe', 1, 'File, comment, torrent update', 1),
-(14, 'Ips', 'ip_update.php', 1322230920, 86400, '0b4f34774259b5069d220c485aa10eba', 1, 'Ip clean', 1),
-(15, 'Signups', 'expired_signup_update.php', 1322225774, 259200, 'bdde41096f769d1a01251813cc2c1353', 1, 'Expired signups update', 1),
-(16, 'Peers', 'peer_update.php', 1322223724, 900, '72181fc6214ddc556d71066df031d424', 1, 'Peers update', 1),
-(17, 'Visible', 'visible_update.php', 1322223676, 900, '77c523eab12be5d0342e4606188cd2ca', 0, 'Torrents visible update', 1),
-(18, 'Announcements', 'announcement_update.php', 1322235510, 86400, 'b73c139b4defbc031e201b91fef29a4c', 1, 'Old announcement updates', 1),
-(19, 'Readposts', 'readpost_update.php', 1322237616, 86400, '3e0c8bc6b6e6cc61fdfe8b26f8268b77', 1, 'Old Readposts updates', 1),
-(20, 'Happyhour', 'happyhour_update.php', 1316047921, 43200, 'a7c422bc9f17b3fba5dab2d0129acd32', 1, 'HappyHour Updates', 1),
-(21, 'Customsmilies', 'customsmilie_update.php', 1322237624, 86400, '9e8a41be2b0a56d83e0d0c0b00639f66', 1, 'Custom Smilie Update', 1),
-(22, 'Karma Vips', 'karmavip_update.php', 1322241313, 86400, 'c444f13b95998c98a851714673ff6b84', 1, 'Karma VIp Updates', 1),
-(23, 'Anonymous Profile', 'anonymous_update.php', 1322248387, 86400, '25146aec76a7b163ac6955685ff667d9', 1, 'Anonymous Profile Updates', 1),
-(24, 'Delete Torrents', 'delete_torrents_update.php', 1322249440, 86400, '52f8e3c9fd438d4a86062f88f1146098', 1, 'Delete Old Torrents Update', 1),
-(25, 'Funds', 'funds_update.php', 1322249596, 86400, '5f50f43a9e640cd6203e1964c17361ba', 1, 'Funds And Donation Updates', 1),
-(26, 'Leechwarns', 'leechwarn_update.php', 1322250519, 86400, '0303a05302fadf30fc18f987d2a5b285', 1, 'Leechwarnings Update', 1),
-(27, 'Auto Invite', 'autoinvite_update.php', 1322253658, 86400, '48839ced75a612d41d9278718075dbb2', 1, 'Auto Invite Updates', 1),
-(28, 'Hit And Run', 'hitrun_update.php', 1322225873, 3600, '3ab445bbff84f87e8dc5a16489d7ca31', 1, 'Hit And Run Updates', 1),
-(29, 'Freeslots Update', 'freeslot_update.php', 1322242742, 86400, '63db6b0519eccbfe0b06d87b8f0bcaad', 1, 'Freeslots Stuffs Update', 1),
-(30, 'Backup Clean', 'backup_update.php', 1322256765, 86400, '2c0d1a9ffa04937255344b97e2c9706f', 1, 'Backups Clean Update', 1),
-(31, 'Inactive Clean', 'inactive_update.php', 1322222619, 86400, 'a401de097e031315b751b992ee40d733', 1, 'Inactive Users Update', 1),
-(32, 'Shout Clean', 'shout_update.php', 1322359522, 172800, '13515c22103b5b916c3d86023220cd61', 1, 'Shoutbox Clean Update', 1),
-(33, 'Power User Clean', 'pu_update.php', 1322276169, 86400, '4751425b1c765360a5f8bab14c6b9a47', 1, 'Power User Clean Updates', 1),
-(34, 'Power User Demote Clean', 'pu_demote_update.php', 1322258944, 86400, 'e9249b5f653f03ed425d68947155056b', 1, 'Power User Demote Clean Updates', 1),
-(35, 'Bugs Clean', 'bugs_update.php', 1322423964, 1209600, '1e9734cdf50408a7739b7b03272aeab3', 1, 'Bugs Update Clean', 1),
-(36, 'Sitepot Clean', 'sitepot_update.php', 1322302367, 86400, '29dae941216f1bdb81f69dce807b3501', 1, 'Sitepot Update Clean', 1),
-(37, 'Userhits Clean', 'userhits_update.php', 1322306426, 86400, 'd0cec8e7adb50290db6cf911a5c74339', 1, 'Userhits Clean Updates', 1),
-(38, 'Process Kill', 'processkill_update.php', 1322222860, 86400, 'b7c0f14c9482a14e9f5cb0d467dfd7c6', 1, 'Mysql Process KIll Updates', 1),
-(39, 'Cleanup Log', 'cleanlog_update.php', 1322224214, 86400, '7dc0b72fc8c12b264fad1613fbea2489', 1, 'Cleanup Log Updates', 1),
-(40, 'Pirate Cleanup', 'pirate_update.php', 1322243128, 86400, 'e5f20d43425832e9397841be6bc92be2', 1, 'Pirate Stuffs Update', 1),
-(41, 'King Cleanup', 'king_update.php', 1322245383, 86400, '12b5c6c9f9919ca09816225c29fddaeb', 1, 'King Stuffs Update', 1),
-(42, 'Free User Cleanup', 'freeuser_update.php', 1322224046, 3900, '37f9de0443159bf284a1c7a703e96cf9', 1, 'Free User Stuffs Update', 1),
-(43, 'Download Possible Cleanup', 'downloadpos_update.php', 1322246051, 86400, 'e20bcc6d07c6ec493e106adb8d2a8227', 1, 'Download Possible Stuffs Update', 1),
-(44, 'Upload Possible Cleanup', 'uploadpos_update.php', 1322246739, 86400, 'fd1110b750af878faccaf672fe53876d', 1, 'Upload Possible Stuffs Update', 1),
-(45, 'Free Torrents Cleanup', 'freetorrents_update.php', 1322223274, 3600, '20390090ac784fee830d19bd708cfcad', 1, 'Free Torrents Stuffs Update', 1),
-(46, 'Chatpost Cleanup', 'chatpost_update.php', 1322246743, 86400, 'bab6f1de36dc97dff02745051e076a39', 1, 'Chatpost Stuffs Update', 1),
-(47, 'Immunity Cleanup', 'immunity_update.php', 1322248056, 86400, '11bf6f41c659b9f49f6ccdfa616e9f82', 1, 'Immunity Stuffs Update', 1),
-(48, 'Warned Cleanup', 'warned_update.php', 1322248383, 86400, '6e558b89ac60454eaa3a45243347c977', 1, 'Warned Stuffs Update', 1),
-(49, 'Games Update', 'gameaccess_update.php', 1322306043, 86400, '33704fd97f8840ff08ef4e6ff236b3e4', 1, 'Games Stuffs Updates', 1),
-(50, 'Pm Update', 'sendpmpos_update.php', 1322306068, 86400, '32784b9c2891f022a91d5007f068f7d9', 1, 'Pm Stuffs Updates', 1),
-(51, 'Avatar Update', 'avatarpos_update.php', 1322306522, 86400, 'f257794129ee772f5cfe00b33b363100', 1, 'Avatar Stuffs Updates', 1);
+(1, 'Lottery Autoclean', 'lotteryclean.php', 1322336888, 259200, 'd6704d582b136ea1ed13635bb9059f57', 1, 'Lottery Autoclean - Lottery clean up here every 3 days', 1),
+(2, 'Optimze Db Auto', 'optimizedb.php', 1322356284, 172800, 'd6704d582b136ea1ed13635bb9059f57', 1, 'Auto Optimize - Runs every 2 days', 1),
+(3, 'Auto Backup Db', 'backupdb.php', 1322227809, 86400, 'd6704d582b136ea1ed13635bb9059f57', 1, 'Auto Backup - Runs every 1 day', 1),
+(4, 'Irc bonus', 'irc_update.php', 1322224621, 1800, 'c06a074cd6403bcc1f292ce864c3cdd5', 1, 'Irc idle bonus update', 1),
+(5, 'Statistics', 'sitestats_update.php', 1322224030, 3600, '2a2afb82d82cc4ddcb6ff1753a40dfe9', 1, 'SIte statistics update', 1),
+(6, 'Karma Bonus', 'karma_update.php', 1322224833, 1800, 'd0df8a38cfba26ece2c285189a656ad0', 0, 'Seedbonus award update', 1),
+(7, 'Forums', 'forum_update.php', 1322223364, 900, 'c9c58a0d43b02cd5358115673bc04c9e', 0, 'Forum online and count update', 1),
+(8, 'Torrents', 'torrents_update.php', 1322223716, 900, '81875d0e7b63771ae2a59f2a48755da4', 1, 'Torrents update', 1),
+(9, 'Normalize', 'torrents_normalize.php', 1322223925, 900, '1274dd2d9ffd203e6d489db25d0f28fe', 1, 'File, comment, torrent update', 1),
+(10, 'Ips', 'ip_update.php', 1322230920, 86400, '0b4f34774259b5069d220c485aa10eba', 1, 'Ip clean', 1),
+(11, 'Signups', 'expired_signup_update.php', 1322225774, 259200, 'bdde41096f769d1a01251813cc2c1353', 1, 'Expired signups update', 1),
+(12, 'Peers', 'peer_update.php', 1322223724, 900, '72181fc6214ddc556d71066df031d424', 1, 'Peers update', 1),
+(13, 'Visible', 'visible_update.php', 1322223676, 900, '77c523eab12be5d0342e4606188cd2ca', 0, 'Torrents visible update', 1),
+(14, 'Announcements', 'announcement_update.php', 1322235510, 86400, 'b73c139b4defbc031e201b91fef29a4c', 1, 'Old announcement updates', 1),
+(15, 'Readposts', 'readpost_update.php', 1322237616, 86400, '3e0c8bc6b6e6cc61fdfe8b26f8268b77', 1, 'Old Readposts updates', 1),
+(16, 'Happyhour', 'happyhour_update.php', 1316047921, 43200, 'a7c422bc9f17b3fba5dab2d0129acd32', 1, 'HappyHour Updates', 1),
+(17, 'Customsmilies', 'customsmilie_update.php', 1322237624, 86400, '9e8a41be2b0a56d83e0d0c0b00639f66', 1, 'Custom Smilie Update', 1),
+(18, 'Karma Vips', 'karmavip_update.php', 1322241313, 86400, 'c444f13b95998c98a851714673ff6b84', 1, 'Karma VIp Updates', 1),
+(19, 'Anonymous Profile', 'anonymous_update.php', 1322248387, 86400, '25146aec76a7b163ac6955685ff667d9', 1, 'Anonymous Profile Updates', 1),
+(20, 'Delete Torrents', 'delete_torrents_update.php', 1322249440, 86400, '52f8e3c9fd438d4a86062f88f1146098', 1, 'Delete Old Torrents Update', 1),
+(21, 'Funds', 'funds_update.php', 1322249596, 86400, '5f50f43a9e640cd6203e1964c17361ba', 1, 'Funds And Donation Updates', 1),
+(22, 'Leechwarns', 'leechwarn_update.php', 1322250519, 86400, '0303a05302fadf30fc18f987d2a5b285', 1, 'Leechwarnings Update', 1),
+(23, 'Auto Invite', 'autoinvite_update.php', 1322253658, 86400, '48839ced75a612d41d9278718075dbb2', 1, 'Auto Invite Updates', 1),
+(24, 'Hit And Run', 'hitrun_update.php', 1322225873, 3600, '3ab445bbff84f87e8dc5a16489d7ca31', 1, 'Hit And Run Updates', 1),
+(25, 'Freeslots Update', 'freeslot_update.php', 1322242742, 86400, '63db6b0519eccbfe0b06d87b8f0bcaad', 1, 'Freeslots Stuffs Update', 1),
+(26, 'Backup Clean', 'backup_update.php', 1322256765, 86400, '2c0d1a9ffa04937255344b97e2c9706f', 1, 'Backups Clean Update', 1),
+(27, 'Inactive Clean', 'inactive_update.php', 1322222619, 86400, 'a401de097e031315b751b992ee40d733', 1, 'Inactive Users Update', 1),
+(28, 'Shout Clean', 'shout_update.php', 1322359522, 172800, '13515c22103b5b916c3d86023220cd61', 1, 'Shoutbox Clean Update', 1),
+(29, 'Power User Clean', 'pu_update.php', 1322276169, 86400, '4751425b1c765360a5f8bab14c6b9a47', 1, 'Power User Clean Updates', 1),
+(30, 'Power User Demote Clean', 'pu_demote_update.php', 1322258944, 86400, 'e9249b5f653f03ed425d68947155056b', 1, 'Power User Demote Clean Updates', 1),
+(31, 'Bugs Clean', 'bugs_update.php', 1322423964, 1209600, '1e9734cdf50408a7739b7b03272aeab3', 1, 'Bugs Update Clean', 1),
+(32, 'Sitepot Clean', 'sitepot_update.php', 1322302367, 86400, '29dae941216f1bdb81f69dce807b3501', 1, 'Sitepot Update Clean', 1),
+(33, 'Userhits Clean', 'userhits_update.php', 1322306426, 86400, 'd0cec8e7adb50290db6cf911a5c74339', 1, 'Userhits Clean Updates', 1),
+(34, 'Process Kill', 'processkill_update.php', 1322222860, 86400, 'b7c0f14c9482a14e9f5cb0d467dfd7c6', 1, 'Mysql Process KIll Updates', 1),
+(35, 'Cleanup Log', 'cleanlog_update.php', 1322224214, 86400, '7dc0b72fc8c12b264fad1613fbea2489', 1, 'Cleanup Log Updates', 1),
+(36, 'Pirate Cleanup', 'pirate_update.php', 1322243128, 86400, 'e5f20d43425832e9397841be6bc92be2', 1, 'Pirate Stuffs Update', 1),
+(37, 'King Cleanup', 'king_update.php', 1322245383, 86400, '12b5c6c9f9919ca09816225c29fddaeb', 1, 'King Stuffs Update', 1),
+(38, 'Free User Cleanup', 'freeuser_update.php', 1322224046, 3900, '37f9de0443159bf284a1c7a703e96cf9', 1, 'Free User Stuffs Update', 1),
+(39, 'Download Possible Cleanup', 'downloadpos_update.php', 1322246051, 86400, 'e20bcc6d07c6ec493e106adb8d2a8227', 1, 'Download Possible Stuffs Update', 1),
+(40, 'Upload Possible Cleanup', 'uploadpos_update.php', 1322246739, 86400, 'fd1110b750af878faccaf672fe53876d', 1, 'Upload Possible Stuffs Update', 1),
+(41, 'Free Torrents Cleanup', 'freetorrents_update.php', 1322223274, 3600, '20390090ac784fee830d19bd708cfcad', 1, 'Free Torrents Stuffs Update', 1),
+(42, 'Chatpost Cleanup', 'chatpost_update.php', 1322246743, 86400, 'bab6f1de36dc97dff02745051e076a39', 1, 'Chatpost Stuffs Update', 1),
+(43, 'Immunity Cleanup', 'immunity_update.php', 1322248056, 86400, '11bf6f41c659b9f49f6ccdfa616e9f82', 1, 'Immunity Stuffs Update', 1),
+(44, 'Warned Cleanup', 'warned_update.php', 1322248383, 86400, '6e558b89ac60454eaa3a45243347c977', 1, 'Warned Stuffs Update', 1),
+(45, 'Games Update', 'gameaccess_update.php', 1322306043, 86400, '33704fd97f8840ff08ef4e6ff236b3e4', 1, 'Games Stuffs Updates', 1),
+(46, 'Pm Update', 'sendpmpos_update.php', 1322306068, 86400, '32784b9c2891f022a91d5007f068f7d9', 1, 'Pm Stuffs Updates', 1),
+(47, 'Avatar Update', 'avatarpos_update.php', 1322306522, 86400, 'f257794129ee772f5cfe00b33b363100', 1, 'Avatar Stuffs Updates', 1);
 
 -- --------------------------------------------------------
 
@@ -1164,7 +1164,7 @@ CREATE TABLE IF NOT EXISTS `moods` (
   `image` varchar(40) NOT NULL DEFAULT '',
   `bonus` int(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=204 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=86 ;
 
 --
 -- Dumping data for table `moods`
@@ -1937,7 +1937,7 @@ CREATE TABLE IF NOT EXISTS `staffpanel` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `file_name` (`file_name`),
   KEY `av_class` (`av_class`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=84 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=65 ;
 
 --
 -- Dumping data for table `staffpanel`
