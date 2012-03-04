@@ -54,12 +54,12 @@ $i++;
       $ratio = ($arr["downloaded"] > 0 ? number_format($arr["uploaded"] / $arr["downloaded"], 3) : ($arr["uploaded"] > 0 ? "Inf." : "---"));
 $HTMLOUT .='<tr>
 <td class="'.$class.'" align="center">'.$i.'</td>
-<td class="'.$class.'" align="center">'.$arr ['how_many_torrents'].'</td>
+<td class="'.$class.'" align="center">'.(int)$arr ['how_many_torrents'].'</td>
 <td class="'.$class.'" align="left">'.format_username($arr).'</td>
 <td class="'.$class.'" align="left">'.get_user_class_name($arr ['class']).'</td>
 <td class="'.$class.'" align="left">'.member_ratio($arr['uploaded'], $arr['downloaded']).'</td>
 <td class="'.$class.'" align="left">'.get_date($arr ['added'], 'DATE',0,1).'</td>
-<td class="'.$class.'" align="center"><a href="sendmessage.php?receiver='.$arr['id'].'"><img src="'.$INSTALLER09['pic_base_url'].'/button_pm.gif" alt="Pm" title="Pm" border="0" /></a></td>
+<td class="'.$class.'" align="center"><a href="pm_system.php?action=send_message&amp;receiver='.(int)$arr['id'].'"><img src="'.$INSTALLER09['pic_base_url'].'/button_pm.gif" alt="Pm" title="Pm" border="0" /></a></td>
 </tr>';
 }
 $HTMLOUT .='</table>'; 
