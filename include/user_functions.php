@@ -157,7 +157,7 @@ function write_staffs()
       $iconfigfile .= "".join("," , $ids);
       $iconfigfile .= ");";
       $iconfigfile .= "\n?".">";
-      $filenum = fopen('./cache/staff_settings_test.php', 'w');
+      $filenum = fopen('./cache/staff_settings.php', 'w');
       ftruncate($filenum, 0);
       fwrite($filenum, $iconfigfile);
       fclose($filenum);
@@ -168,7 +168,7 @@ function write_staffs()
       $nconfigfile .= "".join("," , $usernames);
       $nconfigfile .= ");";
       $nconfigfile .= "\n?".">";
-      $filenum1 = fopen('./cache/staff_settings2_test.php', 'w');
+      $filenum1 = fopen('./cache/staff_settings2.php', 'w');
       ftruncate($filenum1, 0);
       fwrite($filenum1, $nconfigfile);
       fclose($filenum1);
