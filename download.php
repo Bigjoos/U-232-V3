@@ -45,6 +45,7 @@ dbconn();
     $multiplier = happyHour('multiplier');
     happyLog($CURUSER['id'],$id,$multiplier);
     sql_query('INSERT INTO happyhour (userid, torrentid, multiplier ) VALUES ('.$CURUSER['id'].','.$id.','.$multiplier.')' ) or sqlerr(__FILE__,__LINE__);
+    $mc1-> delete_value($CURUSER['id'].'_happy');
   }
    
   if (($CURUSER['downloadpos'] == 0 || $CURUSER['downloadpos'] > 1 || $CURUSER['suspended'] == 'yes') && !($CURUSER['id'] == $row['owner']))
