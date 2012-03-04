@@ -27,6 +27,8 @@ require_once(INCL_DIR.'user_functions.php');
 require_once CLASS_DIR.'class_check.php';
 class_check(UC_SYSOP);
 
+$lang = array_merge( $lang );
+
 function write_staffs2()
 	{
       //==ids
@@ -57,7 +59,7 @@ function write_staffs2()
       ftruncate($filenum1, 0);
       fwrite($filenum1, $nconfigfile);
       fclose($filenum1);
-      stderr('Success', 'Both staff configuration files were updated')
+      stderr('Success', 'Both staff configuration files were updated');
       }
 
 write_staffs2();
