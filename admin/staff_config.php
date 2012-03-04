@@ -27,73 +27,39 @@ require_once(INCL_DIR.'user_functions.php');
 require_once CLASS_DIR.'class_check.php';
 class_check(UC_SYSOP);
 
-//$stdfoot = array('js' => array('browse.foot.v1'));
-$Output='';
-do_your_balls_hang_low();
+function write_staffs2()
+	{
+      //==ids
+		$t = '$INSTALLER09';
+      $iconfigfile = "<"."?php\n/**\nThis file created on ".date('M d Y H:i:s').".\nSite Config staff mod by pdq/U-232.\n**/\n";
+		$ri = sql_query("SELECT id, username, class FROM users WHERE class BETWEEN ".UC_STAFF." AND ".UC_MAX." ORDER BY id ASC") or sqlerr(__file__, __line__); 
+		$iconfigfile .= "".$t."['allowed_staff']['id'] = array(";
+      while ($ai = mysqli_fetch_assoc($ri))
+		{
+	   $ids[] = $ai['id'];
+      $usernames[] = "'".$ai["username"]."' => 1";
+      }
+      $iconfigfile .= "".join("," , $ids);
+      $iconfigfile .= ");";
+      $iconfigfile .= "\n?".">";
+      $filenum = fopen('./cache/staff_settings.php', 'w');
+      ftruncate($filenum, 0);
+      fwrite($filenum, $iconfigfile);
+      fclose($filenum);
+      //==names
+      $t = '$INSTALLER09';
+      $nconfigfile = "<"."?php\n/**\nThis file created on ".date('M d Y H:i:s').".\nSite Config staff mod by pdq/U-232.\n**/\n";
+		$nconfigfile .= "".$t."['staff']['allowed'] = array(";
+      $nconfigfile .= "".join("," , $usernames);
+      $nconfigfile .= ");";
+      $nconfigfile .= "\n?".">";
+      $filenum1 = fopen('./cache/staff_settings2.php', 'w');
+      ftruncate($filenum1, 0);
+      fwrite($filenum1, $nconfigfile);
+      fclose($filenum1);
+      stderr('Success', 'Both staff configuration files were updated')
+      }
 
-function do_your_balls_hang_low(){
-    global $CURUSER, $INSTALLER09;
-    $Output='';
-    // users who are allowed access
-    $pinky_toes=array(
-        'Mindless'=>1,
-        'pdq'=>1,
-        'putyn'=>1
-    );
-   
-    // check if they are allowed, have sent a username/pass and are using their own username
-    if (isset($pinky_toes[$CURUSER['username']]) && isset($_SERVER['PHP_AUTH_USER'])
-     && isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_USER']===($CURUSER['username'])){
-        // generate a passhash from the sent password
-       // $hash=md5($CURUSER['secret'].$_SERVER['PHP_AUTH_PW'].$CURUSER['secret']);
-         $hash=md5($INSTALLER09['site']['salt2'].$_SERVER['PHP_AUTH_PW'].$CURUSER['secret']);
-        // if the password is correct, exit this function
-        if(md5($INSTALLER09['site']['salt2'].$INSTALLER09['staff']['owner_pin'].$CURUSER['secret']) === $hash) return true;
-    }
-    // they're not allowed, the username doesn't match their own, the password is
-    // wrong or they have not sent user/pass yet so we exit
-    header('WWW-Authenticate: Basic realm="Administration"');
-    header('HTTP/1.0 401 Unauthorized');
-   	$Output .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
-<title>ERROR</title>
-</head><body>
-<h1 align="center">ERROR</h1><p align="center">Sorry! Access denied!</p>
-</body></html>';
-	exit();
-}
-
-$ids = $names = array();
-
-$res = sql_query("SELECT id,username from users WHERE class >=".UC_STAFF." ORDER by username ASC");
-while($arr = mysqli_fetch_assoc($res)) {
-    $ids[]   = (int)$arr['id'];
-    $names[] = $arr['username'];
-}
-
-$id_file   =  CACHE_DIR.'ids.txt';
-$name_file =  CACHE_DIR.'names.txt';
-
-$handle_ids = fopen($id_file,"w+");
-if ($handle_ids)
-	fwrite($handle_ids,serialize($ids));
-fclose($handle_ids);
-
-$handle_names = fopen($name_file,"w+");
-if ($handle_names)
-	fwrite($handle_names,serialize($names));
-fclose($handle_names);
-
-$Output .= '<h2>If you promoted or demoted staff, please make sure their username is present or not present on list.</h2>';
-$Output .="<pre>";
-//$Output .= print_r($ids);
-//$Output .= print_r($names);
-$Output .="</pre>";
-
-
-$Output .= '<h2>Files written - Once sure, you may use Back button to return</h2>';
-
+write_staffs2();
 echo stdhead('Staff Config') . $Output . stdfoot();
 ?>
