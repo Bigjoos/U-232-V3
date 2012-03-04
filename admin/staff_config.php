@@ -63,5 +63,5 @@ function write_staffs2()
       }
 
 write_staffs2();
-echo stdhead('Staff Config') . $Output . stdfoot();
+echo stdhead('Staff Config') . stdfoot();
 ?>
