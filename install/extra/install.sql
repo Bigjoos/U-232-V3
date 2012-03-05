@@ -1937,7 +1937,7 @@ CREATE TABLE IF NOT EXISTS `staffpanel` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `file_name` (`file_name`),
   KEY `av_class` (`av_class`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=65 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=67 ;
 
 --
 -- Dumping data for table `staffpanel`
