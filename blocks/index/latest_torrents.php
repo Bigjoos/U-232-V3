@@ -36,7 +36,7 @@
    } else {
    //== If there are no torrents
    if (empty($top5torrents))
-   $HTMLOUT .= "<tr><td colspan='4'>{$lang['top5torrents_no_torrents']}</td></tr></table>";
+   $HTMLOUT .= "<tr><td colspan='4'>{$lang['top5torrents_no_torrents']}</td></tr></table></div>";
    }
    }
    //==Last 5 begin
@@ -72,7 +72,7 @@
    } else {
    //== If there are no torrents
    if (empty($last5torrents))
-   $HTMLOUT .= "<tr><td colspan='4'>{$lang['last5torrents_no_torrents']}</td></tr></table>";
+   $HTMLOUT .= "<tr><td colspan='4'>{$lang['last5torrents_no_torrents']}</td></tr></table></div>";
    }
    }
    $HTMLOUT .="</td></tr></table></div><!--</div>--><br />";
