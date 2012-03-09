@@ -48,7 +48,7 @@ $HTMLOUT ='';
 ** add    : boolean -> enable/disable page adding
 ** edit   : boolean -> enable/disable page editing
 ** delete : boolean -> enable/disable page deletion
-** log    : boolean -> enable/disable the loging of the actions
+** log    : boolean -> enable/disable the logging of the actions
 *
 * @ result $staff_classes array();
 * @ new $staff_tools array add in following format : 'delacct'         => 'delacct',
@@ -56,7 +56,7 @@ $HTMLOUT ='';
 */
 
 if ($INSTALLER09['staffpanel_online'] == 0)
-stderr('Information', 'The staffpanel is currently offline for maintainance work lol');
+stderr('Information', 'The staffpanel is currently offline for maintainance work');
 
 define('IN_INSTALLER09_ADMIN', true);
 require_once(CLASS_DIR.'class_check.php');

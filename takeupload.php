@@ -283,7 +283,7 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     $dict['value']['announce']=bdec(benc_str($INSTALLER09['announce_urls'][0]));  // change announce url to local
     $dict['value']['info']['value']['private']=bdec('i1e');  // add private tracker flag
     $dict['value']['info']['value']['source']=bdec(benc_str( "{$INSTALLER09['baseurl']} {$INSTALLER09['site_name']}")); // add link for bitcomet users
-    //$dict['value']['comment'] = bdec(benc_str("In using this torrent you are bound by the {$INSTALLER09['site_name']} Confidentiality Agreement By Law")); // change torrent comment
+    $dict['value']['comment'] = bdec(benc_str("In using this torrent you are bound by the {$INSTALLER09['site_name']} Confidentiality Agreement By Law")); // change torrent comment
     unset($dict['value']['announce-list']); // remove multi-tracker capability
     unset($dict['value']['nodes']); // remove cached peers (Bitcomet & Azareus)
     $dict=bdec(benc($dict)); // double up on the becoding solves the occassional misgenerated infohash 
