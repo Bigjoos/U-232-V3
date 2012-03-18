@@ -29,5 +29,6 @@ class block_index {
 	const XMAS_GIFT		        = 0x40000; // 262144 //==exclude
 	const ACTIVE_POLL		        = 0x80000; // 524288
    const STAFF_SHOUT		        = 0x100000; // 1048576
+   const MOVIEOFWEEK            = 0x200000; // 2097152
 	}
 ?>

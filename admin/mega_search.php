@@ -35,6 +35,8 @@ require_once INCL_DIR.'html_functions.php';
 require_once(CLASS_DIR.'class_check.php');
 class_check(UC_STAFF);
 
+$stdhead = array(/** include css **/'css' => array('forums'));
+
   //=== bubble tool tip
   function bubble($link, $text)
   {
@@ -458,5 +460,5 @@ $number = 0;
 
 }
 
-echo stdhead('Mega Search') . $HTMLOUT . stdfoot();
+echo stdhead('Mega Search', true, $stdhead) . $HTMLOUT . stdfoot();
 ?> 

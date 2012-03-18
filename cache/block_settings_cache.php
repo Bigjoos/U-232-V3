@@ -22,6 +22,7 @@ $BLOCKS = array(
 	'torrentfreak_on' => 0,
 	'xmas_gift_on' => 1,
 	'active_poll_on' => 1,
+	'movie_ofthe_week_on' => 1,
 	'global_freeleech_on' => 1,
 	'global_demotion_on' => 1,
 	'global_message_on' => 1,
@@ -62,7 +63,6 @@ $BLOCKS = array(
 	'userdetails_report_user_on' => 1,
 	'userdetails_user_status_on' => 1,
 	'userdetails_user_comments_on' => 1,
-	'userdetails_showfriends_on' => 1,
 
 );
 

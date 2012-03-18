@@ -87,6 +87,7 @@ function get_cache_array()
                         'torrentfreak_on'                     => 1,
                         'xmas_gift_on'                     => 1,
                         'active_poll_on'                     => 1,
+                        'movie_ofthe_week_on'                     => 1,
                         'global_demotion_on'             => 1,
                         'global_staff_warn_on'         => 1,
                         'global_message_on'          => 1,
@@ -296,6 +297,13 @@ $HTMLOUT .='
     <b>Enable Poll?</b><div><hr style="color:#A83838;" size="1" /></div>
     <div>Set this option to "Yes" if you want to enable the Active Poll.</div></td>
     <td width="40%"><div style="width: auto;" align="right"><#active_poll_on#></div></td>
+    </tr></table>
+
+    <table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
+    <td width="60%">
+    <b>Enable Movie of the week?</b><div><hr style="color:#A83838;" size="1" /></div>
+    <div>Set this option to "Yes" if you want to enable the movie of the week.</div></td>
+    <td width="40%"><div style="width: auto;" align="right"><#movie_ofthe_week_on#></div></td>
     </tr></table>
     
     <div><h1>Stdhead Display Settings</h1></div>

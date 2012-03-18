@@ -37,8 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     for($i = 0;$i < 10;$i++)
     $newpassword .= $chars[mt_rand(0, strlen($chars) - 1)];
     $passhash =  make_passhash( $secret, md5($newpassword) ) ;
-    $res = sql_query('UPDATE users SET secret='.sqlesc($secret).', passhash='.sqlesc($passhash).' WHERE username='.sqlesc($username).' AND id='.sqlesc($uid).' AND class<'.$CURUSER['class']) or sqlerr();
-    
+    $res = sql_query('UPDATE users SET secret='.sqlesc($secret).', passhash='.sqlesc($passhash).' WHERE username='.sqlesc($username).' AND id='.sqlesc($uid).' AND class<'.$CURUSER['class']) or sqlerr(__file__, __line__);
     $mc1->begin_transaction('MyUser_'.$uid);
     $mc1->update_row(false, array('secret' => $secret, 'passhash' => $passhash));
     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);

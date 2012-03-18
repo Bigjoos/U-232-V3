@@ -9,8 +9,6 @@
 // by system
 // pic management by pdq
 // no rights reserved - public domain FTW!
-
-
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
 require_once(INCL_DIR.'bbcode_functions.php');
@@ -23,21 +21,18 @@ $HTMLOUT ="";
 
 /* Image folder located outside of webroot */
 define('BITBUCKET_DIR', DIRECTORY_SEPARATOR.
-                        'home'.DIRECTORY_SEPARATOR.
-                        'pdq'.DIRECTORY_SEPARATOR.
-                        'domains'.DIRECTORY_SEPARATOR.
-                        'pdq.net'.DIRECTORY_SEPARATOR.
-                        'bitbucket');
+                        'var'.DIRECTORY_SEPARATOR.
+                        'bucket');
                         
 /* Avatar folder located inside BITBUCKET_DIR */
 define('AVATAR_DIR', BITBUCKET_DIR.DIRECTORY_SEPARATOR.'avatars');
 
 $SaLt = 'mE0wI924dsfsfs!@B'; // change this!
-$SaLty = '8368364562';      // NEW!
+$SaLty = '8368364562'; // NEW!
 $skey = 'eTe5$Ybnsccgbsfdsfsw4h6W'; // change this!
 $maxsize = $INSTALLER09['bucket_maxsize'];
-/* seperate images into  */
-$folders = date('Y/m');	
+/* seperate images into */
+$folders = date('Y/m');
 // valid file formats
 $formats = array('.gif', '.jpg', '.jpeg', '.png',);
 // path to bucket/avatar directories
@@ -50,8 +45,8 @@ $PICSALT = $SaLt . $CURUSER['username'];
 $USERSALT = substr(md5($SaLty.$CURUSER['id']), 0, 6);
 
 /* this is a hack, you should create folders named 2012, 2013, 2014, etc,
- * inside these folders you should have folders for the months named 01 to 12
- * then comment out the following 2 lines
+* inside these folders you should have folders for the months named 01 to 12
+* then comment out the following 2 lines
 */
 make_year(BITBUCKET_DIR);
 make_month(BITBUCKET_DIR);
@@ -136,27 +131,25 @@ document.getElementById(id).select();
    if (isset($_GET['images']) && $_GET['images'] == 1) {
         $folder_month = (!isset($_GET['month'])?date('m'):($_GET['month'] < 10?'0':'').(int)$_GET['month']);
         $year = (!isset($_GET['year'])?'&amp;year='.date('Y'):'&amp;year='.(int)$_GET['year']);
-      	
+      
    
      $HTMLOUT .='<p align="center"><a href="bitbucket.php?images=2">View my avatars</a></p>
-    	<p align="center"><a href="bitbucket.php">Hide this months images</a></p> 
-    
-    <p align="center"><b>Previous Months Images</b><br />
-    <a href="bitbucket.php?images=1&amp;month='.$folder_month.'&amp;year='.(isset($_GET['year']) && $_GET['year'] != date('Y')?date('Y').'">This':(date('Y')-1).'">Last').' Year</a> &nbsp; 
-    
-    <a href="bitbucket.php?images=1&amp;month=01'.$year.'">January</a> &nbsp; 
-    <a href="bitbucket.php?images=1&amp;month=02'.$year.'">February</a> &nbsp; 
-    <a href="bitbucket.php?images=1&amp;month=03'.$year.'">March</a> &nbsp; 
-    <a href="bitbucket.php?images=1&amp;month=04'.$year.'">April</a> &nbsp; 
-    <a href="bitbucket.php?images=1&amp;month=05'.$year.'">May</a> &nbsp; 
-    <a href="bitbucket.php?images=1&amp;month=06'.$year.'">June</a> &nbsp; 
-    <a href="bitbucket.php?images=1&amp;month=07'.$year.'">July</a> &nbsp; 
-    <a href="bitbucket.php?images=1&amp;month=08'.$year.'">August</a> &nbsp; 
-    <a href="bitbucket.php?images=1&amp;month=09'.$year.'">September</a> &nbsp; 
-    <a href="bitbucket.php?images=1&amp;month=10'.$year.'">October</a> &nbsp; 
-    <a href="bitbucket.php?images=1&amp;month=11'.$year.'">November</a> &nbsp; 
-    <a href="bitbucket.php?images=1&amp;month=12'.$year.'">Decemeber</a> &nbsp;
-     </p>';
+<p align="center"><a href="bitbucket.php">Hide this months images</a></p>
+<p align="center"><b>Previous Months Images</b><br />
+<a href="bitbucket.php?images=1&amp;month='.$folder_month.'&amp;year='.(isset($_GET['year']) && $_GET['year'] != date('Y')?date('Y').'">This':(date('Y')-1).'">Last').' Year</a> &nbsp;
+<a href="bitbucket.php?images=1&amp;month=01'.$year.'">January</a> &nbsp;
+<a href="bitbucket.php?images=1&amp;month=02'.$year.'">February</a> &nbsp;
+<a href="bitbucket.php?images=1&amp;month=03'.$year.'">March</a> &nbsp;
+<a href="bitbucket.php?images=1&amp;month=04'.$year.'">April</a> &nbsp;
+<a href="bitbucket.php?images=1&amp;month=05'.$year.'">May</a> &nbsp;
+<a href="bitbucket.php?images=1&amp;month=06'.$year.'">June</a> &nbsp;
+<a href="bitbucket.php?images=1&amp;month=07'.$year.'">July</a> &nbsp;
+<a href="bitbucket.php?images=1&amp;month=08'.$year.'">August</a> &nbsp;
+<a href="bitbucket.php?images=1&amp;month=09'.$year.'">September</a> &nbsp;
+<a href="bitbucket.php?images=1&amp;month=10'.$year.'">October</a> &nbsp;
+<a href="bitbucket.php?images=1&amp;month=11'.$year.'">November</a> &nbsp;
+<a href="bitbucket.php?images=1&amp;month=12'.$year.'">Decemeber</a> &nbsp;
+</p>';
   }
     elseif (isset($_GET['images']) && $_GET['images'] == 2) {
     $HTMLOUT .="<p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.php?images=1\">View this months images</a></p>
@@ -168,20 +161,20 @@ document.getElementById(id).select();
     }
     if (isset($_GET['images'])) {
       $folder_month = (!isset($_GET['month'])?date('m'):($_GET['month'] < 10?'0':'').(int)$_GET['month']);
-    	$folder_name = (!isset($_GET['year'])?date('Y').'/':(int)$_GET['year'].'/').$folder_month;
+     $folder_name = (!isset($_GET['year'])?date('Y').'/':(int)$_GET['year'].'/').$folder_month;
       $bucketlink2 = ((isset($_POST["avy"]) || (isset($_GET['images']) && $_GET['images'] == 2)) ? 'avatars/' : $folder_name.'/');
         // foreach ((array) glob((($_GET['images'] == 2)?'avatars/':'bitbucket/') . $CURUSER['username'] . '_*') as $filename) {
          foreach ((array) glob(($_GET['images'] == 2 ? AVATAR_DIR.'/'.$USERSALT : BITBUCKET_DIR.'/'.$folder_name.'/'.$USERSALT).'_*') as $filename) {
             if (!empty($filename)) {
                 $filename = basename($filename);
-    	          $filename = $bucketlink2.$filename;
+     $filename = $bucketlink2.$filename;
                 $encryptedfilename = urlencode(encrypt($filename));
                 $eid = md5($filename);
     $HTMLOUT .="<a href=\"{$address}img.php/{$filename}\"><img src=\"{$address}img.php/{$filename}\" width=\"200\" alt=\"\" /><br />{$address}img.php/{$filename}</a><br />";
     $HTMLOUT .="<p>Direct link to image<br /><input style=\"font-size: 9pt;text-align: center;\" id=\"d".$eid."d\" onclick=\"SelectAll('d".$eid."d');\" type=\"text\" size=\"70\" value=\"{$address}img.php/{$filename}\" readonly=\"readonly\" /></p>";
     $HTMLOUT .="<p align=\"center\">Tag for forums or comments<br /><input style=\"font-size: 9pt;text-align: center;\" id=\"t".$eid."t\" onclick=\"SelectAll('t".$eid."t');\" type=\"text\" size=\"70\" value=\"[img]{$address}img.php/{$filename}[/img]\" readonly=\"readonly\" /></p>";
 $HTMLOUT .="<p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.php?type=".((isset($_GET['images']) && $_GET['images'] == 2)?'2':'1')."&amp;avatar={$address}img.php/{$filename}\">{$lang['bitbucket_maketma']}</a></p>";
-    $HTMLOUT .="<p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.php?type=".((isset($_GET['images']) && $_GET['images'] == 2)?'2':'1')."&amp;delete=".$encryptedfilename."&amp;delhash=". md5($filename . $CURUSER['username'] . $SaLt)."&amp;month=".(!isset($_GET['month']) ? date('m') : ($_GET['month'] < 10 ? '0' : '' ).(int)$_GET['month'])."&amp;year=".(!isset($_GET['year']) ? date('Y') : (int)$_GET['year']).">{$lang['bitbucket_delete']}</a></p><br />";
+    $HTMLOUT .="<p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.php?type=".((isset($_GET['images']) && $_GET['images'] == 2)?'2':'1')."&amp;delete=".$encryptedfilename."&amp;delhash=". md5($filename . $CURUSER['username'] . $SaLt)."&amp;month=".(!isset($_GET['month']) ? date('m') : ($_GET['month'] < 10 ? '0' : '' ).(int)$_GET['month'])."&amp;year=".(!isset($_GET['year']) ? date('Y') : (int)$_GET['year'])."\">{$lang['bitbucket_delete']}</a></p><br />";
             } else
                 $HTMLOUT .="{$lang['bitbucket_noimages']}";
         }
@@ -189,12 +182,13 @@ $HTMLOUT .="<p align=\"center\"><a href=\"{$INSTALLER09['baseurl']}/bitbucket.ph
     echo stdhead($lang['bitbucket_bitbucket']) . $HTMLOUT . stdfoot();
     exit();
 }
+
 if ($_FILES['file']['size'] == 0) stderr($lang['bitbucket_error'], $lang['bitbucket_upfail']);
 if ($_FILES['file']['size'] > $maxsize) stderr($lang['bitbucket_error'], $lang['bitbucket_to_large']);
 $file = preg_replace('`[^a-z0-9\-\_\.]`i', '', $_FILES['file']['name']);
 $allow = ',' . join(',', $formats);
 if(false===stristr($allow, ','.substr($file, -4)))
-	stderr('Error:','Invalid file extension. jpg, gif and png only.');
+stderr('Error:','Invalid file extension. jpg, gif and png only.');
 
 if (! function_exists('exif_imagetype')) {
     function exif_imagetype($filename)
@@ -211,7 +205,7 @@ if ($it1 != IMAGETYPE_GIF && $it1 != IMAGETYPE_JPEG && $it1 != IMAGETYPE_PNG) {
     exit;
 }
 
-$file = strtolower($file); 
+$file = strtolower($file);
 //$path = $bucketdir . $CURUSER['username'] . '_' . $file;
 $path = $bucketdir.$USERSALT.'_'.$file;
 $pathlink = $bucketlink.$USERSALT.'_'.$file;
@@ -221,8 +215,8 @@ while (true) {
     if (!file_exists($path)) break;
     //$path = $bucketdir . $CURUSER['username'] . '_' . bucketrand() . $file;
     $randb = bucketrand();
-	 $path = $bucketdir.$USERSALT.'_'.$randb.$file;
-	 $pathlink = $bucketlink.$USERSALT.'_'.$randb.$file;
+$path = $bucketdir.$USERSALT.'_'.$randb.$file;
+$pathlink = $bucketlink.$USERSALT.'_'.$randb.$file;
     $loop++;
 }
 if (!move_uploaded_file($_FILES['file']['tmp_name'], $path))
@@ -285,21 +279,21 @@ function valid_path($root, $input) {
     $fullpath = $root.$input;
     //echo $fullpath.PHP_EOL;
     $fullpath = realpath($fullpath);
-    $root     = realpath($root);
-    $rl       = strlen($root);
+    $root = realpath($root);
+    $rl = strlen($root);
     return ($root != substr($fullpath, 0, $rl)) ? NULL : $fullpath;
 }
 
 function make_year($path) {
    $dir = $path.'/'.date('Y');
    if (!is_dir($dir))
-      mkdir($dir)
+      mkdir($dir);
 }
 
 function make_month($path) {
    $dir = $path.'/'.date('Y/m');
    if (!is_dir($dir))
-      mkdir($dir)
+      mkdir($dir);
 }
 // EndFile
 ?>

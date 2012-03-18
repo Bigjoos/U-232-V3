@@ -47,6 +47,10 @@ loggedinorreturn();
    require_once(BLOCK_DIR.'index/forum_posts.php');
    }
 
+   if (curuser::$blocks['index_page'] & block_index::MOVIEOFWEEK && $BLOCKS['movie_ofthe_week_on']){
+   require_once(BLOCK_DIR.'index/mow.php');
+   }
+
    if (curuser::$blocks['index_page'] & block_index::LATEST_TORRENTS && $BLOCKS['latest_torrents_on']){
    require_once(BLOCK_DIR.'index/latest_torrents.php');
    }

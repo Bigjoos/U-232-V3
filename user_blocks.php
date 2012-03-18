@@ -146,6 +146,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     	$setbits_index_page |= block_index::STAFF_SHOUT;
     else
     	$clrbits_index_page |= block_index::STAFF_SHOUT;
+
+   if (isset($_POST['movie_ofthe_week']))
+      $setbits_index_page |= block_index::MOVIEOFWEEK;
+     else
+      $clrbits_index_page |= block_index::MOVIEOFWEEK;
     
     //==Stdhead
     if (isset($_POST['stdhead_freeleech']))
@@ -403,6 +408,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $checkbox_index_xmasgift = ((curuser::$blocks['index_page'] & block_index::XMAS_GIFT) ? ' checked="checked"' : '');
         $checkbox_index_active_poll = ((curuser::$blocks['index_page'] & block_index::ACTIVE_POLL) ? ' checked="checked"' : '');
         $checkbox_index_staffshoutbox = ((curuser::$blocks['index_page'] & block_index::STAFF_SHOUT) ? ' checked="checked"' : '');
+        $checkbox_index_mow = ((curuser::$blocks['index_page'] & block_index::MOVIEOFWEEK) ? ' checked="checked"' : '');
         //==Stdhead
         $checkbox_global_freeleech = ((curuser::$blocks['global_stdhead'] & block_stdhead::STDHEAD_FREELEECH) ? ' checked="checked"' : '');
         $checkbox_global_demotion = ((curuser::$blocks['global_stdhead'] & block_stdhead::STDHEAD_DEMOTION) ? ' checked="checked"' : '');
@@ -599,6 +605,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <b>Enable Poll?</b><div><hr style="color:#A83838;" size="1" /></div>
         <div style="color: lightgrey;">Check this option if you want to enable the Active Poll.</div></td>
         <td width="40%"><div style="width: auto;" align="right"><input type="checkbox" name="active_poll" value="yes"'.$checkbox_index_active_poll.' /></div></td>
+        </tr></table>
+
+        <table width="100%" border="0" cellpadding="5" cellspacing="0"><tr>
+        <td width="60%">
+        <b>Enable Movie of the week?</b><div><hr style="color:#A83838;" size="1" /></div>
+        <div style="color: lightgrey;">Check this option if you want to enable the MOvie of the week.</div></td>
+        <td width="40%"><div style="width: auto;" align="right"><input type="checkbox" name="movie_ofthe_week" value="yes"'.$checkbox_index_mow.' /></div></td>
         </tr></table>
     
         <div><h1>Stdhead Display Settings</h1></div>
