@@ -106,7 +106,7 @@ $user_cache['total_donated'] = ($user['total_donated'] + $donated);
 }
 
 //=== add to uploaded amount
-$curuploaded = (int)$user['uploaded'];
+$curuploaded = $user['uploaded'];
 $uploaded = $donated * $givegb; 
 $upadded = mksize($uploaded);
 $total = $uploaded + $curuploaded;

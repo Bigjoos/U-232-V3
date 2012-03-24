@@ -78,7 +78,7 @@ $user_cache['total_donated'] = ($user['total_donated'] + $donated);
 }
 
 //=== add to uploaded amount
-$curuploaded = (int)$user['uploaded'];
+$curuploaded = $user['uploaded'];
 $uploaded = $donated * $givegb; //=== 6442450944 = 6 GB for every 1£ donated || set to 1073741824 for 1 GB for every 1£ donated
 $upadded = mksize($uploaded);
 $total = $uploaded + $curuploaded;
