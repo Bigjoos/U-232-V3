@@ -26,9 +26,9 @@ class block_index {
 	const ADVERTISEMENTS		        = 0x8000; // 32768
 	const RADIO		        = 0x10000; // 65536       //== exclude
 	const TORRENTFREAK		        = 0x20000; // 131072      //== exclude
-	const XMAS_GIFT		        = 0x40000; // 262144 //==exclude
+	const XMAS_GIFT		        = 0x40000; // 262144 //== exclude
 	const ACTIVE_POLL		        = 0x80000; // 524288
-   const STAFF_SHOUT		        = 0x100000; // 1048576
-   const MOVIEOFWEEK            = 0x200000; // 2097152
+   const STAFF_SHOUT		        = 0x100000; // 1048576  //== exclude
+   const MOVIEOFWEEK            = 0x200000; // 2097152 //== exclude
 	}
 ?>

@@ -17,7 +17,7 @@ loggedinorreturn();
    $stdfoot = array(/** include js **/'js' => array('shout','java_klappe'));
    $lang = array_merge( load_language('global'), load_language('index') );
    $HTMLOUT = '';
-   //==Global blocks by elephant2
+   //==Global blocks by elephant
    //==Curuser blocks by pdq
    if (curuser::$blocks['index_page'] & block_index::IE_ALERT && $BLOCKS['ie_user_alert']){
    require_once(BLOCK_DIR.'index/ie_user.php');

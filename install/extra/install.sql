@@ -2527,7 +2527,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 CREATE TABLE IF NOT EXISTS `user_blocks` (
   `userid` int(10) unsigned NOT NULL,
-  `index_page` int(10) unsigned NOT NULL DEFAULT '3731507',
+  `index_page` int(10) unsigned NOT NULL DEFAULT '585727',
   `global_stdhead` int(10) unsigned NOT NULL DEFAULT '511',
   `userdetails_page` bigint(20) unsigned NOT NULL DEFAULT '268439084',
   UNIQUE KEY `userid` (`userid`)
