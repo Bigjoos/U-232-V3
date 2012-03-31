@@ -175,7 +175,7 @@ $INSTALLER09['tpl_cache_time'] = 30;
 # the first one will be displayed on the pages
 $INSTALLER09['announce_urls'] = array();
 $INSTALLER09['announce_urls'][] = '#announce_urls';
-$INSTALLER09['announce_urls'][] = '#announce_urls_https';
+$INSTALLER09['announce_urls'][] = '#announce_https';
 if ($_SERVER["HTTP_HOST"] == "")
 $_SERVER["HTTP_HOST"] = $_SERVER["SERVER_NAME"];
 $INSTALLER09['baseurl'] = 'http'.(isset($_SERVER['HTTPS']) && (bool)$_SERVER['HTTPS'] == true ? 's':'').'://'. $_SERVER['HTTP_HOST'];

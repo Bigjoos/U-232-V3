@@ -9,7 +9,7 @@ array('text'=>'Database','input'=>'config[mysql_db]','info'=>'Your mysql databas
 ),
 'Tracker'=>array(
 array('text'=>'Announce Url','input'=>'config[announce_urls]','info'=>'Your announce url.'),
-array('text'=>'HTTPS Announce Url','input'=>'config[announce_urls_https]','info'=>'Your HTTPS announce url.'),
+array('text'=>'HTTPS Announce Url','input'=>'config[announce_https]','info'=>'Your HTTPS announce url.'),
 array('text'=>'Site Email','input'=>'config[site_email]','info'=>'Your site email address.'),
 array('text'=>'Site Name','input'=>'config[site_name]','info'=>'Your site name.'),
 ),
