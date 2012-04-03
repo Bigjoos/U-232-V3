@@ -180,7 +180,7 @@ return is_numeric($vote) && ($vote >= 0) && (floor($vote) == $vote);
 		}	
 		
 		//=== ok all is well, let then change their votes :)
-		sql_query('DELETE FROM forum_poll_votes WHERE poll_id = '.sqlesc($arr_poll['poll_id']).' AND user_id = '.sqlesc($CURUSER['id'])000);
+		sql_query('DELETE FROM forum_poll_votes WHERE poll_id = '.sqlesc($arr_poll['poll_id']).' AND user_id = '.sqlesc($CURUSER['id']));
 		
 	//=== all went well, send them back!
 	header('Location: forums.php?action=view_topic&topic_id='.$topic_id);   
@@ -558,7 +558,7 @@ $options .='<option class="body" value="'.$i.'">'.$i.' options</option>';
 	//=== serialize it and slap it in the DB FFS!
 	$poll_options = serialize($break_down_poll_options); 
 
-      sql_query('UPDATE forum_poll  SET question = '.sqlesc($poll_question).', poll_answers = '.sqlesc($poll_options).', number_of_options = '.$i.' , poll_starts =  '.$poll_starts.' , poll_ends = '.$poll_ends.', change_vote = \''.$change_vote.'\', multi_options = '.$multi_options.', poll_closed = \'no\' WHERE id = '.sqlesc($poll_id);
+      sql_query('UPDATE forum_poll  SET question = '.sqlesc($poll_question).', poll_answers = '.sqlesc($poll_options).', number_of_options = '.$i.' , poll_starts =  '.$poll_starts.' , poll_ends = '.$poll_ends.', change_vote = \''.$change_vote.'\', multi_options = '.$multi_options.', poll_closed = \'no\' WHERE id = '.sqlesc($poll_id));
 	
 		//=== delete the votes
 		sql_query('DELETE FROM forum_poll_votes WHERE poll_id = '.sqlesc($poll_id));
