@@ -30,7 +30,7 @@ if ($string == '400') {
     $text = 'There has been an error with the page you are trying to view. Please try again later.';
 }
 
-$domain = htmlspecialchars($_SERVER['HTTP_HOST']);
+$domain = htmlsafechars($_SERVER['HTTP_HOST']);
 
     $htmlout = '';
     $htmlout = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
@@ -40,7 +40,7 @@ $domain = htmlspecialchars($_SERVER['HTTP_HOST']);
     <meta http-equiv='refresh' content='5; url=http://".$domain."' />
     <meta name='generator' content='TBDev.net' />
 	  <meta name='MSSmartTagsPreventParsing' content='TRUE' />
-		<title>".htmlspecialchars($page)."</title>
+		<title>{$page}</title>
     <style type='text/css'>
     <!--
     body
@@ -78,8 +78,8 @@ $domain = htmlspecialchars($_SERVER['HTTP_HOST']);
     </table></div><map name='Map' id='map'>
     <area shape='rect' coords='99,425,203,481' alt='Error Not Found' />
     </map>
-    <p align='center'><b>".htmlspecialchars($page)."</b></p>
-    <p align='center'>".htmlspecialchars($text)."</p><br />
+    <p align='center'><b>{$page}</b></p>
+    <p align='center'>{$text}</p><br />
     <p align='center'>You will be redirected back to {$domain} in 5 seconds</p>
     </body>
     </html>";

@@ -65,15 +65,15 @@ if ($variant == 'index')
     $change[$value['id']] = array('id' => $value['id'], 'name'  => $value['name'], 'image' => $value['image']);
     while ($row = mysqli_fetch_assoc($res)) 
     {
-        $row['cat_name'] = htmlspecialchars($change[$row['category']]['name']);
-        $row['cat_pic'] = htmlspecialchars($change[$row['category']]['image']);
-        $id = $row["id"];
+        $row['cat_name'] = htmlsafechars($change[$row['category']]['name']);
+        $row['cat_pic'] = htmlsafechars($change[$row['category']]['image']);
+        $id = (int)$row["id"];
         $htmlout .= "<tr>\n";
 
         $htmlout .= "<td align='center' style='padding: 0px'>";
         if (isset($row["cat_name"])) 
         {
-            $htmlout .= "<a href='browse.php?cat={$row['category']}'>";
+            $htmlout .= "<a href='browse.php?cat=".(int)$row['category']."'>";
             if (isset($row["cat_pic"]) && $row["cat_pic"] != "")
                 $htmlout .= "<img border='0' src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/{$row['cat_pic']}' alt='{$row['cat_name']}' />";
             else
@@ -88,7 +88,7 @@ if ($variant == 'index')
         }
         $htmlout .= "</td>\n";
 
-        $dispname = htmlspecialchars($row["name"]);
+        $dispname = htmlsafechars($row["name"]);
         $htmlout .= "<td align='left'><a href='details.php?";
         if ($variant == "mytorrents")
             $htmlout .= "returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;";
@@ -99,9 +99,9 @@ if ($variant == 'index')
       $htmlout .= "'><b>$dispname</b></a>&nbsp;</td>";
       $htmlout.= ($variant == "index" ? "<td align='center'><a href=\"download.php?torrent={$id}\"><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download Bookmark!' title='Download Bookmark!' /></a></td>" : "");
       
-      $bm = sql_query("SELECT * FROM bookmarks WHERE torrentid=$id && userid={$CURUSER['id']}");
+      $bm = sql_query("SELECT * FROM bookmarks WHERE torrentid=".sqlesc($id)." AND userid=".sqlesc($CURUSER['id']));
       $bms = mysqli_fetch_assoc($bm);
-      $bookmarked = (empty($bms)?'<a href=\'bookmark.php?torrent=' . $id . '&amp;action=add\'><img src=\''.$INSTALLER09['pic_base_url'].'bookmark.gif\' border=\'0\' alt=\'Bookmark it!\' title=\'Bookmark it!\'></a>':'<a href="bookmark.php?torrent='.$id.'&amp;action=delete"><img src=\''.$INSTALLER09['pic_base_url'].'aff_cross.gif\' border=\'0\' alt=\'Delete Bookmark!\' title=\'Delete Bookmark!\' /></a>');
+      $bookmarked = (empty($bms)?'<a href=\'bookmark.php?torrent='.$id.'&amp;action=add\'><img src=\''.$INSTALLER09['pic_base_url'].'bookmark.gif\' border=\'0\' alt=\'Bookmark it!\' title=\'Bookmark it!\'></a>':'<a href="bookmark.php?torrent='.$id.'&amp;action=delete"><img src=\''.$INSTALLER09['pic_base_url'].'aff_cross.gif\' border=\'0\' alt=\'Delete Bookmark!\' title=\'Delete Bookmark!\' /></a>');
       $htmlout.= ($variant == "index" ? "<td align='center'>{$bookmarked}</td>" : "");
       
         if ($variant == "mytorrents")
@@ -119,7 +119,7 @@ if ($variant == 'index')
 
         if ($row["type"] == "single")
         {
-            $htmlout .= "<td align='right'>{$row["numfiles"]}</td>\n";
+            $htmlout .= "<td align='right'>".(int)$row["numfiles"]."</td>\n";
         }
         else 
         {
@@ -149,34 +149,35 @@ if ($variant == 'index')
             }
         }
 
-        $htmlout .= "<td align='center'><span style='white-space: nowrap;'>" . str_replace(",", "<br />", get_date( $row['added'],'')) . "</span></td>\n";
+        $htmlout .= "<td align='center'><span style='white-space: nowrap;'>" . str_replace(",", "<br />", get_date( $row['added'],''))."</span></td>\n";
     
     $htmlout .= "
-    <td align='center'>" . str_replace(" ", "<br />", mksize((int)$row["size"])) . "</td>\n";
+    <td align='center'>" . str_replace(" ", "<br />", mksize($row["size"]))."</td>\n";
 
         if ($row["times_completed"] != 1)
           $_s = "".$lang["torrenttable_time_plural"]."";
         else
           $_s = "".$lang["torrenttable_time_singular"]."";
-        $htmlout .= "<td align='center'><a href='snatches.php?id=$id'>" . number_format((int)$row["times_completed"]) . "<br />$_s</a></td>\n";
+        $htmlout .= "<td align='center'><a href='snatches.php?id=$id'>".number_format($row["times_completed"])."<br />$_s</a></td>\n";
 
         if ($row["seeders"]) 
         {
             if ($variant == "index")
             {
-               if ($row["leechers"]) $ratio = $row["seeders"] / $row["leechers"]; 
+               if ($row["leechers"]) 
+               $ratio = $row["seeders"] / $row["leechers"]; 
                else $ratio = 1;
                $htmlout .= "<td align='right'><b><a href='peerlist.php?id=$id#seeders'>
                <font color='" .get_slr_color($ratio) . "'>".(int)$row["seeders"]."</font></a></b></td>\n";
             }
             else
             {
-                $htmlout .= "<td align='right'><b><a class='" . linkcolor((int)$row["seeders"]) . "' href='peerlist.php?id=$id#seeders'>".(int)$row["seeders"]."</a></b></td>\n";
+                $htmlout .= "<td align='right'><b><a class='".linkcolor($row["seeders"])."' href='peerlist.php?id=$id#seeders'>".(int)$row["seeders"]."</a></b></td>\n";
             }
         }
         else
         {
-            $htmlout .= "<td align='right'><span class='" . linkcolor((int)$row["seeders"]) . "'>".(int)$row["seeders"]."</span></td>\n";
+            $htmlout .= "<td align='right'><span class='".linkcolor($row["seeders"])."'>".(int)$row["seeders"]."</span></td>\n";
         }
 
         if ($row["leechers"]) 
@@ -185,13 +186,13 @@ if ($variant == 'index')
                 $htmlout .= "<td align='right'><b><a href='peerlist.php?id=$id#leechers'>" .
                    number_format($row["leechers"]) . "</a></b></td>\n";
             else
-                $htmlout .= "<td align='right'><b><a class='" . linkcolor((int)$row["leechers"]) . "' href='peerlist.php?id=$id#leechers'>".(int)$row["leechers"]."</a></b></td>\n";
+                $htmlout .= "<td align='right'><b><a class='".linkcolor($row["leechers"])."' href='peerlist.php?id=$id#leechers'>".(int)$row["leechers"]."</a></b></td>\n";
         }
         else
             $htmlout .= "<td align='right'>0</td>\n";
         
        if ($variant == "index")
-       $htmlout .= "<td align='center'>" . (isset($row["username"]) ? ("<a href='userdetails.php?id=" . (int)$row["owner"] . "'><b>".htmlspecialchars($row["username"])."</b></a>") : "<i>(".$lang["torrenttable_unknown_uploader"].")</i>") . "</td>\n";
+       $htmlout .= "<td align='center'>" . (isset($row["username"]) ? ("<a href='userdetails.php?id=".(int)$row["owner"]."'><b>".htmlsafechars($row["username"])."</b></a>") : "<i>(".$lang["torrenttable_unknown_uploader"].")</i>") . "</td>\n";
        $htmlout .= "</tr>\n";
        }
        $htmlout .= "</table>\n";
@@ -204,13 +205,13 @@ $userid = isset($_GET['id']) ? (int)$_GET['id'] : '';
 if (!is_valid_id($userid))
 stderr("Error", "Invalid ID.");
 
-$res = sql_query("SELECT id, username FROM users WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT id, username FROM users WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $arr = mysqli_fetch_array($res);
-$htmlout.="<h1>Sharemarks for <a href=\"userdetails.php?id=".$userid."\">".htmlspecialchars($arr['username'])."</a></h1>";
+$htmlout.="<h1>Sharemarks for <a href=\"userdetails.php?id=".$userid."\">".htmlsafechars($arr['username'])."</a></h1>";
 $htmlout.="<b><a href=\"bookmarks.php\">My Bookmarks</a></b>";
 	
 
-$res = sql_query("SELECT COUNT(id) FROM bookmarks WHERE userid = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT COUNT(id) FROM bookmarks WHERE userid = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $row = mysqli_fetch_array($res);
 $count = $row[0];
 
@@ -220,7 +221,7 @@ $torrentsperpage = 25;
 
 if ($count) {
 $pager = pager($torrentsperpage, $count, "sharemarks.php?&amp;");
-$query1 = "SELECT bookmarks.id as bookmarkid, torrents.username, torrents.owner, torrents.id, torrents.name, torrents.type, torrents.comments, torrents.leechers, torrents.seeders, torrents.save_as, torrents.numfiles, torrents.added, torrents.filename, torrents.size, torrents.views, torrents.visible, torrents.hits, torrents.times_completed, torrents.category FROM bookmarks LEFT JOIN torrents ON bookmarks.torrentid = torrents.id WHERE bookmarks.userid = $userid AND bookmarks.private = 'no' ORDER BY id DESC {$pager['limit']}";
+$query1 = "SELECT bookmarks.id as bookmarkid, torrents.username, torrents.owner, torrents.id, torrents.name, torrents.type, torrents.comments, torrents.leechers, torrents.seeders, torrents.save_as, torrents.numfiles, torrents.added, torrents.filename, torrents.size, torrents.views, torrents.visible, torrents.hits, torrents.times_completed, torrents.category FROM bookmarks LEFT JOIN torrents ON bookmarks.torrentid = torrents.id WHERE bookmarks.userid = ".sqlesc($userid)." AND bookmarks.private = 'no' ORDER BY id DESC {$pager['limit']}";
 $res = sql_query($query1) or sqlerr(__FILE__, __LINE__);
 }
 
@@ -229,5 +230,5 @@ $htmlout .= $pager['pagertop'];
 $htmlout .= sharetable($res, "index", TRUE);
 $htmlout .= $pager['pagerbottom'];
 }
-echo stdhead("Sharemarks for " . $arr['username']) . $htmlout . stdfoot();
+echo stdhead("Sharemarks for ".htmlsafechars($arr['username'])) . $htmlout . stdfoot();
 ?>

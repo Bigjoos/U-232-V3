@@ -19,7 +19,7 @@ $lang = array_merge( load_language('global') );
 
 $HTMLOUT = $user ='';
 
-$action = isset($_GET["action"]) ? htmlspecialchars(trim($_GET["action"])) : '';
+$action = isset($_GET["action"]) ? htmlsafechars(trim($_GET["action"])) : '';
 
 function usercommenttable($rows)
 {
@@ -35,22 +35,22 @@ function usercommenttable($rows)
             if ($title == "")
             $title = get_user_class_name($row["class"]);
             else
-            $title = htmlspecialchars($title);
-            $htmlout .="<a name='comm{$row['id']}' href='userdetails.php?id=".(int)$row['user']."'><b>" .
-                htmlspecialchars($row["username"])."</b></a>" . ($row["donor"] == "yes" ? "<img src=\"{$INSTALLER09['pic_base_url']}star.gif\" alt='Donor' />" : "") . ($row["warned"] == "yes" ? "<img src=" . "\"{$INSTALLER09['pic_base_url']}warned.gif\" alt=\"Warned\" />" : "") . " ($title)\n";
+            $title = htmlsafechars($title);
+            $htmlout .="<a name='comm".(int)$row['id']."' href='userdetails.php?id=".(int)$row['user']."'><b>" .
+                htmlsafechars($row["username"])."</b></a>" . ($row["donor"] == "yes" ? "<img src=\"{$INSTALLER09['pic_base_url']}star.gif\" alt='Donor' />" : "") . ($row["warned"] >= 1 ? "<img src=" . "\"{$INSTALLER09['pic_base_url']}warned.gif\" alt=\"Warned\" />" : "") . " ($title)\n";
         } else
-            $htmlout .="<a name=\"comm" . $row["id"] . "\"><i>(orphaned)</i></a>\n";
+            $htmlout .="<a name=\"comm".(int)$row["id"]."\"><i>(orphaned)</i></a>\n";
 
         $htmlout .=" ".get_date($row["added"], 'DATE',0,1)."" .
             ($userid == $CURUSER["id"] || $row["user"] == $CURUSER["id"] || $CURUSER['class'] >= UC_STAFF ? " - [<a href='usercomment.php?action=edit&amp;cid={$row['id']}'>Edit</a>]" : "") .
-            ($userid == $CURUSER["id"] || $CURUSER['class'] >= UC_STAFF ? " - [<a href='usercomment.php?action=delete&amp;cid={$row['id']}'>Delete</a>]" : "") .
-            ($row["editedby"] && $CURUSER['class'] >= UC_STAFF ? " - [<a href='usercomment.php?action=vieworiginal&amp;cid={$row['id']}'>View original</a>]" : "") . "</p>\n";
-        $avatar = ($CURUSER["avatars"] == "yes" ? htmlspecialchars($row["avatar"]) : "");
+            ($userid == $CURUSER["id"] || $CURUSER['class'] >= UC_STAFF ? " - [<a href='usercomment.php?action=delete&amp;cid=".(int)$row['id']."'>Delete</a>]" : "") .
+            ($row["editedby"] && $CURUSER['class'] >= UC_STAFF ? " - [<a href='usercomment.php?action=vieworiginal&amp;cid=".(int)$row['id']."'>View original</a>]" : "") . "</p>\n";
+        $avatar = ($CURUSER["avatars"] == "yes" ? htmlsafechars($row["avatar"]) : "");
         if (!$avatar)
         $avatar = "{$INSTALLER09['pic_base_url']}default_avatar.gif";
         $text = format_comment($row["text"]);
         if ($row["editedby"])
-        $text .= "<font size='1' class='small'><br /><br />Last edited by <a href='userdetails.php?id={$row['editedby']}'><b>{$row['username']}</b></a> ".get_date($row['editedat'], 'DATE',0,1)."</font>\n";
+        $text .= "<font size='1' class='small'><br /><br />Last edited by <a href='userdetails.php?id=".(int)$row['editedby']."'><b>".htmlsafechars($row['username'])."</b></a> ".get_date($row['editedat'], 'DATE',0,1)."</font>\n";
         $htmlout .= begin_table(true);
         $htmlout .="<tr valign='top'>\n";
         $htmlout .="<td align='center' width='150' style='padding:0px'><img width='150' src=\"{$avatar}\" alt=\"Avatar\" /></td>\n";
@@ -69,7 +69,7 @@ if ($action == "add") {
         if (!is_valid_id($userid))
             stderr("Error", "Invalid ID.");
 
-        $res = sql_query("SELECT username FROM users WHERE id ={$userid}") or sqlerr(__FILE__, __LINE__);
+        $res = sql_query("SELECT username FROM users WHERE id =".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
         $arr = mysqli_fetch_array($res,  MYSQLI_NUM);
         if (!$arr)
             stderr("Error", "No user with that ID.");
@@ -78,11 +78,11 @@ if ($action == "add") {
         if (!$text)
             stderr("Error", "Comment body cannot be empty!");
 
-        sql_query("INSERT INTO usercomments (user, userid, added, text, ori_text) VALUES ({$CURUSER['id']}, {$userid}, '" . TIME_NOW . "', " . sqlesc($text) . "," . sqlesc($text) . ")");
+        sql_query("INSERT INTO usercomments (user, userid, added, text, ori_text) VALUES (".sqlesc($CURUSER['id']).", ".sqlesc($userid).", '".TIME_NOW."', ".sqlesc($text).",".sqlesc($text).")");
 
         $newid = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
 
-        sql_query("UPDATE users SET comments = comments + 1 WHERE id ={$userid}");
+        sql_query("UPDATE users SET comments = comments + 1 WHERE id =".sqlesc($userid));
 
         header("Refresh: 0; url=userdetails.php?id=$userid&viewcomm=$newid#comm$newid");
         die;
@@ -92,19 +92,19 @@ if ($action == "add") {
     if (!is_valid_id($userid))
         stderr("Error", "Invalid ID.");
 
-    $res = sql_query("SELECT username FROM users WHERE id = {$userid}") or sqlerr(__FILE__, __LINE__);
+    $res = sql_query("SELECT username FROM users WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
     $arr = mysqli_fetch_assoc($res);
     if (!$arr)
         stderr("Error", "No user with that ID.");
 
-    $HTMLOUT .="<h1>Add a comment for '" . htmlspecialchars($arr["username"]) . "'</h1>
+    $HTMLOUT .="<h1>Add a comment for '" . htmlsafechars($arr["username"]) . "'</h1>
     <form method='post' action='usercomment.php?action=add'>
-    <input type='hidden' name='userid' value='".(int)$userid."' />
+    <input type='hidden' name='userid' value='$userid' />
     <textarea name='text' rows='10' cols='60'></textarea>
     <br /><br />
     <input type='submit' class='btn' value='Do it!' /></form>\n";
 
-    $res = sql_query("SELECT usercomments.id, usercomments.text, usercomments.editedby, usercomments.editedat, usercomments.added, username, users.id as user, users.avatar, users.title, users.anonymous, users.class, users.donor, users.warned, users.leechwarn, users.chatpost FROM usercomments LEFT JOIN users ON usercomments.user = users.id WHERE user = {$userid} ORDER BY usercomments.id DESC LIMIT 5");
+    $res = sql_query("SELECT usercomments.id, usercomments.text, usercomments.editedby, usercomments.editedat, usercomments.added, username, users.id as user, users.avatar, users.title, users.anonymous, users.class, users.donor, users.warned, users.leechwarn, users.chatpost FROM usercomments LEFT JOIN users ON usercomments.user = users.id WHERE user = ".sqlesc($userid)." ORDER BY usercomments.id DESC LIMIT 5");
 
     $allrows = array();
     while ($row = mysqli_fetch_assoc($res))
@@ -114,14 +114,14 @@ if ($action == "add") {
         $HTMLOUT .="<h2>Most recent comments, in reverse order</h2>\n";
         $HTMLOUT .= usercommenttable($allrows);
     }
-    echo stdhead("Add a comment for \"" .htmlspecialchars($arr["username"]). "\"") . $HTMLOUT . stdfoot();
+    echo stdhead("Add a comment for \"" .htmlsafechars($arr["username"]). "\"") . $HTMLOUT . stdfoot();
     die;
 } elseif ($action == "edit") {
     $commentid = 0 + $_GET["cid"];
     if (!is_valid_id($commentid))
         stderr("Error", "Invalid ID.");
 
-    $res = sql_query("SELECT c.*, u.username, u.id FROM usercomments AS c LEFT JOIN users AS u ON c.userid = u.id WHERE c.id={$commentid}") or sqlerr(__FILE__, __LINE__);
+    $res = sql_query("SELECT c.*, u.username, u.id FROM usercomments AS c LEFT JOIN users AS u ON c.userid = u.id WHERE c.id=".sqlesc($commentid)) or sqlerr(__FILE__, __LINE__);
     $arr = mysqli_fetch_assoc($res);
     if (!$arr)
         stderr("Error", "Invalid ID.");
@@ -130,32 +130,28 @@ if ($action == "add") {
         stderr("Error", "Permission denied.");
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $text = $_POST["text"];
-        $returnto = $_POST["returnto"];
-
+        $text = htmlsafechars($_POST["text"]);
+        $returnto = htmlsafechars($_POST["returnto"]);
         if ($text == "")
             stderr("Error", "Comment body cannot be empty!");
-
-        $text = sqlesc($text);
-
+        //$text = sqlesc($text);
         $editedat = sqlesc(TIME_NOW);
-
-        sql_query("UPDATE usercomments SET text={$text}, editedat={$editedat}, editedby={$CURUSER['id']} WHERE id={$commentid}") or sqlerr(__FILE__, __LINE__);
+        sql_query("UPDATE usercomments SET text=".sqlesc($text).", editedat={$editedat}, editedby=".sqlesc($CURUSER['id'])." WHERE id=".sqlesc($commentid)) or sqlerr(__FILE__, __LINE__);
 
         if ($returnto)
-        header("Location: " . htmlspecialchars($returnto) . "");
+        header("Location: $returnto");
     else
         header("Location: {$INSTALLER09['baseurl']}/userdetails.php?id={$userid}");
         die;
     }
 
-    $HTMLOUT .="<h1>Edit comment for \"" . htmlspecialchars($arr["username"]) . "\"</h1>
+    $HTMLOUT .="<h1>Edit comment for \"".htmlsafechars($arr["username"])."\"</h1>
     <form method='post' action='usercomment.php?action=edit&amp;cid={$commentid}'>
     <input type='hidden' name='returnto' value='{$_SERVER["HTTP_REFERER"]}' />
     <input type=\"hidden\" name=\"cid\" value='".(int)$commentid."' />
-    <textarea name='text' rows='10' cols='60'>" . htmlspecialchars($arr["text"]) . "</textarea>
+    <textarea name='text' rows='10' cols='60'>".htmlsafechars($arr["text"])."</textarea>
     <input type='submit' class='btn' value='Do it!' /></form>";
-    echo stdhead("Edit comment for \"" .htmlspecialchars($arr["username"])."\"") . $HTMLOUT . stdfoot();
+    echo stdhead("Edit comment for \"".htmlsafechars($arr["username"])."\"") . $HTMLOUT . stdfoot();
     stdfoot();
     die;
 } elseif ($action == "delete") {
@@ -174,7 +170,7 @@ if ($action == "add") {
         //stderr("Delete comment", "You are about to delete a comment. Click\n" . "<a href='usercomment.php?action=delete&amp;cid={$commentid}&amp;sure=1&amp;returnto=".urlencode($_SERVER['PHP_SELF'])."'>here</a> if you are sure.");
     }
     
-    $res = sql_query("SELECT id, userid FROM usercomments WHERE id={$commentid}") or sqlerr(__FILE__, __LINE__);
+    $res = sql_query("SELECT id, userid FROM usercomments WHERE id=".sqlesc($commentid)) or sqlerr(__FILE__, __LINE__);
     $arr = mysqli_fetch_assoc($res);
     
     if ($arr['id'] != $CURUSER['id']) {
@@ -184,13 +180,13 @@ if ($action == "add") {
     
     if ($arr)
     $userid = (int)$arr["userid"];
-    sql_query("DELETE FROM usercomments WHERE id={$commentid}") or sqlerr(__FILE__, __LINE__);
+    sql_query("DELETE FROM usercomments WHERE id=".sqlesc($commentid)) or sqlerr(__FILE__, __LINE__);
     
     if ($userid && mysqli_affected_rows($GLOBALS["___mysqli_ston"]) > 0)
-        sql_query("UPDATE users SET comments = comments - 1 WHERE id = {$userid}");
-        $returnto = $_GET["returnto"];
+        sql_query("UPDATE users SET comments = comments - 1 WHERE id = ".sqlesc($userid));
+        $returnto = htmlsafechars($_GET["returnto"]);
         if ($returnto)
-        header("Location: " . htmlspecialchars($returnto) . "");
+        header("Location: $returnto");
         else
         header("Location: {$INSTALLER09['baseurl']}/userdetails.php?id={$userid}");
     die;
@@ -203,7 +199,7 @@ if ($action == "add") {
     if (!is_valid_id($commentid))
         stderr("Error", "Invalid ID.");
 
-    $res = sql_query("SELECT c.*, u.username FROM usercomments AS c LEFT JOIN users AS u ON c.userid = u.id WHERE c.id={$commentid}") or sqlerr(__FILE__, __LINE__);
+    $res = sql_query("SELECT c.*, u.username FROM usercomments AS c LEFT JOIN users AS u ON c.userid = u.id WHERE c.id=".sqlesc($commentid)) or sqlerr(__FILE__, __LINE__);
     $arr = mysqli_fetch_assoc($res);
     if (!$arr)
         stderr("Error", "Invalid ID");
@@ -211,10 +207,10 @@ if ($action == "add") {
     $HTMLOUT .="<h1>Original contents of comment #{$commentid}</h1>
     <table width='500' border='1' cellspacing='0' cellpadding='5'>
     <tr><td class='comment'>\n";
-    $HTMLOUT .=" ".htmlspecialchars($arr["ori_text"]);
+    $HTMLOUT .=" ".htmlsafechars($arr["ori_text"]);
     $HTMLOUT .="</td></tr></table>\n";
 
-    $returnto = htmlspecialchars($_SERVER["HTTP_REFERER"]);
+    $returnto = htmlsafechars($_SERVER["HTTP_REFERER"]);
     if ($returnto)
          $HTMLOUT .="<font size='small'>(<a href='{$returnto}'>back</a>)</font>\n";
 

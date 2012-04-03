@@ -60,7 +60,7 @@ die;
       //if ($id == $CURUSER['id']) {
       // grab current data     
       $res = sql_query('SELECT perms FROM users 
-                     WHERE id = '.$id.' LIMIT 1') or sqlerr(__file__, __line__); 
+                     WHERE id = '.sqlesc($id).' LIMIT 1') or sqlerr(__file__, __line__); 
       $row = mysqli_fetch_assoc($res);
       $row['perms'] = (int)$row['perms'];
       $mc1->begin_transaction('MyUser_'.$id);

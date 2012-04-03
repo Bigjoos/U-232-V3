@@ -11,9 +11,9 @@ function calctime($val)
 	}
 //==Irc
     if  ($user['onirc'] == 'yes'){
-    $ircbonus   = (!empty($user['irctotal'])?number_format($user["irctotal"] / $INSTALLER09['autoclean_interval'], 1):'0.0');
+    $ircbonus   = (!empty($user['irctotal']) ? number_format($user["irctotal"] / $INSTALLER09['autoclean_interval'], 1) : '0.0');
     $HTMLOUT .="<tr><td class='rowhead' valign='top' align='right'>Irc Bonus</td><td align='left'>{$ircbonus}</td></tr>";
-    $irctotal = (!empty($user['irctotal'])?calctime($user['irctotal']):$user['username'].' has never been on IRC!');
+    $irctotal = (!empty($user['irctotal'])?calctime($user['irctotal']) : htmlsafechars($user['username']).' has never been on IRC!');
     $HTMLOUT .="<tr><td class='rowhead' valign='top' align='right'>Irc Idle Time</td><td align='left'>{$irctotal}</td></tr>";
     }
 //==end

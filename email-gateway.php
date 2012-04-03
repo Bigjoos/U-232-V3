@@ -19,16 +19,16 @@ loggedinorreturn();
     if ( !is_valid_id($id) )
       stderr("{$lang['email_error']}", "{$lang['email_bad_id']}");
 
-    $res = sql_query("SELECT username, class, email FROM users WHERE id=$id");
+    $res = sql_query("SELECT username, class, email FROM users WHERE id=".sqlesc($id));
     $arr = mysqli_fetch_assoc($res) or stderr("{$lang['email_error']}", "{$lang['email_no_user']}");
-    $username = $arr["username"];
+    $username = htmlsafechars($arr["username"]);
     
     if ($arr["class"] < UC_STAFF)
       stderr("{$lang['email_error']}", "{$lang['email_email_staff']}");
 
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
-      $to = $arr["email"];
+      $to = htmlsafechars($arr["email"]);
 
       $from = substr(trim($_POST["from"]), 0, 80);
       if ($from == "") $from = "{$lang['email_anon']}";

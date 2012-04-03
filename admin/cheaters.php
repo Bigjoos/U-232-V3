@@ -102,12 +102,12 @@ $HTMLOUT .="<table width=\"80%\">
 
 $res = sql_query("SELECT c.id as cid, c.added, c.userid, c.torrentid, c.client, c.rate, c.beforeup, c.upthis, c.timediff, c.userip, u.id, u.username, u.class, u.downloaded, u.uploaded, u.chatpost, u.leechwarn, u.warned, u.pirate, u.king, u.donor, u.enabled, t.id AS tid, t.name AS tname FROM cheaters AS c LEFT JOIN users AS u ON u.id=c.userid LEFT JOIN torrents AS t ON t.id=c.torrentid ORDER BY added DESC ".$pager['limit']."") or sqlerr(__FILE__, __LINE__);
 while ($arr = mysqli_fetch_assoc($res)) {
-    $torrname = htmlspecialchars(CutName($arr["tname"], 80));
+    $torrname = htmlsafechars(CutName($arr["tname"], 80));
     $users = $arr;
     $users['id'] = (int)$arr['userid'];
     $cheater = "<b><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['id']."'>".format_username($users)."</a></b>{$lang['cheaters_hbcc']}<br />
     <b>{$lang['cheaters_torrent']} <a href='{$INSTALLER09['baseurl']}/details.php?id=".(int)$arr['tid']."' title='{$torrname}'>{$torrname}</a></b>
-<br />{$lang['cheaters_upped']} <b>".mksize((int)$arr['upthis'])."</b><br />{$lang['cheaters_speed']} <b>".mksize((int)$arr['rate'])."/s</b><br />{$lang['cheaters_within']} <b>".(int)$arr['timediff']." {$lang['cheaters_sec']}</b><br />{$lang['cheaters_uc']} <b>".htmlspecialchars($arr['client'])."</b><br />{$lang['cheaters_ipa']} <b>".htmlspecialchars($arr['userip'])."</b>";
+<br />{$lang['cheaters_upped']} <b>".mksize((int)$arr['upthis'])."</b><br />{$lang['cheaters_speed']} <b>".mksize((int)$arr['rate'])."/s</b><br />{$lang['cheaters_within']} <b>".(int)$arr['timediff']." {$lang['cheaters_sec']}</b><br />{$lang['cheaters_uc']} <b>".htmlsafechars($arr['client'])."</b><br />{$lang['cheaters_ipa']} <b>".htmlsafechars($arr['userip'])."</b>";
 
     $HTMLOUT .="<tr><td class=\"table\" width=\"10\" align=\"center\">".(int)$arr['cid']."</td>
     <td class=\"table\" align=\"left\">".format_username($users)."<a href=\"javascript:klappe('a1".(int)$arr['cid']."')\"> - Added: ".get_date($arr['added'], 'DATE')."</a>

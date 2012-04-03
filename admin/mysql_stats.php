@@ -251,7 +251,7 @@ function localisedDate($timestamp = -1, $format = '') {
       // but is included in Questions. Then the total of the percentages is 100.
 
       $QUERY_STATS .= "<tr>
-          <td>&nbsp;". htmlspecialchars($name)."&nbsp;</td>
+          <td>&nbsp;". htmlsafechars($name)."&nbsp;</td>
           <td  align='right'>&nbsp;". number_format($value, 0, '.', ',')."&nbsp;</td>
           <td  align='right'>&nbsp;". number_format(($value * 3600 / $serverStatus['Uptime']), 2, '.', ',')."&nbsp;</td>
           <td  align='right'>&nbsp;". number_format(($value * 100 / ($serverStatus['Questions'] - $serverStatus['Connections'])), 2, '.', ',')."&nbsp;%&nbsp;</td>
@@ -292,8 +292,8 @@ function localisedDate($timestamp = -1, $format = '') {
       {
 
         $STATUS_TABLE .= "<tr>
-            <td>&nbsp;". htmlspecialchars(str_replace('_', ' ', $name))."&nbsp;</td>
-            <td  align='right'>&nbsp;". htmlspecialchars($value)."&nbsp;</td>
+            <td>&nbsp;". htmlsafechars(str_replace('_', ' ', $name))."&nbsp;</td>
+            <td  align='right'>&nbsp;". htmlsafechars($value)."&nbsp;</td>
         </tr>";
 
       }

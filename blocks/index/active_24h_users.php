@@ -17,8 +17,8 @@
      $last24 = $totalonline24;
      $period = $_SERVER['REQUEST_TIME'];
      sql_query('UPDATE avps SET value_s = 0, '.
-                  'value_i = '.$last24.', '.
-                  'value_u = '.$period.' '.
+                  'value_i = '.sqlesc($last24).', '.
+                  'value_u = '.sqlesc($period).' '.
                   'WHERE arg = "last24"') or sqlerr(__FILE__, __LINE__);
      }
      while ($arr = mysqli_fetch_assoc($res)) {

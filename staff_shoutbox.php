@@ -21,7 +21,7 @@ $HTMLOUT = $query = $dellall = $dtcolor = $fontcolor = $bg = $pm = $reply = '';
 header('Content-Type: text/html; charset='.charset());
 // === added turn on / off shoutbox - sir snuggs
 if ( ( isset( $_GET['show_staffshout'] ) ) && ( ( $show_staffshout = $_GET['show_staff'] ) !== $CURUSER['show_staffshout'] ) ) {
-sql_query("UPDATE users SET show_staffshout = ".sqlesc($_GET['show_staff'])." WHERE id = {$CURUSER['id']}") or sqlerr( __FILE__, __LINE__ );
+sql_query("UPDATE users SET show_staffshout = ".sqlesc($_GET['show_staff'])." WHERE id = ".sqlesc($CURUSER['id'])) or sqlerr( __FILE__, __LINE__ );
 $mc1->begin_transaction('MyUser_'.$CURUSER['id']);
 $mc1->update_row(false, array('show_staffshout' => $_GET['show_staff']));
 $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -82,7 +82,7 @@ background: #000000 repeat-x left top;
 <body bgcolor='#F5F4EA' class='date'>
 <form method='post' action='./staff_shoutbox.php'>
 <input type='hidden' name='id' value='".(int)$res['id']."' />
-<textarea name='text' rows='3' id='specialbox'>".htmlspecialchars($res['text'])."</textarea>
+<textarea name='text' rows='3' id='specialbox'>".htmlsafechars($res['text'])."</textarea>
 <input type='submit' name='save' value='save' class='btn' />
 </form></body></html>";
 echo $HTMLOUT;
@@ -129,7 +129,7 @@ background: #000000 repeat-x left top;
 <form method='post' action='./staff_shoutbox.php'>
 <input type='hidden' name='id' value='".(int)$res['id']."' />
 <input type='hidden' name='user' value='".(int)$res['userid']."' />
-<textarea name='text' rows='3' id='specialbox'>".htmlspecialchars($res['text'])."</textarea>
+<textarea name='text' rows='3' id='specialbox'>".htmlsafechars($res['text'])."</textarea>
 <input type='submit' name='save' value='save' class='btn' />
 </form></body></html>";
 echo $HTMLOUT;
@@ -242,7 +242,7 @@ exit;
 if ( isset( $_GET['staff_sent'] ) && ( $_GET['staff_sent'] == "yes" ) ) {
     require_once(INCL_DIR.'bbcode_functions.php');
     $limit = 5;
-    $userid = $CURUSER["id"];
+    $userid = (int)$CURUSER["id"];
     $date = TIME_NOW;
     $text = (trim( $_GET["staff_shbox_text"] ));
     $text_parsed = format_comment($text);
@@ -267,16 +267,16 @@ if ( isset( $_GET['staff_sent'] ) && ( $_GET['staff_sent'] == "yes" ) ) {
             switch ( $command ) {
                 case "/EMPTY" :
                     $what = 'deleted all shouts';
-                    $msg = "[b]" . $user . "'s[/b] shouts have been deleted";
-                    $query = "DELETE FROM shoutbox where userid = " . $a[0];
+                    $msg = "[b]" . htmlsafechars($user) . "'s[/b] shouts have been deleted";
+                    $query = "DELETE FROM shoutbox where userid = " . sqlesc($a[0]);
                     $mc1->delete_value('staff_shoutbox_');
                     //$mc1->delete_value('shoutbox_');
                     break;
                 case "/GAG" :
                     $what = 'gagged';
                     $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - [ShoutBox] User has been gagged by " . $CURUSER["username"] . "\n" . $a[2];
-                    $msg = "[b]" . $user . "[/b] - has been gagged by " . $CURUSER["username"];
-                    $query = "UPDATE users SET chatpost='0', modcomment = concat(" . sqlesc( $modcomment ) . ", modcomment) WHERE id = " . $a[0];
+                    $msg = "[b]" . htmlsafechars($user) . "[/b] - has been gagged by " . $CURUSER["username"];
+                    $query = "UPDATE users SET chatpost='0', modcomment = concat(" . sqlesc( $modcomment ) . ", modcomment) WHERE id = " . sqlesc($a[0]);
                     $mc1->begin_transaction('MyUser_'.$a[0]);
                     $mc1->update_row(false, array('chatpost' => 0));
                     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -290,8 +290,8 @@ if ( isset( $_GET['staff_sent'] ) && ( $_GET['staff_sent'] == "yes" ) ) {
                 case "/UNGAG" :
                     $what = 'ungagged';
                     $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - [ShoutBox] User has been ungagged by " . $CURUSER["username"] . "\n" . $a[2];
-                    $msg = "[b]" . $user . "[/b] - has been ungagged by " . $CURUSER["username"];
-                    $query = "UPDATE users SET chatpost='1', modcomment = concat(" . sqlesc( $modcomment ) . ", modcomment) WHERE id = " . $a[0];
+                    $msg = "[b]" . htmlsafechars($user) . "[/b] - has been ungagged by " . $CURUSER["username"];
+                    $query = "UPDATE users SET chatpost='1', modcomment = concat(" . sqlesc( $modcomment ) . ", modcomment) WHERE id = " . sqlesc($a[0]);
                     $mc1->begin_transaction('MyUser_'.$a[0]);
                     $mc1->update_row(false, array('chatpost' => 1));
                     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -305,8 +305,8 @@ if ( isset( $_GET['staff_sent'] ) && ( $_GET['staff_sent'] == "yes" ) ) {
                 case "/WARN" :
                     $what = 'warned';
                     $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - [ShoutBox] User has been warned by " . $CURUSER["username"] . "\n" . $a[2];
-                    $msg = "[b]" . $user . "[/b] - has been warned by " . $CURUSER["username"];
-                    $query = "UPDATE users SET warned='1', modcomment = concat(" . sqlesc( $modcomment ) . ", modcomment) WHERE id = " . $a[0];
+                    $msg = "[b]" . htmlsafechars($user) . "[/b] - has been warned by " . $CURUSER["username"];
+                    $query = "UPDATE users SET warned='1', modcomment = concat(" . sqlesc( $modcomment ) . ", modcomment) WHERE id = " . sqlesc($a[0]);
                     $mc1->begin_transaction('MyUser_'.$a[0]);
                     $mc1->update_row(false, array('warned' => 1));
                     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -320,8 +320,8 @@ if ( isset( $_GET['staff_sent'] ) && ( $_GET['staff_sent'] == "yes" ) ) {
                 case "/UNWARN" :
                     $what = 'unwarned';
                     $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - [ShoutBox] User has been unwarned by " . $CURUSER["username"] . "\n" . $a[2];
-                    $msg = "[b]" . $user . "[/b] - warning removed by " . $CURUSER["username"];
-                    $query = "UPDATE users SET warned='0', modcomment = concat(" . sqlesc( $modcomment ) . ", modcomment) WHERE id = " . $a[0];
+                    $msg = "[b]" . htmlsafechars($user) . "[/b] - warning removed by " . $CURUSER["username"];
+                    $query = "UPDATE users SET warned='0', modcomment = concat(" . sqlesc( $modcomment ) . ", modcomment) WHERE id = " . sqlesc($a[0]);
                     $mc1->begin_transaction('MyUser_'.$a[0]);
                     $mc1->update_row(false, array('warned' => 0));
                     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -335,8 +335,8 @@ if ( isset( $_GET['staff_sent'] ) && ( $_GET['staff_sent'] == "yes" ) ) {
                 case "/DISABLE" :
                     $what = 'disabled';
                     $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - [ShoutBox] User has been disabled by " . $CURUSER["username"] . "\n" . $a[2];
-                    $msg = "[b]" . $user . "[/b] - has been disabled by " . $CURUSER["username"];
-                    $query = "UPDATE users SET enabled='no', modcomment = concat(" . sqlesc( $modcomment ) . ", modcomment) WHERE id = " . $a[0];
+                    $msg = "[b]" . htmlsafechars($user) . "[/b] - has been disabled by " . $CURUSER["username"];
+                    $query = "UPDATE users SET enabled='no', modcomment = concat(" . sqlesc( $modcomment ) . ", modcomment) WHERE id = " . sqlesc($a[0]);
                     $mc1->begin_transaction('MyUser_'.$a[0]);
                     $mc1->update_row(false, array('enabled' => 'no'));
                     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -350,8 +350,8 @@ if ( isset( $_GET['staff_sent'] ) && ( $_GET['staff_sent'] == "yes" ) ) {
                 case "/ENABLE" :
                     $what = 'enabled';
                     $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - [ShoutBox] User has been enabled by " . $CURUSER["username"] . "\n" . $a[2];
-                    $msg = "[b]" . $user . "[/b] - has been enabled by " . $CURUSER["username"];
-                    $query = "UPDATE users SET enabled='yes', modcomment = concat(" . sqlesc( $modcomment ) . ", modcomment) WHERE id = " . $a[0];
+                    $msg = "[b]" . htmlsafechars($user) . "[/b] - has been enabled by " . $CURUSER["username"];
+                    $query = "UPDATE users SET enabled='yes', modcomment = concat(" . sqlesc( $modcomment ) . ", modcomment) WHERE id = " . sqlesc($a[0]);
                     $mc1->begin_transaction('MyUser_'.$a[0]);
                     $mc1->update_row(false, array('enabled' => 'yes'));
                     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -368,7 +368,7 @@ if ( isset( $_GET['staff_sent'] ) && ( $_GET['staff_sent'] == "yes" ) ) {
             $mc1->delete_value('staff_shoutbox_');
             //$mc1->delete_value('shoutbox_');
             $HTMLOUT .="<script type=\"text/javascript\">parent.document.forms[0].staff_shbox_text.value='';</script>";
-            write_log("Shoutbox user " . $user . " has been " . $what . " by " . $CURUSER["username"] );
+            write_log("Shoutbox user " . htmlsafechars($user) . " has been " . $what . " by " . $CURUSER["username"] );
             unset($text, $text_parsed, $query, $date, $modcomment, $what, $msg, $commands);
         }
     }
@@ -427,7 +427,7 @@ $mc1->cache_value('staff_shoutbox_', $shouts, $INSTALLER09['expires']['staff_sho
 if (count($shouts) > 0)
 {
 $HTMLOUT .="<table border='0' cellspacing='0' cellpadding='2' width='100%' align='left' class='small'>\n";
-$shout_pm_alert = mysqli_fetch_assoc(sql_query( " SELECT count(id) AS pms FROM messages WHERE receiver = ".$CURUSER['id']." AND unread = 'yes' AND location = '1'")) or sqlerr( __FILE__, __LINE__ );
+$shout_pm_alert = mysqli_fetch_assoc(sql_query( " SELECT count(id) AS pms FROM messages WHERE receiver = ".sqlesc($CURUSER['id'])." AND unread = 'yes' AND location = '1'")) or sqlerr( __FILE__, __LINE__ );
 $gotpm = 0;
 if($shout_pm_alert['pms'] > 0 && $gotpm == 0){
 	  $HTMLOUT .= '<tr><td align=\'center\'><a href=\''.$INSTALLER09['baseurl'].'/pm_system.php\' target=\'_parent\'><span style=\'color:red;\'>You have '.(int)$shout_pm_alert['pms'].' new message'.((int)$shout_pm_alert['pms'] > 1 ? 's' : '').'</span></a></td></tr>';
@@ -441,14 +441,14 @@ if($shout_pm_alert['pms'] > 0 && $gotpm == 0){
 		continue;
 	$private = '';
 	if($arr['to_user'] == $CURUSER['id'] && $arr['to_user'] > 0)
-		  $private = "<a href=\"javascript:private_reply('".htmlspecialchars($arr['username'])."')\"><img src=\"{$INSTALLER09['pic_base_url']}private-shout.png\" alt=\"Private shout\" title=\"Private shout! click to reply to ".htmlspecialchars($arr['username'])."\" width=\"16\" style=\"padding-left:2px;padding-right:2px;\" border=\"0\" /></a>";
+		  $private = "<a href=\"javascript:private_reply('".htmlsafechars($arr['username'])."')\"><img src=\"{$INSTALLER09['pic_base_url']}private-shout.png\" alt=\"Private shout\" title=\"Private shout! click to reply to ".htmlsafechars($arr['username'])."\" width=\"16\" style=\"padding-left:2px;padding-right:2px;\" border=\"0\" /></a>";
         $edit = ($CURUSER['class'] >= UC_STAFF || ($arr['userid'] == $CURUSER['id']) && ($CURUSER['class'] >= UC_POWER_USER && $CURUSER['class'] <= UC_STAFF) ? "<a href='{$INSTALLER09['baseurl']}/staff_shoutbox.php?edit=".(int)$arr['id']."&amp;user=".(int)$arr['userid']."'><img src='{$INSTALLER09['pic_base_url']}button_edit2.gif' border='0' alt=\"Edit Shout\"  title=\"Edit Shout\" /></a> " : "" );
         $del = ( $CURUSER['class'] >= UC_STAFF ? "<a href='./staff_shoutbox.php?del=".(int)$arr['id']."'><img src='{$INSTALLER09['pic_base_url']}button_delete2.gif' border='0' alt=\"Delete Single Shout\" title=\"Delete Single Shout\" /></a> " : "" );
         $delall = ($CURUSER['class'] == UC_MAX ? "<a href='./staff_shoutbox.php?delall' onclick=\"confirm_delete(); return false;\"><img src='{$INSTALLER09['pic_base_url']}del.png' border='0' alt=\"Empty Shout\" title=\"Empty Shout\" /></a> " : "" );      
         //$delall 
         $pm = ($CURUSER['id'] != $arr['userid'] ? "<span class='date' style=\"color:$dtcolor\"><a target='_blank' href='./pm_system.php?action=send_message&amp;receiver=".(int)$arr['userid']."'><img src='{$INSTALLER09['pic_base_url']}button_pm2.gif' border='0' alt=\"Pm User\" title=\"Pm User\" /></a></span>\n" : "" );
         $date = get_date($arr["date"], 0,1);
-        $reply = ($CURUSER['id'] != $arr['userid'] ? "<a href=\"javascript:window.top.SmileIT('[b][i]=>&nbsp;[color=#".get_user_class_color($arr['class'])."]".htmlspecialchars($arr['username'])."[/color]&nbsp;-[/i][/b]','shbox','shbox_text')\"><img height='10' src='{$INSTALLER09['pic_base_url']}reply.gif' title='Reply' alt='Reply' style='border:none;' /></a>" : "" );
+        $reply = ($CURUSER['id'] != $arr['userid'] ? "<a href=\"javascript:window.top.SmileIT('[b][i]=>&nbsp;[color=#".get_user_class_color($arr['class'])."]".htmlsafechars($arr['username'])."[/color]&nbsp;-[/i][/b]','shbox','shbox_text')\"><img height='10' src='{$INSTALLER09['pic_base_url']}reply.gif' title='Reply' alt='Reply' style='border:none;' /></a>" : "" );
         $user_stuff = $arr;
         $user_stuff['id'] = (int)$arr['userid'];
         $HTMLOUT .="<tr style='background-color:$bg;'><td><span class='size1' style='color:$fontcolor;'>[$date]</span>\n$del$edit$pm$reply$private ".format_username($user_stuff, true)."<span class='size2' style='color:$fontcolor;'>".format_comment($arr["text"])."\n</span></td></tr>\n";

@@ -35,9 +35,9 @@ else {
     </tr>";
     while($ar = mysqli_fetch_assoc($qs))
       $html .= "<tr>
-                  <td align='left'><a href='userdetails.php?id={$ar['id']}'>{$ar['username']}</a></td>
-                  <td align='center'>{$ar['tickets']}</td>
-                  <td align='center'>{$ar['seedbonus']}</td>
+                  <td align='left'><a href='userdetails.php?id=".(int)$ar['id']."'>".htmlsafechars($ar['username'])."</a></td>
+                  <td align='center'>".(int)$ar['tickets']."</td>
+                  <td align='center'>".(float)$ar['seedbonus']."</td>
         </tr>";
   $html .= "</table>";
 }

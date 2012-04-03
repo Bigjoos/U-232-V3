@@ -107,7 +107,7 @@ class_check(UC_SYSOP);
           <td align='left'>{$arr['first']}</td>
           <td align='left'>{$arr['last']}</td>
           <td align='left'><a href='userdetails.php?id={$arr['addedby']}'>{$arr['username']}</a></td>
-          <td align='left'>".htmlentities($arr['comment'], ENT_QUOTES)."</td>
+          <td align='left'>".htmlsafechars($arr['comment'], ENT_QUOTES)."</td>
           <td><a href='staffpanel.php?tool=bans&amp;remove={$arr['id']}'>{$lang['text_remove']}</a></td>
          </tr>\n";
       }

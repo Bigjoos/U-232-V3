@@ -139,7 +139,7 @@ function move_cat_form() {
   
     foreach ($cats as $c)
     {
-      $select .= ($c['id'] != $r['id']) ? "<option value='{$c["id"]}'>" . htmlentities($c['name'], ENT_QUOTES) . "</option>\n" : "";
+      $select .= ($c['id'] != $r['id']) ? "<option value='{$c["id"]}'>" . htmlsafechars($c['name'], ENT_QUOTES) . "</option>\n" : "";
     }
     
     $select .= "</select>\n";
@@ -158,14 +158,14 @@ function move_cat_form() {
     
       <table class='torrenttable' align='center' width='80%' bgcolor='#555555' cellspacing='2' cellpadding='4px'>
       <tr>
-        <td colspan='2' class='colhead'>You are about to move category: ".htmlentities($r['name'], ENT_QUOTES)."</td>
+        <td colspan='2' class='colhead'>You are about to move category: ".htmlsafechars($r['name'], ENT_QUOTES)."</td>
       </tr>
       <tr>
         <td colspan='2'>Note: This tool will move ALL torrents FROM one category to ANOTHER category only! It will NOT delete any categories or torrents.</td>
       </tr>
       <tr>
         <td align='right' width='50%'><span style='color:red;font-weight:bold;'>Old Category Name:</span></td>
-        <td>".htmlentities($r['name'], ENT_QUOTES)."</td>
+        <td>".htmlsafechars($r['name'], ENT_QUOTES)."</td>
       </tr>
       {$check}
       <tr>
@@ -304,7 +304,7 @@ function delete_cat_form() {
     
       foreach ($cats as $c)
       {
-        $select .= ($c['id'] != $r['id']) ? "<option value='{$c["id"]}'>" . htmlentities($c['name'], ENT_QUOTES) . "</option>\n" : "";
+        $select .= ($c['id'] != $r['id']) ? "<option value='{$c["id"]}'>" . htmlsafechars($c['name'], ENT_QUOTES) . "</option>\n" : "";
       }
       
       $select .= "</select>\n";
@@ -323,27 +323,27 @@ function delete_cat_form() {
     
       <table class='torrenttable' align='center' width='80%' bgcolor='#555555' cellspacing='2' cellpadding='2'>
       <tr>
-        <td colspan='2' class='colhead'>You are about to delete category: ".htmlentities($r['name'], ENT_QUOTES)."</td>
+        <td colspan='2' class='colhead'>You are about to delete category: ".htmlsafechars($r['name'], ENT_QUOTES)."</td>
       </tr>
       <tr>
         <td align='right' width='50%'>Cat Name:</td>
-        <td>".htmlentities($r['name'], ENT_QUOTES)."</td>
+        <td>".htmlsafechars($r['name'], ENT_QUOTES)."</td>
       </tr>
 	        <tr>
         <td align='right' width='50%'>Parent ID:</td>
-        <td>".htmlentities($r['parent_id'], ENT_QUOTES)."</td>
+        <td>".htmlsafechars($r['parent_id'], ENT_QUOTES)."</td>
       </tr>
 	        <tr>
         <td align='right' width='50%'>Table Type:</td>
-        <td>".htmlentities($r['tabletype'], ENT_QUOTES)."</td>
+        <td>".htmlsafechars($r['tabletype'], ENT_QUOTES)."</td>
       </tr>
       <tr>
         <td align='right'>Description:</td>
-        <td>".htmlentities($r['cat_desc'], ENT_QUOTES)."</td>
+        <td>".htmlsafechars($r['cat_desc'], ENT_QUOTES)."</td>
       </tr>
       <tr>
         <td align='right'>Image:</td>
-        <td>".htmlentities($r['image'], ENT_QUOTES)."</td>
+        <td>".htmlsafechars($r['image'], ENT_QUOTES)."</td>
       </tr>
       {$check}
       <tr>
@@ -443,7 +443,7 @@ function edit_cat_form() {
       foreach ($files as $f)
       {
         $selected = ($f == $r['image']) ? " selected='selected'" : "";
-        $select .= "<option value='" . htmlentities($f, ENT_QUOTES) . "'$selected>" . htmlentities($f, ENT_QUOTES) . "</option>\n";
+        $select .= "<option value='" . htmlsafechars($f, ENT_QUOTES) . "'$selected>" . htmlsafechars($f, ENT_QUOTES) . "</option>\n";
         
       }
       
@@ -469,19 +469,19 @@ function edit_cat_form() {
       <table class='torrenttable' align='center' width='80%' bgcolor='#555555' cellspacing='2' cellpadding='2'>
       <tr>
         <td align='right'>New Cat Name:</td>
-        <td><input type='text' name='cat_name' class='option' size='50' value='".htmlentities($r['name'], ENT_QUOTES)."' /></td>
+        <td><input type='text' name='cat_name' class='option' size='50' value='".htmlsafechars($r['name'], ENT_QUOTES)."' /></td>
       </tr>
 	        <tr>
         <td align='right'>New Parent ID:</td>
-        <td><input type='text' name='cat_parent_id' class='option' size='50' value='".htmlentities($r['parent_id'], ENT_QUOTES)."' /></td>
+        <td><input type='text' name='cat_parent_id' class='option' size='50' value='".htmlsafechars($r['parent_id'], ENT_QUOTES)."' /></td>
       </tr>
 	        <tr>
         <td align='right'>New Table Type:</td>
-        <td><input type='text' name='cat_tabletype' class='option' size='50' value='".htmlentities($r['tabletype'], ENT_QUOTES)."' /></td>
+        <td><input type='text' name='cat_tabletype' class='option' size='50' value='".htmlsafechars($r['tabletype'], ENT_QUOTES)."' /></td>
       </tr>
       <tr>
         <td align='right'>Description:</td>
-        <td><textarea cols='50' rows='5' name='cat_desc'>".htmlentities($r['cat_desc'], ENT_QUOTES)."</textarea></td>
+        <td><textarea cols='50' rows='5' name='cat_desc'>".htmlsafechars($r['cat_desc'], ENT_QUOTES)."</textarea></td>
       </tr>
       {$check}
       <tr>
@@ -525,7 +525,7 @@ function show_categories() {
       foreach ($files as $f)
       {
         $i = 0;
-        $select .= "<option value='" . htmlentities($f, ENT_QUOTES) . "'>" . htmlentities($f, ENT_QUOTES) . "</option>\n";
+        $select .= "<option value='" . htmlsafechars($f, ENT_QUOTES) . "'>" . htmlsafechars($f, ENT_QUOTES) . "</option>\n";
         $i++;
       }
       

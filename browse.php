@@ -16,7 +16,7 @@ dbconn(false);
 loggedinorreturn();
 
 if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
-    sql_query("UPDATE users SET last_browse=".TIME_NOW." WHERE id=".$CURUSER['id']) or sqlerr(__FILE__, __LINE__);
+    sql_query("UPDATE users SET last_browse=".TIME_NOW." WHERE id=".sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
     $mc1->begin_transaction('MyUser_'.$CURUSER['id']);
     $mc1->update_row(false, array('last_browse' => TIME_NOW));
     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -56,7 +56,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
     $_valid_sort = array('id','name','numfiles','comments','added','size','times_completed','seeders','leechers','owner');
     $column = isset($_GET['sort']) && isset($_valid_sort[(int)$_GET['sort']]) ? $_valid_sort[(int)$_GET['sort']] : $_valid_sort[0];
 
-    switch (htmlspecialchars($_GET['type'])) {
+    switch (htmlsafechars($_GET['type'])) {
         case 'asc': $ascdesc = "ASC";
             $linkascdesc = "asc";
             break;
@@ -104,7 +104,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
      }
   
     $category = (isset($_GET["cat"])) ? (int)$_GET["cat"] : false;
-
+    
     $all = isset($_GET["all"]) ? $_GET["all"] : false;
 
     if (!$all)
@@ -165,6 +165,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
     }
 
     $subcats = $cat['subcategory'];
+    
     if (count($subcats) > 0)
     {
     foreach ($subcats as $subcat)
@@ -273,7 +274,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
       $pager = pager($torrentsperpage, $count, "browse.php?" . $addparam);
 
     $query = "SELECT id, category, leechers, seeders, bump, release_group, subs, name, times_completed, size, added, poster, descr, type, free, comments, numfiles, filename, anonymous, sticky, nuked, vip, nukereason, newgenre, description, owner, username, youtube, checked_by, IF(nfo <> '', 1, 0) as nfoav," .
-    "IF(numratings < {$INSTALLER09['minvotes']}, NULL, ROUND(ratingsum / numratings, 1)) AS rating ".
+    "IF(num_ratings < {$INSTALLER09['minvotes']}, NULL, ROUND(rating_sum / num_ratings, 1)) AS rating ".
     "FROM torrents $where $orderby {$pager['limit']}";
     $res = sql_query($query) or sqlerr(__FILE__, __LINE__);
     }
@@ -299,7 +300,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
     $new_button ="<a href='?clear_new=1'><input type='submit' value='{$lang['clear_new_btn']}' class='btn' /></a>";
     } else {     
     //== clear new tag automatically 
-    sql_query("UPDATE users SET last_browse=".TIME_NOW." where id=".$CURUSER['id']);
+    sql_query("UPDATE users SET last_browse=".TIME_NOW." where id=".sqlesc($CURUSER['id']));
     $mc1->begin_transaction('MyUser_'.$CURUSER['id']);
     $mc1->update_row(false, array('last_browse' => TIME_NOW));
     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -341,7 +342,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
    
     if (isset($cleansearchstr))
     {
-      $HTMLOUT .= "<h2>{$lang['browse_search']}\"" . htmlentities($searchstr, ENT_QUOTES) . "\"</h2>\n";
+      $HTMLOUT .= "<h2>{$lang['browse_search']}\"" . htmlsafechars($searchstr, ENT_QUOTES) . "\"</h2>\n";
     }
     
     if ($count) 
@@ -374,13 +375,13 @@ if ($no_log_ip) {
          if (!$no_log_ip) {
            $userid = (int)$CURUSER['id'];
            $added = TIME_NOW;
-           $res = sql_query("SELECT * FROM ips WHERE ip = $ip AND userid = $userid") or sqlerr(__FILE__, __LINE__);
+           $res = sql_query("SELECT * FROM ips WHERE ip = ".sqlesc($ip)." AND userid = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
            if (mysqli_num_rows($res) == 0 ) {
-           sql_query("INSERT INTO ips (userid, ip, lastbrowse, type) VALUES ($userid, $ip , $added, 'Browse')") or sqlerr(__FILE__, __LINE__);
+           sql_query("INSERT INTO ips (userid, ip, lastbrowse, type) VALUES (".sqlesc($userid).", ".sqlesc($ip).", $added, 'Browse')") or sqlerr(__FILE__, __LINE__);
            $mc1->delete_value('ip_history_'.$userid);
         }
         else {
-            sql_query("UPDATE ips SET lastbrowse = $added WHERE ip=$ip AND userid = $userid") or sqlerr(__FILE__, __LINE__);
+            sql_query("UPDATE ips SET lastbrowse = $added WHERE ip=".sqlesc($ip)." AND userid = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
             $mc1->delete_value('ip_history_'.$userid);
            }
           }

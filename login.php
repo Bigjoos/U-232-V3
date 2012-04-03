@@ -10,10 +10,8 @@ require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR
 require_once(INCL_DIR.'user_functions.php');
 require_once(CLASS_DIR.'page_verify.php');
 dbconn();
-global $CURUSER;
-if(!$CURUSER){
 get_template();
-}
+
 
 ini_set('session.use_trans_sid', '0');
 $stdhead = array(/** include js **/'js' => array('jquery','jquery.simpleCaptcha-0.2'));
@@ -27,28 +25,36 @@ $newpage->create('takelogin');
 	global $INSTALLER09;
 	$total = 0;
 	$ip = sqlesc(getip());
-	$fail = sql_query("SELECT SUM(attempts) FROM failedlogins WHERE ip={$ip}") or sqlerr(__FILE__, __LINE__);
+	$fail = sql_query("SELECT SUM(attempts) FROM failedlogins WHERE ip=".sqlesc($ip)) or sqlerr(__FILE__, __LINE__);
 	list($total) = mysqli_fetch_row($fail);
 	$left = $INSTALLER09['failedlogins'] - $total;
 	if ($left <= 2)
-	$left = "<font color='red' size='4'>{$left}</font>";
+	$left = "<span style='color:red'>{$left}</span>";
 	else
-	$left = "<font color='green' size='4'>{$left}</font>";
+	$left = "<span style='color:green'>{$left}</span>";
 	return $left;
 	}
 	//== End Failed logins
 
     $HTMLOUT = '';
-
+    
     unset($returnto);
     if (!empty($_GET["returnto"])) {
-      $returnto = htmlspecialchars($_GET["returnto"]);
+      $returnto = htmlsafechars($_GET["returnto"]);
       if (!isset($_GET["nowarn"])) 
       {
         $HTMLOUT .= "<h1>{$lang['login_not_logged_in']}</h1>\n";
         $HTMLOUT .= "{$lang['login_error']}";
+        $HTMLOUT .="<h4>{$lang['login_cookies']}</h4>                                              
+        <h4>{$lang['login_cookies1']}</h4>  
+        <h4>
+        <b>[{$INSTALLER09['failedlogins']}]</b> {$lang['login_failed']}<br />{$lang['login_failed_1']} <b> " .left()." </b> {$lang['login_failed_2']}</h4>";
       }
     }
+
+    
+
+
     $got_ssl = isset($_SERVER['HTTPS']) && (bool)$_SERVER['HTTPS'] == true ? true : false;
     //== click X by Retro
     $value = array('...','...','...','...','...','...');
@@ -61,10 +67,6 @@ $newpage->create('takelogin');
     /*]]>*/
     </script>
     <form method='post' action='takelogin.php'>
-    <noscript>{$lang['login_noscript']}</noscript>
-    <p>{$lang['login_cookies']}</p>                                              
-    <p>{$lang['login_cookies1']}</p>  
-    <b>[{$INSTALLER09['failedlogins']}]</b> {$lang['login_failed']}<br />{$lang['login_failed_1']} <b> " .left()." </b> {$lang['login_failed_2']}<br /><br />
     <table border='0' cellpadding='5'>
     <tr>
     <td class='rowhead'>{$lang['login_username']}</td><td align='left'><input type='text' size='40' name='username' /></td></tr>
@@ -75,15 +77,16 @@ $newpage->create('takelogin');
     <label for='ssl2'>{$lang['login_ssl2']}<input type='checkbox' name='perm_ssl' ".($got_ssl ? "" : "disabled='disabled' title='SSL connection not available'")." value='1' id='ssl2'/></label>
     </td>
     </tr>
+    <!--<tr><td>{$lang['login_duration']}</td><td align='left'><input type='checkbox' name='logout' value='yes' />{$lang['login_15mins']}</td></tr>-->
     <tr><td align='left' class='rowhead' colspan='2' id='captchalogin'></td></tr>
     <tr><td align='center' colspan='2'>{$lang['login_click']}<strong>{$lang['login_x']}</strong></td></tr>
     <tr><td colspan='2' align='center'>";
     for ($i=0; $i < count($value); $i++) {
     $HTMLOUT .= "<input name=\"submitme\" type=\"submit\" value=\"{$value[$i]}\" class=\"btn\" />";
     }
-    $HTMLOUT .= "</td></tr></table>";
     if (isset($returnto))
-    $HTMLOUT .= "<input type='hidden' name='returnto' value='" . htmlentities($returnto) . "' />\n";
+    $HTMLOUT .= "<input type='hidden' name='returnto' value='" . htmlsafechars($returnto) . "' />\n";
+    $HTMLOUT .= "</td></tr></table>";
     $HTMLOUT .= "</form>
     {$lang['login_signup']}{$lang['login_forgot']}";
      

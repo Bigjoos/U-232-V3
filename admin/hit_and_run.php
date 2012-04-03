@@ -70,7 +70,7 @@ if ($hit_and_run_arr['seeder'] !== 'yes')
 if ($hit_and_run_arr['userid'] !== $hit_and_run_arr['owner']){
 $ratio_site = member_ratio($hit_and_run_arr['up'], $hit_and_run_arr['down']);
 $ratio_torrent = member_ratio($hit_and_run_arr['uload'], $hit_and_run_arr['dload']);
-$avatar = ($CURUSER['avatars'] == 'yes' ? ($hit_and_run_arr['avatar'] == '' ? '<img src="pic/default_avatar.gif"  width="40" alt="default avatar" />' : '<img src="'.htmlspecialchars($hit_and_run_arr['avatar']).'" alt="avatar"  width="40" />') : '');
+$avatar = ($CURUSER['avatars'] == 'yes' ? ($hit_and_run_arr['avatar'] == '' ? '<img src="pic/default_avatar.gif"  width="40" alt="default avatar" />' : '<img src="'.htmlsafechars($hit_and_run_arr['avatar']).'" alt="avatar"  width="40" />') : '');
 $torrent_needed_seed_time = $hit_and_run_arr['seedtime'];
 //=== get times per class
 		switch (true)
@@ -116,7 +116,7 @@ $users['id'] = (int)$hit_and_run_arr['userid'];
 $HTMLOUT .= '<tr><td align="left">'.$avatar.'</td>
 			<td align="left"><a class="altlink" href="userdetails.php?id='.(int)$hit_and_run_arr['userid'].'&amp;completed=1#completed">'.format_username($users).'</a>  [ '.get_user_class_name($hit_and_run_arr['class']).' ]
 </td>
-			<td align="left"><a class="altlink" href="details.php?id='.(int)$hit_and_run_arr['torrentid'].'&amp;hit=1">'.htmlspecialchars($hit_and_run_arr['name']).'</a><br />
+			<td align="left"><a class="altlink" href="details.php?id='.(int)$hit_and_run_arr['torrentid'].'&amp;hit=1">'.htmlsafechars($hit_and_run_arr['name']).'</a><br />
 			Leechers: '.(int)$hit_and_run_arr['numleeching'].'<br />
 			Seeders: '.(int)$hit_and_run_arr['numseeding'].'
          </td>

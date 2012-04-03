@@ -16,17 +16,17 @@ session_start();
 dbconn();
 
    $lang = array_merge( load_language('global'), load_language('recover') );
-   
+   $stdhead = array(/** include js **/'js' => array('jquery','jquery.simpleCaptcha-0.2'));
    if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
     
     if(empty($captchaSelection) || $_SESSION['simpleCaptchaAnswer'] != $captchaSelection){
-        //header('Location: login.php');
+        header('Location: recover.php');
         //print_r($_POST);
         //print_r($_GET); exit;
         exit();
     }
-
+ 
     $email = trim($_POST["email"]);
     if (!validemail($email))
       stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_invalidemail']}");
@@ -35,7 +35,7 @@ dbconn();
 
     $sec = mksecret();
 
-    sql_query("UPDATE users SET editsecret=" . sqlesc($sec) . " WHERE id=" . $arr["id"]) or sqlerr(__FILE__, __LINE__);
+    sql_query("UPDATE users SET editsecret=".sqlesc($sec)." WHERE id=" . sqlesc($arr["id"])) or sqlerr(__FILE__, __LINE__);
     $mc1->begin_transaction('MyUser_'.$arr["id"]);
     $mc1->update_row(false, array('editsecret' => $sec));
     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -61,23 +61,23 @@ $body = sprintf($lang['email_request'], $email, $_SERVER["REMOTE_ADDR"], $INSTAL
     $md5 = $_GET["secret"];
 
     if (!$id)
-      httperr();
+	 die();
 
-    $res = sql_query("SELECT username, email, passhash, editsecret FROM users WHERE id = $id");
-    $arr = mysqli_fetch_assoc($res) or httperr();
+    $res = sql_query("SELECT username, email, passhash, editsecret FROM users WHERE id = ".sqlesc($id));
+    $arr = mysqli_fetch_assoc($res);
 
     $email = $arr["email"];
     $sec = $arr['editsecret'];
     
     if ($md5 != md5($sec . $email . $arr["passhash"] . $sec))
-      httperr();
+	 die();
 
     $newpassword = make_password();
     $sec = mksecret();
 
     $newpasshash = make_passhash( $sec, md5($newpassword) );
 
-    sql_query("UPDATE users SET secret=" . sqlesc($sec) . ", editsecret='', passhash=" . sqlesc($newpasshash) . " WHERE id=$id AND editsecret=" . sqlesc($arr["editsecret"])) or sqlerr(__FILE__, __LINE__);
+    sql_query("UPDATE users SET secret=" . sqlesc($sec) . ", editsecret='', passhash=" . sqlesc($newpasshash) . " WHERE id=".sqlesc($id)." AND editsecret=" . sqlesc($arr["editsecret"])) or sqlerr(__FILE__, __LINE__);
     $mc1->begin_transaction('MyUser_'.$id);
     $mc1->update_row(false, array('secret' => $sec, 'editsecret' => '', 'passhash' => $newpasshash));
     $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -99,21 +99,20 @@ $body = sprintf($lang['email_request'], $email, $_SERVER["REMOTE_ADDR"], $INSTAL
       
     $HTMLOUT = '';
     
-    $HTMLOUT .= "<script type='text/javascript' src='scripts/jquery.js'></script>
-      <script type='text/javascript' src='scripts/jquery.simpleCaptcha-0.2.js'></script>
-      <script type='text/javascript'>
-	    /*<![CDATA[*/
-	    $(document).ready(function () {
-	    $('#captcharecover').simpleCaptcha();
-      });
-      /*]]>*/
-      </script>
+    $HTMLOUT .= "<script type='text/javascript'>
+	  /*<![CDATA[*/
+	  $(document).ready(function () {
+	  $('#captcharec').simpleCaptcha();
+    });
+    /*]]>*/
+    </script>
+      
       <h1>{$lang['recover_unamepass']}</h1>
       <p>{$lang['recover_form']}</p>
       <form method='post' action='{$_SERVER['PHP_SELF']}'>
       <table border='1' cellspacing='0' cellpadding='10'>
       <tr>
-      <td align='left' class='rowhead' colspan='2' id='captcharecover'></td>
+      <td class='rowhead' colspan='2' id='captcharec'></td>
       </tr>
       <tr>
       <td class='rowhead'>{$lang['recover_regdemail']}</td>
@@ -124,7 +123,7 @@ $body = sprintf($lang['email_request'], $email, $_SERVER["REMOTE_ADDR"], $INSTAL
       </table>
       </form>";
 
-      echo stdhead($lang['head_recover']). $HTMLOUT . stdfoot();
+      echo stdhead($lang['head_recover'], true, $stdhead). $HTMLOUT . stdfoot();
     }
 
 ?>

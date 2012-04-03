@@ -80,8 +80,8 @@ class_check(UC_STAFF);
       while ($uper = mysqli_fetch_assoc($res))
       {
         $HTMLOUT .= "<tr>
-        <td><a href='userdetails.php?id=".$uper['id']."'><b>".$uper['name']."</b></a></td>
-        <td " . ($uper['last']?(">".get_date( $uper['last'],'')." (".get_date( $uper['last'],'',0,1).")"):"align='center'>---") . "</td>
+        <td><a href='userdetails.php?id=".(int)$uper['id']."'><b>".htmlsafechars($uper['name'])."</b></a></td>
+        <td ".($uper['last']?(">".get_date( $uper['last'],'')." (".get_date( $uper['last'],'',0,1).")"):"align='center'>---") . "</td>
         <td align='right'>{$uper['n_t']}</td>
         <td align='right'>" . ($n_tor > 0?number_format(100 * $uper['n_t']/$n_tor,1)."%":"---") . "</td>
         <td align='right'>" . $uper['n_p']."</td>
@@ -122,7 +122,7 @@ class_check(UC_STAFF);
       while ($cat = mysqli_fetch_assoc($res))
       {
         $HTMLOUT .= "<tr>
-        <td class='rowhead'>{$cat['name']}</td>
+        <td class='rowhead'>".htmlsafechars($cat['name'])."</td>
         <td " . ($cat['last']?(">".get_date( $cat['last'],'')." (".get_date( $cat['last'],'',0,1).")"):"align='center'>---") ."</td>
         <td align='right'>{$cat['n_t']}</td>
         <td align='right'>" . number_format(100 * $cat['n_t']/$n_tor,1) . "%</td>

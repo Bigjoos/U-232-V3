@@ -91,7 +91,7 @@ switch ($CURUSER['class'])
 //=== get action and check to see if it's ok...
 $returnto = isset($_GET['returnto']) ? $_GET['returnto'] : '/index.php';
 $possible_actions = array('view_mailbox', 'use_draft', 'new_draft', 'save_or_edit_draft','view_message','move','forward','forward_pm', 'edit_mailboxes','delete','search', 'move_or_delete_multi', 'send_message');      
-$action = (isset($_GET['action']) ? htmlspecialchars($_GET['action']) : (isset($_POST['action']) ? htmlspecialchars($_POST['action']) : 'view_mailbox'));
+$action = (isset($_GET['action']) ? htmlsafechars($_GET['action']) : (isset($_POST['action']) ? htmlsafechars($_POST['action']) : 'view_mailbox'));
 
         if (!in_array($action, $possible_actions)) 
             stderr('Error', 'A ruffian that will swear, drink, dance, revel the night, rob, murder and commit the oldest of ins the newest kind of ways.');
@@ -112,7 +112,7 @@ $action = (isset($_GET['action']) ? htmlspecialchars($_GET['action']) : (isset($
             
     //=== get orderby and check to see if it's ok...
     $good_order_by = array('username','added','subject','id');      
-    $order_by = (isset($_GET['order_by']) ? htmlspecialchars($_GET['order_by']) : 'added');
+    $order_by = (isset($_GET['order_by']) ? htmlsafechars($_GET['order_by']) : 'added');
 
         if (!in_array($order_by, $good_order_by)) 
             stderr('Error', 'Tempt not too much the hatred of my spirit, for I am sick when I do look on thee.');
@@ -128,7 +128,7 @@ $top_links = '<div style="text-align: center;">
     if (isset($_GET['change_pm_number']))
         {
         $change_pm_number = (isset($_GET['change_pm_number']) ? intval($_GET['change_pm_number']) : 20);
-        sql_query('UPDATE users SET pms_per_page = '.$change_pm_number.' WHERE id = '.$CURUSER['id']) or sqlerr(__FILE__,__LINE__);
+        sql_query('UPDATE users SET pms_per_page = '.sqlesc($change_pm_number).' WHERE id = '.sqlesc($CURUSER['id'])) or sqlerr(__FILE__,__LINE__);
                 $mc1->begin_transaction('user'.$CURUSER['id']);
                 $mc1->update_row(false, array('pms_per_page' => $change_pm_number));
                 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -146,7 +146,7 @@ $top_links = '<div style="text-align: center;">
     if (isset($_GET['show_pm_avatar']))
         {
             $show_pm_avatar = ($_GET['show_pm_avatar'] === 'yes' ? 'yes' : 'no');
-                sql_query('UPDATE users SET show_pm_avatar = '.sqlesc($show_pm_avatar).' WHERE id = '.$CURUSER['id']) or sqlerr(__FILE__,__LINE__);
+                sql_query('UPDATE users SET show_pm_avatar = '.sqlesc($show_pm_avatar).' WHERE id = '.sqlesc($CURUSER['id'])) or sqlerr(__FILE__,__LINE__);
                 $mc1->begin_transaction('user'.$CURUSER['id']);
                 $mc1->update_row(false, array('show_pm_avatar' => $show_pm_avatar));
                 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -234,11 +234,11 @@ function get_all_boxes()
             
     while ($row = mysqli_fetch_assoc($res))
     {
-    $get_all_boxes .= '<option class="body" value="'.(int)$row['boxnumber'].'">'.htmlspecialchars($row['name']).'</option>';
+    $get_all_boxes .= '<option class="body" value="'.(int)$row['boxnumber'].'">'.htmlsafechars($row['name']).'</option>';
     }
     $get_all_boxes .= '</select>';
     $mc1->cache_value('get_all_boxes'.$CURUSER['id'], $get_all_boxes, 86400);
-    return $get_all_boxes;
+    //return $get_all_boxes;
     }
     return $get_all_boxes;
     }
@@ -258,11 +258,11 @@ function insertJumpTo($mailbox)
 
      while ($row = mysqli_fetch_assoc($res))
      {
-     $insertJumpTo .= '<option class="body" value="pm_system.php?action=view_mailbox&amp;box='.(int)$row['boxnumber'].'" '.((int)$row['boxnumber'] == $mailbox ? 'selected="selected"' : '').'>'.htmlspecialchars($row['name']).'</option>';
+     $insertJumpTo .= '<option class="body" value="pm_system.php?action=view_mailbox&amp;box='.(int)$row['boxnumber'].'" '.((int)$row['boxnumber'] == $mailbox ? 'selected="selected"' : '').'>'.htmlsafechars($row['name']).'</option>';
      }
      $insertJumpTo .= '</select></form>';
      $mc1->cache_value('insertJumpTo'.$CURUSER['id'], $insertJumpTo, 86400);                 
-     return $insertJumpTo;
+     //return $insertJumpTo;
      }
      return $insertJumpTo;
      }

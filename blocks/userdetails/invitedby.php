@@ -3,7 +3,7 @@
     if ($user['invitedby'] > 0)
     {
     //=== Fetch inviter info
-    $res_get_invitor = sql_query('SELECT id, class, username, warned, suspended, enabled, donor, chatpost, leechwarn, pirate, king FROM users WHERE id='.$user['invitedby']) or sqlerr(__FILE__, __LINE__);
+    $res_get_invitor = sql_query('SELECT id, class, username, warned, suspended, enabled, donor, chatpost, leechwarn, pirate, king FROM users WHERE id='.sqlesc($user['invitedby'])) or sqlerr(__FILE__, __LINE__);
     $user_get_invitor = mysqli_fetch_assoc($res_get_invitor);
     $HTMLOUT .= '<tr><td class="rowhead">Invited&nbsp;By</td><td align="left">'.format_username($user_get_invitor).'</td></tr>';
     }
@@ -12,7 +12,7 @@
     $HTMLOUT .= '<tr><td class="rowhead">Invited&nbsp;By</td><td align="left"><b>Open Signups</b></td></tr>';
     }
     //=== members invites by snuggles
-    $rez_invited = sql_query('SELECT id, class, username, email, uploaded, downloaded, status, warned, suspended, enabled, donor, email, ip, chatpost, leechwarn, pirate, king FROM users WHERE invitedby = '.$user['id'].' ORDER BY added');
+    $rez_invited = sql_query('SELECT id, class, username, email, uploaded, downloaded, status, warned, suspended, enabled, donor, email, ip, chatpost, leechwarn, pirate, king FROM users WHERE invitedby = '.sqlesc($user['id']).' ORDER BY added');
     $inviteted_by_this_member = '';
     if(mysqli_num_rows($rez_invited) < 1)
 	  $inviteted_by_this_member .= 'No invitees yet.';
@@ -27,8 +27,8 @@
 		<td class="colhead"><b>Status</b></td></tr>';
 	  while($arr_invited = mysqli_fetch_assoc($rez_invited))
     {
-	  $inviteted_by_this_member .= '<tr><td>'.($arr_invited['status'] == 'pending' ? htmlspecialchars($arr_invited['username']) : format_username($arr_invited).'<br />'.$arr_invited['ip']).'</td>
-		<td>'.htmlspecialchars($arr_invited['email']).'</td>
+	  $inviteted_by_this_member .= '<tr><td>'.($arr_invited['status'] == 'pending' ? htmlsafechars($arr_invited['username']) : format_username($arr_invited).'<br />'.$arr_invited['ip']).'</td>
+		<td>'.htmlsafechars($arr_invited['email']).'</td>
 		<td>'.mksize($arr_invited['uploaded']).'</td>
 		<td>'.mksize($arr_invited['downloaded']).'</td>
 		<td>'.member_ratio($arr_invited['uploaded'], $arr_invited['downloaded']).'</td>

@@ -20,13 +20,13 @@ if (!defined('BUNNY_PM_SYSTEM'))
     if ($mailbox > 1)
         {
         //== get name of PM box if not in or out
-        $res_box_name = sql_query('SELECT name FROM pmboxes WHERE userid = '.$CURUSER['id'].' AND boxnumber='.$mailbox.' LIMIT 1') or sqlerr(__FILE__,__LINE__);
+        $res_box_name = sql_query('SELECT name FROM pmboxes WHERE userid = '.sqlesc($CURUSER['id']).' AND boxnumber='.sqlesc($mailbox).' LIMIT 1') or sqlerr(__FILE__,__LINE__);
         $arr_box_name = mysqli_fetch_row($res_box_name);
         
         if (mysqli_num_rows($res_box_name) === 0) 
                 stderr('Error','Invalid Mailbox');
                 
-        $mailbox_name = htmlspecialchars($arr_box_name[0]);
+        $mailbox_name = htmlsafechars($arr_box_name[0]);
 
             $other_box_info = '<p align="center"><span style="color: red;">***</span><span style="font-weight: bold;">please note:</span>
                                             you have a max of <span style="font-weight: bold;">'.$maxbox.'</span> PMs for all mail boxes that are not either 
@@ -36,9 +36,9 @@ if (!defined('BUNNY_PM_SYSTEM'))
 //==== get count from PM boxs & get image & % box full
     //=== get stuff for the pager
     $res_count = sql_query('SELECT COUNT(id) FROM messages WHERE '.
-                                            ($mailbox === PM_INBOX ? 'receiver = '.$CURUSER['id'].' AND location = 1' : 
-                                            ($mailbox === PM_SENTBOX ? 'sender = '.$CURUSER['id'].' AND (saved = \'yes\' || unread= \'yes\') AND draft = \'no\' ' : 
-                                            'receiver = '.$CURUSER['id'].' AND location = '.$mailbox))) or sqlerr(__FILE__,__LINE__);
+                                            ($mailbox === PM_INBOX ? 'receiver = '.sqlesc($CURUSER['id']).' AND location = 1' : 
+                                            ($mailbox === PM_SENTBOX ? 'sender = '.sqlesc($CURUSER['id']).' AND (saved = \'yes\' || unread= \'yes\') AND draft = \'no\' ' : 
+                                            'receiver = '.sqlesc($CURUSER['id'])).' AND location = '.sqlesc($mailbox))) or sqlerr(__FILE__,__LINE__);
     $arr_count = mysqli_fetch_row($res_count);
     $messages = $arr_count[0];
     
@@ -57,11 +57,11 @@ if (!defined('BUNNY_PM_SYSTEM'))
                             LEFT JOIN friends AS f ON f.userid = '.$CURUSER['id'].' AND f.friendid = m.sender
                             LEFT JOIN blocks AS b ON b.userid = '.$CURUSER['id'].' AND b.blockid = m.sender
                             WHERE '.($mailbox === PM_INBOX ? 'receiver = '.$CURUSER['id'].' AND location = 1' : 
-                            ($mailbox === PM_SENTBOX ? 'sender = '.$CURUSER['id'].' AND (saved = \'yes\' || unread= \'yes\') AND draft = \'no\' ' : 'receiver = '.$CURUSER['id'].' AND location = '.$mailbox)).' 
+                            ($mailbox === PM_SENTBOX ? 'sender = '.$CURUSER['id'].' AND (saved = \'yes\' || unread= \'yes\') AND draft = \'no\' ' : 'receiver = '.$CURUSER['id'].' AND location = '.sqlesc($mailbox))).' 
                             ORDER BY '.$order_by.(isset($_GET['ASC']) ? ' ASC ' : ' DESC ').$LIMIT) or sqlerr(__FILE__,__LINE__);
 
 //=== Start Page
-//echo stdhead(htmlspecialchars($mailbox_name)); 
+//echo stdhead(htmlsafechars($mailbox_name)); 
 
 //=== let's make the table
 $HTMLOUT .= $h1_thingie.$top_links.'
@@ -118,29 +118,29 @@ $HTMLOUT .= $h1_thingie.$top_links.'
                             else
                                 {
                               if ($row['friend'] > 0)
-                              $friends = ' [ <span class="font_size_1"><a href="friends.php?action=delete&amp;type=friend&amp;targetid='.$row['id'].'">remove from friends</a></span> ]';
+                              $friends = ' [ <span class="font_size_1"><a href="friends.php?action=delete&amp;type=friend&amp;targetid='.(int)$row['id'].'">remove from friends</a></span> ]';
                               elseif ($row['blocked'] > 0)
-                              $friends = ' [ <span class="font_size_1"><a href="friends.php?action=delete&amp;type=block&amp;targetid='.$row['id'].'">remove from blocks</a></span> ]';
+                              $friends = ' [ <span class="font_size_1"><a href="friends.php?action=delete&amp;type=block&amp;targetid='.(int)$row['id'].'">remove from blocks</a></span> ]';
                               else
-                              $friends = ' [ <span class="font_size_1"><a href="friends.php?action=add&amp;type=friend&amp;targetid='.$row['id'].'">add to friends</a></span> ] 
-                                           [ <span class="font_size_1"><a href="friends.php?action=add&amp;type=block&amp;targetid='.$row['id'].'">add to blocks</a></span> ]';
+                              $friends = ' [ <span class="font_size_1"><a href="friends.php?action=add&amp;type=friend&amp;targetid='.(int)$row['id'].'">add to friends</a></span> ] 
+                                           [ <span class="font_size_1"><a href="friends.php?action=add&amp;type=block&amp;targetid='.(int)$row['id'].'">add to blocks</a></span> ]';
                               }
 
-                $subject = (!empty($row['subject']) ? htmlspecialchars($row['subject']) : 'No Subject');
+                $subject = (!empty($row['subject']) ? htmlsafechars($row['subject']) : 'No Subject');
                 $who_sent_it = ($row['id'] == 0 ? '<span style="font-weight: bold;">System</span>' : print_user_stuff($row).$friends);
                 $read_unread = ($row['unread'] === 'yes' ? '<img src="pic/pn_inboxnew.gif" title="Unread Message" alt="Unread" />' : '<img src="pic/pn_inbox.gif" title="Read Message" alt="Read" />');
                 $extra = ($row['unread'] === 'yes' ? $spacer.'[ <span style="color: red;"> un-read</span> ]' : '').($row['urgent'] === 'yes' ? $spacer.'<span style="color: red;">URGENT!</span>' : '');
                 $avatar = (($CURUSER['avatars'] === 'no' || $CURUSER['show_pm_avatar'] === 'no' || $row['id'] == 0)? '' : (empty($row['avatar']) ? '
                 <img width="40" src="pic/default_avatar.gif" alt="no avatar" />' : (($row['offensive_avatar'] === 'yes' && $CURUSER['view_offensive_avatar'] === 'no') ? 
-                '<img width="40" src="pic/fuzzybunny.gif" alt="fuzzy!" />' : '<img width="40" src="'.htmlspecialchars($row['avatar']).'" alt="avatar" />')));
+                '<img width="40" src="pic/fuzzybunny.gif" alt="fuzzy!" />' : '<img width="40" src="'.htmlsafechars($row['avatar']).'" alt="avatar" />')));
 
                 $HTMLOUT .= '
                 <tr>
                     <td class="'.$class.'" align="center">'.$read_unread.'</td>
-                    <td class="'.$class.'" align="left"><a class="altlink"  href="pm_system.php?action=view_message&amp;id='.$row['message_id'].'">'.$subject.'</a>'.$extra.'</td>
+                    <td class="'.$class.'" align="left"><a class="altlink"  href="pm_system.php?action=view_message&amp;id='.(int)$row['message_id'].'">'.$subject.'</a>'.$extra.'</td>
                     <td class="'.$class.'" align="left">'.$avatar.$who_sent_it.'</td>
                     <td class="'.$class.'" align="left">'.get_date($row['added'], '').'</td>
-                    <td class="'.$class.'" align="center"><input type="checkbox" name="pm[]" value="'.$row['message_id'].'" /></td>
+                    <td class="'.$class.'" align="center"><input type="checkbox" name="pm[]" value="'.(int)$row['message_id'].'" /></td>
                 </tr>';
                 }
         }

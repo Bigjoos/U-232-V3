@@ -33,7 +33,7 @@ require_once(INCL_DIR.'user_functions.php');
 
 dbconn();
 
-    $res = sql_query("SELECT editsecret FROM users WHERE id = $id");
+    $res = sql_query("SELECT editsecret FROM users WHERE id =".sqlesc($id));
     $row = mysqli_fetch_assoc($res);
 
     if (!$row)
@@ -46,7 +46,7 @@ dbconn();
     if ($md5 != md5($sec . $email . $sec))
       stderr("{$lang['confirmmail_user_error']}", "{$lang['confirmmail_not_complete']}");
 
-   sql_query("UPDATE users SET editsecret='', email=" . sqlesc($email) . " WHERE id=$id AND editsecret=" . sqlesc($row["editsecret"]));
+   sql_query("UPDATE users SET editsecret='', email=" . sqlesc($email) . " WHERE id=".sqlesc($id)." AND editsecret=".sqlesc($row["editsecret"]));
    $mc1->begin_transaction('MyUser_'.$id);
    $mc1->update_row(false, array('editsecret' => '', 'email' => $email));
    $mc1->commit_transaction($INSTALLER09['expires']['curuser']);

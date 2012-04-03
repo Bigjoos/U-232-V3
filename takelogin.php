@@ -26,7 +26,7 @@ function failedloginscheck() {
    list($total) = mysqli_fetch_row($res);
    if ($total >= $INSTALLER09['failedlogins']) {
       sql_query("UPDATE failedlogins SET banned = 'yes' WHERE ip=$ip") or sqlerr(__FILE__, __LINE__);
-      stderr("Login Locked!", "You have been <b>Exceeded</b> the allowed maximum login attempts without successful login, therefore your ip address <b>(".htmlspecialchars($ip).")</b> has been locked for 24 hours.");
+      stderr("Login Locked!", "You have been <b>Exceeded</b> the allowed maximum login attempts without successful login, therefore your ip address <b>(".htmlsafechars($ip).")</b> has been locked for 24 hours.");
    }
 } // End
 
@@ -64,7 +64,7 @@ function bark($text = 'Username or password incorrect') {
     
 failedloginscheck ();
 
-$res = sql_query("SELECT id, ip, passhash, perms, ssluse, secret, enabled FROM users WHERE username = " . sqlesc($username) . " AND status = 'confirmed'");
+$res = sql_query("SELECT id, ip, passhash, perms, ssluse, secret, enabled, logout FROM users WHERE username = " . sqlesc($username) . " AND status = 'confirmed'");
 $row = mysqli_fetch_assoc($res);
 
 $ip_escaped = sqlesc(getip());
@@ -77,7 +77,6 @@ if (!$row) {
       sql_query("INSERT INTO failedlogins (ip, added, attempts) VALUES ($ip_escaped, $added, 1)") or sqlerr(__FILE__, __LINE__);
    else
       sql_query("UPDATE failedlogins SET attempts = attempts + 1 where ip=$ip_escaped") or sqlerr(__FILE__, __LINE__);
-
    bark();
 }
 if ($row['passhash'] != make_passhash($row['secret'], md5($password))) {
@@ -89,7 +88,7 @@ if ($row['passhash'] != make_passhash($row['secret'], md5($password))) {
 
    $to = ((int)$row["id"]);
    $subject="Failed login";
-   $msg = "[color=red]Security alert[/color]\n Account: ID=".$row['id']." Somebody (probably you, ".$username." !) tried to login but failed!". "\nTheir [b]Ip Address [/b] was : ". $ip . "\n If this wasn't you please report this event to a {$INSTALLER09['site_name']} staff member\n - Thank you.\n";
+   $msg = "[color=red]Security alert[/color]\n Account: ID=".(int)$row['id']." Somebody (probably you, ".htmlsafechars($username)." !) tried to login but failed!". "\nTheir [b]Ip Address [/b] was : ".htmlsafechars($ip)."\n If this wasn't you please report this event to a {$INSTALLER09['site_name']} staff member\n - Thank you.\n";
    $sql = "INSERT INTO messages (sender, receiver, msg, subject, added) VALUES('System', '$to', ". sqlesc($msg).", ". sqlesc($subject).", $added);";
    $res = sql_query($sql) or sqlerr(__FILE__, __LINE__);
    $mc1->delete_value('inbox_new_'.$row['id']);
@@ -113,16 +112,18 @@ if ($no_log_ip) {
 }
 
 if (!$no_log_ip) {
-   $res = sql_query("SELECT * FROM ips WHERE ip =$ip_escaped AND userid =$userid") or sqlerr(__FILE__,__LINE__);
+   $res = sql_query("SELECT * FROM ips WHERE ip=$ip_escaped AND userid =".sqlesc($userid)) or sqlerr(__FILE__,__LINE__);
    if (mysqli_num_rows($res) == 0 ) {
-      sql_query("INSERT INTO ips (userid, ip, lastlogin, type) VALUES ($userid, $ip_escaped , $added, 'Login')") or sqlerr(__FILE__,__LINE__);
+      sql_query("INSERT INTO ips (userid, ip, lastlogin, type) VALUES (".sqlesc($userid).", $ip_escaped , $added, 'Login')") or sqlerr(__FILE__,__LINE__);
       $mc1->delete_value('ip_history_'.$userid);
    }
    else {
-         sql_query("UPDATE ips SET lastlogin = $added WHERE ip=$ip_escaped AND userid = $userid") or sqlerr(__FILE__, __LINE__);
+         sql_query("UPDATE ips SET lastlogin=$added WHERE ip=$ip_escaped AND userid=".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
          $mc1->delete_value('ip_history_'.$userid);
    }
 } // End Ip logger
+
+
 
 $passh = md5($row["passhash"].$_SERVER["REMOTE_ADDR"]);
 logincookie($row["id"], $passh);
@@ -130,13 +131,18 @@ logincookie($row["id"], $passh);
 if (isset($_POST['use_ssl']) && $_POST['use_ssl'] == 1 && !isset($_SERVER['HTTPS']))
    $INSTALLER09['baseurl'] = str_replace('http','https',$INSTALLER09['baseurl']);
 
-$ssl_value = (isset($_POST['perm_ssl']) && $_POST['perm_ssl'] == 1 ? ', ssluse = 2' : ', ssluse = 1');
+$ssl_value = (isset($_POST['perm_ssl']) && $_POST['perm_ssl'] == 1 ? 'ssluse = 2' : 'ssluse = 1');
+
 $ssluse = ($row['ssluse'] == 2 ? 2 : 1);
 
+//if(isset($_POST['logout']) && $_POST['logout'] == "yes")
+//set_mycookie('logout', 'yes');
+//$duration = isset($_POST['logout']) ? 'yes' : 'no';
+//, logout='.sqlesc($duration).'//, 'logout' => $duration
 // output browser
 $ua=getBrowser();
 $browser= "Browser: ".$ua['name']." ".$ua['version'].". Os: ".$ua['platform'].". Agent : ".$ua['userAgent'];
-sql_query('UPDATE users SET browser='.sqlesc($browser).$ssl_value.', ip = '.$ip_escaped.', last_access='.TIME_NOW.', last_login='.TIME_NOW.' WHERE id='.$row['id']) or sqlerr(__FILE__,__LINE__);
+sql_query('UPDATE users SET browser='.sqlesc($browser).', '.$ssl_value.', ip = '.$ip_escaped.', last_access='.TIME_NOW.', last_login='.TIME_NOW.' WHERE id='.sqlesc($row['id'])) or sqlerr(__FILE__,__LINE__);
 $mc1->begin_transaction('MyUser_'.$row['id']);
 $mc1->update_row(false, array('browser' => $browser, 'ip' => $ip, 'ssluse' => $ssluse, 'last_access' => TIME_NOW, 'last_login' => TIME_NOW));
 $mc1->commit_transaction($INSTALLER09['expires']['curuser']);

@@ -33,7 +33,7 @@ $auther_error = $content = $count = $count2 = $edited_by = $row_count = $over_fo
 
 //=== get all the search stuff
 $search = (isset($_GET['search']) ? strip_tags(trim($_GET['search'])) : '');
-$auther = (isset($_GET['auther']) ? trim(htmlspecialchars($_GET['auther'])) : '');
+$auther = (isset($_GET['auther']) ? trim(htmlsafechars($_GET['auther'])) : '');
 $search_what = ((isset($_GET['search_what']) && $_GET['search_what'] === 'body') ? 'body' : ((isset($_GET['search_what']) && $_GET['search_what'] === 'title') ? 'title' : 'all')); 
 $search_when = (isset($_GET['search_when']) ? intval($_GET['search_when']) : 0);
 $sort_by = ((isset($_GET['sort_by']) && $_GET['sort_by'] === 'date')? 'date' : 'relevance'); 
@@ -204,35 +204,35 @@ if ($show_as === 'list')
 
 		if ($search_what === 'all' || $search_what === 'title')
 		{
-		$topic_title = highlightWords(htmlentities($arr['topic_title'], ENT_QUOTES), $search);
-		$topic_desc = highlightWords(htmlentities($arr['topic_desc'], ENT_QUOTES), $search);
-		$post_title = highlightWords(htmlentities($arr['post_title'], ENT_QUOTES), $search);
+		$topic_title = highlightWords(htmlsafechars($arr['topic_title'], ENT_QUOTES), $search);
+		$topic_desc = highlightWords(htmlsafechars($arr['topic_desc'], ENT_QUOTES), $search);
+		$post_title = highlightWords(htmlsafechars($arr['post_title'], ENT_QUOTES), $search);
 		}
 		else
 		{
-		$topic_title =htmlentities($arr['topic_title'], ENT_QUOTES);
-		$topic_desc = htmlentities($arr['topic_desc'], ENT_QUOTES);
-		$post_title = htmlentities($arr['post_title'], ENT_QUOTES);
+		$topic_title =htmlsafechars($arr['topic_title'], ENT_QUOTES);
+		$topic_desc = htmlsafechars($arr['topic_desc'], ENT_QUOTES);
+		$post_title = htmlsafechars($arr['post_title'], ENT_QUOTES);
 		}
 
 $body = format_comment($arr['body'],1,0);
 		$search_post = str_replace(' ', '+', $search);
 		
-		$post_id = $arr['post_id'];
-		$posts = $arr['post_count'];
+		$post_id = (int)$arr['post_id'];
+		$posts = (int)$arr['post_count'];
 		
         $post_text = tool_tip(' <img src="pic/forums/mg.gif" height="14" alt="Preview" title="Preview" />', $body, 'Post Preview');
 		$rpic = ($arr ['num_ratings'] != 0 ? ratingpic_forums(ROUND($arr ['rating_sum'] / $arr ['num_ratings'], 1)) :  ''); 
 		
 		$content .= '<tr>
 		<td class="'.$class.'" align="center"><img src="pic/forums/'.($posts < 30 ? ($arr['locked'] == 'yes' ? 'locked' : 'topic') : 'hot_topic').'.gif" alt="topic" title="topic" /></td>
-		<td class="'.$class.'" align="center">'.($arr['icon'] == '' ? '<img src="pic/forums/topic_normal.gif" alt="Topic" title="Topic" />' : '<img src="pic/smilies/'.htmlspecialchars($arr['icon']).'.gif" alt="'.htmlspecialchars($arr['icon']).'" title="'.htmlspecialchars($arr['icon']).'" />').'</td>
+		<td class="'.$class.'" align="center">'.($arr['icon'] == '' ? '<img src="pic/forums/topic_normal.gif" alt="Topic" title="Topic" />' : '<img src="pic/smilies/'.htmlsafechars($arr['icon']).'.gif" alt="'.htmlsafechars($arr['icon']).'" title="'.htmlsafechars($arr['icon']).'" />').'</td>
 		<td align="left" valign="middle" class="'.$class.'">
 		<table border="0" cellspacing="2" cellpadding="2">
 		<tr>
 		<td  class="'.$class.'" align="right"><span style="font-weight: bold;">Post: </span></td>
 		<td  class="'.$class.'" align="left">
-		<a class="altlink" href="forums.php?action=view_topic&amp;topic_id=15&amp;page=p'.$arr['post_id'].'&amp;search='.$search_post.'#'.$arr['post_id'].'" title="go to the post">'.($post_title == '' ? 'Link To Post' : $post_title).'</a></td>
+		<a class="altlink" href="forums.php?action=view_topic&amp;topic_id=15&amp;page=p'.(int)$arr['post_id'].'&amp;search='.$search_post.'#'.(int)$arr['post_id'].'" title="go to the post">'.($post_title == '' ? 'Link To Post' : $post_title).'</a></td>
 		<td class="'.$class.'" align="right"></td>
 		</tr>
 		<tr>
@@ -243,7 +243,7 @@ $body = format_comment($arr['body'],1,0);
 		<tr>
 		<td  class="'.$class.'" align="right"><span style="font-style: italic;">In topic: </span></td>
 		<td  class="'.$class.'" align="left"> '.($arr['sticky'] == 'yes' ? '<img src="pic/forums/pinned.gif" alt="Pinned" title="Pinned" />' : '').($arr['poll_id'] > 0 ? '<img src="pic/forums/poll.gif" alt="Poll" title="Poll" />' : '').'
-		<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$arr['topic_id'].'" title="go to topic">'.$topic_title.'</a>'.$post_text.'</td>
+		<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.(int)$arr['topic_id'].'" title="go to topic">'.$topic_title.'</a>'.$post_text.'</td>
 		<td class="'.$class.'" align="right"> '.$rpic.'</td>
 		</tr>
 		<tr>
@@ -254,8 +254,8 @@ $body = format_comment($arr['body'],1,0);
 		</table>
 		</td>
 		<td align="left" class="'.$class.'">
-		<a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$arr['forum_id'].'" title="go to forum">'.htmlentities($arr['forum_name'], ENT_QUOTES).'</a>
-		'.($arr['forum_desc'] != '' ? '<br />&#9658; <span style="font-size: x-small;">'.htmlentities($arr['forum_desc'], ENT_QUOTES).'</span>' : '').'</td>
+		<a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.(int)$arr['forum_id'].'" title="go to forum">'.htmlsafechars($arr['forum_name'], ENT_QUOTES).'</a>
+		'.($arr['forum_desc'] != '' ? '<br />&#9658; <span style="font-size: x-small;">'.htmlsafechars($arr['forum_desc'], ENT_QUOTES).'</span>' : '').'</td>
 		<td align="center" class="'.$class.'">'.ROUND($arr['relevance'], 3).'</td>
 		<td align="center" class="'.$class.'">'.number_format($posts - 1).'</td>
 		<td align="center" class="'.$class.'">'.number_format($arr['views']).'</td>
@@ -294,49 +294,49 @@ if ($show_as === 'posts')
 		$class = ($count2 == 0 ? 'one' : 'two');
 		$class_alt = ($count2 == 0 ? 'two' : 'one');
 		
-		$post_title = ($arr['post_title'] != '' ? ' <span style="font-weight: bold; font-size: x-small;">'.htmlentities($arr['post_title'], ENT_QUOTES).'</span>' : 'Link to Post');
+		$post_title = ($arr['post_title'] != '' ? ' <span style="font-weight: bold; font-size: x-small;">'.htmlsafechars($arr['post_title'], ENT_QUOTES).'</span>' : 'Link to Post');
 
 		if ($search_what === 'all' || $search_what === 'title')
 		{
-		$topic_title = highlightWords(htmlentities($arr['topic_title'], ENT_QUOTES), $search);
-		$topic_desc = highlightWords(htmlentities($arr['topic_desc'], ENT_QUOTES), $search);
+		$topic_title = highlightWords(htmlsafechars($arr['topic_title'], ENT_QUOTES), $search);
+		$topic_desc = highlightWords(htmlsafechars($arr['topic_desc'], ENT_QUOTES), $search);
 		$post_title = highlightWords($post_title, $search);
 		}
 		else
 		{
-		$topic_title =htmlentities($arr['topic_title'], ENT_QUOTES);
-		$topic_desc = htmlentities($arr['topic_desc'], ENT_QUOTES);
+		$topic_title =htmlsafechars($arr['topic_title'], ENT_QUOTES);
+		$topic_desc = htmlsafechars($arr['topic_desc'], ENT_QUOTES);
 		}
 		
-		$post_id = $arr['post_id'];
-		$posts = $arr['post_count'];
+		$post_id = (int)$arr['post_id'];
+		$posts = (int)$arr['post_count'];
 		
 		
-		$post_icon = ($arr['icon'] != '' ? '<img src="pic/smilies/'.htmlspecialchars($arr['icon']).'.gif" alt="icon" title="icon" /> ' : '<img src="pic/forums/topic_normal.gif" alt="icon" alt="Normal Topic" /> ');
+		$post_icon = ($arr['icon'] != '' ? '<img src="pic/smilies/'.htmlsafechars($arr['icon']).'.gif" alt="icon" title="icon" /> ' : '<img src="pic/forums/topic_normal.gif" alt="icon" alt="Normal Topic" /> ');
 		
 		$edited_by = '';
 		if ($arr['edit_date'] > 0)
 		{
-		$res_edited = sql_query('SELECT username FROM users WHERE id='.$arr['edited_by']);
+		$res_edited = sql_query('SELECT username FROM users WHERE id='.sqlesc($arr['edited_by']));
 		$arr_edited = mysqli_fetch_assoc($res_edited);
 		
-		$edited_by = '<br /><br /><br /><span style="font-weight: bold; font-size: x-small;">Last edited by <a class="altlink" href="member_details.php?id='.$arr['edited_by'].'">'.htmlspecialchars($arr_edited['username']).'</a>
-				 at '.get_date($arr['edit_date'],'').' GMT '.($arr['edit_reason'] != '' ? ' </span>[ Reason: '.htmlspecialchars($arr['edit_reason']).' ] <span style="font-weight: bold; font-size: x-small;">' : '');
+		$edited_by = '<br /><br /><br /><span style="font-weight: bold; font-size: x-small;">Last edited by <a class="altlink" href="member_details.php?id='.(int)$arr['edited_by'].'">'.htmlsafechars($arr_edited['username']).'</a>
+				 at '.get_date($arr['edit_date'],'').' GMT '.($arr['edit_reason'] != '' ? ' </span>[ Reason: '.htmlsafechars($arr['edit_reason']).' ] <span style="font-weight: bold; font-size: x-small;">' : '');
 		}
 		
 		$body = ($arr['bbcode'] == 'yes' ? highlightWords(format_comment($arr['body']), $search) : highlightWords(format_comment_no_bbcode($arr['body']), $search));
 		$search_post = str_replace(' ', '+', $search);
 		
 			$content .='<tr><td class="forum_head_dark" colspan="3" align="left">in: 
-			<a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$arr['forum_id'].'" title="Link to Forum">
-			<span style="color: white;font-weight: bold;">'.htmlentities($arr['forum_name'], ENT_QUOTES).'</span></a> in: 
-			<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$arr['topic_id'].'" title="Link to topic"><span style="color: white;font-weight: bold;">
+			<a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.(int)$arr['forum_id'].'" title="Link to Forum">
+			<span style="color: white;font-weight: bold;">'.htmlsafechars($arr['forum_name'], ENT_QUOTES).'</span></a> in: 
+			<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.(int)$arr['topic_id'].'" title="Link to topic"><span style="color: white;font-weight: bold;">
 			'.$topic_title.'</a></span></td></tr>
 			<tr><td class="forum_head" align="left" width="100" valign="middle"><a name="'.$post_id.'"></a>
 			<span style="font-weight: bold;">Relevance: '.ROUND($arr['relevance'], 3).'</span></td>
 			<td class="forum_head" align="left" valign="middle">
 			<span style="white-space:nowrap;">'.$post_icon.'
-			<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$arr['topic_id'].'&amp;page='.$page.'#'.$arr['post_id'].'" title="Link to Post">'.$post_title.'</a>&nbsp;&nbsp;&nbsp;&nbsp; posted on: '.get_date($arr['added'],'').' ['.get_date($arr['added'],'',0,1).']</span></td>
+			<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$arr['topic_id'].'&amp;page='.$page.'#'.(int)$arr['post_id'].'" title="Link to Post">'.$post_title.'</a>&nbsp;&nbsp;&nbsp;&nbsp; posted on: '.get_date($arr['added'],'').' ['.get_date($arr['added'],'',0,1).']</span></td>
 			<td class="forum_head" align="right" valign="middle"><span style="white-space:nowrap;"> 
 			 <a href="forums.php?action=view_my_posts&amp;page='.$page.'#top"><img src="pic/forums/up.gif" alt="top" title="Top"/></a> 
 			 <a href="forums.php?action=view_my_posts&amp;page='.$page.'#bottom"><img src="pic/forums/down.gif" alt="bottom" title="Bottom" /></a> 
@@ -344,7 +344,7 @@ if ($show_as === 'posts')
 			</tr>	
 			
 			<tr><td class="'.$class_alt.'" align="center" width="100px" valign="top">'.avatar_stuff($arr).'<br />
-			'.print_user_stuff($arr).($arr['title'] == '' ? '' : '<br /><span style=" font-size: xx-small;">['.htmlspecialchars($arr['title']).']</span>').'<br />
+			'.print_user_stuff($arr).($arr['title'] == '' ? '' : '<br /><span style=" font-size: xx-small;">['.htmlsafechars($arr['title']).']</span>').'<br />
 			<span style="font-weight: bold;">'.get_user_class_name($arr['class']).'</span><br />
 			</td>
 			<td class="'.$class.'" align="left" valign="top" colspan="2">'.$body.$edited_by.'</td></tr>
@@ -403,7 +403,7 @@ ORDER BY o_f.sort, f.sort ASC');
 			}
 			
 			$search_in_forums .= ($arr_forums['over_forum_id'] != $over_forum_id ? '<tr>
-			<td align="left" class="forum_head_dark" colspan="3"><span style="color: white;">'.htmlentities($arr_forums['over_forum_name'], ENT_QUOTES).'</span></td>
+			<td align="left" class="forum_head_dark" colspan="3"><span style="color: white;">'.htmlsafechars($arr_forums['over_forum_name'], ENT_QUOTES).'</span></td>
 			</tr>' : '');
  
 		if ($arr_forums['forum_id'] === $arr_forums['over_forum_id'])
@@ -414,7 +414,7 @@ ORDER BY o_f.sort, f.sort ASC');
 			++$row_count;
 			$search_in_forums .= '<tr><td class="one" align="left">
 			<input name="f'.$arr_forums['real_forum_id'].'" type="checkbox" '.($selected_forums ? 'checked="checked"' : '').' value="1" />
-			<a href="forums.php?action=view_forum&amp;forum_id='.$arr_forums['real_forum_id'].'" class="altlink" title="'.htmlentities($arr_forums['description'], ENT_QUOTES).'">'.htmlentities($arr_forums['name'], ENT_QUOTES).'</a></td></tr> '.($row_count == 3 ? '</td></tr>' : '');
+			<a href="forums.php?action=view_forum&amp;forum_id='.$arr_forums['real_forum_id'].'" class="altlink" title="'.htmlsafechars($arr_forums['description'], ENT_QUOTES).'">'.htmlsafechars($arr_forums['name'], ENT_QUOTES).'</a></td></tr> '.($row_count == 3 ? '</td></tr>' : '');
 		}
 		$over_forum_id = $arr_forums['over_forum_id'];
 		}
@@ -443,7 +443,7 @@ $search_in_forums .= '<tr>
 			
 			$search_in_forums .= ($arr_forums['over_forum_id'] != $over_forum_id ? 
 			'<tr>
-			<td align="left" class="forum_head_dark" colspan="3"><span style="color: white;">'.htmlentities($arr_forums['over_forum_name'], ENT_QUOTES).'</span></td>
+			<td align="left" class="forum_head_dark" colspan="3"><span style="color: white;">'.htmlsafechars($arr_forums['over_forum_name'], ENT_QUOTES).'</span></td>
 			</tr>' : '');
 			
 		if ($arr_forums['forum_id'] == $arr_forums['over_forum_id'])
@@ -455,7 +455,7 @@ $search_in_forums .= '<tr>
 			
 			$search_in_forums .= '<td class="one" align="left">
 			<input name="f'.$arr_forums['real_forum_id'].'" type="checkbox" '.(in_array($arr_forums['real_forum_id'], $selected_forums) ? 'checked="checked"' : '').' value="1" />
-			<a href="forums.php?action=view_forum&amp;forum_id='.$arr_forums['real_forum_id'].'" class="altlink" title="'.htmlentities($arr_forums['description'], ENT_QUOTES).'">'.htmlentities($arr_forums['name'], ENT_QUOTES).'</a> '.($row_count == 3 ? '</tr>' : '');
+			<a href="forums.php?action=view_forum&amp;forum_id='.$arr_forums['real_forum_id'].'" class="altlink" title="'.htmlsafechars($arr_forums['description'], ENT_QUOTES).'">'.htmlsafechars($arr_forums['name'], ENT_QUOTES).'</a> '.($row_count == 3 ? '</tr>' : '');
 		}
 		$over_forum_id = $arr_forums['over_forum_id'];
 		}
@@ -517,7 +517,7 @@ $sort_by_drop_down = '<select name="sort_by">
 		<td class="three" align="right" width="60px" valign="middle">
 		<span style="font-weight: bold;white-space:nowrap;">Search Terms:</span></td>
 		<td class="three" align="left">
-		<input type="text" class="search" name="search" value="'.htmlspecialchars($search).'" /> 	
+		<input type="text" class="search" name="search" value="'.htmlsafechars($search).'" /> 	
 		<span style="text-align: right;">
 		<a class="altlink"  title="Open Boolean Search Help"  id="help_open" style="font-weight:bold;cursor:help;"><img src="pic/forums/more.gif" alt="+" title="+" width="18" /> Open Boolean Search Help</a> 
 		<a class="altlink"  title="Close Boolean Search Help"  id="help_close" style="font-weight:bold;cursor:pointer;display:none"><img src="pic/forums/less.gif" alt="-" title="-" width="18" /> Close Boolean Search Help</a> <br />

@@ -3,7 +3,7 @@
     if  ($user['paranoia'] < 1 || $CURUSER['id'] == $id || $CURUSER['class'] >= UC_STAFF) 
     {
     if(($port_data = $mc1->get_value('port_data_'.$id)) === false) {
-    $q1 = sql_query('SELECT connectable, port,agent FROM peers WHERE userid = '.$id.' LIMIT 1') or sqlerr(__FILE__,__LINE__);
+    $q1 = sql_query('SELECT connectable, port,agent FROM peers WHERE userid = '.sqlesc($id).' LIMIT 1') or sqlerr(__FILE__,__LINE__);
     $port_data = mysqli_fetch_row($q1);
     $mc1->cache_value('port_data_'.$id, $port_data, $INSTALLER09['expires']['port_data']);
     }
@@ -21,8 +21,8 @@
     }
     $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_connectable']}</td><td align='left'>".$connectable."</td></tr>";
     if (!empty($port))
-    $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_port']}</td><td class='tablea' align='left'>".htmlentities($port)."</td></tr>
-    <tr><td class='rowhead'>{$lang['userdetails_client']}</td><td class='tablea' align='left'>".htmlentities($agent)."</td></tr>";
+    $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_port']}</td><td class='tablea' align='left'>".htmlsafechars($port)."</td></tr>
+    <tr><td class='rowhead'>{$lang['userdetails_client']}</td><td class='tablea' align='left'>".htmlsafechars($agent)."</td></tr>";
     }
 //==End
 // End Class

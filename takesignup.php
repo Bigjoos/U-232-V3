@@ -78,7 +78,7 @@ dbconn();
     stderr($lang['takesignup_user_error'], $lang['takesignup_blank']);
 
     if(!blacklist($wantusername))
-    stderr($lang['takesignup_user_error'],sprintf($lang['takesignup_badusername'],htmlspecialchars($wantusername)));
+    stderr($lang['takesignup_user_error'],sprintf($lang['takesignup_badusername'],htmlsafechars($wantusername)));
 
     if ($wantpassword != $passagain)
       stderr($lang['takesignup_user_error'], $lang['takesignup_nomatch']);
@@ -114,13 +114,13 @@ dbconn();
     stderr($lang['takesignup_failed'], $lang['takesignup_qualify']);
 
     // check if email addy is already in use
-    $a = (mysqli_fetch_row(sql_query("SELECT COUNT(*) FROM users WHERE email='$email'"))) or sqlerr(__FILE__, __LINE__);
+    $a = (mysqli_fetch_row(sql_query("SELECT COUNT(id) FROM users WHERE email=".sqlesc($email)))) or sqlerr(__FILE__, __LINE__);
     if ($a[0] != 0)
     stderr($lang['takesignup_user_error'], $lang['takesignup_email_used']);
     //=== check if ip addy is already in use
-    $c = (mysqli_fetch_row(sql_query("SELECT COUNT(*) FROM users WHERE ip='" . $_SERVER['REMOTE_ADDR'] . "'"))) or sqlerr(__FILE__, __LINE__);
+    $c = (mysqli_fetch_row(sql_query("SELECT COUNT(id) FROM users WHERE ip=".sqlesc($_SERVER['REMOTE_ADDR'])))) or sqlerr(__FILE__, __LINE__);
     if ($c[0] != 0)
-    stderr("Error", "The ip " . $_SERVER['REMOTE_ADDR'] . " is already in use. We only allow one account per ip address.");
+    stderr("Error", "The ip ".htmlsafechars($_SERVER['REMOTE_ADDR'])." is already in use. We only allow one account per ip address.");
   
     // TIMEZONE STUFF
     if(isset($_POST["user_timezone"]) && preg_match('#^\-?\d{1,2}(?:\.\d{1,2})?$#', $_POST['user_timezone']))
@@ -138,14 +138,14 @@ dbconn();
     $wantpasshash = make_passhash( $secret, md5($wantpassword) );
     $editsecret = ( !$arr[0] ? "" : make_passhash_login_key() );
     $wanthintanswer = md5($hintanswer);
-    
+    $user_frees = (TIME_NOW + 14 * 86400);
     //$ip = getip();
     
-    $ret = sql_query("INSERT INTO users (username, passhash, secret, editsecret, birthday, passhint, hintanswer, email, status, ". (!$arr[0]?"class, ":"") ."added, last_access, time_offset, dst_in_use) VALUES (" .
+    $ret = sql_query("INSERT INTO users (username, passhash, secret, editsecret, birthday, passhint, hintanswer, email, status, ". (!$arr[0]?"class, ":"") ."added, last_access, time_offset, dst_in_use, free_switch) VALUES (" .
 		implode(",", array_map("sqlesc", array($wantusername, $wantpasshash, $secret, $editsecret, $birthday, $passhint, $wanthintanswer, $email, (!$arr[0]?'confirmed':'pending')))).
-		", ". (!$arr[0]?UC_SYSOP.", ":""). "". TIME_NOW ." ,". TIME_NOW ." , $time_offset, {$dst_in_use['tm_isdst']})");
+		", ". (!$arr[0]?UC_SYSOP.", ":""). "".TIME_NOW.",".TIME_NOW." , $time_offset, {$dst_in_use['tm_isdst']}, $user_frees)");
     $mc1->delete_value('birthdayusers');
-    $message = "Welcome New {$INSTALLER09['site_name']} Member : - " . htmlspecialchars($wantusername) . "";
+    $message = "Welcome New {$INSTALLER09['site_name']} Member : - " . htmlsafechars($wantusername) . "";
    
     if (!$ret) 
     {
@@ -153,17 +153,13 @@ dbconn();
         stderr($lang['takesignup_user_error'], $lang['takesignup_user_exists']);
       stderr($lang['takesignup_user_error'], $lang['takesignup_fatal_error']);
     }
-
     $id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
-    
     //==New member pm
     $added = TIME_NOW;
     $subject = sqlesc("Welcome");
-    $msg = sqlesc("Hey there {$wantusername} ! Welcome to {$INSTALLER09['site_name']} ! :clap2: \n\n Please ensure your connectable before downloading or uploading any torrents\n - If your unsure then please use the forum and Faq or pm admin onsite.\n\ncheers {$INSTALLER09['site_name']} staff.\n");
+    $msg = sqlesc("Hey there ".htmlsafechars($wantusername)." ! Welcome to {$INSTALLER09['site_name']} ! :clap2: \n\n Please ensure your connectable before downloading or uploading any torrents\n - If your unsure then please use the forum and Faq or pm admin onsite.\n\ncheers {$INSTALLER09['site_name']} staff.\n");
     sql_query("INSERT INTO messages (sender, subject, receiver, msg, added) VALUES (0, $subject, $id, $msg, $added)") or sqlerr(__FILE__, __LINE__);
-    
     //==End new member pm
-    
     $latestuser_cache['id'] =  (int)$id;
     $latestuser_cache['username'] = $wantusername;
     $latestuser_cache['class'] =  '0';
@@ -176,7 +172,7 @@ dbconn();
     $latestuser_cache['king'] =  '0';
     /** OOP **/
     $mc1->cache_value('latestuser', $latestuser_cache, $INSTALLER09['expires']['latestuser']);
-    write_log("User account $id ($wantusername) was created");
+    write_log("User account ".(int)$id." (".htmlsafechars($wantusername).") was created");
 
     $psecret = $editsecret; 
     if($INSTALLER09['autoshout_on'] == 1){

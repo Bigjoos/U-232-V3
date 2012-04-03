@@ -17,7 +17,7 @@ stderr("No Permision", "system file");
 $id = (int)$_GET['id'];
 if (!is_valid_id($id))
 die();
-$action = isset($_GET['action']) ? htmlspecialchars($_GET['action']) : '';
+$action = isset($_GET['action']) ? htmlsafechars($_GET['action']) : '';
 $res = sql_query("SELECT hash1, username, passhash FROM users WHERE id = ".sqlesc($id)." AND class >= ".UC_STAFF) or sqlerr(__FILE__, __LINE__);
 $arr = mysqli_fetch_assoc($res);
    $hash1 = md5($arr['username'].TIME_NOW.$arr['passhash']);

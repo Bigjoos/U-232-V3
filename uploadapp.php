@@ -16,7 +16,7 @@ $HTMLOUT = '';
 
 // Fill in application
 if (isset($_POST["form"]) != "1") {
-    $res = sql_query("SELECT status FROM uploadapp WHERE userid = ".sqlesc($CURUSER['id'])."") or sqlerr(__FILE__, __LINE__);
+    $res = sql_query("SELECT status FROM uploadapp WHERE userid = ".sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
     $arr = mysqli_fetch_assoc($res);
     if ($CURUSER['class'] >= UC_UPLOADER)
         stderr($lang['uploadapp_user_error'], $lang['uploadapp_alreadyup']);
@@ -30,7 +30,7 @@ if (isset($_POST["form"]) != "1") {
         <form action='./uploadapp.php' method='post' enctype='multipart/form-data'>
         <table border='1' cellspacing='0' cellpadding='5' align='center'>";
         $ratio = member_ratio($CURUSER['uploaded'], $CURUSER['downloaded']);
-        $res = sql_query("SELECT connectable FROM peers WHERE userid=".sqlesc($CURUSER['id'])."")or sqlerr(__FILE__, __LINE__);
+        $res = sql_query("SELECT connectable FROM peers WHERE userid=".sqlesc($CURUSER['id']))or sqlerr(__FILE__, __LINE__);
         if ($row = mysqli_fetch_row($res)) {
             $connect = $row[0];
             if ($connect == 'yes')
@@ -38,10 +38,11 @@ if (isset($_POST["form"]) != "1") {
             else
                 $connectable = 'No';
         } else
-            $connectable = 'Pending';                                                                                            
+            $connectable = 'Pending'; 
+                                                                                           
         $HTMLOUT .="<tr>
         <td class='rowhead'>{$lang['uploadapp_username']}</td>
-        <td><input name='userid' type='hidden' value='".(int)$CURUSER['id'] ."' />".$CURUSER['username'] ."</td>
+        <td><input name='userid' type='hidden' value='".(int)$CURUSER['id']."' />".$CURUSER['username']."</td>
         </tr>
         <tr>
         <td class='rowhead'>{$lang['uploadapp_joined']}</td><td>".get_date($CURUSER['added'], '', 0, 1) ."</td>
@@ -94,15 +95,15 @@ if (isset($_POST["form"]) != "1") {
     // Process application
     } else {
     $app['userid'] = (int) $_POST['userid'];
-    $app['connectable'] = htmlentities($_POST['connectable']);
-    $app['speed'] = htmlentities($_POST['speed']);
-    $app['offer'] = htmlentities($_POST['offer']);
-    $app['reason'] = htmlentities($_POST['reason']);
-    $app['sites'] = htmlentities($_POST['sites']);
-    $app['sitenames'] = htmlentities($_POST['sitenames']);
-    $app['scene'] = htmlentities($_POST['scene']);
-    $app['creating'] = htmlentities($_POST['creating']);
-    $app['seeding'] = htmlentities($_POST['seeding']);
+    $app['connectable'] = htmlsafechars($_POST['connectable']);
+    $app['speed'] = htmlsafechars($_POST['speed']);
+    $app['offer'] = htmlsafechars($_POST['offer']);
+    $app['reason'] = htmlsafechars($_POST['reason']);
+    $app['sites'] = htmlsafechars($_POST['sites']);
+    $app['sitenames'] = htmlsafechars($_POST['sitenames']);
+    $app['scene'] = htmlsafechars($_POST['scene']);
+    $app['creating'] = htmlsafechars($_POST['creating']);
+    $app['seeding'] = htmlsafechars($_POST['seeding']);
 
     if (!is_valid_id($app['userid']))
         stderr($lang['uploadapp_error'], $lang['uploadapp_tryagain']);
@@ -124,7 +125,7 @@ if (isset($_POST["form"]) != "1") {
             stderr($lang['uploadapp_error'], $lang['uploadapp_tryagain']);
     } else {
         $subject = sqlesc("Uploader application");
-        $msg = sqlesc("An uploader application has just been filled in by [url={$INSTALLER09['baseurl']}/userdetails.php?id=$CURUSER[id]][b]$CURUSER[username][/b][/url]. Click [url={$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps&action=show][b]Here[/b][/url] to go to the uploader applications page.");
+        $msg = sqlesc("An uploader application has just been filled in by [url={$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$CURUSER['id']."][b]{$CURUSER['username']}[/b][/url]. Click [url={$INSTALLER09['baseurl']}/staffpanel.php?tool=uploadapps&action=show][b]Here[/b][/url] to go to the uploader applications page.");
         $dt = TIME_NOW;
         $subres = sql_query('SELECT id FROM users WHERE class = '.UC_STAFF) or sqlerr(__FILE__, __LINE__);
         while ($arr = mysqli_fetch_assoc($subres))

@@ -56,7 +56,7 @@ if ($action == 'read_announce')
 
  	$HTMLOUT.="<table width='100%' border='0' cellpadding='4' cellspacing='0'>
  	<tr>
- 	<td width='50%' bgcolor='orange'>Subject: <b>".htmlspecialchars($subject)."</b></td>
+ 	<td width='50%' bgcolor='orange'>Subject: <b>".htmlsafechars($subject)."</b></td>
  	</tr>
  	<tr>
  	<td colspan='2' bgcolor='#333333'>".format_comment($body)."</td>
@@ -75,7 +75,7 @@ $HTMLOUT.="<table align='center' width='30%' border='0' cellpadding='4' cellspac
 </tr>";
 
 foreach($ann_list AS $x)
-$HTMLOUT .="<tr><td align='center'><a href='?action=read_announce&amp;id=".$x[0]."'>".htmlspecialchars($x[1])."</a></td></tr>\n";
+$HTMLOUT .="<tr><td align='center'><a href='?action=read_announce&amp;id=".$x[0]."'>".htmlsafechars($x[1])."</a></td></tr>\n";
 $HTMLOUT.="</table>";
 $HTMLOUT.="</td></tr></table>";
 echo stdhead('Announcement History') . $HTMLOUT . stdfoot();

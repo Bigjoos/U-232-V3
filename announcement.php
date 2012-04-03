@@ -15,7 +15,7 @@ $HTMLOUT='';
 $lang = array_merge( load_language('global'), load_language('index') );
 
 $dt = TIME_NOW;
-$res = sql_query("SELECT u.id, u.curr_ann_id, u.curr_ann_last_check, u.last_access, ann_main.subject AS curr_ann_subject, ann_main.body AS curr_ann_body " . " FROM users AS u " . " LEFT JOIN announcement_main AS ann_main " . " ON ann_main.main_id = u.curr_ann_id " . " WHERE u.id = {$CURUSER['id']} AND u.enabled='yes' AND u.status = 'confirmed'") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT u.id, u.curr_ann_id, u.curr_ann_last_check, u.last_access, ann_main.subject AS curr_ann_subject, ann_main.body AS curr_ann_body " . " FROM users AS u " . " LEFT JOIN announcement_main AS ann_main " . " ON ann_main.main_id = u.curr_ann_id " . " WHERE u.id = ".sqlesc($CURUSER['id'])." AND u.enabled='yes' AND u.status = 'confirmed'") or sqlerr(__FILE__, __LINE__);
 
 $row = mysqli_fetch_assoc($res);
 
@@ -59,7 +59,7 @@ $row['curr_ann_last_check'] == 0;
 
     if (mysqli_num_rows($result))
     { // Announcement valid for member
-    $row['curr_ann_id'] = $ann_row['main_id'];
+    $row['curr_ann_id'] = (int)$ann_row['main_id'];
 
     // Create two row elements to hold announcement subject and body.
     $row['curr_ann_subject'] = $ann_row['subject'];
@@ -135,7 +135,7 @@ $row['curr_ann_last_check'] == 0;
     <div class='headbody'>
     <table width='100%' border='1' cellspacing='0' cellpadding='5'>
     <tr><td bgcolor='transparent'><b><font color='red'>Announcement&nbsp;: 
-    ".htmlspecialchars($ann_subject)."</font></b></td></tr>
+    ".htmlsafechars($ann_subject)."</font></b></td></tr>
     <tr><td style='padding: 10px; background:#333333'>
     ".format_comment($ann_body)."
     <br /><hr /><br />

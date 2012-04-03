@@ -1,6 +1,6 @@
 <?php
     //== Best film of the week
-        $categorie = genrelist();
+    $categorie = genrelist();
 foreach($categorie as $key => $value)
 $change[$value['id']] = array('id' => $value['id'], 'name'  => $value['name'], 'image' => $value['image']);
 if(($motw_cached = $mc1->get_value('top_movie_2')) === false) {
@@ -23,10 +23,10 @@ $HTMLOUT .= "<div class='headline'>
 if ($motw_cached)
 {
 foreach($motw_cached as $m_w) {
-$mw['cat_name'] = htmlspecialchars($change[$m_w['category']]['name']);
-$mw['cat_pic'] = htmlspecialchars($change[$m_w['category']]['image']);
-$HTMLOUT .= "<tr><td align='center'><img border='0' src='pic/caticons/{$CURUSER['categorie_icon']}/".htmlentities($mw["cat_pic"])."' alt='".htmlentities($mw["cat_name"])."' title='".htmlentities($mw["cat_name"])."' /></td>
-    <td style='padding-right: 5px'><a href='{$INSTALLER09['baseurl']}/details.php?id=".(int)$m_w["id"]."'><b>".htmlentities($m_w["name"])."</b></a></td>
+$mw['cat_name'] = htmlsafechars($change[$m_w['category']]['name']);
+$mw['cat_pic'] = htmlsafechars($change[$m_w['category']]['image']);
+$HTMLOUT .= "<tr><td align='center'><img border='0' src='pic/caticons/{$CURUSER['categorie_icon']}/".htmlsafechars($mw["cat_pic"])."' alt='".htmlsafechars($mw["cat_name"])."' title='".htmlsafechars($mw["cat_name"])."' /></td>
+    <td style='padding-right: 5px'><a href='{$INSTALLER09['baseurl']}/details.php?id=".(int)$m_w["id"]."'><b>".htmlsafechars($m_w["name"])."</b></a></td>
     <td align='left'>".(int)$m_w["times_completed"]."</td>
     <td align='left'>".(int)$m_w["seeders"]."</td>
     <td align='left'>".(int)$m_w["leechers"]."</td></tr>";

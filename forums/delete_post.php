@@ -38,8 +38,7 @@ if (!defined('BUNNY_FORUMS'))
     }	
 
 	//=== make sure it's their post or they are staff... this may change
-	$res_post = sql_query('SELECT p.user_id, p.staff_lock, u.id, u.class, u.suspended, t.locked, t.user_id AS owner_id, t.first_post, f.min_class_read, f.min_class_write, f.id AS forum_id 
-							FROM posts AS p LEFT JOIN users AS u ON p.user_id = u.id LEFT JOIN topics AS t ON t.id = p.topic_id LEFT JOIN forums AS f ON t.forum_id = f.id WHERE p.id='.$post_id);
+	$res_post = sql_query('SELECT p.user_id, p.staff_lock, u.id, u.class, u.suspended, t.locked, t.user_id AS owner_id, t.first_post, f.min_class_read, f.min_class_write, f.id AS forum_id FROM posts AS p LEFT JOIN users AS u ON p.user_id = u.id LEFT JOIN topics AS t ON t.id = p.topic_id LEFT JOIN forums AS f ON t.forum_id = f.id WHERE p.id='.sqlesc($post_id));
 	$arr_post = mysqli_fetch_assoc($res_post);
 
 	//=== if staff or post owner let them delete post
@@ -85,17 +84,17 @@ if (!defined('BUNNY_FORUMS'))
 		if ($delete_for_real  === 1)
 		{
 		//=== re-do that last post thing ;)
-		$res = sql_query('SELECT p.id, t.forum_id FROM posts AS p LEFT JOIN topics as t ON p.topic_id = t.id WHERE p.topic_id = '.$topic_id.' ORDER BY id DESC LIMIT 1');
+		$res = sql_query('SELECT p.id, t.forum_id FROM posts AS p LEFT JOIN topics as t ON p.topic_id = t.id WHERE p.topic_id = '.sqlesc($topic_id).' ORDER BY id DESC LIMIT 1');
 		$arr = mysqli_fetch_assoc($res);
 		
-		sql_query('UPDATE topics SET last_post = '.$arr['id'].', post_count = post_count - 1 WHERE id = '.$topic_id);
-		sql_query('UPDATE forums SET post_count = post_count - 1 WHERE id = '.$arr['forum_id']);	
-		sql_query('DELETE FROM posts WHERE id = '.$post_id);
+		sql_query('UPDATE topics SET last_post = '.sqlesc($arr['id']).', post_count = post_count - 1 WHERE id = '.sqlesc($topic_id));
+		sql_query('UPDATE forums SET post_count = post_count - 1 WHERE id = '.sqlesc($arr['forum_id']));	
+		sql_query('DELETE FROM posts WHERE id = '.sqlesc($post_id));
 		$mc1->delete_value('last_posts_'.$CURUSER['class']);
 		}
 		else
 		{
-		sql_query('UPDATE posts SET status = \'deleted\'  WHERE id = '.$post_id.' AND topic_id = '.$topic_id);
+		sql_query('UPDATE posts SET status = \'deleted\'  WHERE id = '.sqlesc($post_id).' AND topic_id = '.sqlesc($topic_id));
 		}
 	//=== ok, all done here, send them back! \o/
 	header('Location: forums.php?action=view_topic&topic_id='.$topic_id); 

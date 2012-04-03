@@ -29,7 +29,7 @@ class_check(UC_STAFF);
     
 //== Reset Lost Password
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = trim(htmlentities($_POST['username']));
+    $username = trim(htmlsafechars($_POST['username']));
     $uid = (int)$_POST["uid"];
     $secret = mksecret();
     $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -48,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (mysqli_affected_rows($GLOBALS["___mysqli_ston"]) != 1)
     stderr('Error', 'Password not updated. User not found or higher/equal class to yourself');
     
-    write_log('passwordreset', 'Password reset for ' . htmlspecialchars($username) . ' by ' . htmlspecialchars($CURUSER['username']));
-    stderr('Success', 'The password for account <b>' . htmlspecialchars($username) . '</b> is now <b>' . htmlspecialchars($newpassword) . '</b>.');
+    write_log('passwordreset', 'Password reset for ' . htmlsafechars($username) . ' by ' . htmlsafechars($CURUSER['username']));
+    stderr('Success', 'The password for account <b>' . htmlsafechars($username) . '</b> is now <b>' . htmlsafechars($newpassword) . '</b>.');
 }
 
 $HTMLOUT ="";

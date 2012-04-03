@@ -41,7 +41,7 @@ $HTMLOUT="";
     if (!is_valid_id($id))
         stderr('Error...', 'Invalid ID!');
 
-    $do = isset($_POST["do"]) ? htmlspecialchars(trim($_POST["do"])) : '';
+    $do = isset($_POST["do"]) ? htmlsafechars(trim($_POST["do"])) : '';
 
 if ($do == 'enabled')
         sql_query("UPDATE users SET enabled = 'yes' WHERE ID IN(" . join(', ', $ids) . ") AND enabled = 'no'") or sqlerr(__FILE__, __LINE__);
@@ -106,10 +106,10 @@ if (mysqli_num_rows($res) != 0) {
         $added = get_date($arr['added'], 'LONG',0,1);
         $last_access = get_date($arr['last_access'], 'LONG',0,1);
         $class = get_user_class_name($arr["class"]);
-        $status = htmlspecialchars($arr['status']);
-        $enabled = htmlspecialchars($arr['enabled']);
+        $status = htmlsafechars($arr['status']);
+        $enabled = htmlsafechars($arr['enabled']);
  
-    $HTMLOUT .="<tr align='center'><td><input type=\"checkbox\" name=\"ids[]\" value=\"".(int)$arr['id']."\" /></td><td><a href='/userdetails.php?id=".(int)$arr['id']."'><b>".htmlspecialchars($arr['username'])."</b></a>" . ($arr["donor"] == "yes" ? "<img src='pic/star.gif' border='0' alt='Donor' />" : "") . ($arr["warned"] == "yes" ? "<img src='pic/warned.gif' border='0' alt='Warned' />" : "") . "</td>
+    $HTMLOUT .="<tr align='center'><td><input type=\"checkbox\" name=\"ids[]\" value=\"".(int)$arr['id']."\" /></td><td><a href='/userdetails.php?id=".(int)$arr['id']."'><b>".htmlsafechars($arr['username'])."</b></a>" . ($arr["donor"] == "yes" ? "<img src='pic/star.gif' border='0' alt='Donor' />" : "") . ($arr["warned"] >= 1 ? "<img src='pic/warned.gif' border='0' alt='Warned' />" : "") . "</td>
 		<td style='white-space: nowrap;'>{$added}</td>
 		<td style='white-space: nowrap;'>{$last_access}</td>
 		<td>{$class}</td>

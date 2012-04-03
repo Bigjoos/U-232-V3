@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $time = TIME_NOW;
   $subject = "10% Addition";
   $msg = "Today, ".get_date($time, 'LONG',0,1).", you have increased your total upload amount by 10% from [b]".mksize($uploaded)."[/b] to [b]".mksize($newuploaded)."[/b], which brings your ratio to [b]".$newratio."[/b].";
-  $res = sql_query("UPDATE users SET uploaded = uploaded * 1.1, tenpercent = 'yes' WHERE id = {$CURUSER['id']}") or sqlerr(__FILE__, __LINE__);
+  $res = sql_query("UPDATE users SET uploaded = uploaded * 1.1, tenpercent = 'yes' WHERE id = ".sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
   $update['uploaded'] = ($CURUSER['uploaded'] * 1.1);
   $mc1->begin_transaction('userstats_'.$CURUSER['id']);
   $mc1->update_row(false, array('uploaded' => $update['uploaded']));
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $mc1->begin_transaction('MyUser_'.$CURUSER['id']);
   $mc1->update_row(false, array('tenpercent' => 'yes'));
   $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
-  $res1 = sql_query("INSERT INTO messages (sender, poster, receiver, subject, msg, added) VALUES (0, 0, {$CURUSER['id']}, ".sqlesc($subject).", ".sqlesc($msg).", '".TIME_NOW."')") or sqlerr(__FILE__, __LINE__);
+  $res1 = sql_query("INSERT INTO messages (sender, poster, receiver, subject, msg, added) VALUES (0, 0, ".sqlesc($CURUSER['id']).", ".sqlesc($subject).", ".sqlesc($msg).", '".TIME_NOW."')") or sqlerr(__FILE__, __LINE__);
   $mc1->delete_value('inbox_new_'.$CURUSER['id']); 
   $mc1->delete_value('inbox_new_sb_'.$CURUSER['id']);
   if (!$res)

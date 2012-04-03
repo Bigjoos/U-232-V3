@@ -26,7 +26,7 @@ loggedinorreturn();
    $_valid_sort = array('id','name','numfiles','comments','added','size','times_completed','seeders','leechers','owner');
    $column = isset($_GET['sort']) && isset($_valid_sort[(int)$_GET['sort']]) ? $_valid_sort[(int)$_GET['sort']] : $_valid_sort[0];
 
-    switch (htmlspecialchars($_GET['type'])) {
+    switch (htmlsafechars($_GET['type'])) {
         case 'asc': $ascdesc = "ASC";
             $linkascdesc = "asc";
             break;
@@ -58,7 +58,7 @@ loggedinorreturn();
     else 
     {
       $pager = pager(20, $count, "mytorrents.php?{$pagerlink}");
-      $res = sql_query("SELECT type, sticky, vip, descr, nuked, bump, nukereason, release_group, free, comments, leechers, seeders, IF(numratings < {$INSTALLER09['minvotes']}, NULL, ROUND(ratingsum / numratings, 1)) AS rating, id, name, save_as, numfiles, added, size, views, visible, hits, times_completed, category, description, username FROM torrents $where $orderby ".$pager['limit']);
+      $res = sql_query("SELECT type, sticky, vip, descr, nuked, bump, nukereason, release_group, free, comments, leechers, seeders, IF(num_ratings < {$INSTALLER09['minvotes']}, NULL, ROUND(rating_sum / num_ratings, 1)) AS rating, id, name, save_as, numfiles, added, size, views, visible, hits, times_completed, category, description, username FROM torrents $where $orderby ".$pager['limit']);
       $HTMLOUT .= $pager['pagertop'];
       $HTMLOUT .="<br />";
       $HTMLOUT .= torrenttable($res, "mytorrents");

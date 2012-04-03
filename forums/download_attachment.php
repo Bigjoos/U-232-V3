@@ -38,9 +38,8 @@ if (!defined('BUNNY_FORUMS'))
 //exit();
 
 	//=== log  people who DL the file
-	sql_query('UPDATE `attachments` SET `times_downloaded` = times_downloaded + 1 WHERE `id` = '.$id);
-	
-	$what_to_download_res = sql_query('SELECT file, extension FROM `attachments` WHERE `id` = '.$id);
+	sql_query('UPDATE `attachments` SET `times_downloaded` = times_downloaded + 1 WHERE `id` = '.sqlesc($id));
+	$what_to_download_res = sql_query('SELECT file, extension FROM `attachments` WHERE `id` = '.sqlesc($id));
 	$what_to_download_arr = mysqli_fetch_assoc($what_to_download_res);
 	
 header('Content-type: application/'.$what_to_download_arr['extension']);

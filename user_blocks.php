@@ -380,7 +380,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $updateset[] = 'userdetails_page = (userdetails_page & ~'.$clrbits_userdetails_page.')';
     
     if (count($updateset))
-      sql_query('UPDATE user_blocks SET '.implode(',', $updateset).' WHERE userid = '.$id) or sqlerr(__FILE__, __LINE__);
+      sql_query('UPDATE user_blocks SET '.implode(',', $updateset).' WHERE userid = '.sqlesc($id)) or sqlerr(__FILE__, __LINE__);
       $mc1->delete_value('blocks::'.$id);
       header('Location: '.$INSTALLER09['baseurl'].'/user_blocks.php');
       exit();
@@ -903,9 +903,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div style="color: lightgrey;">Enable user comments</div></td>
         <td width="40%"><div style="width: auto;" align="right"><input type="checkbox" name="userdetails_user_comments" value="yes" '.$checkbox_userdetails_usercomments.' /></div></td>
         </tr></table>';
-        
         $HTMLOUT.='<input type="submit" name="submit" value="Submit" class="btn" tabindex="2" accesskey="s" /></form>';
-    
         $HTMLOUT .= end_frame();
     
 echo stdhead("User Blocks Config", true, $stdhead) . $HTMLOUT . stdfoot($stdfoot);

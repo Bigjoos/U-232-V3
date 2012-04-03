@@ -61,7 +61,7 @@ stderr("Error", "No Amount Selected.");
 
 $res = sql_query("SELECT * FROM users WHERE id = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
 $user = mysqli_fetch_array($res) or stderr("Error", "No user with that ID!");
-$modcomment = htmlspecialchars($user['modcomment']);
+$modcomment = htmlsafechars($user['modcomment']);
 
 //=== add donated amount  to user and to funds table /  Set donor status
 if (isset($_POST['amount'])) {
@@ -104,7 +104,7 @@ $donoruntil = TIME_NOW + $donorlength * $givetime; //===> 2419200 = 2 weeks for 
 $donoruntil_val = TIME_NOW + $donorlength * $givetime; //===> 1209600 = 2 weeks for 5$ --- 604800 = 1 week for 5£ donation
 $dur = $donorlength . " week" . ($donorlength > 1 ? "s" : ""); //=== I left the 1 ? "s" in case you want to have only one week...
 $subject = sqlesc("Thank You for Your Donation!");
-$msg = sqlesc("Dear ".htmlspecialchars($user['username'])."
+$msg = sqlesc("Dear ".htmlsafechars($user['username'])."
 :wave:
 Thanks for your support to {$INSTALLER09['site_name']}!
 Your donation helps us in the costs of running the site. Everything above the current running costs will go towards server upgrades.
@@ -138,7 +138,7 @@ $donoruntil_val = $donorlengthadd * $givetime; //===> 1209600 = 2 weeks for 5$ -
 }
 $donorlengthadd = $donoruntil_val;
 $subject = sqlesc("Thank You for Your Donation... Again!");
-$msg = sqlesc("Dear " . htmlspecialchars($user['username']) ."
+$msg = sqlesc("Dear " . htmlsafechars($user['username']) ."
 :wave:
 Thanks for your continued support to {$INSTALLER09['site_name']}!
 Your donation helps us in the costs of running the site. Everything above the current running costs will go towards next months costs!
@@ -210,11 +210,11 @@ $HTMLOUT .= begin_main_frame();
 $HTMLOUT .="
 <br /><table width='80%' border='0' align='center'>
 <tr><td align='center' valign='middle' class='colhead'><h1>Success!</h1></td></tr>
-<tr><td align='center' valign='middle' class='one'><br /><b>Successfully entered donation on <b>".htmlspecialchars($user['username'])."</b>!</b><br /><br />
-<b><u>Changes to ".htmlspecialchars($user['username'])."'s account:</u></b><br /><br /><table width='60%'><tr><td><b>Donor status set for:</b> {$dur}<br /><b>Class set to:</b> ".$user_class."<br />
+<tr><td align='center' valign='middle' class='one'><br /><b>Successfully entered donation on <b>".htmlsafechars($user['username'])."</b>!</b><br /><br />
+<b><u>Changes to ".htmlsafechars($user['username'])."'s account:</u></b><br /><br /><table width='60%'><tr><td><b>Donor status set for:</b> {$dur}<br /><b>Class set to:</b> ".$user_class."<br />
 <b>Upload Bonus:</b> $upadded [ added to $curuploaded ]<br />
 <b>Invites set to:</b> $totalinvites [ used to be  ".(int)$user['invites']." ]<br />
-<b>Current Donation:</b> $donated.0<br /><b>Total Donations:</b> $total_donated.0</td></tr></table><br /><br /><a class='altlink' href='staffpanel.php?tool=paypal_manual_confirm'><b>Add another ?</b></a> || go to <b><a class='altlink' href='{$INSTALLER09['baseurl']}/userdetails.php?id={$id}'>".htmlspecialchars($user['username'])."'s</a></b> profile?<br /><br />";
+<b>Current Donation:</b> $donated.0<br /><b>Total Donations:</b> $total_donated.0</td></tr></table><br /><br /><a class='altlink' href='staffpanel.php?tool=paypal_manual_confirm'><b>Add another ?</b></a> || go to <b><a class='altlink' href='{$INSTALLER09['baseurl']}/userdetails.php?id={$id}'>".htmlsafechars($user['username'])."'s</a></b> profile?<br /><br />";
 $HTMLOUT .= end_frame();
 $HTMLOUT .= end_main_frame();
 echo stdhead('Success') . $HTMLOUT . stdfoot();
@@ -223,18 +223,18 @@ die();
 //=== end do it all
 $HTMLOUT .= begin_main_frame();
 //=== search users
-$search = (isset($_POST["search"]) ? htmlspecialchars($_POST["search"]) : "");
+$search = (isset($_POST["search"]) ? htmlsafechars($_POST["search"]) : "");
 $class = (isset($_GET['class']) ? (int)$_GET['class'] : '');
 if ($class == '-' || !is_valid_id($class))
 if ($search != '' || $class)
 {
   $query = "username LIKE ".sqlesc("%$search%")." AND status='confirmed'";
 	if ($search)
-		  $q1 = "search=" . htmlspecialchars($search);
+		  $q1 = "search=" . htmlsafechars($search);
 }
 else
 {
-  $letter = (isset($_GET["letter"]) ? htmlspecialchars($_GET["letter"]) : "");
+  $letter = (isset($_GET["letter"]) ? htmlsafechars($_GET["letter"]) : "");
   if (strlen($letter) > 1)
     die;
 

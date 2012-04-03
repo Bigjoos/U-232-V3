@@ -26,7 +26,7 @@ if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
 require_once(INCL_DIR.'user_functions.php');
 require_once(INCL_DIR.'html_functions.php');
 require_once(CLASS_DIR.'class_check.php');
-class_check(UC_MODERATOR);
+class_check(UC_STAFF);
 
 
 $blacklist = file_exists($INSTALLER09['nameblacklist']) && is_array(unserialize(file_get_contents($INSTALLER09['nameblacklist'])))  ? unserialize(file_get_contents($INSTALLER09['nameblacklist'])) : array();

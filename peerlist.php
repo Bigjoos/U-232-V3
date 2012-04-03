@@ -52,7 +52,7 @@ function dltable($name, $arr, $torrent)
 	  if(($e['tanonymous'] == 'yes' && $e['owner'] == $e['userid'] || $e['anonymous'] == 'yes'  OR $e['paranoia'] >= 2 && $CURUSER['id'] != $e['userid']) && $CURUSER['class'] < UC_STAFF)
 		$htmlout .= "<td><b>Kezer Soze</b></td>\n";
 		else
-		$htmlout .= "<td><a href='userdetails.php?id=".(int)$e['userid']."'><b>".htmlspecialchars($e['username'])."</b></a></td>\n";
+		$htmlout .= "<td><a href='userdetails.php?id=".(int)$e['userid']."'><b>".htmlsafechars($e['username'])."</b></a></td>\n";
 		} 
 		else
 			$htmlout .= "<td>" . ($mod ? $e["ip"] : preg_replace('/\.\d+$/', ".xxx", $e["ip"])) . "</td>\n";
@@ -78,7 +78,7 @@ function dltable($name, $arr, $torrent)
       $htmlout .= "<td align='right'>" . sprintf("%.2f%%", 100 * (1 - ($e["to_go"] / $torrent["size"]))) . "</td>\n";
       $htmlout .= "<td align='right'>" . mkprettytime($now - $e["st"]) . "</td>\n";
       $htmlout .= "<td align='right'>" . mkprettytime($now - $e["la"]) . "</td>\n";
-      $htmlout .= "<td align='left'>" . htmlspecialchars(getagent($e["agent"], $e['peer_id'])) . "</td>\n";
+      $htmlout .= "<td align='left'>" . htmlsafechars(getagent($e["agent"], $e['peer_id'])) . "</td>\n";
       $htmlout .= "</tr>\n";
     }
     $htmlout .= "</table>\n";
@@ -101,7 +101,7 @@ function dltable($name, $arr, $torrent)
     FROM peers p
     LEFT JOIN users u ON p.userid = u.id
 	LEFT JOIN torrents as t on t.id = p.torrent
-    WHERE p.torrent = $id") or sqlerr();
+    WHERE p.torrent = ".sqlesc($id))  or sqlerr(__FILE__, __LINE__);
           
           if(mysqli_num_rows($subres) == 0)
             stderr("{$lang['peerslist_warning']}", "{$lang['peerslist_no_data']}");
@@ -138,7 +138,7 @@ function dltable($name, $arr, $torrent)
 
     
 
-      $HTMLOUT .= "<h1>Peerlist for <a href='{$INSTALLER09['baseurl']}/details.php?id=$id'>".htmlentities($row['name'])."</a></h1>";
+      $HTMLOUT .= "<h1>Peerlist for <a href='{$INSTALLER09['baseurl']}/details.php?id=$id'>".htmlsafechars($row['name'])."</a></h1>";
       $HTMLOUT .= dltable("{$lang['peerslist_seeders']}<a name='seeders'></a>", $seeders, $row);
       $HTMLOUT .= '<br />' . dltable("{$lang['peerslist_leechers']}<a name='leechers'></a>", $downloaders, $row);
       

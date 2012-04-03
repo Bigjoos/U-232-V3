@@ -16,18 +16,18 @@ if (!isset($CURUSER))
 
   $uid = (int)$CURUSER['id'];
   $tid = isset($_POST['torrentid']) ? (int) $_POST['torrentid'] : (isset($_GET['torrentid']) ? (int) $_GET['torrentid'] : 0);
-  $do  = isset($_POST['action']) ? $_POST['action'] : (isset($_GET['action']) ? $_GET['action'] : 'list');
+  $do  = isset($_POST['action']) ? htmlsafechars($_POST['action']) : (isset($_GET['action']) ? htmlsafechars($_GET['action']) : 'list');
   $ajax = isset($_POST['ajax']) && $_POST['ajax']  == 1 ? true : false;
   
   function print_list() {
 	global $uid,$tid,$ajax;
 	$target = $ajax ? '_self' : '_parent';
-    $qt = sql_query("SELECT th.userid, u.username, u.seedbonus FROM thanks as th INNER JOIN users as u ON u.id=th.userid WHERE th.torrentid={$tid} ORDER BY u.class DESC") or sqlerr();
+    $qt = sql_query("SELECT th.userid, u.username, u.seedbonus FROM thanks as th INNER JOIN users as u ON u.id=th.userid WHERE th.torrentid=".sqlesc($tid)." ORDER BY u.class DESC") or sqlerr(__FILE__, __LINE__);
 	$list = array(); $hadTh = false;
 	if(mysqli_num_rows($qt)> 0) {
 	  while($a = mysqli_fetch_assoc($qt)) {
-	   $list[] = '<a href=\'userdetails.php?id='.$a['userid'].'\' target=\''.$target.'\'>'.$a['username'].'</a>';
-	    $ids[] = $a['userid'];
+	   $list[] = '<a href=\'userdetails.php?id='.(int)$a['userid'].'\' target=\''.$target.'\'>'.htmlsafechars($a['username']).'</a>';
+	    $ids[] = (int)$a['userid'];
 	  }
 	   $hadTh = in_array($uid,$ids) ? true : false;
 	}
@@ -81,11 +81,11 @@ IFRAME;
     break;
 	case 'add': 
 	  if($uid > 0 && $tid > 0) {
-     $c = 'SELECT count(id) FROM thanks WHERE userid = '.$uid.' AND torrentid = '.$tid;
+     $c = 'SELECT count(id) FROM thanks WHERE userid = '.sqlesc($uid).' AND torrentid = '.sqlesc($tid);
      $result = sql_query($c);
      $arr = $result->fetch_row();
      if ($arr[0] == 0) {
-     if(sql_query('INSERT INTO thanks(userid,torrentid) VALUES('.$uid.','.$tid.')'))
+     if(sql_query('INSERT INTO thanks(userid,torrentid) VALUES('.sqlesc($uid).','.sqlesc($tid).')'))
 	  echo(print_list());
 	  else {
 		  $msg = 'There was an error with the query,contact the staff. Mysql error '.((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
@@ -97,10 +97,10 @@ IFRAME;
 	
 	if($INSTALLER09['seedbonus_on'] == 1){
 				// ===add karma
-        sql_query("UPDATE users SET seedbonus = seedbonus+5.0 WHERE id =".$uid."") or sqlerr(__FILE__, __LINE__);
+        sql_query("UPDATE users SET seedbonus = seedbonus+5.0 WHERE id =".sqlesc($uid)) or sqlerr(__FILE__, __LINE__);
         $sql = sql_query('SELECT seedbonus '.
                        'FROM users '.
-                       'WHERE id = '.$uid) or sqlerr(__FILE__, __LINE__);
+                       'WHERE id = '.sqlesc($uid)) or sqlerr(__FILE__, __LINE__);
         $User = mysqli_fetch_assoc($sql);
         $update['seedbonus'] = ($User['seedbonus'] + 5);
         $mc1->begin_transaction('userstats_'.$uid);

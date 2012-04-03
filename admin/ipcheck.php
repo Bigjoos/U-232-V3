@@ -74,15 +74,15 @@ $HTMLOUT.= begin_table();
                         $utc = " bgcolor=\"333333\"";
 
                   $HTMLOUT.="<tr$utc><td align='left'><a href='userdetails.php?id=" .(int)$arr['id']."'>".format_username($arr, true)."</a></td>
-                                  <td align='center'>".htmlspecialchars($arr['email'])."</td>
+                                  <td align='center'>".htmlsafechars($arr['email'])."</td>
                                   <td align='center'>$added</td>
                                   <td align='center'>$last_access</td>
                                   <td align='center'>$downloaded</td>
                                   <td align='center'>$uploaded</td>
                                   <td align='center'>".member_ratio($arr['uploaded'], $arr['downloaded'])."</td>
-                                  <td align='center'><span style=\"font-weight: bold;\">".htmlspecialchars($arr['ip'])."</span></td>\n<td align='center'>" .
+                                  <td align='center'><span style=\"font-weight: bold;\">".htmlsafechars($arr['ip'])."</span></td>\n<td align='center'>" .
                                   ($arr['peer_count'] > 0 ? "<span style=\"color: red; font-weight: bold;\">{$lang['ipcheck_no']}</span>" : "<span style=\"color: green; font-weight: bold;\">{$lang['ipcheck_yes']}</span>") . "</td></tr>\n";
-                  $ip = htmlspecialchars($arr["ip"]);
+                  $ip = htmlsafechars($arr["ip"]);
                 }
           }
         }

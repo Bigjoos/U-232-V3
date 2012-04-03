@@ -50,7 +50,7 @@ if (empty($wantusername) || empty($wantpassword) || empty($email) || empty($invi
 stderr("Error","Don't leave any fields blank.");
 
 if(!blacklist($wantusername))
- stderr($lang['takesignup_user_error'],sprintf($lang['takesignup_badusername'],htmlspecialchars($wantusername)));
+ stderr($lang['takesignup_user_error'],sprintf($lang['takesignup_badusername'],htmlsafechars($wantusername)));
 
 if (strlen($wantusername) > 12)
 stderr("Error","Sorry, username is too long (max is 12 chars)");
@@ -89,14 +89,14 @@ if ($_POST["rulesverify"] != "yes" || $_POST["faqverify"] != "yes" || $_POST["ag
 stderr("Error","Sorry, you're not qualified to become a member of this site.");
 
 // check if email addy is already in use
-$a = (@mysqli_fetch_row(sql_query('SELECT COUNT(id) FROM users WHERE email = ' . sqlesc($email)))) or sqlerr(__FILE__, __LINE__);
+$a = (@mysqli_fetch_row(sql_query('SELECT COUNT(id) FROM users WHERE email = '.sqlesc($email)))) or sqlerr(__FILE__, __LINE__);
 if ($a[0] != 0)
-stderr('Error', 'The e-mail address <b>' . htmlspecialchars($email) . '</b> is already in use.');
+stderr('Error', 'The e-mail address <b>' . htmlsafechars($email) . '</b> is already in use.');
 
 //=== check if ip addy is already in use
-$c = (@mysqli_fetch_row(sql_query("select count(id) from users where ip='" . $_SERVER['REMOTE_ADDR'] . "'"))) or sqlerr(__FILE__, __LINE__);
+$c = (@mysqli_fetch_row(sql_query("SELECT COUNT(id) FROM users WHERE ip=".sqlesc($_SERVER['REMOTE_ADDR'])))) or sqlerr(__FILE__, __LINE__);
 if ($c[0] != 0)
-stderr("Error", "The ip " . $_SERVER['REMOTE_ADDR'] . " is already in use. We only allow one account per ip address.");
+stderr("Error", "The ip " .htmlsafechars($_SERVER['REMOTE_ADDR'])." is already in use. We only allow one account per ip address.");
 
 // TIMEZONE STUFF
     if(isset($_POST["user_timezone"]) && preg_match('#^\-?\d{1,2}(?:\.\d{1,2})?$#', $_POST['user_timezone']))
@@ -117,7 +117,7 @@ $assoc = mysqli_fetch_assoc($select_inv);
 if ($rows == 0)
 stderr("Error","Invite not found.\nPlease request a invite from one of our members.");
 
-if ($assoc["receiver"]!=0)
+if ($assoc["receiver"] != 0)
 stderr("Error","Invite already taken.\nPlease request a new one from your inviter.");
 
     $secret = mksecret();
@@ -129,12 +129,11 @@ $new_user = sql_query("INSERT INTO users (username, passhash, secret, passhint, 
 implode(",", array_map("sqlesc", array($wantusername, $wantpasshash, $secret, $editsecret, $birthday, $passhint, $wanthintanswer, (int)$assoc['sender'], $email))).
 ", ". (!$arr[0]?UC_SYSOP.", ":""). "'".  TIME_NOW ."','".  TIME_NOW ."','".  TIME_NOW ."', $time_offset, {$dst_in_use['tm_isdst']})");
 
-$message = "Welcome New {$INSTALLER09['site_name']} Member : - " . htmlspecialchars($wantusername) . "";
+$message = "Welcome New {$INSTALLER09['site_name']} Member : - " . htmlsafechars($wantusername) . "";
 
 if (!$new_user) {
 if (((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) == 1062)
 stderr("Error","Username already exists!");
-stderr("Error","borked");
 }
 
 //===send PM to inviter
@@ -142,7 +141,7 @@ $sender = (int)$assoc["sender"];
 $added = TIME_NOW;
 $msg = sqlesc("Hey there [you] ! :wave:\nIt seems that someone you invited to {$INSTALLER09['site_name']} has arrived ! :clap2: \n\n Please go to your [url={$INSTALLER09['baseurl']}/invite.php]Invite page[/url] to confirm them so they can log in.\n\ncheers\n");
 $subject = sqlesc("Someone you invited has arrived!");
-sql_query("INSERT INTO messages (sender, subject, receiver, msg, added) VALUES (0, $subject, $sender, $msg, $added)") or sqlerr(__FILE__, __LINE__);
+sql_query("INSERT INTO messages (sender, subject, receiver, msg, added) VALUES (0, $subject, ".sqlesc($sender).", $msg, $added)") or sqlerr(__FILE__, __LINE__);
 $mc1->delete_value('inbox_new_'.$sender);
 $mc1->delete_value('inbox_new_sb_'.$sender);
 //////////////end/////////////////////
@@ -153,7 +152,7 @@ $latestuser_cache['username'] = $wantusername;
 /** OOP **/
 $mc1->cache_value('latestuser', $latestuser_cache, 0, $INSTALLER09['expires']['latestuser']);
 $mc1->delete_value('birthdayusers');
-write_log('User account '.htmlspecialchars($wantusername).' was created!');
+write_log('User account '.htmlsafechars($wantusername).' was created!');
 if($INSTALLER09['autoshout_on'] == 1){
 autoshout($message);
 }

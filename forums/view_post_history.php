@@ -41,30 +41,30 @@ if (!defined('BUNNY_FORUMS') || $CURUSER['class'] < UC_STAFF)
       				f.name AS forum_name, u.id, u.username, u.class, u.donor, u.suspended, u.warned, u.enabled, u.avatar, u.offensive_avatar, u.chatpost, u.leechwarn, u.pirate, u.king 
       				FROM posts AS p LEFT JOIN topics AS t ON p.topic_id = t.id LEFT JOIN forums AS f ON t.forum_id = f.id LEFT JOIN users AS u ON p.user_id = u.id 
 					WHERE '.($CURUSER['class'] < UC_STAFF ? 'p.status = \'ok\' AND t.status = \'ok\' AND' : 
-					($CURUSER['class'] < $min_delete_view_class ? 'p.status != \'deleted\' AND t.status != \'deleted\'  AND' : '')).' p.id = '.$post_id);
+					($CURUSER['class'] < $min_delete_view_class ? 'p.status != \'deleted\' AND t.status != \'deleted\'  AND' : '')).' p.id = '.sqlesc($post_id));
       $arr = mysqli_fetch_array($res);	
       
       $res_edited = sql_query('SELECT id, username, class, donor, suspended, warned, enabled, avatar, chatpost, leechwarn, pirate, king, offensive_avatar FROM users WHERE id = '.$arr['edited_by']);
       $arr_edited = mysqli_fetch_array($res_edited);
       
-      $icon = htmlspecialchars($arr['icon']);
-      $post_title = htmlentities($arr['post_title'], ENT_QUOTES);
+      $icon = htmlsafechars($arr['icon']);
+      $post_title = htmlsafechars($arr['post_title'], ENT_QUOTES);
 
 	
 	$location_bar = '<h1><a class="altlink" href="forums.php">Forums</a> <img src="pic/arrow_next.gif" alt="&#9658;" title="&#9658;" /> 
-			<a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$forum_id.'">'.htmlentities($arr['forum_name'], ENT_QUOTES).'</a>
+			<a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$forum_id.'">'.htmlsafechars($arr['forum_name'], ENT_QUOTES).'</a>
 			<img src="pic/arrow_next.gif" alt="&#9658;" title="&#9658;" /> 
-			<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$topic_id.'">'.htmlentities($arr['topic_name'], ENT_QUOTES).'</a></h1>
+			<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$topic_id.'">'.htmlsafechars($arr['topic_name'], ENT_QUOTES).'</a></h1>
 			<span style="text-align: center;">'.$mini_menu.'</span><br /><br />';
 
 	$HTMLOUT .= $location_bar;
 	
-	$HTMLOUT .= '<h1>'.htmlspecialchars($arr['username']).'\'s Final Edited Post. last edited by: '.print_user_stuff($arr_edited).'</h1>
+	$HTMLOUT .= '<h1>'.htmlsafechars($arr['username']).'\'s Final Edited Post. last edited by: '.print_user_stuff($arr_edited).'</h1>
 		<table border="0" cellspacing="5" cellpadding="10" width="90%">
 		<tr>
 			<td class="forum_head" align="left" width="120px" valign="middle">
 			<span style="white-space:nowrap;">#'.$post_id.'
-			<span style="font-weight: bold;">'.htmlspecialchars($arr['username']).'</span></span>
+			<span style="font-weight: bold;">'.htmlsafechars($arr['username']).'</span></span>
 			</td>
 			<td class="forum_head" align="left" valign="middle">
 			<span style="white-space:nowrap;"> posted on: '.get_date($arr['added'],'').' ['.get_date($arr['added'],'',0,1).'] GMT
@@ -75,6 +75,6 @@ if (!defined('BUNNY_FORUMS') || $CURUSER['class'] < UC_STAFF)
 			<td class="two" align="center" width="120px" valign="top">'.avatar_stuff($arr).'<br />'.print_user_stuff($arr).'</td>
 			<td class="one" align="left" valign="top" colspan="2">'.($arr['bbcode'] == 'yes' ? format_comment($arr['body']) : format_comment_no_bbcode($arr['body'])).'</td>
 		</tr>
-		</table><br /><h1>Post History</h1>[ All Post Edits by Date Desc. ]<br /><br />'.$arr['post_history'].'<br />'.$location_bar ;
+		</table><br /><h1>Post History</h1>[ All Post Edits by Date Desc. ]<br /><br />'.htmlsafechars($arr['post_history']).'<br />'.$location_bar ;
 
 ?>

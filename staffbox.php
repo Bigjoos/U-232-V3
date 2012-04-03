@@ -28,7 +28,7 @@ loggedinorreturn();
 		
 	$do = isset($_GET['do']) && in_array($_GET['do'],$valid_do) ? $_GET['do']  : (isset($_POST['do']) && in_array($_POST['do'],$valid_do) ? $_POST['do'] : '');
 	$id = isset($_GET['id']) ? (int)$_GET['id'] : (isset($_POST['id']) && is_array($_POST['id']) ? array_map('mkint',$_POST['id']) : 0);
-	$message = isset($_POST['message']) && !empty($_POST['message']) ? $_POST['message'] : '';
+	$message = isset($_POST['message']) && !empty($_POST['message']) ? htmlsafechars($_POST['message']) : '';
 	$reply = isset($_POST['reply']) && $_POST['reply'] == 1 ? true : false;
 	
 	switch($do) {
@@ -50,14 +50,14 @@ loggedinorreturn();
 				exit;
 			}
 			
-			$q1 = mysqli_query($GLOBALS["___mysqli_ston"], 'SELECT s.msg,s.sender,s.subject,u.username FROM staffmessages as s LEFT JOIN users as u ON s.sender=u.id WHERE s.id IN ('.join(',',$id).')') or sqlerr(__FILE__,__LINE__);
+			$q1 = sql_query('SELECT s.msg,s.sender,s.subject,u.username FROM staffmessages as s LEFT JOIN users as u ON s.sender=u.id WHERE s.id IN ('.join(',',$id).')') or sqlerr(__FILE__,__LINE__);
 			$a = mysqli_fetch_assoc($q1);
-			$response = htmlspecialchars($message)."\n---". $a['username']." wrote ---\n".$a['msg'];
-			sql_query('INSERT INTO messages(sender,receiver,added,subject,msg) VALUES('.$CURUSER['id'].','.$a['sender'].','.TIME_NOW.','.sqlesc('RE: '.$a['subject']).','.sqlesc($response).')') or sqlerr(__FILE__,__LINE__);
+			$response = htmlsafechars($message)."\n---". htmlsafechars($a['username'])." wrote ---\n".htmlsafechars($a['msg']);
+			sql_query('INSERT INTO messages(sender,receiver,added,subject,msg) VALUES('.sqlesc($CURUSER['id']).','.sqlesc($a['sender']).','.TIME_NOW.','.sqlesc('RE: '.$a['subject']).','.sqlesc($response).')') or sqlerr(__FILE__,__LINE__);
 			$mc1->delete_value('inbox_new_'.$a['sender']);
-      $mc1->delete_value('inbox_new_sb_'.$a['sender']);	
+         $mc1->delete_value('inbox_new_sb_'.$a['sender']);	
 			$message = ', answer='.sqlesc($message);
-			if(sql_query('UPDATE staffmessages SET answered=\'1\', answeredby='.$CURUSER['id'].' '.$message.' WHERE id IN ('.join(',',$id).')')) {
+			if(sql_query('UPDATE staffmessages SET answered=\'1\', answeredby='.sqlesc($CURUSER['id']).' '.$message.' WHERE id IN ('.join(',',$id).')')) {
 			 $mc1->delete_value('staff_mess_');
 				header('Refresh: 2; url='.$_SERVER['PHP_SELF']);
 				stderr($lang['staffbox_success'],$lang['staffbox_setanswered_ids']);
@@ -72,7 +72,7 @@ loggedinorreturn();
 						FROM staffmessages  as s
 						LEFT JOIN users as u ON s.sender = u.id 
 						LEFT JOIN users as u2 ON s.answeredby = u2.id 
-						WHERE s.id = '.$id) or sqlerr(__FILE__,__LINE__);
+						WHERE s.id = '.sqlesc($id)) or sqlerr(__FILE__,__LINE__);
 			if(mysqli_num_rows($q2) == 1) {
 				$a = mysqli_fetch_assoc($q2);
 				$HTMLOUT = begin_main_frame().begin_frame($lang['staffbox_pm_view']);
@@ -81,9 +81,9 @@ loggedinorreturn();
                 <div class='global_head_sb'>Helpdesk</div><br />
                 <div class='global_text_sb'><br /><br />
 								<table width='90%' border='1' cellspacing='0' cellpadding='5' align='center'>
-								 <tr><td>{$lang['staffbox_pm_from']}&nbsp;<a href='userdetails.php?id=".$a['sender']."'>".$a['username']."</a> at ".get_date($a['added'],'DATE',1)."<br/>
-								 {$lang['staffbox_pm_subject']} : <b>".htmlspecialchars($a['subject'])."</b><br/>
-								 {$lang['staffbox_pm_answered']} : <b>".($a['answeredby'] > 0 ? "<a href='userdetails.php?id=".$a['answeredby']."'>".$a['username2']."</a>" : "<span style='color:#ff0000'>No</span>")."</b>
+								 <tr><td>{$lang['staffbox_pm_from']}&nbsp;<a href='userdetails.php?id=".(int)$a['sender']."'>".htmlsafechars($a['username'])."</a> at ".get_date($a['added'],'DATE',1)."<br/>
+								 {$lang['staffbox_pm_subject']} : <b>".htmlsafechars($a['subject'])."</b><br/>
+								 {$lang['staffbox_pm_answered']} : <b>".($a['answeredby'] > 0 ? "<a href='userdetails.php?id=".(int)$a['answeredby']."'>".htmlsafechars($a['username2'])."</a>" : "<span style='color:#ff0000'>No</span>")."</b>
 								</td></tr>
 								<tr><td>".format_comment($a['msg'])."
 								</td></tr>
@@ -92,12 +92,12 @@ loggedinorreturn();
 								</td></tr>
 								<tr><td align='left'>
 									<select name='do'>
-										<option value='setanswered' ".($a['answeredby'] > 0 ? 'disabled=\'disabled\'' : "" )." >{$lang['staffbox_pm_reply']}</option>
-										<option value='restart' ".($a['answeredby'] != $CURUSER['id'] ? 'disabled=\'disabled\'' : "" )." >{$lang['staffbox_pm_restart']}</option>
+										<option value='setanswered' ".($a['answeredby'] > 0 ? 'disabled=\'disabled\'' : "" ).">{$lang['staffbox_pm_reply']}</option>
+										<option value='restart' ".($a['answeredby'] != $CURUSER['id'] ? 'disabled=\'disabled\'' : "" ).">{$lang['staffbox_pm_restart']}</option>
 										<option value='delete'>{$lang['staffbox_pm_delete']}</option>
 									</select>
 									<input type='hidden' name='reply' value='1'/>
-									<input type='hidden' name='id[]' value='".$a['id']."'/><input type='submit' value='{$lang['staffbox_confirm']}' />
+									<input type='hidden' name='id[]' value='".(int)$a['id']."'/><input type='submit' value='{$lang['staffbox_confirm']}' />
 									</td></tr>
 								</table>
 								</div></form>";
@@ -121,19 +121,12 @@ loggedinorreturn();
 	break;
 	default: 
 	$count_msgs = get_row_count('staffmessages');
-    
 	$perpage = 4;
-    $pager = pager($perpage, $count_msgs, 'staffbox.php?');
-
-   
-
-    if (!$count_msgs)
+   $pager = pager($perpage, $count_msgs, 'staffbox.php?');
+   if (!$count_msgs)
 		stderr($lang['staffbox_err'],$lang['staffbox_no_msgs']);
 	else {
-	
 	$HTMLOUT = begin_main_frame().begin_frame($lang['staffbox_info']);
-    
-
 	$HTMLOUT .="<form method='post' name='staffbox' action='".$_SERVER['PHP_SELF']."'>
 	<div class='global_icon_sb'><img src='images/global.design/helpdesk.png' alt='' title='Helpdesk' class='global_image' width='25'/></div>
   <div class='global_head_sb'>Helpdesk</div>
@@ -156,11 +149,11 @@ loggedinorreturn();
 						
     while ($a = mysqli_fetch_assoc($r))
 		$HTMLOUT .="<tr>
-                   <td align='center'><a href='".$_SERVER['PHP_SELF']."?do=view&amp;id=".$a['id']."'>" .htmlspecialchars($a['subject']). "</a></td>
-                   <td align='center'><b>".($a['username'] ? "<a href='userdetails.php?id=".$a['sender']."'>".$a['username']."</a>" : "Unknown[".$a['sender']."]")."</b></td>
+                   <td align='center'><a href='".$_SERVER['PHP_SELF']."?do=view&amp;id=".(int)$a['id']."'>" .htmlsafechars($a['subject']). "</a></td>
+                   <td align='center'><b>".($a['username'] ? "<a href='userdetails.php?id=".(int)$a['sender']."'>".htmlsafechars($a['username'])."</a>" : "Unknown[".(int)$a['sender']."]")."</b></td>
                    <td align='center' nowrap='nowrap'>" .get_date($a['added'],'DATE',1)."<br/><span class='small'>".get_date($a['added'],0,1)."</span></td>
-				   <td align='center'><b>".($a['answeredby'] > 0 ? "by <a href='userdetails.php?id=".$a['answeredby']."'>".$a['username2']."</a>" : "<span style='color:#ff0000'>No</span>")."</b></td>
-                   <td align='center'><input type='checkbox' name='id[]' value='" . $a['id'] . "' /></td>
+				   <td align='center'><b>".($a['answeredby'] > 0 ? "by <a href='userdetails.php?id=".(int)$a['answeredby']."'>".htmlsafechars($a['username2'])."</a>" : "<span style='color:#ff0000'>No</span>")."</b></td>
+                   <td align='center'><input type='checkbox' name='id[]' value='".(int)$a['id']."' /></td>
                   </tr>\n";
 
 	$HTMLOUT .="<tr><td align='right' colspan='5'>

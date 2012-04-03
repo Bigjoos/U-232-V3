@@ -17,26 +17,26 @@ if (!defined('BUNNY_PM_SYSTEM'))
 	exit();
 }
             //=== get post / get stuff
-            $keywords = (isset($_POST['keywords']) ? htmlspecialchars($_POST['keywords']) : '');
-            $member = (isset($_POST['member']) ? htmlspecialchars($_POST['member']) : '');
+            $keywords = (isset($_POST['keywords']) ? htmlsafechars($_POST['keywords']) : '');
+            $member = (isset($_POST['member']) ? htmlsafechars($_POST['member']) : '');
             $all_boxes = (isset($_POST['all_boxes']) ? intval($_POST['all_boxes']) : '');
             $sender_reciever = ($mailbox >= 1 ? 'sender' : 'receiver');
 
             //== query stuff
-            $what_in_out = ($mailbox >= 1 ? 'AND receiver = '.$CURUSER['id'].' AND saved = \'yes\'' : 'AND sender = '.$CURUSER['id'].' AND saved = \'yes\'');
+            $what_in_out = ($mailbox >= 1 ? 'AND receiver = '.sqlesc($CURUSER['id']).' AND saved = \'yes\'' : 'AND sender = '.sqlesc($CURUSER['id']).' AND saved = \'yes\'');
             $location = (isset($_POST['all_boxes']) ? 'AND location != 0' : 'AND location = '.$mailbox);
             $limit = (isset($_POST['limit']) ? intval($_POST['limit']) : 25); 
             $as_list_post = (isset($_POST['as_list_post']) ? intval($_POST['as_list_post']) : 2); 
             $desc_asc = (isset($_POST['ASC']) == 1 ? 'ASC' : 'DESC');
 
             //=== search in
-            $subject = (isset($_POST['subject']) ? intval($_POST['subject']) : '');
-            $text = (isset($_POST['text']) ? intval($_POST['text']) : '');
+            $subject = (isset($_POST['subject']) ? htmlsafechars($_POST['subject']) : '');
+            $text = (isset($_POST['text']) ? htmlsafechars($_POST['text']) : '');
             $member_sys =(isset($_POST['system']) ? 'system' : '');
 
             //=== get sort and check to see if it's ok...
             $possible_sort = array('added', 'subject', 'sender', 'receiver', 'relevance');      
-            $sort = (isset($_GET['sort']) ? htmlspecialchars($_GET['sort']) : (isset($_POST['sort']) ? htmlspecialchars($_POST['sort']) : 'relevance'));
+            $sort = (isset($_GET['sort']) ? htmlsafechars($_GET['sort']) : (isset($_POST['sort']) ? htmlsafechars($_POST['sort']) : 'relevance'));
             
                 if (!in_array($sort, $possible_sort)) 
                     {
@@ -44,7 +44,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
                     }
                 else
                     {
-                    $sort = htmlspecialchars(isset($_POST['sort']));
+                    $sort = htmlsafechars(isset($_POST['sort']));
                     }
 
         //=== Try finding a user with specified name
@@ -57,7 +57,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
                     stderr('Error','Sorry, there is no member with that username.');
                     
             //=== if searching by member...
-            $and_member = ($mailbox >= 1 ? ' AND sender = '.$arr_username['id'].' AND saved = \'yes\' ' : ' AND receiver = '.$arr_username['id'].' AND saved = \'yes\' ');
+            $and_member = ($mailbox >= 1 ? ' AND sender = '.sqlesc($arr_username['id']).' AND saved = \'yes\' ' : ' AND receiver = '.sqlesc($arr_username['id']).' AND saved = \'yes\' ');
             $the_username = print_user_stuff($arr_username);
             }
 
@@ -68,7 +68,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
                     }
 
             //=== get all boxes
-            $res = sql_query('SELECT boxnumber, name FROM pmboxes WHERE userid = '.$CURUSER['id']. ' ORDER BY boxnumber') or sqlerr(__FILE__,__LINE__);
+            $res = sql_query('SELECT boxnumber, name FROM pmboxes WHERE userid = '.sqlesc($CURUSER['id']). ' ORDER BY boxnumber') or sqlerr(__FILE__,__LINE__);
             
                 $get_all_boxes = '<select name="box">
                                             <option class="body" value="1" '.($mailbox == PM_INBOX ? 'selected="selected"' : '').'>Inbox</option>
@@ -77,7 +77,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
                                             
                 while ($row = mysqli_fetch_assoc($res))
                     {
-                    $get_all_boxes .= '<option class="body" value="'.$row['boxnumber'].'" '.($row['boxnumber'] == $mailbox ? 'selected="selected"' : '').'>'.htmlspecialchars($row['name']).'</option>';
+                    $get_all_boxes .= '<option class="body" value="'.(int)$row['boxnumber'].'" '.($row['boxnumber'] == $mailbox ? 'selected="selected"' : '').'>'.htmlsafechars($row['name']).'</option>';
                     }
                 
                 $get_all_boxes .= '</select>';
@@ -166,11 +166,11 @@ if (!defined('BUNNY_PM_SYSTEM'))
             {
             //=== if only member name is entered and no search string... get all messages by that member
             case (!$keywords && $member):
-                    $res_search = sql_query("SELECT * FROM messages WHERE sender = ".sqlesc($arr_username['id'])." AND saved = 'yes' $location AND receiver = ".$CURUSER['id']." ORDER BY ".sqlesc($sort)." $desc_asc LIMIT ".$limit) or sqlerr(__FILE__,__LINE__);
+                    $res_search = sql_query("SELECT * FROM messages WHERE sender = ".sqlesc($arr_username['id'])." AND saved = 'yes' $location AND receiver = ".sqlesc($CURUSER['id'])." ORDER BY ".sqlesc($sort)." $desc_asc LIMIT ".$limit) or sqlerr(__FILE__,__LINE__);
                 break;
             //=== if system entered default both ...  
             case (!$keywords && $member_sys):
-                    $res_search = sql_query("SELECT * FROM messages WHERE sender = 0 $location AND receiver = ".$CURUSER['id']." ORDER BY ".sqlesc($sort)." $desc_asc LIMIT ".$limit) or sqlerr(__FILE__,__LINE__);
+                    $res_search = sql_query("SELECT * FROM messages WHERE sender = 0 $location AND receiver = ".sqlesc($CURUSER['id'])." ORDER BY ".sqlesc($sort)." $desc_asc LIMIT ".$limit) or sqlerr(__FILE__,__LINE__);
                 break;
             //=== if just subject
             case ($subject && !$text):
@@ -189,7 +189,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
         $num_resault = mysqli_num_rows($res_search);
 
     //=== show the search resaults \o/o\o/o\o/
-    $HTMLOUT .='<h1>your search for '.($keywords ? '"'.$keywords.'"' : ($member ? 'member '.htmlspecialchars($arr_username['username']).'\'s PMs' : ($member_sys ? 'system messages' : '' ))).'</h1>
+    $HTMLOUT .='<h1>your search for '.($keywords ? '"'.$keywords.'"' : ($member ? 'member '.htmlsafechars($arr_username['username']).'\'s PMs' : ($member_sys ? 'system messages' : '' ))).'</h1>
         <div style="text-align: center;">'.($num_resault < $limit ? 'returned' : 'showing first').' <span style="font-weight: bold;">'.$num_resault.'</span> 
         match'.($num_resault === 1 ? '' : 'es').'! '.($num_resault === 0 ? ' better luck next time...' : '').'</div>';
 
@@ -220,7 +220,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
                 //=== if not searching one member...
                 if (!$member)
                     {
-                    $res_username = sql_query('SELECT id, username, warned, suspended, enabled, donor, leechwarn, chatpost, pirate, king, class FROM users WHERE id = '.$row[$sender_reciever].' LIMIT 1') or sqlerr(__FILE__,__LINE__);
+                    $res_username = sql_query('SELECT id, username, warned, suspended, enabled, donor, leechwarn, chatpost, pirate, king, class FROM users WHERE id = '.sqlesc($row[$sender_reciever]).' LIMIT 1') or sqlerr(__FILE__,__LINE__);
                     $arr_username = mysqli_fetch_assoc($res_username);
                     $the_username = print_user_stuff($arr_username);
                     }
@@ -230,14 +230,14 @@ if (!defined('BUNNY_PM_SYSTEM'))
 
                 if($all_boxes && $arr_box === '')
                     {
-                    $res_box_name = sql_query('SELECT name FROM pmboxes WHERE userid = '.$CURUSER['id']. ' AND boxnumber = '.$row['location']) or sqlerr(__FILE__,__LINE__);
+                    $res_box_name = sql_query('SELECT name FROM pmboxes WHERE userid = '.sqlesc($CURUSER['id']). ' AND boxnumber = '.sqlesc($row['location'])) or sqlerr(__FILE__,__LINE__);
                     $arr_box_name = mysqli_fetch_assoc($res_box_name);
-                    $arr_box = htmlspecialchars($arr_box_name['name']);
+                    $arr_box = htmlsafechars($arr_box_name['name']);
                     }
 
         //==== highlight search terms... from Jaits search forums mod
         $body = str_ireplace($keywords,'<span style="background-color:yellow;font-weight:bold;color:black;">'.$keywords.'</span>', format_comment($row['msg']));
-        $subject = str_ireplace($keywords,'<span style="background-color:yellow;font-weight:bold;color:black;">'.$keywords.'</span>', htmlspecialchars($row['subject']));
+        $subject = str_ireplace($keywords,'<span style="background-color:yellow;font-weight:bold;color:black;">'.$keywords.'</span>', htmlsafechars($row['subject']));
 
     //=== print the damn thing ... if it's as a list or as posts...
     $HTMLOUT .= ($as_list_post == 2 ? '
@@ -257,7 +257,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
         <td class="'.$class.'"><a class="altlink" href="pm_system.php?action=view_message&amp;id='.$row['id'].'">'.($row['subject'] !== '' ? $subject : 'No Subject').'</a> '.($all_boxes ? '[ found in '.$arr_box.' ]' : '').'</td>
         <td class="'.$class.'">'.($row[$sender_reciever] == 0 ? 'Sys-bot' : $the_username).'</td>
         <td class="'.$class.'">'.get_date($row['added'], '').' GMT ['.get_date($row['added'],'',0,1).'] </td>
-        <td class="'.$class.'"><input type="checkbox" name="pm[]" value="'.$row['id'].'" /></td>
+        <td class="'.$class.'"><input type="checkbox" name="pm[]" value="'.(int)$row['id'].'" /></td>
     </tr>');
     }
 }

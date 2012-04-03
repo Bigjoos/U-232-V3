@@ -17,7 +17,7 @@ $lang = array_merge( load_language('global') );
 
 $HTMLOUT='';
 
-$allowed_ids = array(1,10,14); //== 1 Is Sysop - add userids you want access
+$allowed_ids = array(1); //== 1 Is Sysop - add userids you want access
 if (!in_array($CURUSER['id'], $allowed_ids))
     stderr('Error', 'Access Denied!');
 

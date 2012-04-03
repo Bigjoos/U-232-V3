@@ -65,8 +65,8 @@ function searchcloud_insert($word) {
 			//spew out some html malarky!
 			$cloud_tags[] = '<a style="color:'.$colour_array[mt_rand(0, 5)].'; font-size: '. floor($size) . 'px'
     . '" class="tag_cloud" href="browse.php?search=' . urlencode($tag) . '&amp;searchin=all&amp;incldead=1'
-    . '" title="\'' . htmlentities($tag)  . '\' returned a count of ' . $count . '">'
-    . htmlentities(stripslashes($tag)) . '</a>';
+    . '" title="\'' . htmlsafechars($tag)  . '\' returned a count of ' . $count . '">'
+    . htmlsafechars(stripslashes($tag)) . '</a>';
 		}
 		
 		$cloud_html = join("\n", $cloud_tags) . "\n";

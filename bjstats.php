@@ -6,8 +6,6 @@
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
  **/
-$_NO_COMPRESS = true;
-ob_start("ob_gzhandler");
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
 require_once(INCL_DIR.'html_functions.php');
@@ -21,21 +19,6 @@ if ($CURUSER['class'] < UC_POWER_USER)
 	stderr("Sorry...", "You must be a Power User or above to play Blackjack.");
 	exit;
 }
-
-     $HTMLOUT='';
-     $mingames = 1;
-     $cachefile = "./cache/bjstats.txt";
-     $cachetime = 60 * 30; // 30 minutes
-     if (file_exists($cachefile) && (time() - $cachetime < filemtime($cachefile)))
-     {
-     require_once($cachefile);
-     $HTMLOUT .="<p align='center'><font class='small'>This page last updated ".date('Y-m-d H:i:s', filemtime($cachefile)).". </font></p>";
-     echo stdhead('Blackjack') . $HTMLOUT . stdfoot();
-     exit;
-     }
-     $HTMLOUT .= ob_start();
-     
-
 
 function bjtable($res, $frame_caption)
 {
@@ -86,8 +69,9 @@ function bjtable($res, $frame_caption)
 
 
    
+$HTMLOUT='';
+     $mingames = 10;
 
-$HTMLOUT .="<h1>Blackjack Stats</h1>";
 //$HTMLOUT .="<p>Stats are cached and updated every 30 minutes. You need to play at least $mingames games to be included.</p>";
 $HTMLOUT .="<br />";
 //==Most Games Played
@@ -111,12 +95,8 @@ $HTMLOUT .= bjtable($res, "Most Credit Lost","Users");
 //==Most Credit Lost
 $HTMLOUT .="<br /><br />";
 // open the cache file for writing      
-$fp = fopen($cachefile, 'w');
-// save the contents of output buffer to the file    
-fwrite($fp, ob_get_contents());
-// close the file
-fclose($fp);
-// Send the output to the browser
-$HTMLOUT .= ob_end_flush();
+
+
 echo stdhead('Blackjack Stats') . $HTMLOUT . stdfoot();
+
 ?>

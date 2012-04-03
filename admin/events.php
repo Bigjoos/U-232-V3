@@ -165,7 +165,7 @@ $showDates = 0;
 if(array_key_exists('userid', $_POST))
 $userid = (int)$_POST['userid'];
 if(array_key_exists('editText', $_POST))
-$text = htmlspecialchars($_POST['editText']);
+$text = htmlsafechars($_POST['editText']);
 if(array_key_exists('editStartTime', $_POST))
 $start = strtotime(trim($_POST['editStartTime']));
 if(array_key_exists('editEndTime', $_POST))
@@ -228,7 +228,7 @@ $id = (int)$scheduled_event['id'];
 $users = $scheduled_event;
 $users['id'] = (int)$scheduled_event['userid'];
 $username = format_username($users);
-$text = htmlspecialchars($scheduled_event['overlayText']);
+$text = htmlsafechars($scheduled_event['overlayText']);
 $start = get_date((int)$scheduled_event['startTime'], 'DATE');
 $end = get_date((int)$scheduled_event['endTime'], 'DATE');
 $freeleech = (bool)(int)$scheduled_event['freeleechEnabled'];
@@ -281,7 +281,7 @@ $HTMLOUT .="<table>
 else
 foreach($scheduled_events as $scheduled_event){
 if($id == $scheduled_event['id']){
-$text = htmlspecialchars($scheduled_event['overlayText']);
+$text = htmlsafechars($scheduled_event['overlayText']);
 $start = get_date((int)$scheduled_event['startTime'], 'DATE');
 $end = get_date((int)$scheduled_event['endTime'], 'DATE');
 $freeleech = (bool)(int)$scheduled_event['freeleechEnabled'];

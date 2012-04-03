@@ -34,7 +34,7 @@ function I_smell_a_rat($var){
  	stderr("Error", "I smell a rat!");
 }
 
-$bonus = htmlspecialchars($CURUSER['seedbonus'], 1);
+
 
 /////////freeleech
 if (isset($_GET["freeleech_success"]) && $_GET["freeleech_success"]){
@@ -46,7 +46,7 @@ if($freeleech_success == '1'){
 if ($_GET["norefund"] != '0') {
 $HTMLOUT .="<table width='80%'><tr><td class='colhead' align='left' colspan='2'><h1>Success!</h1></td></tr><tr>".
 "<td align='left' class='one'><img src='{$INSTALLER09['pic_base_url']}/smilies/karma.gif' alt='good_karma' title='Good Karma' /></td><td align='left' class='one'><b>Congratulations! </b>
-$CURUSER[username] you have set the tracker <b>Free Leech !</b> <img src='{$INSTALLER09['pic_base_url']}smilies/w00t.gif' alt='w00t' title='W00t' /><br /><br />Remaining ".htmlspecialchars($_GET['norefund'])." points have been contributed towards the next freeleech period automatically!".
+$CURUSER[username] you have set the tracker <b>Free Leech !</b> <img src='{$INSTALLER09['pic_base_url']}smilies/w00t.gif' alt='w00t' title='W00t' /><br /><br />Remaining ".htmlsafechars($_GET['norefund'])." points have been contributed towards the next freeleech period automatically!".
 "<br /> click to go back to your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Point</a> page.<br /><br />".
 "</td></tr></table>";
 echo stdhead($CURUSER['username'] . "'s Karma Bonus Points Page", true, $stdhead) . $HTMLOUT . stdfoot();
@@ -81,7 +81,7 @@ if($doubleup_success == '1'){
 if ($_GET["norefund"] != '0') {
 $HTMLOUT .="<table width='80%'><tr><td class='colhead' align='left' colspan='2'><h1>Success!</h1></td></tr><tr>".
 "<td align='left' class='one'><img src='{$INSTALLER09['pic_base_url']}smilies/karma.gif' alt='good_karma' title='Good Karma' /></td><td align='left' class='one'><b>Congratulations! </b>
-$CURUSER[username] you have set the tracker <b>Double Up !</b> <img src='{$INSTALLER09['pic_base_url']}smilies/w00t.gif' alt='w00t' title='W00t' /><br /><br />Remaining ".htmlspecialchars($_GET['norefund'])." points have been contributed towards the next Double upload period automatically!".
+$CURUSER[username] you have set the tracker <b>Double Up !</b> <img src='{$INSTALLER09['pic_base_url']}smilies/w00t.gif' alt='w00t' title='W00t' /><br /><br />Remaining ".htmlsafechars($_GET['norefund'])." points have been contributed towards the next Double upload period automatically!".
 "<br /> click to go back to your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Point</a> page.<br /><br />".
 "</td></tr></table>";
 echo stdhead($CURUSER['username'] . "'s Karma Bonus Points Page", true, $stdhead) . $HTMLOUT . stdfoot();
@@ -116,7 +116,7 @@ if($halfdown_success == '1'){
 if ($_GET["norefund"] != '0') {
 $HTMLOUT .="<table width='80%'><tr><td class='colhead' align='left' colspan='2'><h1>Success!</h1></td></tr><tr>".
 "<td align='left' class='one'><img src='{$INSTALLER09['pic_base_url']}smilies/karma.gif' alt='good_karma' title='Good Karma' /></td><td align='left' class='one'><b>Congratulations! </b>
-$CURUSER[username] you have set the tracker <b>Half Download !</b> <img src='{$INSTALLER09['pic_base_url']}smilies/w00t.gif' alt='w00t' title='W00t' /><br /><br />Remaining ".htmlspecialchars($_GET['norefund'])." points have been contributed towards the next Half download period automatically!".
+$CURUSER[username] you have set the tracker <b>Half Download !</b> <img src='{$INSTALLER09['pic_base_url']}smilies/w00t.gif' alt='w00t' title='W00t' /><br /><br />Remaining ".htmlsafechars($_GET['norefund'])." points have been contributed towards the next Half download period automatically!".
 "<br /> click to go back to your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Point</a> page.<br /><br />".
 "</td></tr></table>";
 echo stdhead($CURUSER['username'] . "'s Karma Bonus Points Page", true, $stdhead) . $HTMLOUT . stdfoot();
@@ -395,7 +395,7 @@ die;
 case (isset($_GET['bump_success']) && $_GET['bump_success'] == 1):
 $res_free = sql_query('SELECT id,name FROM torrents WHERE id = '.sqlesc(0 + $_GET['t_name'])) or sqlerr(__FILE__, __LINE__);
 $arr_free = mysqli_fetch_assoc($res_free);
-stderr('Success!', '<img src="pic/smilies/karma.gif" alt="good karma" /> <b>Congratulations '.$CURUSER['username'].'!!!</b> <img src="pic/smilies/karma.gif" alt="good karma" /><br />  you have ReAnimated the torrent <b><a class="altlink" href="details.php?id='.$arr_free['id'].'">'.htmlspecialchars($arr_free['name']).'</a></b>! Bringing it back to page one! <img src="pic/smilies/w00t.gif" alt="w00t" /><br /><br />
+stderr('Success!', '<img src="pic/smilies/karma.gif" alt="good karma" /> <b>Congratulations '.$CURUSER['username'].'!!!</b> <img src="pic/smilies/karma.gif" alt="good karma" /><br />  you have ReAnimated the torrent <b><a class="altlink" href="details.php?id='.$arr_free['id'].'">'.htmlsafechars($arr_free['name']).'</a></b>! Bringing it back to page one! <img src="pic/smilies/w00t.gif" alt="w00t" /><br /><br />
 Click to go back to your <a class="altlink" href="mybonus.php">Karma Points</a> page.<br /><br />');
 echo stdhead($CURUSER['username'] . "'s Karma Bonus Points Page", true, $stdhead) . $HTMLOUT . stdfoot();
 die;
@@ -414,9 +414,9 @@ I_smell_a_rat($_GET['gift_success']);
  
 $HTMLOUT  .="<table align='center' width='80%'><tr><td class='colhead' align='left' colspan='2'><h1>Success!</h1></td></tr><tr><td align='left' class='one'>
 <img src='{$INSTALLER09['pic_base_url']}smilies/karma.gif' alt='good_karma' title='Good karma' /></td><td align='left' class='one'><b>Congratulations! ".$CURUSER['username']." </b>
-you have spread the Karma well.<br /><br />Member <b>".htmlspecialchars($_GET['usernamegift'])."</b> will be pleased with your kindness!<br /><br />This is the message that was sent:<br />
+you have spread the Karma well.<br /><br />Member <b>".htmlsafechars($_GET['usernamegift'])."</b> will be pleased with your kindness!<br /><br />This is the message that was sent:<br />
 <b>Subject:</b> Someone Loves you!<br /> <p>You have been given a gift of <b>".(0 + $_GET['gift_amount_points'])."</b> Karma points by ".$CURUSER['username']."</p><br />
-You may also <a class='altlink' href='{$INSTALLER09['baseurl']}/pm_system.php?action=send_message&amp;receiver=".(0 + $_GET['gift_id'])."'>send ".htmlspecialchars($_GET['usernamegift'])." a message as well</a>, or go back to your <a class='altlink' href='mybonus.php'>Karma Bonus Point</a> page.<br /><br /></td></tr></table>";
+You may also <a class='altlink' href='{$INSTALLER09['baseurl']}/pm_system.php?action=send_message&amp;receiver=".(0 + $_GET['gift_id'])."'>send ".htmlsafechars($_GET['usernamegift'])." a message as well</a>, or go back to your <a class='altlink' href='mybonus.php'>Karma Bonus Point</a> page.<br /><br /></td></tr></table>";
 echo stdhead($CURUSER['username'] . "'s Karma Bonus Points Page", true, $stdhead) . $HTMLOUT . stdfoot();
 die;
 
@@ -485,9 +485,9 @@ $option = (int) $_POST['option'];
 $res_points = sql_query("SELECT * FROM bonus WHERE id =" . sqlesc($option));
 $arr_points = mysqli_fetch_assoc($res_points);
 
-$art = $arr_points['art'];
-$points = (int)$arr_points['points'];
-$minpoints = (int)$arr_points['minpoints'];
+$art = htmlsafechars($arr_points['art']);
+$points = (float)$arr_points['points'];
+$minpoints = (float)$arr_points['minpoints'];
 
 if ($CURUSER['seedbonus'] <= 0)
 stderr("Error", "I smell a rat!");
@@ -497,15 +497,17 @@ stderr("Error", "I smell a rat!");
 
 $sql = sql_query('SELECT uploaded, downloaded, seedbonus, bonuscomment, free_switch, warned, invites, freeslots, reputation '.
                        'FROM users '.
-                       'WHERE id = '.$userid) or sqlerr(__FILE__, __LINE__);
+                       'WHERE id = '.sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
       $User = mysqli_fetch_assoc($sql);
 
-$seedbonus=htmlspecialchars($bonus-$points,1);
+$bonus = (float)$User['seedbonus'];
+$seedbonus = ($bonus-$points);
 $upload = (float)$User['uploaded'];
 $download = (float)$User['downloaded'];
-$bonuscomment = htmlspecialchars($User['bonuscomment']);
+$bonuscomment = htmlsafechars($User['bonuscomment']);
 $free_switch = (int)$User['free_switch'];
 $warned = (int)$User['warned'];
+$reputation = (int)$User['reputation'];
 
 if($bonus < $minpoints)
 stderr("Sorry", "you do not have enough Karma points!");
@@ -516,7 +518,7 @@ case 'traffic':
 //=== trade for one upload credit
 $up = $upload + $arr_points['menge'];
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for upload bonus.\n " .$bonuscomment;
-sql_query("UPDATE users SET uploaded = ".sqlesc($upload + $arr_points['menge']).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET uploaded = ".sqlesc($upload + $arr_points['menge']).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('userstats_'.$userid);
 $mc1->update_row(false, array('uploaded' => $upload+$arr_points['menge'], 'seedbonus' => $seedbonus));
 $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
@@ -529,12 +531,11 @@ break;
  
 case 'reputation':
 //=== trade for reputation
-if ($CURUSER['class'] < UC_POWER_USER || $CURUSER['reputation'] >= 5000)
+if ($CURUSER['class'] < UC_POWER_USER || $User['reputation'] >= 5000)
 stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides...Sorry your not a Power User or you already have to many rep points :-P<br />go back to your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Point</a> page and think that one over.");
-$reputation = $CURUSER['reputation'];
 $rep = $reputation + $arr_points['menge'];
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for 100 rep points.\n " .$bonuscomment;
-sql_query("UPDATE users SET reputation = ".sqlesc($rep).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET reputation = ".sqlesc($rep).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('reputation' => $rep));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -553,11 +554,11 @@ break;
 
 case 'immunity':
 //=== trade for immunity
-if ($CURUSER['class'] < UC_POWER_USER || $CURUSER['reputation'] < 5000)
+if ($CURUSER['class'] < UC_POWER_USER || $User['reputation'] < 3000)
 stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides...Sorry your not a Power User or you dont have enough rep :-P<br />go back to your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Point</a> page and think that one over.");
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for 1 years immunity status.\n " .$bonuscomment;
 $immunity = (86400 * 365 + TIME_NOW);
-sql_query("UPDATE users SET immunity = ".sqlesc($immunity).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET immunity = ".sqlesc($immunity).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('immunity' => $immunity));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -577,10 +578,10 @@ break;
 case 'userblocks':
 //=== trade for userblock access
 $reputation = $User['reputation'];
-if ($CURUSER['class'] < UC_POWER_USER || $CURUSER['reputation'] < 50)
+if ($CURUSER['class'] < UC_POWER_USER || $User['reputation'] < 50)
 stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides...Sorry your not a Power User or you dont have enough rep points yet - Minimum 50 required :-P<br />go back to your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Point</a> page and think that one over.");
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for user blocks access.\n " .$bonuscomment;
-sql_query("UPDATE users SET got_blocks = 'yes', seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET got_blocks = 'yes', seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('got_blocks' => 'yes'));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -600,10 +601,10 @@ break;
 case 'userunlock':
 //=== trade for user_unlocks access
 $reputation = $User['reputation'];
-if ($CURUSER['class'] < UC_POWER_USER || $CURUSER['reputation'] < 50)
+if ($CURUSER['class'] < UC_POWER_USER || $User['reputation'] < 50)
 stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides...Sorry your not a Power User or you dont have enough rep points yet - Minimum 50 required :-P<br />go back to your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Point</a> page and think that one over.");
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for user unlocks access.\n " .$bonuscomment;
-sql_query("UPDATE users SET got_moods = 'yes', seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET got_moods = 'yes', seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('got_moods' => 'yes'));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -626,7 +627,7 @@ $anonymous_until = (86400 * 14 + TIME_NOW);
 if ($CURUSER['anonymous_until'] >= 1)
 stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.");
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for 14 days Anonymous profile.\n " .$bonuscomment;
-sql_query("UPDATE users SET anonymous_until = ".sqlesc($anonymous_until).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET anonymous_until = ".sqlesc($anonymous_until).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('anonymous_until' => $anonymous_until));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -649,7 +650,7 @@ $parked_until = 1;
 if ($CURUSER['parked_until'] == 1)
 stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.");
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for 14 days Anonymous profile.\n " .$bonuscomment;
-sql_query("UPDATE users SET parked_until = ".sqlesc($parked_until).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET parked_until = ".sqlesc($parked_until).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('parked_until' => $parked_until));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -672,7 +673,7 @@ $down = $download - $arr_points['menge'];
 if ($CURUSER['downloaded'] == 0)
 stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.");
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for download credit removal.\n " .$bonuscomment;
-sql_query("UPDATE users SET downloaded = ".sqlesc($download - $arr_points['menge']).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET downloaded = ".sqlesc($download - $arr_points['menge']).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('userstats_'.$userid);
 $mc1->update_row(false, array('downloaded' => $download - $arr_points['menge'], 'seedbonus' => $seedbonus));
 $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
@@ -686,10 +687,10 @@ break;
 case 'freeyear':
 //=== trade for years freeleech
 $free_switch = (365 * 86400 + TIME_NOW);
-if ($CURUSER['free_switch'] != 0)
+if ($User['free_switch'] != 0)
 stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.");
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for One year of freeleech.\n " .$bonuscomment;
-sql_query("UPDATE users SET free_switch = ".sqlesc($free_switch).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET free_switch = ".sqlesc($free_switch).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('free_switch' => $free_switch));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -711,7 +712,7 @@ case 'freeslots':
 $freeslots = (int)$User['freeslots'];
 $slots = $freeslots + $arr_points['menge'];
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for freeslots.\n " .$bonuscomment;
-sql_query("UPDATE users SET freeslots = ".sqlesc($slots).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET freeslots = ".sqlesc($slots).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('freeslots' => $slots));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -735,7 +736,7 @@ $inv = $invites - 1;
 if ($CURUSER['invites'] == 0)
 stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.");
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " invites for bonus points.\n" .$bonuscomment;
-sql_query("UPDATE users SET invites = ".sqlesc($inv).", seedbonus = seedbonus + 200 WHERE id = ".sqlesc($userid)." AND invites = '$invites +1'") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET invites = ".sqlesc($inv).", seedbonus = seedbonus + 200 WHERE id = ".sqlesc($userid)." AND invites =".sqlesc($invites)."+1") or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('invites' => $inv));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -761,7 +762,7 @@ $fslot = $slots + 2;
 if ($CURUSER['invites'] == 0)
 stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.");
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " invites for bonus points.\n" .$bonuscomment;
-sql_query("UPDATE users SET invites = ".sqlesc($inv).", freeslots ".sqlesc($fslot)." WHERE id = ".sqlesc($userid)." AND invites = '$invites +1'") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET invites = ".sqlesc($inv).", freeslots ".sqlesc($fslot)." WHERE id = ".sqlesc($userid)." AND invites = ".sqlesc($invites)."+1") or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('invites' => $inv, 'freeslots' => $fslot));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -785,7 +786,7 @@ stderr("Error", "Now why would you want to add what you already have?<br />go ba
 $pirate = (86400 * 14 + TIME_NOW);
 $free_switch = (14 * 86400 + TIME_NOW);
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for 2 weeks Pirate + freeleech Status.\n " .$bonuscomment;
-sql_query("UPDATE users SET free_switch = ".sqlesc($free_switch).", pirate = ".sqlesc($pirate).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET free_switch = ".sqlesc($free_switch).", pirate = ".sqlesc($pirate).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('free_switch' => $free_switch, 'pirate' => $pirate));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -878,7 +879,7 @@ stderr("Error", "Now why would you want to add what you already have?<br />go ba
 $king = (86400 * 30 + TIME_NOW);
 $free_switch = (30 * 86400 + TIME_NOW);
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for 1 month King + freeleech Status.\n " .$bonuscomment;
-sql_query("UPDATE users SET free_switch = ".sqlesc($free_switch).", king = ".sqlesc($king).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET free_switch = ".sqlesc($free_switch).", king = ".sqlesc($king).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('free_switch' => $free_switch, 'king' => $king));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -899,21 +900,20 @@ break;
 case 'freeleech':
 $points2 = 59999; //== Adjust so that its you can only contribute 1 point under the the bonus option amount doubled - current 30000 x 2 = 60000 - 1 = 59999
 $pointspool = (int)$arr_points['pointspool'];
-$points= htmlspecialchars($points,1);
 $donation = (int)$_POST['donate'];
 $seedbonus = ($bonus - $donation);
-if($bonus < $donation || $donation <= 0 ||$donation > $points2){
-stderr("Error", " <br />Points: ".htmlspecialchars($donation)." <br /> Bonus: ".htmlspecialchars($bonus)." <br /> Donation: ".htmlspecialchars($donation)." <br />Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.<br /> Click to go back to your <a class='altlink' href='./mybonus.php'>Karma Bonus Point</a> page.<br />");
+if($bonus < $donation || $donation <= 0 || $donation > $points2){
+stderr("Error", " <br />Points: ".(float)$donation." <br /> Bonus: ".(float)$bonus." <br /> Donation: ".(float)$donation." <br />Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.<br /> Click to go back to your <a class='altlink' href='./mybonus.php'>Karma Bonus Point</a> page.<br />");
 die;
 }
-if(($pointspool+$donation) >= $arr_points["points"] ){
+if(($pointspool + $donation) >= $arr_points["points"]){
 $now = TIME_NOW;
 $end = (86400 * 3 + TIME_NOW);
 $message = sqlesc("FreeLeech [ON]");
-sql_query("INSERT INTO events (userid,overlayText, startTime, endTime, displayDates, freeleechEnabled) VALUES ($userid, $message, $now, $end, 1, 1)") or sqlerr(__FILE__, __LINE__);
+sql_query("INSERT INTO events (userid, overlayText, startTime, endTime, displayDates, freeleechEnabled) VALUES (".sqlesc($userid).", $message, $now, $end, 1, 1)") or sqlerr(__FILE__, __LINE__);
 $norefund = ($donation + $pointspool) % $points;
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$donation. " Points contributed for freeleech.\n " .$bonuscomment;
-sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).",  bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).",  bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 sql_query("UPDATE bonus SET pointspool = ".sqlesc($norefund)." WHERE id = '11' LIMIT 1") or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('userstats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus));
@@ -933,9 +933,9 @@ header("Refresh: 0; url={$INSTALLER09['baseurl']}//mybonus.php?freeleech_success
 die;
 } else {
 // add to the pool
-sql_query("UPDATE bonus SET pointspool = pointspool + '$donation' WHERE id = '11' LIMIT 1") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE bonus SET pointspool = pointspool + ".sqlesc($donation)." WHERE id = '11' LIMIT 1") or sqlerr(__FILE__, __LINE__);
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$donation. " Points contributed for freeleech.\n " .$bonuscomment;
-sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('userstats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus));
 $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
@@ -948,7 +948,7 @@ $mc1->delete_value('freeleech_counter');
 $mc1->delete_value('freecontribution_datas_');
 write_bonus_log($CURUSER["id"], $donation, $type = "freeleech");
 $Remaining = ($arr_points['points'] - $arr_points['pointspool'] - $donation);
-$msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the freeleech contribution pot ! * Only [b]".htmlspecialchars($Remaining)."[/b] more karma point".($Remaining > 1?'s':'')." to go! * [color=green][b]Freeleech contribution:[/b][/color] [url={$INSTALLER09['baseurl']}/mybonus.php]". $donation ."/".$points.'[/url]';
+$msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the freeleech contribution pot ! * Only [b]".htmlsafechars($Remaining)."[/b] more karma point".($Remaining > 1?'s':'')." to go! * [color=green][b]Freeleech contribution:[/b][/color] [url={$INSTALLER09['baseurl']}/mybonus.php]". $donation ."/".$points.'[/url]';
 $mc1->delete_value('shoutbox_');
 autoshout($msg);
 header("Refresh: 0; url={$INSTALLER09['baseurl']}/mybonus.php?freeleech_success=2");
@@ -961,21 +961,20 @@ break;
 case 'doubleup':
 $points2 = 59999; //== Adjust so that its you can only contribute 1 point under the the bonus option amount doubled - current 30000 x 2 = 60000 - 1 = 59999
 $pointspool = (int)$arr_points['pointspool'];
-$points= htmlspecialchars($points,1);
 $donation = (int)$_POST['donate'];
 $seedbonus = ($bonus - $donation);
-if($bonus < $donation || $donation <= 0 ||$donation > $points2){
-stderr("Error", " <br />Points: ".htmlspecialchars($donation)." <br /> Bonus: ".htmlspecialchars($bonus)." <br /> Donation: ".htmlspecialchars($donation)." <br />Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.<br /> Click to go back to your <a class='altlink' href='./mybonus.php'>Karma Bonus Point</a> page.<br />");
+if($bonus < $donation || $donation <= 0 || $donation > $points2){
+stderr("Error", " <br />Points: ".(float)$donation." <br /> Bonus: ".(float)$bonus." <br /> Donation: ".(float)$donation." <br />Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.<br /> Click to go back to your <a class='altlink' href='./mybonus.php'>Karma Bonus Point</a> page.<br />");
 die;
 }
-if(($pointspool+$donation) >= $arr_points["points"] ){
+if(($pointspool + $donation) >= $arr_points["points"]){
 $now = TIME_NOW;
 $end = (86400 * 3 + TIME_NOW);
 $message = sqlesc("DoubleUpload [ON]");
-sql_query("INSERT INTO events(userid, overlayText, startTime, endTime, displayDates, duploadEnabled) VALUES ($userid, $message, $now, $end, 1, 1)") or sqlerr(__FILE__, __LINE__);
+sql_query("INSERT INTO events(userid, overlayText, startTime, endTime, displayDates, duploadEnabled) VALUES (".sqlesc($userid).", $message, $now, $end, 1, 1)") or sqlerr(__FILE__, __LINE__);
 $norefund = ($donation + $pointspool) % $points;
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$donation. " Points contributed for doubleupload.\n " .$bonuscomment;
-sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).",  bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).",  bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 sql_query("UPDATE bonus SET pointspool = ".sqlesc($norefund)." WHERE id = '12' LIMIT 1") or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('userstats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus));
@@ -995,9 +994,9 @@ header("Refresh: 0; url={$INSTALLER09['baseurl']}/mybonus.php?doubleup_success=1
 die;
 } else {
 // add to the pool
-sql_query("UPDATE bonus SET pointspool = pointspool + '$donation' WHERE id = '12' LIMIT 1") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE bonus SET pointspool = pointspool + ".sqlesc($donation)." WHERE id = '12' LIMIT 1") or sqlerr(__FILE__, __LINE__);
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$donation. " Points contributed for doubleupload.\n " .$bonuscomment;
-sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('userstats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus));
 $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
@@ -1010,7 +1009,7 @@ $mc1->delete_value('doubleupload_counter');
 $mc1->delete_value('freecontribution_datas_');
 write_bonus_log($CURUSER["id"], $donation, $type = "doubleupload");
 $Remaining = ($arr_points['points'] - $arr_points['pointspool'] - $donation);
-$msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the double upload contribution pot ! * Only [b]".htmlspecialchars($Remaining)."[/b] more karma point".($Remaining > 1?'s':'')." to go! * [color=green][b]Double upload contribution:[/b][/color] [url={$INSTALLER09['baseurl']}/mybonus.php]". $donation ."/".$points.'[/url]';
+$msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the double upload contribution pot ! * Only [b]".htmlsafechars($Remaining)."[/b] more karma point".($Remaining > 1?'s':'')." to go! * [color=green][b]Double upload contribution:[/b][/color] [url={$INSTALLER09['baseurl']}/mybonus.php]". $donation ."/".$points.'[/url]';
 $mc1->delete_value('shoutbox_');
 autoshout($msg);
 header("Refresh: 0; url={$INSTALLER09['baseurl']}/mybonus.php?doubleup_success=2");
@@ -1023,21 +1022,20 @@ break;
 case 'halfdown':
 $points2 = 59999; //== Adjust so that its you can only contribute 1 point under the the bonus option amount doubled - current 30000 x 2 = 60000 - 1 = 59999
 $pointspool = (int)$arr_points['pointspool'];
-$points= htmlspecialchars($points,1);
-$donation = 0 + $_POST['donate'];
+$donation = (int)$_POST['donate'];
 $seedbonus = ($bonus - $donation);
-if($bonus < $donation || $donation <= 0 ||$donation > $points2){
-stderr("Error", " <br />Points: ".htmlspecialchars($donation)." <br /> Bonus: ".htmlspecialchars($bonus)." <br /> Donation: ".htmlspecialchars($donation)." <br />Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.<br /> Click to go back to your <a class='altlink' href='./mybonus.php'>Karma Bonus Point</a> page.<br />");
+if($bonus < $donation || $donation <= 0 || $donation > $points2){
+stderr("Error", " <br />Points: ".(float)$donation." <br /> Bonus: ".(float)$bonus." <br /> Donation: ".(float)$donation." <br />Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.<br /> Click to go back to your <a class='altlink' href='./mybonus.php'>Karma Bonus Point</a> page.<br />");
 die;
 }
-if(($pointspool+$donation) >= $arr_points["points"] ){
+if(($pointspool + $donation) >= $arr_points["points"]){
 $now = TIME_NOW;
 $end = (86400 * 3 + TIME_NOW);
 $message = sqlesc("HalfDownload [ON]");
-sql_query("INSERT INTO events(userid, overlayText, startTime, endTime, displayDates, hdownEnabled) VALUES ($userid, $message, $now, $end, 1, 1)") or sqlerr(__FILE__, __LINE__);
+sql_query("INSERT INTO events(userid, overlayText, startTime, endTime, displayDates, hdownEnabled) VALUES (".sqlesc($userid).", $message, $now, $end, 1, 1)") or sqlerr(__FILE__, __LINE__);
 $norefund = ($donation + $pointspool) % $points;
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$donation. " Points contributed for Halfdownload.\n " .$bonuscomment;
-sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).",  bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).",  bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 sql_query("UPDATE bonus SET pointspool = ".sqlesc($norefund)." WHERE id = '13' LIMIT 1") or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('userstats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus));
@@ -1057,9 +1055,9 @@ header("Refresh: 0; url={$INSTALLER09['baseurl']}/mybonus.php?halfdown_success=1
 die;
 } else {
 // add to the pool
-sql_query("UPDATE bonus SET pointspool = pointspool + '$donation' WHERE id = '13' LIMIT 1") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE bonus SET pointspool = pointspool + ".sqlesc($donation)." WHERE id = '13' LIMIT 1") or sqlerr(__FILE__, __LINE__);
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points contributed for halfdownload.\n " .$bonuscomment;
-sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('userstats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus));
 $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
@@ -1072,7 +1070,7 @@ $mc1->delete_value('halfdownload_counter');
 $mc1->delete_value('freecontribution_datas_');
 write_bonus_log($CURUSER["id"], $donation, $type = "halfdownload");
 $Remaining = ($arr_points['points'] - $arr_points['pointspool'] - $donation);
-$msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the half download contribution pot ! * Only [b]".htmlspecialchars($Remaining)."[/b] more karma point".($Remaining > 1?'s':'')." to go! * [color=green][b]Half download contribution:[/b][/color] [url={$INSTALLER09['baseurl']}/mybonus.php]". $donation ."/".$points.'[/url]';
+$msg = $CURUSER['username']. " Donated ".$donation." karma point".($donation > 1?'s':'')." into the half download contribution pot ! * Only [b]".htmlsafechars($Remaining)."[/b] more karma point".($Remaining > 1?'s':'')." to go! * [color=green][b]Half download contribution:[/b][/color] [url={$INSTALLER09['baseurl']}/mybonus.php]". $donation ."/".$points.'[/url]';
 $mc1->delete_value('shoutbox_');
 autoshout($msg);
 header("Refresh: 0; url={$INSTALLER09['baseurl']}/mybonus.php?halfdown_success=2");
@@ -1084,16 +1082,16 @@ break;
 case 'ratio':
 //=== trade for one torrent 1:1 ratio
 $torrent_number = (int)$_POST['torrent_id'];
-$res_snatched = sql_query("SELECT s.uploaded, s.downloaded, t.name FROM snatched AS s LEFT JOIN torrents AS t ON t.id = s.torrentid WHERE s.userid = '$userid' AND torrentid = ".sqlesc($torrent_number)." LIMIT 1") or sqlerr(__FILE__, __LINE__);
+$res_snatched = sql_query("SELECT s.uploaded, s.downloaded, t.name FROM snatched AS s LEFT JOIN torrents AS t ON t.id = s.torrentid WHERE s.userid = ".sqlesc($userid)." AND torrentid = ".sqlesc($torrent_number)." LIMIT 1") or sqlerr(__FILE__, __LINE__);
 $arr_snatched = mysqli_fetch_assoc($res_snatched);
 if ($arr_snatched['name'] == '')
 stderr("Error", "No torrent with that ID!<br />Back to your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Point</a> page.");
 if ($arr_snatched['uploaded'] >= $arr_snatched['downloaded'])
 stderr("Error", "Your ratio on that torrent is fine, you must have selected the wrong torrent ID.<br />Back to your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Point</a> page.");
-sql_query("UPDATE snatched SET uploaded = ".sqlesc($arr_snatched['downloaded'])." WHERE userid = '$userid' AND torrentid = ".sqlesc($torrent_number)) or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE snatched SET uploaded = ".sqlesc($arr_snatched['downloaded'])." WHERE userid = ".sqlesc($userid)." AND torrentid = ".sqlesc($torrent_number)) or sqlerr(__FILE__, __LINE__);
 $difference = $arr_snatched['downloaded'] - $arr_snatched['uploaded'];
-$bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for 1 to 1 ratio on torrent: ".$arr_snatched['name']." ".$torrent_number.", ".$difference." added .\n " .$bonuscomment;
-sql_query("UPDATE users SET uploaded = $upload + $difference, bonuscomment = '$bonuscomment', seedbonus = '$seedbonus' WHERE id = '$userid'") or sqlerr(__FILE__, __LINE__);
+$bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for 1 to 1 ratio on torrent: ".htmlsafechars($arr_snatched['name'])." ".$torrent_number.", ".$difference." added .\n " .$bonuscomment;
+sql_query("UPDATE users SET uploaded = ".ssqlesc($upload + $difference).", bonuscomment = ".sqlesc($bonuscomment).", seedbonus = ".sqlesc($seedbonus)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('userstats_'.$userid);
 $mc1->update_row(false, array('uploaded' => $upload + $difference, 'seedbonus' => $seedbonus));
 $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
@@ -1113,8 +1111,8 @@ if ($arr_free['name'] == '')
 stderr('Error', 'No torrent with that ID!<br /><br />Back to your <a class="altlink" href="karma_bonus.php">Karma Points</a> page.');
 $free_time = (7 * 86400 + TIME_NOW);
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points to Reanimate torrent: ".$arr_free['name'].".\n " .$bonuscomment;
-sql_query('UPDATE users SET bonuscomment = '.sqlesc($bonuscomment).', seedbonus = '.sqlesc($seedbonus).' WHERE id = '.$userid) or sqlerr(__FILE__, __LINE__);
-sql_query('UPDATE torrents SET bump = \'yes\', free='.sqlesc($free_time).', added = '.sqlesc(TIME_NOW).' WHERE id = '.sqlesc($torrent_number)) or sqlerr(__FILE__, __LINE__);
+sql_query('UPDATE users SET bonuscomment = '.sqlesc($bonuscomment).', seedbonus = '.sqlesc($seedbonus).' WHERE id = '.sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
+sql_query('UPDATE torrents SET bump = \'yes\', free='.sqlesc($free_time).', added = '.TIME_NOW.' WHERE id = '.sqlesc($torrent_number)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('userstats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus));
 $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
@@ -1134,7 +1132,7 @@ if ($CURUSER['class'] > UC_VIP)
 stderr("Error", "Now why would you want to lower yourself to VIP?<br />go back to your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Point</a> page and think that one over.");
 $vip_until = (86400 * 28 + TIME_NOW);
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for 1 month VIP Status.\n " .$bonuscomment;
-sql_query("UPDATE users SET class = ".UC_VIP.", vip_added = 'yes', vip_until = '$vip_until', seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET class = ".UC_VIP.", vip_added = 'yes', vip_until = ".sqlesc($vip_until).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('class' => 2, 'vip_added' => 'yes', 'vip_until' => $vip_until));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -1156,16 +1154,16 @@ case 'warning':
 if ($CURUSER['warned'] == 0)
 stderr("Error", "How can we remove a warning that isn't there?<br />go back to your <a class='altlink' href='{$INSTALLER09['baseurl']}/mybonus.php'>Karma Bonus Point</a> page and think that one over.");
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for removing warning.\n " .$bonuscomment;
-$res_warning = sql_query("SELECT modcomment FROM users WHERE id = '$userid'") or sqlerr(__FILE__, __LINE__);
+$res_warning = sql_query("SELECT modcomment FROM users WHERE id =".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $arr = mysqli_fetch_assoc($res_warning);
-$modcomment = htmlspecialchars($arr['modcomment']);
+$modcomment = htmlsafechars($arr['modcomment']);
 $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - Warning removed by - Bribe with Karma.\n". $modcomment;
 $modcom = sqlesc($modcomment);
-sql_query("UPDATE users SET warned = '0', seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment).", modcomment = ".sqlesc($modcom)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET warned = '0', seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment).", modcomment = ".sqlesc($modcom)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $dt = sqlesc(TIME_NOW);
 $subject = sqlesc("Warning removed by Karma.");
 $msg = sqlesc("Your warning has been removed by the big Karma payoff... Please keep on your best behaviour from now on.\n");
-sql_query("INSERT INTO messages (sender, receiver, added, msg, subject) VALUES(0, $userid, $dt, $msg, $subject)") or sqlerr(__FILE__, __LINE__);
+sql_query("INSERT INTO messages (sender, receiver, added, msg, subject) VALUES(0, ".sqlesc($userid).", $dt, $msg, $subject)") or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('warned' => 0));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -1188,7 +1186,7 @@ case 'smile':
 //=== trade for one month special smilies :P
 $smile_until = (86400 * 28 + TIME_NOW);
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for 1 month of custom smilies.\n " .$bonuscomment;
-sql_query("UPDATE users SET smile_until = ".sqlesc($smile_until).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET smile_until = ".sqlesc($smile_until).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('smile_until' => $smile_until));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -1210,7 +1208,7 @@ case 'invite':
 $invites = (int)$User['invites'];
 $inv = $invites + 3;
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for invites.\n " .$bonuscomment;
-sql_query("UPDATE users SET invites = ".sqlesc($inv).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET invites = ".sqlesc($inv).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('invites' => $inv));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -1236,7 +1234,7 @@ $title = strip_tags($_POST['title']);
 $words = array('fuck', 'shit', 'Moderator', 'Administrator', 'Admin', 'pussy', 'Sysop', 'cunt', 'nigger', 'VIP', 'Super User', 'Power User', 'ADMIN', 'SYSOP', 'MODERATOR', 'ADMINISTRATOR');
 $title = str_replace($words, "I just wasted my karma", $title);
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for custom title. Old title was {$CURUSER['title']} new title is ".$title.".\n " .$bonuscomment;
-sql_query("UPDATE users SET title = ".sqlesc($title).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET title = ".sqlesc($title).", seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('title' => $title));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -1256,25 +1254,24 @@ break;
 case 'gift_1':
 //=== trade for giving the gift of karma
 $points = 0 + $_POST['bonusgift'];
-$usernamegift = htmlspecialchars($_POST['username']);
+$usernamegift = htmlsafechars($_POST['username']);
 $res = sql_query("SELECT id,seedbonus,bonuscomment,username FROM users WHERE username=" . sqlesc($usernamegift));
 $arr = mysqli_fetch_assoc($res);
 $useridgift = (int)$arr['id'];
-$userseedbonus = (int)$arr['seedbonus'];
-$bonuscomment_gift = htmlspecialchars($arr['bonuscomment']);
-$usernamegift = htmlspecialchars($arr['username']);
+$userseedbonus = (float)$arr['seedbonus'];
+$bonuscomment_gift = htmlsafechars($arr['bonuscomment']);
+$usernamegift = htmlsafechars($arr['username']);
 
 $check_me = array(100,200,300,400,500,1000,5000,10000,20000,50000,100000);
 if (!in_array($points, $check_me))
 stderr("Error", "I smell a rat!");
 
 if($bonus >= $points){
-$points= htmlspecialchars($points,1);
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points as gift to $usernamegift .\n " .$bonuscomment;
 $bonuscomment_gift = get_date( TIME_NOW, 'DATE', 1 ) . " - recieved " .$points. " Points as gift from {$CURUSER['username']} .\n " .$bonuscomment_gift;
-$seedbonus=$bonus-$points;
-$giftbonus1=$userseedbonus+$points;
-if ($userid==$useridgift){
+$seedbonus = $bonus-$points;
+$giftbonus1 = $userseedbonus + $points;
+if ($userid == $useridgift){
 header("Refresh: 0; url={$INSTALLER09['baseurl']}/mybonus.php?gift_fail=1");
 die;
 }
@@ -1282,10 +1279,10 @@ if (!$useridgift){
 header("Refresh: 0; url={$INSTALLER09['baseurl']}/mybonus.php?gift_fail_user=1");
 die;
 }
-sql_query("SELECT bonuscomment,id FROM users WHERE id = ".sqlesc($useridgift)."") or sqlerr(__FILE__, __LINE__);
+sql_query("SELECT bonuscomment,id FROM users WHERE id = ".sqlesc($useridgift)) or sqlerr(__FILE__, __LINE__);
 //=== and to post to the person who gets the gift!
-sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
-sql_query("UPDATE users SET seedbonus = ".sqlesc($giftbonus1).", bonuscomment = ".sqlesc($bonuscomment_gift)." WHERE id = ".sqlesc($useridgift)."");
+sql_query("UPDATE users SET seedbonus = ".sqlesc($seedbonus).", bonuscomment = ".sqlesc($bonuscomment)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET seedbonus = ".sqlesc($giftbonus1).", bonuscomment = ".sqlesc($bonuscomment_gift)." WHERE id = ".sqlesc($useridgift));
 $mc1->begin_transaction('userstats_'.$userid);
 $mc1->update_row(false, array('seedbonus' => $seedbonus));
 $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
@@ -1340,7 +1337,7 @@ function mysql_fetch_all($query, $default_value = Array())
 function write_bonus_log($userid, $amount, $type){
   $added = TIME_NOW;
   $donation_type = $type;
-  sql_query("INSERT INTO bonuslog (id, donation, type, added_at) VALUES('$userid', '$amount', '$donation_type', $added)") or sqlerr(__FILE__, __LINE__);
+  sql_query("INSERT INTO bonuslog (id, donation, type, added_at) VALUES(".sqlesc($userid).", ".sqlesc($amount).", ".sqlesc($donation_type).", $added)") or sqlerr(__FILE__, __LINE__);
 }
     if(($scheduled_events = $mc1->get_value('freecontribution_datas_')) === false) {
     $scheduled_events = mysql_fetch_all("SELECT * from `events` ORDER BY `startTime` DESC LIMIT 3;", array());
@@ -1527,7 +1524,7 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
     foreach($top_donators as $a) {
     $top_donators_id = (int)$a["id"];
     $damount_donated = (int)$a["total"];
-    //$top_donators_username = htmlspecialchars($a['username']);
+    //$top_donators_username = htmlsafechars($a['username']);
     $user_stuff = $a;
     $user_stuff['id'] = (int)$a['userid'];
     $top_donator .= "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators_id'>" . format_username($user_stuff) . "</a> [$damount_donated]<br />";
@@ -1554,7 +1551,7 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
     foreach($top_donators2 as $b) {
     $top_donators2_id = (int)$b["id"];
     $damount_donated2 = (int)$b["total"];
-    //$top_donators2_username = htmlspecialchars($b['username']);
+    //$top_donators2_username = htmlsafechars($b['username']);
     $user_stuff = $b;
     $user_stuff['id'] = (int)$b['userid'];
     $top_donator2 .= "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators2_id'>" . format_username($user_stuff) . "</a> [$damount_donated2]<br />";
@@ -1581,7 +1578,7 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
     foreach($top_donators3 as $c) {
     $top_donators3_id = (int)$c["id"];
     $damount_donated3 = (int)$c["total"];
-    //$top_donators3_username = htmlspecialchars($c['username']);
+    //$top_donators3_username = htmlsafechars($c['username']);
     $user_stuff = $c;
     $user_stuff['id'] = (int)$c['userid'];
     $top_donator3 .= "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=$top_donators3_id'>" . format_username($user_stuff) . "</a> [$damount_donated3]<br />";
@@ -1620,7 +1617,7 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
             }
             $HTMLOUT .="&nbsp;]</div>";
             //==End
-
+            $bonus = (float)$CURUSER['seedbonus'];
             $HTMLOUT .="
             <table align='center' width='100%' border='1' cellspacing='0' cellpadding='5'>
             <tr>
@@ -1658,31 +1655,31 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
 
   switch (true){
  	case ($gets['id'] == 5):
- 	$HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /><input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."<br /><br />Enter the <b>Special Title</b> you would like to have <input type='text' name='title' size='30' maxlength='30' /> click Exchange! </td><td align='center' class='".$class."'>".htmlspecialchars($gets['points'])."</td>";
+ 	$HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /><input type='hidden' name='art' value='".htmlsafechars($gets['art'])."' /><h1><font color='#000000'>".htmlsafechars($gets['bonusname'])."</font></h1>".htmlsafechars($gets['description'])."<br /><br />Enter the <b>Special Title</b> you would like to have <input type='text' name='title' size='30' maxlength='30' /> click Exchange! </td><td align='center' class='".$class."'>".(float)$gets['points']."</td>";
   break;
   case ($gets['id'] == 7):
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."<br /><br />Enter the <b>username</b> of the person you would like to send karma to, and select how many points you want to send and click Exchange!<br />".$otheroption."</td><td align=center class='".$class."'>min.<br />".htmlspecialchars($gets['points'])."<br />max.<br />100000.0</td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlsafechars($gets['art'])."' /><h1><font color='#000000'>".htmlsafechars($gets['bonusname'])."</font></h1>".htmlsafechars($gets['description'])."<br /><br />Enter the <b>username</b> of the person you would like to send karma to, and select how many points you want to send and click Exchange!<br />".$otheroption."</td><td align=center class='".$class."'>min.<br />".(float)$gets['points']."<br />max.<br />100000.0</td>";
   break;
   case ($gets['id'] == 9):
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."</td><td align='center' class='".$class."'>min.<br />".htmlspecialchars($gets['points'])."</td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlsafechars($gets['art'])."' /><h1><font color='#000000'>".htmlsafechars($gets['bonusname'])."</font></h1>".htmlsafechars($gets['description'])."</td><td align='center' class='".$class."'>min.<br />".(float)$gets['points']."</td>";
   break;
   case ($gets['id'] == 10):
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."<br /><br />Enter the <b>ID number of the Torrent:</b> <input type='text' name='torrent_id' size='4' maxlength='8' /> you would like to buy a 1 to 1 ratio on.</td><td align='center' class='".$class."'>min.<br />".htmlspecialchars($gets['points'])."</td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlsafechars($gets['art'])."' /><h1><font color='#000000'>".htmlsafechars($gets['bonusname'])."</font></h1>".htmlsafechars($gets['description'])."<br /><br />Enter the <b>ID number of the Torrent:</b> <input type='text' name='torrent_id' size='4' maxlength='8' /> you would like to buy a 1 to 1 ratio on.</td><td align='center' class='".$class."'>min.<br />".(float)$gets['points']."</td>";
   break;
   case ($gets['id'] == 11):
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color=\"#000000\">".htmlspecialchars($gets["bonusname"])."</font></h1>".htmlspecialchars($gets['description'])."<br />".$top_donator."<br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .htmlspecialchars($gets['minpoints'])." <br /></td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlsafechars($gets['art'])."' /><h1><font color=\"#000000\">".htmlsafechars($gets["bonusname"])."</font></h1>".htmlsafechars($gets['description'])."<br />".$top_donator."<br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .(float)$gets['minpoints']." <br /></td>";
   break;
   case ($gets['id'] == 12):
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color=\"#000000\">".htmlspecialchars($gets["bonusname"])."</font></h1>".htmlspecialchars($gets['description'])."<br />".$top_donator2."<br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .htmlspecialchars($gets['minpoints'])." <br /></td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /> <input type='hidden' name='art' value='".htmlsafechars($gets['art'])."' /><h1><font color=\"#000000\">".htmlsafechars($gets["bonusname"])."</font></h1>".htmlsafechars($gets['description'])."<br />".$top_donator2."<br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>".(float)$gets['minpoints']." <br /></td>";
   break;
   case ($gets['id'] == 13):
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /><input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color=\"#000000\">".htmlspecialchars($gets["bonusname"])."</font></h1>".htmlspecialchars($gets['description'])."<br />".$top_donator3."<br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>" .htmlspecialchars($gets['minpoints'])." <br /></td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /><input type='hidden' name='art' value='".htmlsafechars($gets['art'])."' /><h1><font color=\"#000000\">".htmlsafechars($gets["bonusname"])."</font></h1>".htmlsafechars($gets['description'])."<br />".$top_donator3."<br />Enter the <b>amount to contribute</b><input type='text' name='donate' size='10' maxlength='10' /></td><td align='center' class='".$class."'>".(float)$gets['minpoints']." <br /></td>";
   break;
   case ($gets['id'] == 34):
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /><input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."<br /><br />Enter the <b>ID number of the Torrent:</b> <input type='text' name='torrent_id' size='4' maxlength='8' /> you would like to bump.</td><td align='center' class='".$class."'>min.<br />".htmlspecialchars($gets['points'])."</td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /><input type='hidden' name='art' value='".htmlsafechars($gets['art'])."' /><h1><font color='#000000'>".htmlsafechars($gets['bonusname'])."</font></h1>".htmlsafechars($gets['description'])."<br /><br />Enter the <b>ID number of the Torrent:</b> <input type='text' name='torrent_id' size='4' maxlength='8' /> you would like to bump.</td><td align='center' class='".$class."'>min.<br />".(float)$gets['points']."</td>";
   break;
   default:
-  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /><input type='hidden' name='art' value='".htmlspecialchars($gets['art'])."' /><h1><font color='#000000'>".htmlspecialchars($gets['bonusname'])."</font></h1>".htmlspecialchars($gets['description'])."</td><td align='center' class='".$class."'>".htmlspecialchars($gets['points'])."</td>";
+  $HTMLOUT .="<tr><td align='left' class='".$class."'><form action='{$INSTALLER09['baseurl']}/mybonus.php?exchange=1' method='post'><input type='hidden' name='option' value='".(int)$gets['id']."' /><input type='hidden' name='art' value='".htmlsafechars($gets['art'])."' /><h1><font color='#000000'>".htmlsafechars($gets['bonusname'])."</font></h1>".htmlsafechars($gets['description'])."</td><td align='center' class='".$class."'>".(float)$gets['points']."</td>";
   }
 
 
@@ -1692,13 +1689,13 @@ if(($halfdownload_counter = $mc1->get_value('halfdownload_counter')) === false) 
   $HTMLOUT .="<td class='".$class."'><input class='button' type='submit' name='submit' value='Karma Gift!' /></td></form>";
   break;
   case ($gets['id'] == 11 ):
-  $HTMLOUT .="<td align='center' class='".$class."'>". (htmlspecialchars($gets['points']) - htmlspecialchars($gets['pointspool'])) . " <br />Points needed! <br /><input class='button' type='submit' name='submit' value='Contribute!' /></td></form>";
+  $HTMLOUT .="<td align='center' class='".$class."'>". ((float)$gets['points'] - (float)$gets['pointspool']) . " <br />Points needed! <br /><input class='button' type='submit' name='submit' value='Contribute!' /></td></form>";
   break;
   case ($gets['id'] == 12 ):
-  $HTMLOUT .="<td align='center' class='".$class."'>". (htmlspecialchars($gets['points']) - htmlspecialchars($gets['pointspool'])) . " <br />Points needed! <br /><input class='button' type='submit' name='submit' value='Contribute!' /></td></form>";
+  $HTMLOUT .="<td align='center' class='".$class."'>". ((float)$gets['points'] - (float)$gets['pointspool']) . " <br />Points needed! <br /><input class='button' type='submit' name='submit' value='Contribute!' /></td></form>";
   break;
   case ($gets['id'] == 13 ):
-  $HTMLOUT .="<td align='center' class='".$class."'>". (htmlspecialchars($gets['points']) - htmlspecialchars($gets['pointspool'])) . " <br />Points needed! <br /><input class='button' type='submit' name='submit' value='Contribute!' /></td></form>";
+  $HTMLOUT .="<td align='center' class='".$class."'>". ((float)$gets['points'] - (float)$gets['pointspool']) . " <br />Points needed! <br /><input class='button' type='submit' name='submit' value='Contribute!' /></td></form>";
   break;
   default:
   $HTMLOUT .="<td class='".$class."'><input class='button' type='submit' name='submit' value='Exchange!' /></td></form>";

@@ -23,7 +23,7 @@ function parse_poll()
       //search for a poll with given ID
       $query = sql_query("SELECT * FROM polls
                             LEFT JOIN poll_voters ON polls.pid = poll_voters.poll_id
-                            AND poll_voters.user_id = {$CURUSER['id']} 
+                            AND poll_voters.user_id = ".sqlesc($CURUSER['id'])." 
                             ORDER BY polls.start_date DESC
                             LIMIT 1");
        //Did we find the poll?
@@ -96,7 +96,7 @@ function parse_poll()
         {
         	//ok, lets get this show on the road!
         	
-        	$htmlout = poll_header( $poll_data['pid'], htmlentities($poll_data['poll_question'], ENT_QUOTES) );
+        	$htmlout = poll_header( $poll_data['pid'], htmlsafechars($poll_data['poll_question'], ENT_QUOTES) );
         	$poll_answers = unserialize(stripslashes($poll_data['choices']));
         	
         	reset($poll_answers);
@@ -104,7 +104,7 @@ function parse_poll()
         	foreach ( $poll_answers as $id => $data )
         	{
         		//subtitle question
-        		$question    = htmlentities($data['question'], ENT_QUOTES);
+        		$question    = htmlsafechars($data['question'], ENT_QUOTES);
         		$choice_html = "";
         		$tv_poll     = 0;
         		
@@ -118,7 +118,7 @@ function parse_poll()
         		// Get the choises from the unserialised array
         		foreach( $data['choice'] as $choice_id => $text )
         		{
-        			$choice  = htmlentities($text, ENT_QUOTES);
+        			$choice  = htmlsafechars($text, ENT_QUOTES);
         			
         			$votes   = intval($data['votes'][ $choice_id ]);
         			
@@ -148,7 +148,7 @@ function parse_poll()
         else if ( $check == 2 )
         {
 	        // only for guests when view before vote is off
-	        $htmlout  = poll_header($poll_data['pid'], htmlentities($poll_data['poll_question'], ENT_QUOTES));
+	        $htmlout  = poll_header($poll_data['pid'], htmlsafechars($poll_data['poll_question'], ENT_QUOTES));
 	        $htmlout .= poll_show_no_guest_view( );
 	        $htmlout .= show_total_votes($total_votes);
         }
@@ -159,18 +159,18 @@ function parse_poll()
         	reset($poll_answers);
         	
         	//output poll form
-        	$htmlout = poll_header($poll_data['pid'], htmlentities($poll_data['poll_question'], ENT_QUOTES));
+        	$htmlout = poll_header($poll_data['pid'], htmlsafechars($poll_data['poll_question'], ENT_QUOTES));
         	
         	foreach ( $poll_answers as $id => $data )
         	{
         		// get the question again!
-        		$question    = htmlentities($data['question'], ENT_QUOTES);
+        		$question    = htmlsafechars($data['question'], ENT_QUOTES);
         		$choice_html = "";
         		
         		// get choices for this question
         		foreach( $data['choice'] as $choice_id => $text )
         		{
-        			$choice = htmlentities($text, ENT_QUOTES);
+        			$choice = htmlsafechars($text, ENT_QUOTES);
         			$votes  = intval($data['votes'][ $choice_id ]);
         	
 					

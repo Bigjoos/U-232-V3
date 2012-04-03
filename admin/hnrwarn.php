@@ -148,14 +148,14 @@ $stdfoot = array(/** include js **/'js' => array('wz_tooltip'));
 	
 			while($a = mysqli_fetch_assoc($g))
 			{
-			$tip = ($do == "hnrwarn" ? "Hit and run Warned for : ".$a["warn_reason"]."<br />" : "Disabled for ".$a["disable_reason"]);
+			$tip = ($do == "hnrwarn" ? "Hit and run Warned for : ".htmlsafechars($a["warn_reason"])."<br />" : "Disabled for ".htmlsafechars($a["disable_reason"]));
 				$HTMLOUT .="<tr>
-				  <td align='left' width='100%'><a href='userdetails.php?id={$a["id"]}' onmouseover=\"Tip('($tip)')\" onmouseout=\"UnTip()\">{$a["username"]}</a></td>
-				  <td align='left' nowrap='nowrap'>{$a["ratio"]}<br /><font class='small'><b>D: </b>".mksize($a["downloaded"])."&nbsp;<b>U:</b> ".mksize($a["uploaded"])."</font></td>
+				  <td align='left' width='100%'><a href='userdetails.php?id=".(int)$a["id"]."' onmouseover=\"Tip('($tip)')\" onmouseout=\"UnTip()\">".htmlsafechars($a["username"])."</a></td>
+				  <td align='left' nowrap='nowrap'>".(float)$a["ratio"]."<br /><font class='small'><b>D: </b>".mksize($a["downloaded"])."&nbsp;<b>U:</b> ".mksize($a["uploaded"])."</font></td>
 				  <td align='center' nowrap='nowrap'>".get_user_class_name($a["class"])."</td>
 				  <td align='center' nowrap='nowrap'>".get_date($a["last_access"],'LONG',0,1)."</td>
 				  <td align='center' nowrap='nowrap'>".get_date($a["added"],'DATE',1)."</td>
-				  <td align='center' nowrap='nowrap'><input type='checkbox' name='users[]' value='{$a["id"]}' /></td>
+				  <td align='center' nowrap='nowrap'><input type='checkbox' name='users[]' value='".(int)$a["id"]."' /></td>
 				</tr>";
 			}
 			
@@ -168,7 +168,7 @@ $stdfoot = array(/** include js **/'js' => array('wz_tooltip'));
 				</select>
 				&raquo;
 				<input type='submit' value='Apply' />
-				<input type='hidden' value='".htmlspecialchars($_SERVER["REQUEST_URI"])."' name='ref' />
+				<input type='hidden' value='".htmlsafechars($_SERVER["REQUEST_URI"])."' name='ref' />
 			</td>
 			</tr>
 			</table>

@@ -70,12 +70,12 @@
  	      }
 
  	      $added = get_date($topicarr['added'],'',0,1);
- 	      $username = "".(!empty($topicarr['username']) ? "<a href='/userdetails.php?id=".(int)$topicarr['puser_id']."'><b>".htmlspecialchars($topicarr['username'])."</b></a>" : "<i>Unknown[$topic_userid]</i>")."";
-	      $author = (!empty($topicarr['u2_username']) ? "<a href='/userdetails.php?id=$topic_userid'><b>".htmlspecialchars($topicarr['u2_username'])."</b></a>" : ($topic_userid == '0' ? "<i>System</i>" : "<i>Unknown[$topic_userid]</i>"));
+ 	      $username = "".(!empty($topicarr['username']) ? "<a href='/userdetails.php?id=".(int)$topicarr['puser_id']."'><b>".htmlsafechars($topicarr['username'])."</b></a>" : "<i>Unknown[$topic_userid]</i>")."";
+	      $author = (!empty($topicarr['u2_username']) ? "<a href='/userdetails.php?id=".(int)$topic_userid."'><b>".htmlsafechars($topicarr['u2_username'])."</b></a>" : ($topic_userid == '0' ? "<i>System</i>" : "<i>Unknown[$topic_userid]</i>"));
 	      $staffimg = ($topicarr['min_class_read'] >= UC_STAFF ? "<img src='".$INSTALLER09['pic_base_url']."staff.png' border='0' alt='Staff forum' title='Staff Forum' />" : '');
 	      $stickyimg = ($topicarr['sticky'] == 'yes' ? "<img src='".$INSTALLER09['pic_base_url']."sticky.gif' border='0' alt='Sticky' title='Sticky Topic' />&nbsp;&nbsp;" : '');
 	      $lockedimg = ($topicarr['locked'] == 'yes' ? "<img src='".$INSTALLER09['pic_base_url']."forumicons/locked.gif' border='0' alt='Locked' title='Locked Topic' />&nbsp;" : '');
-        $topic_name = $lockedimg.$stickyimg."<a href='/forums.php?action=view_topic&amp;topic_id=$topicid&amp;page=last#".(int)$topicarr['last_post']."'><b>" . htmlspecialchars($topicarr['topic_name']) . "</b></a>&nbsp;&nbsp;$staffimg&nbsp;&nbsp;$menu<br /><font class='small'>in <a href='forums.php?action=view_forum&amp;forum_id=".(int)$topicarr['forum_id']."'>".htmlspecialchars($topicarr['name'])."</a>&nbsp;by&nbsp;$author&nbsp;&nbsp;($added)</font>";
+        $topic_name = $lockedimg.$stickyimg."<a href='/forums.php?action=view_topic&amp;topic_id=$topicid&amp;page=last#".(int)$topicarr['last_post']."'><b>" . htmlsafechars($topicarr['topic_name']) . "</b></a>&nbsp;&nbsp;$staffimg&nbsp;&nbsp;$menu<br /><font class='small'>in <a href='forums.php?action=view_forum&amp;forum_id=".(int)$topicarr['forum_id']."'>".htmlsafechars($topicarr['name'])."</a>&nbsp;by&nbsp;$author&nbsp;&nbsp;($added)</font>";
         $HTMLOUT .="
         <tr><td>
          {$topic_name}

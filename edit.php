@@ -79,20 +79,20 @@ loggedinorreturn();
     fclose($fp);
     }
     }
-    $ismodd = '<tr><td align=\'center\' class=\'colhead\' colspan=\'2\'><b>Edit Torrent</b> '.(($CURUSER['class'] > UC_UPLOADER)?'<small><a href="edit.php?id='.$id.'&amp;unedit=1">Click here</a> to add temp edit notification while you edit this torrent</small>':'').'</td></tr>';
+    $ismodd = '<tr><td align=\'center\' class=\'colhead\' colspan=\'2\'><b>Edit Torrent</b> '.(($CURUSER['class'] > UC_UPLOADER) ? '<small><a href="edit.php?id='.$id.'&amp;unedit=1">Click here</a> to add temp edit notification while you edit this torrent</small>' : '').'</td></tr>';
     $HTMLOUT  .= "<form method='post' name='edit' action='takeedit.php' enctype='multipart/form-data'>
     <input type='hidden' name='id' value='$id' />";
     
     if (isset($_GET["returnto"]))
-    $HTMLOUT  .= "<input type='hidden' name='returnto' value='" . htmlspecialchars($_GET["returnto"]) . "' />\n";
+    $HTMLOUT  .= "<input type='hidden' name='returnto' value='" . htmlsafechars($_GET["returnto"]) . "' />\n";
     $HTMLOUT  .=  "<table border='1' cellspacing='0' cellpadding='10'>\n";
     $HTMLOUT  .= $ismodd;
-    $HTMLOUT  .= tr("{$lang['edit_imdb_url']}", "<input type='text' name='url' size='80' value='".$row["url"]."' />", 1);
-    $HTMLOUT  .= tr($lang['edit_poster'], "<input type='text' name='poster' size='80' value='" . htmlspecialchars($row["poster"]) . "' /><br />{$lang['edit_poster1']}\n", 1);
-    $HTMLOUT  .= tr($lang['edit_youtube'], "<input type='text' name='youtube' value='{$row['youtube']}'size='80' /><br />({$lang['edit_youtube_info']})\n", 1);
-    $HTMLOUT  .= tr($lang['edit_torrent_name'], "<input type='text' name='name' value='" . htmlspecialchars($row["name"]) . "' size='80' />", 1);
-    $HTMLOUT  .= tr($lang['edit_torrent_tags'], "<input type='text' name='tags' value='" . htmlspecialchars($row["tags"]) . "' size='80' /><br />({$lang['edit_tags_info']})\n", 1);
-    $HTMLOUT  .= tr($lang['edit_torrent_description'], "<input type='text' name='description' value='" . htmlspecialchars($row['description']) . "' size='80' />", 1);
+    $HTMLOUT  .= tr("{$lang['edit_imdb_url']}", "<input type='text' name='url' size='80' value='".htmlsafechars($row["url"])."' />", 1);
+    $HTMLOUT  .= tr($lang['edit_poster'], "<input type='text' name='poster' size='80' value='" . htmlsafechars($row["poster"]) . "' /><br />{$lang['edit_poster1']}\n", 1);
+    $HTMLOUT  .= tr($lang['edit_youtube'], "<input type='text' name='youtube' value='".htmlsafechars($row['youtube'])."'size='80' /><br />({$lang['edit_youtube_info']})\n", 1);
+    $HTMLOUT  .= tr($lang['edit_torrent_name'], "<input type='text' name='name' value='" . htmlsafechars($row["name"]) . "' size='80' />", 1);
+    $HTMLOUT  .= tr($lang['edit_torrent_tags'], "<input type='text' name='tags' value='" . htmlsafechars($row["tags"]) . "' size='80' /><br />({$lang['edit_tags_info']})\n", 1);
+    $HTMLOUT  .= tr($lang['edit_torrent_description'], "<input type='text' name='description' value='" . htmlsafechars($row['description']) . "' size='80' />", 1);
     $HTMLOUT  .= tr($lang['edit_nfo'], "<input type='radio' name='nfoaction' value='keep' checked='checked' />{$lang['edit_keep_current']}<br />".
 	"<input type='radio' name='nfoaction' value='update' />{$lang['edit_update']}<br /><input type='file' name='nfo' size='80' />", 1);
     if ((strpos($row["ori_descr"], "<") === false) || (strpos($row["ori_descr"], "&lt;") !== false))
@@ -103,19 +103,19 @@ loggedinorreturn();
     {
       $c = " checked";
     }
-    $HTMLOUT .= tr($lang['edit_description'], "". textbbcode("edit","descr","".htmlspecialchars($row['ori_descr'])."")."<br />({$lang['edit_tags']})", 1);
-    //$HTMLOUT .= tr($lang['edit_description'], "". BBcode(htmlspecialchars($row['ori_descr']),false)."<br />({$lang['edit_tags']})", 1);
+    $HTMLOUT .= tr($lang['edit_description'], "". textbbcode("edit","descr","".htmlsafechars($row['ori_descr'])."")."<br />({$lang['edit_tags']})", 1);
+    //$HTMLOUT .= tr($lang['edit_description'], "". BBcode(htmlsafechars($row['ori_descr']),false)."<br />({$lang['edit_tags']})", 1);
     $s = "<select name=\"type\">\n";
     $cats = genrelist2();
     foreach ($cats as $cat)
     {
-    $s .= "<optgroup label=\"" . htmlspecialchars($cat["name"]) . "\">";
+    $s .= "<optgroup label=\"" . htmlsafechars($cat["name"]) . "\">";
     $subcats = $cat['subcategory'];
     if (count($subcats) > 0)
     {
     foreach ($subcats as $subcat)
     {
-    $s .= "<option value=\"" . $subcat["id"] . "\" ".($subcat["id"] == $row["category"]?" selected='selected'":"").">" . htmlspecialchars($subcat["name"]) . "</option>\n";
+    $s .= "<option value=\"".(int)$subcat["id"]."\" ".($subcat["id"] == $row["category"] ? "selected='selected' " : "").">".htmlsafechars($subcat["name"])."</option>\n";
     }
     }
     $s .= "</optgroup>\n";
@@ -123,25 +123,26 @@ loggedinorreturn();
     $s .= "</select>\n";
     $HTMLOUT  .= tr($lang['edit_type'], $s, 1);
     require_once(CACHE_DIR.'subs.php');
-	  $subs_list='';
-	  $subs_list .= "<table border=\"1\"><tr>\n";
-	  $i = 0;
-	  foreach($subs as $s)
-	  {	
-	  $subs_list .=  ($i && $i % 4 == 0) ? "</tr><tr>" : "";
-	  $subs_list .= "<td style='padding-right: 5px'><input name=\"subs[]\" " . (strpos($row["subs"], $s["id"]) !== false ? " checked='checked'" : "") . "  type=\"checkbox\" value=\"".$s["id"]."\" /> ".$s["name"]."</td>\n";
-	  ++$i;
-	  }
-	  $subs_list .= "</tr></table>\n";
-	  $HTMLOUT .= tr("Subtitiles",$subs_list,1);
+	 $subs_list='';
+	 $subs_list .= "<table border=\"1\"><tr>\n";
+	 $i = 0;
+	 foreach($subs as $s)
+	 {	
+	 $subs_list .=  ($i && $i % 4 == 0) ? "</tr><tr>" : "";
+	 $subs_list .= "<td style='padding-right: 5px'><input name=\"subs[]\" " . (strpos($row["subs"], $s["id"]) !== false ? " checked='checked'" : "") . "  type=\"checkbox\" value=\"".(int)$s["id"]."\" />".htmlsafechars($s["name"])."</td>\n";
+	 ++$i;
+	 }
+	 $subs_list .= "</tr></table>\n";
+	 $HTMLOUT .= tr("Subtitiles",$subs_list,1);
     $rg = "<select name='release_group'>\n<option value='scene'".($row["release_group"] == "scene" ? " selected='selected'" : "").">Scene</option>\n<option value='p2p'".($row["release_group"] == "p2p" ? " selected='selected'" : "").">p2p</option>\n<option value='none'".($row["release_group"] == "none" ? " selected='selected'" : "").">None</option> \n</select>\n";
     $HTMLOUT .= tr("Release Group", $rg, 1);
     $HTMLOUT  .= tr($lang['edit_visible'], "<input type='checkbox' name='visible'" . (($row["visible"] == "yes") ? " checked='checked'" : "" ) . " value='1' /> {$lang['edit_visible_mainpage']}<br /><table border='0' cellspacing='0' cellpadding='0' width='420'><tr><td class='embedded'>{$lang['edit_visible_info']}</td></tr></table>", 1);
     if ($CURUSER['class'] >= UC_STAFF)
     $HTMLOUT  .= tr($lang['edit_banned'], "<input type='checkbox' name='banned'" . (($row["banned"] == "yes") ? " checked='checked'" : "" ) . " value='1' /> {$lang['edit_banned']}", 1);
+    $HTMLOUT .= tr($lang['edit_recommend_torrent'],"<input type='radio' name='recommended' " . (($row["recommended"] == "yes") ? "checked='checked'" : "") . " value='yes' />Yes!<input type='radio' name='recommended' " . ($row["recommended"] == "no" ? "checked='checked'" : "") . " value='no' />No!<br/><font class='small' >{$lang['edit_recommend']}</font>",1);
     if ($CURUSER['class'] >= UC_UPLOADER){
     $HTMLOUT .= tr("Nuked", "<input type='radio' name='nuked'" . ($row["nuked"] == "yes" ? " checked='checked'" : "") . " value='yes' />Yes <input type='radio' name='nuked'" . ($row["nuked"] == "no" ? " checked='checked'" : "") . " value='no' />No",1);
-    $HTMLOUT .= tr("Nuke Reason", "<input type='text' name='nukereason' value='" . htmlspecialchars($row["nukereason"]) . "' size='80' />", 1);
+    $HTMLOUT .= tr("Nuke Reason", "<input type='text' name='nukereason' value='" . htmlsafechars($row["nukereason"]) . "' size='80' />", 1);
     }
     if ($CURUSER['class'] >= UC_STAFF)
     {
@@ -172,7 +173,7 @@ loggedinorreturn();
     <td align='right'><font color='red'>&nbsp;*&nbsp;</font><b>&nbsp;{$lang['edit_comment']}</b></td>
     <td>
     <select name='allow_comments'>
-    <option value='".htmlspecialchars($row["allow_comments"])."'>".htmlspecialchars($row["allow_comments"])."</option>
+    <option value='".htmlsafechars($row["allow_comments"])."'>".htmlsafechars($row["allow_comments"])."</option>
     <option value='yes'>Yes</option><option value='no'>No</option></select>{$messc}</td></tr>\n";
     }
     // ===end
@@ -190,7 +191,7 @@ loggedinorreturn();
     <table>
     <tr>
     <td align='left'>
-    <input type='radio' name='genre' value='keep' checked='checked' />Dont touch it [ Current: ".htmlspecialchars($row['newgenre'])." ]<br /></td>
+    <input type='radio' name='genre' value='keep' checked='checked' />Dont touch it [ Current: ".htmlsafechars($row['newgenre'])." ]<br /></td>
     <td style='border:none'><input type='radio' name='genre' value='movie' />Movie</td>
     <td style='border:none'><input type='radio' name='genre' value='music' />Music</td>
     <td style='border:none'><input type='radio' name='genre' value='game' />Game</td>
@@ -248,7 +249,7 @@ loggedinorreturn();
     
     if (isset($_GET["returnto"]))
     {
-      $HTMLOUT  .= "<input type='hidden' name='returnto' value='" . htmlspecialchars($_GET["returnto"]) . "' />\n";
+      $HTMLOUT  .= "<input type='hidden' name='returnto' value='" . htmlsafechars($_GET["returnto"]) . "' />\n";
 		}
     
     $HTMLOUT  .= "<tr><td colspan='2' align='center'><input type='submit' value='{$lang['edit_delete']}' class='btn' /></td>

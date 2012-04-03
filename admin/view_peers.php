@@ -32,13 +32,13 @@ class_check(UC_STAFF);
 $lang = array_merge( $lang );
 $HTMLOUT = $count = '';
  
-$res = sql_query("SELECT COUNT(id) FROM peers") or sqlerr();
+$res = sql_query("SELECT COUNT(id) FROM peers") or sqlerr(__FILE__, __LINE__);
 $row = mysqli_fetch_row($res);
 $count = $row[0];
 $peersperpage = 15;
 
 $HTMLOUT .="<h2 align='center'>Site peers</h2>
-<font class='small'>There is approx&nbsp;".htmlspecialchars($count)."&nbsp;peers currently</font>";
+<font class='small'>There is approx&nbsp;".htmlsafechars($count)."&nbsp;peers currently</font>";
 $HTMLOUT .= begin_main_frame();
 
 $pager = pager($peersperpage, $count, "staffpanel.php?tool=view_peers&amp;action=view_peers&amp;");
@@ -52,7 +52,7 @@ $sql = "SELECT p.id, p.userid, p.torrent, p.passkey, p.peer_id, p.ip, p.port, p.
 "LEFT JOIN torrents AS t ON t.id=p.torrent WHERE started != '0'".
 "ORDER BY p.started DESC {$pager['limit']}";
 
-$result = sql_query($sql) or print(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+$result = sql_query($sql) or sqlerr(__FILE__, __LINE__);
 if( mysqli_num_rows($result) != 0 ) {
 
 $HTMLOUT .="<table width='100%' border='1' cellspacing='0' cellpadding='5' align='center'>
@@ -74,26 +74,26 @@ $HTMLOUT .="<table width='100%' border='1' cellspacing='0' cellpadding='5' align
 </tr>";
 
 while($row = mysqli_fetch_assoc($result)) {
-$smallname =substr(htmlspecialchars($row["name"]) , 0, 25);
-if ($smallname != htmlspecialchars($row["name"])) {
+$smallname =substr(htmlsafechars($row["name"]) , 0, 25);
+if ($smallname != htmlsafechars($row["name"])) {
 $smallname .= '...';
 }
 
 $HTMLOUT .='<tr>
-<td><a href="userdetails.php?id='.(int)($row['userid']).'">'.htmlspecialchars($row['username']).'</a></td>
+<td><a href="userdetails.php?id='.(int)($row['userid']).'">'.htmlsafechars($row['username']).'</a></td>
 <td><a href="details.php?id='.(int)($row['torrent']).'">'.$smallname.'</a></td>
-<td align="center">'.htmlspecialchars($row['ip']).'</td>
-<td align="center">'.htmlspecialchars($row['port']).'</td>
-<td align="center">'.htmlspecialchars(mksize($row['uploaded'])).'</td>
-<td align="center">'.htmlspecialchars(mksize($row['downloaded'])).'</td>
-<td align="center">'.htmlspecialchars($row['passkey']).'</td>
+<td align="center">'.htmlsafechars($row['ip']).'</td>
+<td align="center">'.htmlsafechars($row['port']).'</td>
+<td align="center">'.htmlsafechars(mksize($row['uploaded'])).'</td>
+<td align="center">'.htmlsafechars(mksize($row['downloaded'])).'</td>
+<td align="center">'.htmlsafechars($row['passkey']).'</td>
 <td align="center">'.($row['connectable'] == 'yes' ? "<img src='".$INSTALLER09['pic_base_url']."aff_tick.gif' alt='Yes' title='Yes' />" : "<img src='".$INSTALLER09['pic_base_url']."aff_cross.gif' alt='No' title='No' />").'</td>
 <td align="center">'.($row['seeder'] == 'yes' ? "<img src='".$INSTALLER09['pic_base_url']."aff_tick.gif' alt='Yes' title='Yes' />" : "<img src='".$INSTALLER09['pic_base_url']."aff_cross.gif' alt='No' title='No' />").'</td>
 <td align="center">'.get_date($row['started'], 'DATE',0,1).'</td>
 <td align="center">'.get_date($row['last_action'], 'DATE',0,1).'</td>
-<td align="center">'.htmlspecialchars(mksize($row['uploadoffset'])).'</td>
-<td align="center">'.htmlspecialchars(mksize($row['downloadoffset'])).'</td>
-<td align="center">'.htmlspecialchars(mksize($row['to_go'])).'</td>
+<td align="center">'.htmlsafechars(mksize($row['uploadoffset'])).'</td>
+<td align="center">'.htmlsafechars(mksize($row['downloadoffset'])).'</td>
+<td align="center">'.htmlsafechars(mksize($row['to_go'])).'</td>
 </tr>';
 }
 $HTMLOUT .="</table>";

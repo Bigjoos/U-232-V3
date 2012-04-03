@@ -62,7 +62,7 @@
  $html .= "<td class=\"colhead\" style=\"padding-bottom: 2px;padding-left: 7px;white-space: nowrap;\">
  <input id=\"checkAll".(int)$cat['tabletype']."\" type=\"checkbox\" onclick=\"checkAllFields(1,".(int)$cat['tabletype'].");\" " . (isset($cat['checked']) && $cat['checked'] ? "checked='checked'" : "") . " />
  <a href=\"javascript: ShowHideMainSubCats(".(int)$cat['tabletype'].",{$ncats})\">
- <img border=\"0\" src=\"pic/plus.png\" id=\"pic".(int)$cat['tabletype']."\" alt=\"Show/Hide\" />&nbsp;" . htmlspecialchars($cat['name']) . "</a>&nbsp;".(($linkpage != '') ? "<a class=\"catlink\" href=\"{$linkpage}?{$cat['categories']}\">(All)</a>" : "")."</td>\n";
+ <img border=\"0\" src=\"pic/plus.png\" id=\"pic".(int)$cat['tabletype']."\" alt=\"Show/Hide\" />&nbsp;" . htmlsafechars($cat['name']) . "</a>&nbsp;".(($linkpage != '') ? "<a class=\"catlink\" href=\"{$linkpage}?{$cat['categories']}\">(All)</a>" : "")."</td>\n";
  $i++;
  }
  $nrows = ceil($ncats/$INSTALLER09['catsperrow']);
@@ -101,7 +101,7 @@
  $html .= ($i && $i % $INSTALLER09['subcatperrow'] == 0) ? "</tr><tr>" : "";
  $html .= "<td class=\"one\" style=\"padding-bottom: 2px;padding-left: 7px;white-space: nowrap;\">
  <input onclick=\"checkAllFields(2,".(int)$cats['tabletype'].");\" name=\"cats".(int)$cats['tabletype']."[]\" value=\"".(int)$cat['id']."\" type=\"checkbox\" ". (in_array($cat['id'],$wherecatina) ? "checked='checked'" : "") . " />
- ".(($linkpage != '') ? "<a href=\"{$linkpage}?cats".(int)$cats['tabletype']."[]=".(int)$cat['id']."\"><img src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/" . htmlspecialchars($cat['image']) . "' alt='" . htmlspecialchars($cat['name']) . "' title='" . htmlspecialchars($cat['name']) . "' /></a>" : htmlspecialchars($cat['name']))."</td>\n";
+ ".(($linkpage != '') ? "<a href=\"{$linkpage}?cats".(int)$cats['tabletype']."[]=".(int)$cat['id']."\"><img src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/" . htmlsafechars($cat['image']) . "' alt='" . htmlsafechars($cat['name']) . "' title='" . htmlsafechars($cat['name']) . "' /></a>" : htmlsafechars($cat['name']))."</td>\n";
  $i++;
  }
  $nsubcats = count($subcats);

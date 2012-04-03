@@ -17,7 +17,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
 }
 
     //=== make sure they "should" be forwarding this PM
-    $res = sql_query('SELECT * FROM messages WHERE id='.$pm_id) or sqlerr(__FILE__,__LINE__);
+    $res = sql_query('SELECT * FROM messages WHERE id='.sqlesc($pm_id)) or sqlerr(__FILE__,__LINE__);
     $message = mysqli_fetch_assoc($res);
 
         if (mysqli_num_rows($res) === 0) 
@@ -27,14 +27,14 @@ if (!defined('BUNNY_PM_SYSTEM'))
          stderr('Error','He be as good a gentleman as the devil is, as Lucifer and Beelzebub himself.');
 
                     //=== Try finding a user with specified name
-                    $res_username = sql_query('SELECT id, class, acceptpms, notifs FROM users WHERE LOWER(username)=LOWER('.sqlesc(htmlspecialchars($_POST['to'])).') LIMIT 1');
+                    $res_username = sql_query('SELECT id, class, acceptpms, notifs FROM users WHERE LOWER(username)=LOWER('.sqlesc(htmlsafechars($_POST['to'])).') LIMIT 1');
                     $to_username = mysqli_fetch_assoc($res_username);
 
     if (mysqli_num_rows($res_username) === 0) 
         stderr('Error','Sorry, there is no member with that username.');
 
         //=== make sure the reciever has space in their box
-        $res_count = sql_query('SELECT COUNT(id) FROM messages WHERE receiver = '.$to_username['id'].' AND location = 1') or sqlerr(__FILE__, __LINE__);
+        $res_count = sql_query('SELECT COUNT(id) FROM messages WHERE receiver = '.sqlesc($to_username['id']).' AND location = 1') or sqlerr(__FILE__, __LINE__);
 
             if (mysqli_num_rows($res_count) > ($maxbox * 3)  && $CURUSER['class'] < UC_STAFF) 
                 stderr('Sorry', 'Members mailbox is full.');
@@ -42,7 +42,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
         //=== allow suspended users to PM / forward to staff only
             if ($CURUSER['suspended'] === 'yes')
                 {
-                $res = sql_query('SELECT class FROM users WHERE id = '.$to_username['id']) or sqlerr(__FILE__, __LINE__);
+                $res = sql_query('SELECT class FROM users WHERE id = '.sqlesc($to_username['id'])) or sqlerr(__FILE__, __LINE__);
                 $row = mysqli_fetch_assoc($res);
                 
                     if ($row['class'] < UC_STAFF) 	
@@ -58,7 +58,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
                             stderr('Error', 'This user dosen\'t accept PMs.');
 
                             //=== if this member has blocked the sender
-                            $res2 = sql_query('SELECT id FROM blocks WHERE userid='.$to_username['id'].' AND blockid='.$CURUSER['id']) or sqlerr(__FILE__, __LINE__);
+                            $res2 = sql_query('SELECT id FROM blocks WHERE userid='.sqlesc($to_username['id']).' AND blockid='.sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
 
                                 if (mysqli_num_rows($res2) === 1) 
                                     stderr('Refused', 'This member has blocked PMs from you.');
@@ -66,7 +66,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
                                 //=== finally if they only allow PMs from friends
                                 if ($to_username['acceptpms'] === 'friends')
                                     {
-                                    $res2 = sql_query('SELECT * FROM friends WHERE userid='.$to_username['id'].' AND friendid='.$CURUSER['id']) or sqlerr(__FILE__, __LINE__);
+                                    $res2 = sql_query('SELECT * FROM friends WHERE userid='.sqlesc($to_username['id']).' AND friendid='.sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
 
                                         if (mysqli_num_rows($res2) != 1) 
                                             stderr('Refused', 'This member only accepts PMs from members on their friends list.');
@@ -74,12 +74,12 @@ if (!defined('BUNNY_PM_SYSTEM'))
                         }
 
     //=== ok... all is good... let's get the info and send it :D
-    $subject = htmlspecialchars($_POST['subject']);
-    $first_from = (validusername($_POST['first_from']) ? htmlspecialchars($_POST['first_from']) : '');
-    $body = "\n\n".$_POST['body']."\n\n-------- Original Message from [b]".$first_from."::[/b] \"".htmlspecialchars($message['subject'])."\"  -------------------------------------\n" . $message['msg']."\n";
+    $subject = htmlsafechars($_POST['subject']);
+    $first_from = (validusername($_POST['first_from']) ? htmlsafechars($_POST['first_from']) : '');
+    $body = "\n\n".$_POST['body']."\n\n-------- Original Message from [b]".$first_from."::[/b] \"".htmlsafechars($message['subject'])."\"  -------------------------------------\n" . $message['msg']."\n";
 
         sql_query('INSERT INTO `messages` (`sender`, `receiver`, `added`, `subject`, `msg`, `unread`, `location`, `saved`, `poster`, `urgent`) 
-                        VALUES ('.$CURUSER['id'].', '.$to_username['id'].', '.TIME_NOW.', '.sqlesc($subject).', '.sqlesc($body).', \'yes\', 1, '.sqlesc($save).', 0, '.sqlesc($urgent).')') or sqlerr(__FILE__, __LINE__);
+                        VALUES ('.sqlesc($CURUSER['id']).', '.sqlesc($to_username['id']).', '.TIME_NOW.', '.sqlesc($subject).', '.sqlesc($body).', \'yes\', 1, '.sqlesc($save).', 0, '.sqlesc($urgent).')') or sqlerr(__FILE__, __LINE__);
          $mc1->delete_value('inbox_new_'.$to_username['id']);
          $mc1->delete_value('inbox_new_sb_'.$to_username['id']);
         //=== Check if message was forwarded
@@ -89,7 +89,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
     //=== if they just have to know about it right away... send them an email (if selected if profile)
 	  if (strpos($to_username['notifs'], '[pm]') !== false)
         {
-	    $username = $CURUSER['username'];
+	    $username = htmlsafechars($CURUSER['username']);
 $body = <<<EOD
 You have received a PM from $username!
 

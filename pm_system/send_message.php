@@ -24,16 +24,16 @@ if (!defined('BUNNY_PM_SYSTEM'))
 
         //=== check to see they have everything or...
         $receiver = sqlesc(isset($_POST['receiver']) ? intval($_POST['receiver']) : 0);
-        $subject = sqlesc(htmlspecialchars($_POST['subject']));
+        $subject = sqlesc(htmlsafechars($_POST['subject']));
         $body = sqlesc(trim($_POST['body']));
         $save = ((isset($_POST['save']) && $_POST['save'] === 1) ? '1' : '0');
         $delete = sqlesc((isset($_POST['delete']) && $_POST['delete'] !== 0) ? intval($_POST['delete']) : 0);
         $urgent = sqlesc((isset($_POST['urgent']) && $_POST['urgent'] == 'yes' &&  $CURUSER['class'] >= UC_STAFF) ? 'yes' : 'no');
-        $returnto = htmlspecialchars(isset($_POST['returnto']) ? $_POST['returnto'] : '');
-        //$returnto = htmlspecialchars($_POST['returnto']);
+        $returnto = htmlsafechars(isset($_POST['returnto']) ? $_POST['returnto'] : '');
+        //$returnto = htmlsafechars($_POST['returnto']);
 
             //=== get user info from DB
-            $res_receiver = sql_query('SELECT id, acceptpms, notifs, email, class, username FROM users WHERE id='.$receiver) or sqlerr(__FILE__, __LINE__);
+            $res_receiver = sql_query('SELECT id, acceptpms, notifs, email, class, username FROM users WHERE id='.sqlesc($receiver)) or sqlerr(__FILE__, __LINE__);
             $arr_receiver = mysqli_fetch_assoc($res_receiver);
 
                 if (!is_valid_id(intval($_POST['receiver'])) || !is_valid_id($arr_receiver['id'])) 
@@ -45,7 +45,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
         //=== allow suspended users to PM / forward to staff only
         if ($CURUSER['suspended'] === 'yes')
             {
-            $res = sql_query('SELECT class FROM users WHERE id = '.$receiver) or sqlerr(__FILE__, __LINE__);
+            $res = sql_query('SELECT class FROM users WHERE id = '.sqlesc($receiver)) or sqlerr(__FILE__, __LINE__);
             $row = mysqli_fetch_assoc($res);
         
                 if ($row['class'] < UC_STAFF) 
@@ -53,11 +53,11 @@ if (!defined('BUNNY_PM_SYSTEM'))
             }
 
         //=== make sure they have space
-        //$res_count = sql_query('SELECT COUNT(*) FROM messages WHERE receiver = '.$receiver.' AND location = 1') or sqlerr(__FILE__, __LINE__);
-        //$arr_count = mysqli_fetch_row($res_count);
+        $res_count = sql_query('SELECT COUNT(*) FROM messages WHERE receiver = '.sqlesc($receiver).' AND location = 1') or sqlerr(__FILE__, __LINE__);
+        $arr_count = mysqli_fetch_row($res_count);
 
-            //if ($arr_count[0] >= $maxbox  && $CURUSER['class'] < UC_STAFF) 
-                //stderr('Sorry', 'Members PM box is full.');
+            if ($arr_count[0] >= $maxbox  && $CURUSER['class'] < UC_STAFF) 
+                stderr('Sorry', 'Members PM box is full.');
 
         //=== Make sure recipient wants this message
 		if ($CURUSER['class'] < UC_STAFF)
@@ -67,28 +67,28 @@ if (!defined('BUNNY_PM_SYSTEM'))
             switch($should_i_send_this)
                 {
                 case 'yes':
-                    $r = sql_query('SELECT id FROM blocks WHERE userid = '.$receiver.' AND blockid = '.$CURUSER['id']) or sqlerr(__FILE__, __LINE__);
+                    $r = sql_query('SELECT id FROM blocks WHERE userid = '.sqlesc($receiver).' AND blockid = '.sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
                     $block = mysqli_fetch_row($r);
                     
                         if ($block[0] > 0) 
-                            stderr('Refused', $arr_receiver['username'].' has blocked PMs from you.');
+                            stderr('Refused', htmlsafechars($arr_receiver['username']).' has blocked PMs from you.');
                     break;
                 case 'friends':
-                    $r = sql_query('SELECT id FROM friends WHERE userid = '.$receiver.' AND friendid = '.$CURUSER['id']) or sqlerr(__FILE__, __LINE__);
+                    $r = sql_query('SELECT id FROM friends WHERE userid = '.sqlesc($receiver).' AND friendid = '.sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
                     $friend = mysqli_fetch_row($r);
 			
                         if ($friend[0] > 0)
-                            stderr('Refused', $arr_receiver['username'].' only accepts PMs from members in their friends list.');
+                            stderr('Refused', htmlsafechars($arr_receiver['username']).' only accepts PMs from members in their friends list.');
                     break;		
                 case 'no':
-                    stderr('Refused', $arr_receiver['username'].' does not accept PMs.');
+                    stderr('Refused', htmlsafechars($arr_receiver['username']).' does not accept PMs.');
                     break;		
 				}
 	  }
 
     //=== ok all is well... post the message :D
     sql_query('INSERT INTO messages (poster, sender, receiver, added, msg, subject, saved, location, urgent) VALUES 
-                            ('.$CURUSER['id'].', '.$CURUSER['id'].', '.$receiver.', '.TIME_NOW.', '.$body.', '.$subject.', '.$save.', 1,'.$urgent.')') or sqlerr(__FILE__, __LINE__);
+                            ('.sqlesc($CURUSER['id']).', '.sqlesc($CURUSER['id']).', '.sqlesc($receiver).', '.TIME_NOW.', '.$body.', '.$subject.', '.$save.', 1,'.$urgent.')') or sqlerr(__FILE__, __LINE__);
      $mc1->delete_value('inbox_new_'.$receiver);
       $mc1->delete_value('inbox_new_sb_'.$receiver);
        $mc1->delete_value('shoutbox_');
@@ -99,7 +99,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
         //=== if they just have to know about it right away... send them an email (if selected if profile)
 	  if (strpos($arr_receiver['notifs'], '[pm]') !== false)
         {
-	    $username = $CURUSER['username'];
+	    $username = htmlsafechars($CURUSER['username']);
 $body = <<<EOD
 You have received a PM from $username!
 
@@ -118,7 +118,7 @@ EOD;
       if ($delete != 0)
       {
 	      //=== be sure they should be deleting this...
-	      $res = sql_query('SELECT saved, receiver FROM messages WHERE id='.$delete) or sqlerr(__FILE__, __LINE__);
+	      $res = sql_query('SELECT saved, receiver FROM messages WHERE id='.sqlesc($delete)) or sqlerr(__FILE__, __LINE__);
 	      if (mysqli_num_rows($res) > 0)
 	      {
 	        $arr = mysqli_fetch_assoc($res);
@@ -129,11 +129,11 @@ EOD;
               
 	        if ($arr['saved'] == 'no')
                 {
-                sql_query('DELETE FROM messages WHERE id = '.$delete) or sqlerr(__FILE__, __LINE__);
+                sql_query('DELETE FROM messages WHERE id = '.sqlesc($delete)) or sqlerr(__FILE__, __LINE__);
                 }
           elseif ($arr['saved'] == 'yes')
             {
-            sql_query('UPDATE messages SET location = 0 WHERE id = '.$delete) or sqlerr(__FILE__, __LINE__);
+            sql_query('UPDATE messages SET location = 0 WHERE id = '.sqlesc($delete)) or sqlerr(__FILE__, __LINE__);
             }
 	      }
       }
@@ -149,7 +149,7 @@ EOD;
 //=== basic page :D
     $receiver = (isset($_GET['receiver']) ? intval($_GET['receiver']) : (isset($_POST['receiver']) ? intval($_POST['receiver']) : 0));
     $replyto = (isset($_GET['replyto']) ? intval($_GET['replyto']) : (isset($_POST['replyto']) ? intval($_POST['replyto']) : 0));
-    $returnto = htmlspecialchars(isset($_POST['returnto']) ? $_POST['returnto'] : '');
+    $returnto = htmlsafechars(isset($_POST['returnto']) ? $_POST['returnto'] : '');
     
 
         if ($receiver === 0) 
@@ -158,7 +158,7 @@ EOD;
         if (!is_valid_id($receiver)) 
             stderr('Error', 'No member with that ID!');
 
-            $res_member = sql_query('SELECT username FROM users WHERE id = '.$receiver) or sqlerr(__FILE__,__LINE__);
+            $res_member = sql_query('SELECT username FROM users WHERE id = '.sqlesc($receiver)) or sqlerr(__FILE__,__LINE__);
             $arr_member = mysqli_fetch_row($res_member);
 
     //=== if reply
@@ -168,7 +168,7 @@ EOD;
                     stderr('Error', 'No member with that ID!');           
             
         //=== make sure they should be replying to this PM...
-        $res_old_message = sql_query('SELECT receiver, sender, subject, msg FROM messages WHERE id = '.$replyto) or sqlerr(__FILE__,__LINE__);
+        $res_old_message = sql_query('SELECT receiver, sender, subject, msg FROM messages WHERE id = '.sqlesc($replyto)) or sqlerr(__FILE__,__LINE__);
         $arr_old_message = mysqli_fetch_assoc($res_old_message);
 	
           //print $arr_old_message['sender'];
@@ -178,7 +178,7 @@ EOD;
                 stderr('Error', 'Slander, whose edge is sharper than the sword, whose tongue out venoms all the worms of Nile');
 
         $body .= "\n\n\n-------- $arr_member[0] wrote: --------\n$arr_old_message[msg]\n";
-        $subject = 'Re: '.htmlspecialchars($arr_old_message['subject']);
+        $subject = 'Re: '.htmlsafechars($arr_old_message['subject']);
         }
 
     //=== if preview or not replying	  
@@ -189,11 +189,9 @@ EOD;
         }	  
        
     //=== and finally print the basic page  :D
-    //echo stdhead((($_POST['draft'] == 'yes' || $_GET['draft'] == 'yes') ? 'write draft' : 'Send message'), FALSE);
-    
         $avatar = (($CURUSER['avatars'] === 'no') ? '' : (empty($CURUSER['avatar']) ? '
         <img width="80" src="pic/default_avatar.gif" alt="no avatar" />' : (($CURUSER['offensive_avatar'] === 'yes' && $CURUSER['view_offensive_avatar'] === 'no') ? 
-        '<img width="80" src="pic/fuzzybunny.gif" alt="fuzzy!" />' : '<img width="80" src="'.htmlspecialchars($CURUSER['avatar']).'" alt="avatar" />')));
+        '<img width="80" src="pic/fuzzybunny.gif" alt="fuzzy!" />' : '<img width="80" src="'.htmlsafechars($CURUSER['avatar']).'" alt="avatar" />')));
 
     //=== Code for preview Retros code
     if (isset($_POST['buttonval']) && $_POST['buttonval'] == 'Preview')
@@ -202,7 +200,7 @@ EOD;
         $HTMLOUT .='<h1>Preview PM</h1>
     <table border="0" cellspacing="0" cellpadding="5" align="center" style="max-width:800px">
     <tr>
-        <td align="left" colspan="2" class="colhead"><span style="font-weight: bold;">subject: </span>'. htmlspecialchars($subject).'</td>
+        <td align="left" colspan="2" class="colhead"><span style="font-weight: bold;">subject: </span>'. htmlsafechars($subject).'</td>
     </tr>
     <tr>
         <td align="center" valign="top" class="one" width="0px" id="photocol">'.$avatar.'</td>

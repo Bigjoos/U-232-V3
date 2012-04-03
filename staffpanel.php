@@ -48,7 +48,7 @@ $HTMLOUT ='';
 ** add    : boolean -> enable/disable page adding
 ** edit   : boolean -> enable/disable page editing
 ** delete : boolean -> enable/disable page deletion
-** log    : boolean -> enable/disable the logging of the actions
+** log    : boolean -> enable/disable the loging of the actions
 *
 * @ result $staff_classes array();
 * @ new $staff_tools array add in following format : 'delacct'         => 'delacct',
@@ -62,7 +62,7 @@ define('IN_INSTALLER09_ADMIN', true);
 require_once(CLASS_DIR.'class_check.php');
 class_check(UC_MODERATOR);
 
-$action = (isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : NULL));
+$action = (isset($_GET['action']) ? htmlsafechars($_GET['action']) : (isset($_POST['action']) ? htmlsafechars($_POST['action']) : NULL));
 $id = (isset($_GET['id']) ? (int)$_GET['id'] : (isset($_POST['id']) ? (int)$_POST['id'] : NULL));
 $class_color = (function_exists('get_user_class_color') ? true : false);
 
@@ -167,14 +167,14 @@ $class_color = (function_exists('get_user_class_color') ? true : false);
 		stderr('Error', 'You are not allowed to delete this page.');
 	
 	  if (!$sure)
-		stderr('Sanity check', 'Are you sure you want to delete this page: "'.htmlspecialchars($arr['page_name']).'"? Click <a href="'.$_SERVER['PHP_SELF'].'?action='.$action.'&amp;id='.$id.'&amp;sure=yes">here</a> to delete it or <a href="'.$_SERVER['PHP_SELF'].'">here</a> to go back.');
+		stderr('Sanity check', 'Are you sure you want to delete this page: "'.htmlsafechars($arr['page_name']).'"? Click <a href="'.$_SERVER['PHP_SELF'].'?action='.$action.'&amp;id='.$id.'&amp;sure=yes">here</a> to delete it or <a href="'.$_SERVER['PHP_SELF'].'">here</a> to go back.');
 
 	  sql_query('DELETE FROM staffpanel WHERE id = '.sqlesc($id)) or sqlerr(__FILE__, __LINE__);
 	
 	  if (mysqli_affected_rows($GLOBALS["___mysqli_ston"]))
 	  {
 		if ($staff_classes[$CURUSER['class']]['log'])
-			write_log('Page "'.$arr['page_name'].'"('.($class_color ? '<font color="#'.get_user_class_color($arr['av_class']).'">' : '').get_user_class_name($arr['av_class']).($class_color ? '</font>' : '').') was deleted from the staff panel by <a href="/userdetails.php?id='.$CURUSER['id'].'">'.$CURUSER['username'].'</a>('.($class_color ? '<font color="#'.get_user_class_color($CURUSER['class']).'">' : '').get_user_class_name($CURUSER['class']).($class_color ? '</font>' : '').')');
+			write_log('Page "'.htmlsafechars($arr['page_name']).'"('.($class_color ? '<font color="#'.get_user_class_color($arr['av_class']).'">' : '').get_user_class_name($arr['av_class']).($class_color ? '</font>' : '').') was deleted from the staff panel by <a href="/userdetails.php?id='.(int)$CURUSER['id'].'">'.$CURUSER['username'].'</a>('.($class_color ? '<font color="#'.get_user_class_color($CURUSER['class']).'">' : '').get_user_class_name($CURUSER['class']).($class_color ? '</font>' : '').')');
 		
 		header('Location: '.$_SERVER['PHP_SELF']);
 		exit();
@@ -378,11 +378,11 @@ $class_color = (function_exists('get_user_class_color') ? true : false);
 			
 			$HTMLOUT .="<tr align='center'>
 			<td align='left'>
-      <a href='".htmlspecialchars($arr['file_name'])."' title='".htmlspecialchars($arr['page_name'])."'>
-      ".htmlspecialchars($arr['page_name'])."</a><br /><font class='small'>".htmlspecialchars($arr['description'])."</font>
+      <a href='".htmlsafechars($arr['file_name'])."' title='".htmlsafechars($arr['page_name'])."'>
+      ".htmlsafechars($arr['page_name'])."</a><br /><font class='small'>".htmlsafechars($arr['description'])."</font>
 			</td>
       <td>
-		  <a href='userdetails.php?id=".(int)$arr['added_by']."'>".htmlspecialchars($arr['username'])."</a>
+		  <a href='userdetails.php?id=".(int)$arr['added_by']."'>".htmlsafechars($arr['username'])."</a>
       </td>
       <td>
       <span style='white-space: nowrap;'>".get_date($arr['added'], 'LONG',0,1)."<br /></span>

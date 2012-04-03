@@ -33,7 +33,7 @@ $HTMLOUT = $ip = $mask ='';
 
 $HTMLOUT .= begin_main_frame();
 
-$ip = isset($_GET["ip"]) ? htmlspecialchars(trim($_GET["ip"])) : '';
+$ip = isset($_GET["ip"]) ? htmlsafechars(trim($_GET["ip"])) : '';
 if ($ip)
   {
 	  $regex = "/^(((1?\d{1,2})|(2[0-4]\d)|(25[0-5]))(\.\b|$)){4}$/";
@@ -44,7 +44,7 @@ if ($ip)
 		echo stdhead("IP Search") . $HTMLOUT . stdfoot();
 		die();
 	}
-  $mask = isset($_GET["mask"]) ? htmlspecialchars(trim($_GET["mask"])) : '';
+  $mask = isset($_GET["mask"]) ? htmlsafechars(trim($_GET["mask"])) : '';
 	if ($mask == "" || $mask == "255.255.255.255")
 	{
 	   $where1 = "u.ip = '$ip'";
@@ -136,7 +136,7 @@ if ($ip)
 
   $res = sql_query($query1) or sqlerr(__FILE__, __LINE__);
 
-  $HTMLOUT .= begin_frame("".htmlspecialchars($count)." users have used the IP: ".htmlspecialchars($ip)." (".htmlspecialchars($addr).")", True);
+  $HTMLOUT .= begin_frame("".htmlsafechars($count)." users have used the IP: ".htmlsafechars($ip)." (".htmlsafechars($addr).")", True);
 
    if ($count > $perpage)
    $HTMLOUT .= $pager['pagertop'];
@@ -148,7 +148,7 @@ if ($ip)
 		"<td class='colhead'><a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=ipsearch&amp;action=ipsearch&amp;ip=$ip&amp;mask=$mask&amp;order=last_ip'>Last IP</a></td>".
 		"<td class='colhead'><a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=ipsearch&amp;action=ipsearch&amp;ip=$ip&amp;mask=$mask&amp;order=last_access'>Last access</a></td>".
 		"<td class='colhead'>Num of IP's</td>".
-		"<td class='colhead'><a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=ipsearch&amp;action=ipsearch&amp;ip=$ip&amp;mask=$mask'>Last access on <br />".htmlspecialchars($ip)."</a></td>".
+		"<td class='colhead'><a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=ipsearch&amp;action=ipsearch&amp;ip=$ip&amp;mask=$mask'>Last access on <br />".htmlsafechars($ip)."</a></td>".
 		"<td class='colhead'><a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=ipsearch&amp;action=ipsearch&amp;ip=$ip&amp;mask=$mask&amp;order=added'>Added</a></td>".
 		"<td class='colhead'>Invited by</td></tr>";
 
@@ -167,7 +167,7 @@ if ($ip)
    		if ($array[0] == 0)
 			  $ipstr = $user['last_ip'];
 		else
-			  $ipstr = "<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=testip&amp;action=testip&amp;ip=" . $user['last_ip'] . "'><font color='#FF0000'><b>" .htmlspecialchars( $user["last_ip"]) . "</b></font></a>";
+			  $ipstr = "<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=testip&amp;action=testip&amp;ip=" .htmlsafechars($user['last_ip']) . "'><font color='#FF0000'><b>" .htmlsafechars( $user["last_ip"]) . "</b></font></a>";
 			}
 			else
 		  $ipstr = "---";
@@ -184,7 +184,7 @@ if ($ip)
 		   if ($invitedby == "")
 			  $invitedby = "<i>[Deleted]</i>";
 		   else
-			  $invitedby = "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id={$user['invitedby']}'>".htmlspecialchars($invitedby)."</a>";
+			  $invitedby = "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id={$user['invitedby']}'>".htmlsafechars($invitedby)."</a>";
 		}
 		else
 		   $invitedby = "--";
@@ -194,7 +194,7 @@ if ($ip)
 		  "<td>" .member_ratio($user['uploaded'], $user['downloaded']) . "</td>
 		  <td>" . $user['email'] . "</td><td>" . $ipstr . "</td>
 		  <td><div align='center'>" . get_date($user['last_access'],'DATE' ,1,0) . "</div></td>
-		  <td><div align='center'><b><a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=iphistory&amp;action=iphistory&amp;id=" . (int)$user['id'] . "'>" . htmlspecialchars($iphistory). "</a></b></div></td>
+		  <td><div align='center'><b><a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=iphistory&amp;action=iphistory&amp;id=" . (int)$user['id'] . "'>" . htmlsafechars($iphistory). "</a></b></div></td>
 		  <td><div align='center'>" . get_date($user['access'],'DATE' ,1,0) . "</div></td>
 		  <td><div align='center'>" . get_date($user['added'],'DATE' ,1,0) . "</div></td>
 		  <td><div align='center'>" . $invitedby . "</div></td>

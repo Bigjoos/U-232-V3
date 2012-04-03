@@ -18,7 +18,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
 }
 
     //=== Get the info
-    $res = sql_query('SELECT * FROM messages WHERE id='.$pm_id) or sqlerr(__FILE__,__LINE__);
+    $res = sql_query('SELECT * FROM messages WHERE id='.sqlesc($pm_id)) or sqlerr(__FILE__,__LINE__);
     $message = mysqli_fetch_assoc($res);
 
         if ($message['sender'] == $CURUSER['id'] && $message['sender'] == $CURUSER['id'] || mysqli_num_rows($res) === 0)  
@@ -27,24 +27,22 @@ if (!defined('BUNNY_PM_SYSTEM'))
     //=== if not from curuser then get who from
     if($message['sender'] !== $CURUSER['id'])
         {
-        $res_forward = sql_query('SELECT username FROM users WHERE id='.$message['sender']) or sqlerr(__FILE__,__LINE__);
+        $res_forward = sql_query('SELECT username FROM users WHERE id='.sqlesc($message['sender'])) or sqlerr(__FILE__,__LINE__);
         $arr_forward = mysqli_fetch_assoc($res_forward);
         $forwarded_username = ($message['sender'] === 0 ? 'System' : (mysqli_num_rows($res_forward) === 0 ? 'Un-known' : $arr_forward['username']));
         }
     else
-        $forwarded_username = $CURUSER['username'];
+        $forwarded_username = htmlsafechars($CURUSER['username']);
 
 //=== print out the forwarding page
-//echo stdhead('Forward PM');
-
-$HTMLOUT .='<h1>Fwd: '.htmlspecialchars($message['subject']).'</h1>
+$HTMLOUT .='<h1>Fwd: '.htmlsafechars($message['subject']).'</h1>
         <form action="pm_system.php" method="post">
         <input type="hidden" name="id" value="'.$pm_id.'" />
         <input type="hidden" name="action" value="forward_pm" />
     <table border="0" cellspacing="0" cellpadding="5" align="center" style="max-width:600px;">
     <tr>
         <td align="left" colspan="2" class="colhead" valign="top"><h1>forward message 
-        <img src="pic/arrow_next.gif" alt=":" />Fwd: '.htmlspecialchars($message['subject']).'</h1></td>
+        <img src="pic/arrow_next.gif" alt=":" />Fwd: '.htmlsafechars($message['subject']).'</h1></td>
     </tr>
     <tr>
         <td align="right" class="one" valign="top"><span style="font-weight: bold;">To:</span></td>
@@ -60,7 +58,7 @@ $HTMLOUT .='<h1>Fwd: '.htmlspecialchars($message['subject']).'</h1>
     </tr>
     <tr>
         <td align="right" class="one" valign="top"><span style="font-weight: bold;">Subject:</span></td>
-        <td align="left" class="one" valign="top"><input type="text" class="text_default" name="subject" value="Fwd: '.htmlspecialchars($message['subject']).'" /></td>
+        <td align="left" class="one" valign="top"><input type="text" class="text_default" name="subject" value="Fwd: '.htmlsafechars($message['subject']).'" /></td>
     </tr>
     <tr>
         <td align="center" class="one"></td>

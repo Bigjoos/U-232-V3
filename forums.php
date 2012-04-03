@@ -21,14 +21,15 @@ Powered by Bunnies!!!
 define('BUNNY_FORUMS', TRUE);
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
+require_once(INCL_DIR.'function_rating.php');
 dbconn(false);
 loggedinorreturn();
 
 $lang = array_merge( load_language('global'), load_language('forums') );
 
-$stdhead = array(/** include css **/'css' => array('forums','jquery.lightbox-0.5','style','style2','bbcode'));
+$stdhead = array(/** include css **/'css' => array('forums','jquery.lightbox-0.5','style','style2','bbcode','rating_style'));
 
-$stdfoot = array(/** include js **/'js' => array('popup','jquery.lightbox-0.5.min','lightbox'));
+$stdfoot = array(/** include js **/'js' => array('popup','jquery.lightbox-0.5.min','lightbox','sack'));
 
 $over_forum_id = $count = $now_viewing = $child_boards = '';
 
@@ -39,10 +40,8 @@ if (function_exists('parked'))
 parked();
 
 $HTMLOUT='';
-
 //=== update members last forums access 
-sql_query('UPDATE users SET forum_access='.TIME_NOW.' WHERE id='.$CURUSER['id']);
- 
+sql_query('UPDATE users SET forum_access='.TIME_NOW.' WHERE id='.sqlesc($CURUSER['id']));
 /*==============================
 the following is 110% up to you...
 you can set all the configuration stuff here in the forums.php main file,
@@ -76,22 +75,20 @@ use the following and suit to your site:
 	$upload_folder = 'uploads/'; //===  you should rename this for security. or even beter put it outside your root dir :D	
 	
 ============================================================ */
-
 	//=== get config info from the DB (comment out and use hard coded if you prefer)
 	$config_id = 13;
 	$config_res = sql_query ('SELECT delete_for_real, min_delete_view_class, readpost_expiry, min_upload_class, accepted_file_extension, 
-								accepted_file_types, max_file_size, upload_folder FROM forum_config WHERE id = '.$config_id);
+								accepted_file_types, max_file_size, upload_folder FROM forum_config WHERE id = '.sqlesc($config_id));
 	$config_arr = mysqli_fetch_array($config_res);
-	
 	//=== all config stuff:
 	$delete_for_real = ($config_arr['delete_for_real'] == 1 ? 1 : 0);
-	$min_delete_view_class =  intval($config_arr['min_delete_view_class']);
-	$readpost_expiry = (intval($config_arr['readpost_expiry']) * 86400);
-	$min_upload_class = intval($config_arr['min_upload_class']);
+	$min_delete_view_class =  htmlsafechars($config_arr['min_delete_view_class']);
+	$readpost_expiry = ((int)$config_arr['readpost_expiry'] * 86400);
+	$min_upload_class = htmlsafechars($config_arr['min_upload_class']);
 	$accepted_file_extension =  array($config_arr['accepted_file_extension']);
 	$accepted_file_types =  array($config_arr['accepted_file_types']);
 	$max_file_size = intval($config_arr['max_file_size']);
-	$upload_folder =  htmlspecialchars(trim($config_arr['upload_folder']));
+	$upload_folder =  htmlsafechars(trim($config_arr['upload_folder']));
 	
 	//=== post / get action posted so we know what to do :P
 	$posted_action = strip_tags((isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : '')));
@@ -140,6 +137,30 @@ use the following and suit to your site:
   /*]]>*/
   </script>";
   }
+  $HTMLOUT .="<script type='text/javascript'>
+	var e = new sack();
+function do_rate(rate,id,what) {
+		var box = document.getElementById('rate_'+id);
+		e.setVar('rate',rate);
+		e.setVar('id',id);
+		e.setVar('ajax','1');
+		e.setVar('what',what);
+		e.requestFile = 'rating.php';
+		e.method = 'GET';
+		e.element = 'rate_'+id;
+		e.onloading = function () {
+			box.innerHTML = 'Loading ...'
+		}
+		e.onCompletion = function() {
+			if(e.responseStatus)
+				box.innerHTML = e.response();
+		}
+		e.onerror = function () {
+			alert('That was something wrong with the request!');
+		}
+		e.runAJAX();
+}
+</script>";
 //=== mini menu
 $mini_menu = '<a class="altlink" href="forums.php?action=subscriptions">My Subscriptions</a> |
 			<a class="altlink" href="forums.php?action=search">Search</a> |
@@ -485,81 +506,55 @@ $res_forums = sql_query('SELECT o_f.id AS over_forum_id, o_f.name AS over_forum_
 		//=== well... let's do the loop and make the damned page!
 		while ($arr_forums = mysqli_fetch_assoc($res_forums))
 		{
-
 	//=== if it's a forums section print it, if not, list the fourm sections in it \o/
 	$HTMLOUT .= ($arr_forums['over_forum_id'] != $over_forum_id ? 
-			'<tr>
-			<td align="left" class="forum_head_dark" colspan="3">
-			<a class="altlink" href="forums.php?action=section_view&amp;forum_id='.$arr_forums['over_forum_id'].'" title="'.htmlentities($arr_forums['over_forum_description'], ENT_QUOTES).'">
-			<span style="color: white;">'.htmlentities($arr_forums['over_forum_name'], ENT_QUOTES).'</span></a></td>
-			</tr>' : '');
+	'<tr><td align="left" class="forum_head_dark" colspan="3">
+	<a class="altlink" href="forums.php?action=section_view&amp;forum_id='.(int)$arr_forums['over_forum_id'].'" title="'.htmlsafechars($arr_forums['over_forum_description'], ENT_QUOTES).'"><span style="color: white;">'.htmlsafechars($arr_forums['over_forum_name'], ENT_QUOTES).'</span></a></td></tr>' : '');
 			
 		if ($arr_forums['forum_id'] == $arr_forums['over_forum_id'])
 		{
-		
 		//=== change colors
 		$count= (++$count)%2;
 		$class = ($count == 0 ? 'one' : 'two');
-
-		$forum_id = $arr_forums['real_forum_id'];
-		$forum_name = htmlentities($arr_forums['name'], ENT_QUOTES);
-		$forum_description = htmlentities($arr_forums['description'], ENT_QUOTES);
-		
+		$forum_id = (int)$arr_forums['real_forum_id'];
+		$forum_name = htmlsafechars($arr_forums['name'], ENT_QUOTES);
+		$forum_description = htmlsafechars($arr_forums['description'], ENT_QUOTES);
 		$topic_count = number_format($arr_forums['topic_count']);
 		$post_count = number_format($arr_forums['post_count']);
-		
-		
 		//=== Find last post ID
-		$last_post_res = sql_query('SELECT t.id AS topic_id, t.topic_name, t.last_post, p.added, u.id, 
-                                                     u.username, u.class, u.donor, u.suspended, u.warned, u.enabled , u.chatpost, u.leechwarn, u.pirate, u.king, u.avatar_rights
-                                                    FROM topics AS t 
-                                                    LEFT JOIN posts AS p ON p.topic_id = t.id 
-                                                    RIGHT JOIN users AS u ON u.id = p.user_id 
-                                                    WHERE '.($CURUSER['class'] < UC_STAFF ? 'p.status = \'ok\' AND t.status = \'ok\' AND' : 
-                                                    ($CURUSER['class'] < $min_delete_view_class ? ' t.status != \'deleted\'  AND p.status != \'deleted\'  AND' : '')).' t.forum_id = '.$forum_id.' 	
-                                                    ORDER BY p.id DESC LIMIT 1');
+		$last_post_res = sql_query('SELECT t.id AS topic_id, t.topic_name, t.last_post, p.added, u.id, u.username, u.class, u.donor, u.suspended, u.warned, u.enabled, u.chatpost, u.leechwarn, u.pirate, u.king, u.avatar_rights FROM topics AS t 
+      LEFT JOIN posts AS p ON p.topic_id = t.id 
+      RIGHT JOIN users AS u ON u.id = p.user_id 
+      WHERE '.($CURUSER['class'] < UC_STAFF ? 'p.status = \'ok\' AND t.status = \'ok\' AND' : ($CURUSER['class'] < $min_delete_view_class ? ' t.status != \'deleted\' AND p.status != \'deleted\'  AND' : '')).' t.forum_id = '.sqlesc($forum_id).' ORDER BY p.id DESC LIMIT 1');
 		$last_post_arr = mysqli_fetch_assoc($last_post_res);
-		
 		//=== only do more if there is a post there...
 		if ($last_post_arr['last_post'] > 0)
 		{
-			$last_post_id = $last_post_arr['last_post'];
-		
+			$last_post_id = (int)$last_post_arr['last_post'];
 			//=== get the last post read by CURUSER (with Retro's $readpost_expiry thingie)
-  			$last_read_post_res = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.$CURUSER['id'].' AND topic_id='.$last_post_arr['topic_id']);
+  			$last_read_post_res = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.sqlesc($CURUSER['id']).' AND topic_id='.sqlesc($last_post_arr['topic_id']));
 			$last_read_post_arr = mysqli_fetch_row($last_read_post_res);
-      		
-      			$image_to_use = ($last_post_arr['added'] > (TIME_NOW - $readpost_expiry)) ? (!$last_read_post_arr OR $last_post_id > $last_read_post_arr[0]) : 0;
-      		
-      			$img = ($image_to_use ? 'unlockednew' : 'unlocked');
-		
+      	$image_to_use = ($last_post_arr['added'] > (TIME_NOW - $readpost_expiry)) ? (!$last_read_post_arr OR $last_post_id > $last_read_post_arr[0]) : 0;
+         $img = ($image_to_use ? 'unlockednew' : 'unlocked');
 			$last_post = '<span style="white-space:nowrap;">Last Post by: '.($last_post_arr['username'] !== '' ? print_user_stuff($last_post_arr) : 'Lost').' <span style="font-size: x-small;"> [ '.get_user_class_name($last_post_arr['class']).' ] </span><br />
-			in &#9658; <a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$last_post_arr['topic_id'].'&amp;page='.$last_post_id.'#'.$last_post_id.'" title="'.htmlentities($last_post_arr['topic_name'], ENT_QUOTES).'">
-			<span style="font-weight: bold;">'.CutName(htmlentities($last_post_arr['topic_name'], ENT_QUOTES), 30).'</span></a><br />
+			in &#9658; <a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.(int)$last_post_arr['topic_id'].'&amp;page='.$last_post_id.'#'.$last_post_id.'" title="'.htmlsafechars($last_post_arr['topic_name'], ENT_QUOTES).'">
+			<span style="font-weight: bold;">'.CutName(htmlsafechars($last_post_arr['topic_name'], ENT_QUOTES), 30).'</span></a><br />
 			'.get_date($last_post_arr['added'],'').'<br /></span>';
-		
-			
 				//=== get child boards if any
-				$child_boards_res = sql_query('SELECT name, id FROM forums WHERE parent_forum = '.$arr_forums['real_forum_id'].' AND min_class_read <= '.$CURUSER['class'].' ORDER BY sort ASC');
-				
+				$child_boards_res = sql_query('SELECT name, id FROM forums WHERE parent_forum = '.sqlesc($arr_forums['real_forum_id']).' AND min_class_read <= '.sqlesc($CURUSER['class']).' ORDER BY sort ASC');
 				$child_boards = '';
 				while ($child_boards_arr = mysqli_fetch_assoc($child_boards_res))
 				{
 			  	if ($child_boards != '')
 			  	$child_boards .= ', ';
-			  	$child_boards .= '<a href="forums.php?action=view_forum&amp;forum_id='.$child_boards_arr['id'].'" title="click to view!" class="altlink">'.htmlentities($child_boards_arr['name'], ENT_QUOTES).'</a>';
+			  	$child_boards .= '<a href="forums.php?action=view_forum&amp;forum_id='.(int)$child_boards_arr['id'].'" title="click to view!" class="altlink">'.htmlsafechars($child_boards_arr['name'], ENT_QUOTES).'</a>';
 			  	}
-
-					if ($child_boards != '')
-					{
-					$child_boards = '<hr /><span style="font-size: xx-small;">child boards:</span> '.$child_boards;
-					}
-								  	
-			
+			   if ($child_boards != '')
+			   {
+			   $child_boards = '<hr /><span style="font-size: xx-small;">child boards:</span> '.$child_boards;
+			   }		  
 				//=== now_viewing
-				 $now_viewing_res = sql_query('SELECT n_v.user_id, u.id, u.username, u.class, u.donor, u.suspended, u.warned, u.enabled, u.chatpost, u.leechwarn, u.pirate, u.king, u.avatar_rights
-									FROM now_viewing AS n_v LEFT JOIN users AS u ON n_v.user_id = u.id WHERE forum_id = '.$arr_forums['real_forum_id']);
-
+				 $now_viewing_res = sql_query('SELECT n_v.user_id, u.id, u.username, u.class, u.donor, u.suspended, u.warned, u.enabled, u.chatpost, u.leechwarn, u.pirate, u.king, u.avatar_rights FROM now_viewing AS n_v LEFT JOIN users AS u ON n_v.user_id = u.id WHERE forum_id = '.sqlesc($arr_forums['real_forum_id']));
 				//=== let's see whos lookng in here...
 				$now_viewing = '';
 				while ($now_viewing_arr = mysqli_fetch_assoc($now_viewing_res))
@@ -567,13 +562,12 @@ $res_forums = sql_query('SELECT o_f.id AS over_forum_id, o_f.name AS over_forum_
 				$now_viewing .= print_user_stuff($now_viewing_arr);
 			  	}
 
-					if ($now_viewing != '')
-					{
-					$now_viewing = '<hr /><span style="font-size: xx-small;">now viewing:</span>'.$now_viewing;
-					}
-				 $now_viewing = '';
-		
-		} //=== end of only do more if there is a post there...
+				if ($now_viewing != '')
+				{
+				$now_viewing = '<hr /><span style="font-size: xx-small;">now viewing:</span>'.$now_viewing;
+				}
+				$now_viewing = '';
+		      } //=== end of only do more if there is a post there...
 		else
 		{
 		$img = 'unlocked';
@@ -587,7 +581,7 @@ $res_forums = sql_query('SELECT o_f.id AS over_forum_id, o_f.name AS over_forum_
 		<tr>
 		<td class="'.$class.'" align="left" width="30"><img src="pic/forums/'.$img.'.gif" alt="'.$img.'" title="Unlocked" /></td>
 		<td width="100%" class="'.$class.'" align="left">
-		'.bubble('<span style="font-weight: bold;"><a class="altlink" href="?action=view_forum&amp;forum_id='.$arr_forums['real_forum_id'].'">
+		'.bubble('<span style="font-weight: bold;"><a class="altlink" href="?action=view_forum&amp;forum_id='.(int)$arr_forums['real_forum_id'].'">
 		'.$forum_name.'</a></span>', '<span style="font-size: x-small;">'.$forum_name.'</span>
 		'.$forum_description).($CURUSER['class'] >= UC_ADMINISTRATOR ? '<span style="font-size: x-small;"> 
 		[<a class="altlink" href="staffpanel.php?tool=forum_manage&amp;action=forum_manage&amp;action2=edit_forum_page&amp;id='.$forum_id.'">Edit</a>] 
@@ -599,34 +593,33 @@ $res_forums = sql_query('SELECT o_f.id AS over_forum_id, o_f.name AS over_forum_
 		<td class="'.$class.'" align="center" width="80"><span style="font-size: x-small;">'.$post_count.' Posts<br />'.$topic_count.' Topics</span></td>
 		<td class="'.$class.'" align="left" width="140"><span style="font-size: x-small;">'.$last_post.'</span></td>
 		</tr>';	
-	  } //== end of sectioon	
+	   } //== end of sectioon	
 			
-		$over_forum_id = $arr_forums['over_forum_id'];
+		$over_forum_id = (int)$arr_forums['over_forum_id'];
 		$child_boards = '';
 		} //=== end while loop!	
 		
 		$HTMLOUT .= '</table><br />'.$location_bar.insert_quick_jump_menu().'<br />';
 		
-	 //=== members active in forums
-	$active_members_res = sql_query('SELECT n_v.user_id, u.id, u.username, u.class, u.donor, u.suspended, u.warned, u.enabled, u.chatpost, u.leechwarn, u.pirate, u.king, u.avatar_rights FROM now_viewing AS n_v LEFT JOIN users AS u ON n_v.user_id = u.id');	
-	//=== let's see whos lookng in here...
-	$now_viewing = '';
-	while ($active_members_arr = mysqli_fetch_assoc($active_members_res))
-	{
-	$now_viewing .= print_user_stuff($active_members_arr);
-	}
+	   //=== members active in forums
+	   $active_members_res = sql_query('SELECT n_v.user_id, u.id, u.username, u.class, u.donor, u.suspended, u.warned, u.enabled, u.chatpost, u.leechwarn, u.pirate, u.king, u.avatar_rights FROM now_viewing AS n_v LEFT JOIN users AS u ON n_v.user_id = u.id');	
+	   //=== let's see whos lookng in here...
+	   $now_viewing = '';
+	   while ($active_members_arr = mysqli_fetch_assoc($active_members_res))
+	   {
+	   $now_viewing .= print_user_stuff($active_members_arr);
+	   }
 
-$HTMLOUT .= '<table border="0" cellspacing="5" cellpadding="5" style="max-width:80%;min-width:600px;" align="center">
+      $HTMLOUT .= '<table border="0" cellspacing="5" cellpadding="5" style="max-width:80%;min-width:600px;" align="center">
 		<tr>
-			<td class="forum_head_dark" align="center">Members currently active</td>
+	   <td class="forum_head_dark" align="center">Members currently active</td>
 		</tr>
 		<tr>
-			<td class="three" align="center">'.$now_viewing.'</td>
+		<td class="three" align="center">'.$now_viewing.'</td>
 		</tr>
 		</table><br />'.$legend.stdfoot($stdfoot);
-		
-	break;
-	} //=== end switch
+	   break;
+	   } //=== end switch
 
 
 //=== all functions
@@ -656,14 +649,12 @@ function ratingpic_forums($num)
     global $CURUSER;
     $switch='';
     $quick_jump_menu = ($staff === false ? '
-
 				<table><tr><td>
 				<form method="get" action="forums.php" name="jump">
 				<span style="text-align: center;font-weight: bold;">
 				<input type="hidden" name="action" value="view_forum" />Quick jump: 
 				<select name="forum_id" onchange="if(this.options[this.selectedIndex].value != -1){ forms[\'jump\'].submit() }">
 				<option class="head" value="0"> Select a forum to jump to</option>' : '');
-    
     $res = sql_query('SELECT f.id, f.name, f.parent_forum, f.min_class_read, of.name AS over_forum_name FROM forums AS f LEFT JOIN over_forums AS of ON f.forum_id = of.id ORDER BY of.sort, f.parent_forum, f.sort ASC');
     if (mysqli_num_rows($res) > 0)
     {
@@ -677,7 +668,7 @@ function ratingpic_forums($num)
 	    $quick_jump_menu .= '<option class="head" value="-1"> '.$arr['over_forum_name'] . ' </option>';
 	    }
 		  $switch = $arr['over_forum_name'];
-      $quick_jump_menu .= '<option class="body" value="' . $arr['id'].'">'.($arr['parent_forum'] != 0 ? '&#176; '.$arr['name'].' [ child-board ]' : $arr['name']).'</option>';
+      $quick_jump_menu .= '<option class="body" value="'.(int)$arr['id'].'">'.($arr['parent_forum'] != 0 ? '&#176; '.htmlsafechars($arr['name']).' [ child-board ]' : htmlsafechars($arr['name'])).'</option>';
       }
     }
     }

@@ -47,27 +47,18 @@ $config_id = 13;
 	$min_delete_view_class = ((isset($_POST['min_delete_view_class']) &&  valid_class($_POST['min_delete_view_class'])) ? intval($_POST['min_delete_view_class']) : 0);
 	$readpost_expiry = (isset($_POST['readpost_expiry']) ? intval($_POST['readpost_expiry']) :  0);
 	$min_upload_class = ((isset($_POST['min_upload_class']) &&  valid_class($_POST['min_upload_class'])) ? intval($_POST['min_upload_class']) : 0);
-	
-
-	
 	$accepted_file_extension = (isset($_POST['accepted_file_extension']) ? preg_replace('/\s\s+/', ' ', $_POST['accepted_file_extension']) : ''); 
 	$accepted_file_extension = explode(' ', $accepted_file_extension);	
 	$accepted_file_extension = serialize($accepted_file_extension);
-
-
 	$accepted_file_types = (isset($_POST['accepted_file_types']) ? preg_replace('/\s\s+/', ' ', $_POST['accepted_file_types']) : ''); 	
 	$accepted_file_types = explode(' ', $accepted_file_types);	
 	$accepted_file_types = serialize($accepted_file_types);
-	
 	$max_file_size = (isset($_POST['max_file_size']) ? intval($_POST['max_file_size']) :  0);
-	$upload_folder = (isset($_POST['upload_folder']) ? htmlspecialchars(trim($_POST['upload_folder'])) :  '');
+	$upload_folder = (isset($_POST['upload_folder']) ? htmlsafechars(trim($_POST['upload_folder'])) :  '');
 
-	sql_query('UPDATE forum_config SET delete_for_real = '.$delete_for_real.', min_delete_view_class = '.$min_delete_view_class.', readpost_expiry = '.$readpost_expiry.',
-					min_upload_class = '.$min_upload_class.', accepted_file_extension = '.sqlesc($accepted_file_extension).',  accepted_file_types = '.sqlesc($accepted_file_types).',
-					max_file_size = '.$max_file_size.', upload_folder = '.sqlesc($upload_folder).' WHERE id = '.$config_id);
-		
-		header('Location: staffpanel.php?tool=forum_config&action=forum_config'); 
-		die();
+	sql_query('UPDATE forum_config SET delete_for_real = '.sqlesc($delete_for_real).', min_delete_view_class = '.sqlesc($min_delete_view_class).', readpost_expiry = '.sqlesc($readpost_expiry).', min_upload_class = '.sqlesc($min_upload_class).', accepted_file_extension = '.sqlesc($accepted_file_extension).',  accepted_file_types = '.sqlesc($accepted_file_types).', max_file_size = '.$max_file_size.', upload_folder = '.sqlesc($upload_folder).' WHERE id = '.sqlesc($config_id));
+	header('Location: staffpanel.php?tool=forum_config&action=forum_config'); 
+	die();
 	}
 	
 $main_links = '<p><a class="altlink" href="staffpanel.php?tool=over_forums&amp;action=over_forums">Over Forums</a> :: 
@@ -76,7 +67,7 @@ $main_links = '<p><a class="altlink" href="staffpanel.php?tool=over_forums&amp;a
 
 
 	$res = sql_query ('SELECT delete_for_real, min_delete_view_class, readpost_expiry, min_upload_class, accepted_file_extension, 
-								accepted_file_types, max_file_size, upload_folder FROM forum_config WHERE id = '.$config_id);
+								accepted_file_types, max_file_size, upload_folder FROM forum_config WHERE id = '.sqlesc($config_id));
 
 	$arr = mysqli_fetch_array($res);
 		
@@ -133,13 +124,13 @@ $HTMLOUT .=  $main_links.'<form method="post" action="staffpanel.php?tool=forum_
 		  <tr>
 		    <td align="right"  class="three"><span style="font-weight: bold;">Accepted file ext:</span>  </td>
 		    <td align="left" class="three">
-			<input name="accepted_file_extension" type="text" class="text_default" size="30" maxlength="200" value="'.htmlspecialchars($accepted_file_extension).'" /><br />
+			<input name="accepted_file_extension" type="text" class="text_default" size="30" maxlength="200" value="'.htmlsafechars($accepted_file_extension).'" /><br />
 			Defaults are: zip and rar. Add more at your own risk! Each entry must be separated by a single space.</td>
  		 </tr>
 		  <tr>
 		    <td align="right"  class="three"><span style="font-weight: bold;">Accepted file types:</span>  </td>
 		    <td align="left" class="three">
-			<input name="accepted_file_types" type="text" class="text_default" size="30" maxlength="200" value="'.htmlspecialchars($accepted_file_types).'" /><br />
+			<input name="accepted_file_types" type="text" class="text_default" size="30" maxlength="200" value="'.htmlsafechars($accepted_file_types).'" /><br />
 			Must match the above accepted file ext\'s. Add more at your own risk! Each entry must be separated by a single space</td>
  		 </tr>
 		  <tr>
@@ -151,7 +142,7 @@ $HTMLOUT .=  $main_links.'<form method="post" action="staffpanel.php?tool=forum_
 		  <tr>
 		    <td align="right"  class="three"><span style="font-weight: bold;">Upload folder:</span>  </td>
 		    <td align="left" class="three">
-			<input name="upload_folder" type="text" class="text_default" size="30" maxlength="200" value="'.htmlspecialchars($arr['upload_folder']).'" /><br />
+			<input name="upload_folder" type="text" class="text_default" size="30" maxlength="200" value="'.htmlsafechars($arr['upload_folder']).'" /><br />
 			Must be writable, and must be followed by a forward slash.<br />
 			Name this something unique for added security, the location is never visible to members.</td>
  		 </tr>

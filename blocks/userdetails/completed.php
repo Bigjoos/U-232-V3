@@ -3,7 +3,7 @@
     if  ($user['paranoia'] < 2 || $CURUSER['id'] == $id || $CURUSER['class'] >= UC_STAFF) 
     {
     $completed = $count2= '';
-    $r = sql_query("SELECT torrents.name,torrents.added AS torrent_added, snatched.start_date AS s, snatched.complete_date AS c, snatched.downspeed, snatched.seedtime, snatched.seeder, snatched.torrentid as tid, snatched.id, categories.id as category, categories.image, categories.name as catname, snatched.uploaded, snatched.downloaded, snatched.hit_and_run, snatched.mark_of_cain, snatched.complete_date, snatched.last_action, torrents.seeders, torrents.leechers, torrents.owner, snatched.start_date AS st, snatched.start_date FROM snatched JOIN torrents ON torrents.id = snatched.torrentid JOIN categories ON categories.id = torrents.category WHERE snatched.finished='yes' AND userid=$id AND torrents.owner != $id ORDER BY snatched.id DESC") or sqlerr(__FILE__, __LINE__);
+    $r = sql_query("SELECT torrents.name,torrents.added AS torrent_added, snatched.start_date AS s, snatched.complete_date AS c, snatched.downspeed, snatched.seedtime, snatched.seeder, snatched.torrentid as tid, snatched.id, categories.id as category, categories.image, categories.name as catname, snatched.uploaded, snatched.downloaded, snatched.hit_and_run, snatched.mark_of_cain, snatched.complete_date, snatched.last_action, torrents.seeders, torrents.leechers, torrents.owner, snatched.start_date AS st, snatched.start_date FROM snatched JOIN torrents ON torrents.id = snatched.torrentid JOIN categories ON categories.id = torrents.category WHERE snatched.finished='yes' AND userid=".sqlesc($id)." AND torrents.owner != ".sqlesc($id)." ORDER BY snatched.id DESC") or sqlerr(__FILE__, __LINE__);
     //=== completed
     if (mysqli_num_rows($r) > 0){ 
     $completed .= "<table class='main' border='1' cellspacing='0' cellpadding='3'>
@@ -85,7 +85,7 @@
     $mark_of_cain = ($a['mark_of_cain'] == 'yes' ? "<img src='{$INSTALLER09['pic_base_url']}moc.gif' width='40px' alt='Mark Of Cain' title='The mark of Cain!' />".$checkbox_for_delete : '');
     $hit_n_run = ($a['hit_and_run'] > 0 ? "<img src='{$INSTALLER09['pic_base_url']}hnr.gif' width='40px' alt='Hit and run' title='Hit and run!' />" : '');
     $completed .= "<tr><td style='padding: 0px' class='$class'><img src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/{$a['image']}' alt='{$a['name']}' title='{$a['name']}' /></td>
-    <td class='$class'><a class='altlink' href='{$INSTALLER09['baseurl']}/details.php?id=".(int)$a['tid']."&amp;hit=1'><b>".htmlspecialchars($a['name'])."</b></a>
+    <td class='$class'><a class='altlink' href='{$INSTALLER09['baseurl']}/details.php?id=".(int)$a['tid']."&amp;hit=1'><b>".htmlsafechars($a['name'])."</b></a>
     <br /><font color='.$color.'>  ".(($CURUSER['class'] >= UC_STAFF || $user['id'] == $CURUSER['id']) ? "seeded for</font>: ".mkprettytime($a['seedtime']).(($minus_ratio != '0:00' && $a['uploaded'] < $a['downloaded']) ? "<br />should still seed for: ".$minus_ratio."&nbsp;&nbsp;" : '').
     ($a['seeder'] == 'yes' ? "&nbsp;<font color='limegreen'> [<b>seeding</b>]</font>" : $hit_n_run."&nbsp;".$mark_of_cain) : '')."</td>
     <td align='center' class='$class'>".(int)$a['seeders']."</td>

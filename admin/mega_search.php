@@ -66,8 +66,8 @@ $stdhead = array(/** include css **/'css' => array('forums'));
            }
  }                    
 
-$msg_to_analyze = (isset($_POST['msg_to_analyze']) ?  htmlspecialchars($_POST['msg_to_analyze']) : '');
-$invite_code = (isset($_POST['invite_code']) ?  htmlspecialchars($_POST['invite_code']) : '');
+$msg_to_analyze = (isset($_POST['msg_to_analyze']) ?  htmlsafechars($_POST['msg_to_analyze']) : '');
+$invite_code = (isset($_POST['invite_code']) ?  htmlsafechars($_POST['invite_code']) : '');
 $user_names = (isset($_POST['user_names']) ?  preg_replace('/[^a-zA-Z0-9_-\s]/', '', $_POST['user_names']) : '');
 
 
@@ -148,7 +148,7 @@ $number = 0;
     $found .= '<tr>
     <td align="left" class="'.$class2.'">'.$search_users.'</td>
     <td align="left" class="'.$class2.'">'.print_user_stuff($arr).'</td>
-    <td align="center" class="'.$class2.'">'.htmlspecialchars($arr['email']).'</td>
+    <td align="center" class="'.$class2.'">'.htmlsafechars($arr['email']).'</td>
     <td align="center" class="'.$class2.'">
     <span style="color: blue;" title="added">'.get_date($arr['added'],'').'</span><br />
     <span style="color: green;" title="last access">'.get_date($arr['last_access'],'').'</span></td>
@@ -213,7 +213,7 @@ $number = 0;
     //=== get inviter
     if ($arr['invitedby'] > 0)
     {
-    $res_inviter = sql_query('SELECT id, username, class, donor, suspended, leechwarn, chatpost, pirate, king, warned, enabled FROM users WHERE id = '.$arr['invitedby']);
+    $res_inviter = sql_query('SELECT id, username, class, donor, suspended, leechwarn, chatpost, pirate, king, warned, enabled FROM users WHERE id = '.sqlesc($arr['invitedby']));
     $arr_inviter = mysqli_fetch_array($res_inviter);
     $inviter = ($arr_inviter['username'] !== '' ? print_user_stuff($arr_inviter) : 'open signups');
     }
@@ -224,7 +224,7 @@ $number = 0;
     $random_number = mt_rand(1,666666666);     
     $matches_for_email .= '<tr>
     <td align="left" class="'.$class2.'">'.print_user_stuff($arr).'</td>
-    <td align="center" class="'.$class2.'">'.htmlspecialchars($arr['email']).'</td>
+    <td align="center" class="'.$class2.'">'.htmlsafechars($arr['email']).'</td>
     <td align="center" class="'.$class2.'">
     <span style="color: blue;" title="added">'.get_date($arr['added'],'').'</span><br />
     <span style="color: green;" title="last access">'.get_date($arr['last_access'],'').'</span></td>
@@ -319,7 +319,7 @@ $number = 0;
     //=== get inviter
     if ($arr['invitedby'] > 0)
                     {
-                    $res_inviter = sql_query('SELECT id, username, class, donor, suspended, leechwarn, chatpost, pirate, king, warned, enabled FROM users WHERE id = '.$arr['invitedby']);
+                    $res_inviter = sql_query('SELECT id, username, class, donor, suspended, leechwarn, chatpost, pirate, king, warned, enabled FROM users WHERE id = '.sqlesc($arr['invitedby']));
                     $arr_inviter = mysqli_fetch_array($res_inviter);
                     $inviter = ($arr_inviter['username'] !== '' ? print_user_stuff($arr_inviter) : 'open signups');
                     }
@@ -335,7 +335,7 @@ $number = 0;
                 $matches_for_ip .= '<tr>
                             <td align="left" class="'.$class2.'">'.print_user_stuff($arr).'</td>
                             <td align="center" class="'.$class2.'"><span style="color: red; font-weight: bold;">'.$tested_ip.' </span></td>
-                            <td align="center" class="'.$class2.'">'.htmlspecialchars($arr['email']).'</td>
+                            <td align="center" class="'.$class2.'">'.htmlsafechars($arr['email']).'</td>
                             <td align="center" class="'.$class2.'">
                             <span style="color: blue;" title="added">'.get_date($arr['added'],'').'</span><br />
                             <span style="color: green;" title="last access">'.get_date($arr['last_access'],'').'</span>
@@ -386,7 +386,7 @@ $number = 0;
             else 
             {
                 
-                $u1 = sql_query('SELECT id, username, donor, class, enabled, leechwarn, chatpost, pirate, king, warned, suspended FROM users WHERE  id='.$user['invitedby']);
+                $u1 = sql_query('SELECT id, username, donor, class, enabled, leechwarn, chatpost, pirate, king, warned, suspended FROM users WHERE  id='.sqlesc($user['invitedby']));
                 $user1 = mysqli_fetch_array($u1);
             
             $HTMLOUT .=  '<h1>'.print_user_stuff($user).' made the invite code: '.$invite_code.'  ('.get_date($user['invite_added'],'').')</h1>
@@ -403,8 +403,8 @@ $number = 0;
                 </tr>
                 <tr>
                 <td align="left">'.print_user_stuff($user).'</td>
-                <td align="center">'.$user['email'].'</td>
-                <td align="center">'.$user['ip'].'</td>
+                <td align="center">'.htmlsafechars($user['email']).'</td>
+                <td align="center">'.htmlsafechars($user['ip']).'</td>
                 <td align="center">'.get_date($user['last_access'],'').'</td>
                 <td align="center">'.get_date($user['added'],'').'</td>
                 <td align="center"><img src="pic/up.png" alt="Up" title="Uploaded" /> <span style="color: green;">'.mksize($user['uploaded']).'</span><br />
@@ -425,7 +425,7 @@ $number = 0;
             else 
             {
                 
-                $u2 = sql_query('SELECT id, username, donor, class, enabled, warned, leechwarn, chatpost, pirate, king, suspended FROM users WHERE id='.$user_invited['invitedby']);
+                $u2 = sql_query('SELECT id, username, donor, class, enabled, warned, leechwarn, chatpost, pirate, king, suspended FROM users WHERE id='.sqlesc($user_invited['invitedby']));
                 $user2 = mysqli_fetch_array($u2);
             
             $HTMLOUT .=  '<h1>'.print_user_stuff($user_invited).' used the Invite from '.print_user_stuff($user).'</h1>
@@ -443,8 +443,8 @@ $number = 0;
                 <tr>
                 <td align="left">'.print_user_stuff($user_invited).'</td>
                 
-                <td align="center">'.$user_invited['email'].'</td>
-                <td align="center">'.$user_invited['ip'].'</td>
+                <td align="center">'htmlsafechars(.$user_invited['email']).'</td>
+                <td align="center">'.htmlsafechars($user_invited['ip']).'</td>
                 <td align="center">'.get_date($user_invited['last_access'],'').'</td>
                 <td align="center">'.get_date($user_invited['added'],'').'</td>
                 <td align="center"><img src="pic/up.png" alt="Up" title="Uploaded" /> <span style="color: green;">'.mksize($user_invited['uploaded']).'</span><br />

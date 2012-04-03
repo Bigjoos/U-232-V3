@@ -47,7 +47,7 @@ if (!isset($member_id) || !is_valid_id($member_id))
     {
       $query = 'username LIKE '.sqlesc("%$search%").' AND status=\'confirmed\'';
       if ($search)
-          $q = 'search='.htmlspecialchars($search);
+          $q = 'search='.htmlsafechars($search);
     }
     else
     {
@@ -136,7 +136,7 @@ if (!isset($member_id) || !is_valid_id($member_id))
 	$colour = (++$colour)%2;
 	$class = ($colour == 0 ? 'one' : 'two');
 		
-	$country = ($row['name'] != NULL) ? '<td class="'.$class.'" align="center"><img src="pic/flag/'.$row['flagpic'].'" alt="'.htmlspecialchars($row['name']).'" /></td>' : 
+	$country = ($row['name'] != NULL) ? '<td class="'.$class.'" align="center"><img src="pic/flag/'.$row['flagpic'].'" alt="'.htmlsafechars($row['name']).'" /></td>' : 
 	'<td class="'.$class.'" align="center">---</td>';
   
       $HTMLOUT .=  '<tr>
@@ -145,7 +145,7 @@ if (!isset($member_id) || !is_valid_id($member_id))
 		<td class="'.$class.'">'.get_date( $row['last_access'], '').'</td>
 		<td class="'.$class.'" align="left">'.get_user_class_name($row['class']).'</td>
 		'.$country.'
-		<td class="'.$class.'" align="center"><a href="forums.php?action=member_post_history&amp;id='.$row['id'].'" title="see this members post history" class="altlink">Post History</a></td>
+		<td class="'.$class.'" align="center"><a href="forums.php?action=member_post_history&amp;id='.(int)$row['id'].'" title="see this members post history" class="altlink">Post History</a></td>
 	</tr>';
     }
     $HTMLOUT .=  '</table>';
@@ -165,7 +165,7 @@ $res_count = sql_query('SELECT COUNT(p.id) AS count
 								LEFT JOIN forums AS f ON f.id = t.forum_id 
 								WHERE '.($CURUSER['class'] < UC_STAFF ? 'p.status = \'ok\' AND t.status = \'ok\' AND' : 
 								($CURUSER['class'] < $min_delete_view_class ? 'p.status != \'deleted\' AND t.status != \'deleted\'  AND' : '')).'
-								p.user_id = '.$member_id.' AND f.min_class_read <= '.$CURUSER['class']);
+								p.user_id = '.sqlesc($member_id).' AND f.min_class_read <= '.$CURUSER['class']);
 $arr_count = mysqli_fetch_row($res_count);
 $count = $arr_count[0];
 
@@ -185,11 +185,11 @@ LEFT JOIN topics AS t ON p.topic_id = t.id
 LEFT JOIN forums AS f ON f.id = t.forum_id 
 WHERE  '.($CURUSER['class'] < UC_STAFF ? 'p.status = \'ok\' AND t.status = \'ok\' AND' : 
 ($CURUSER['class'] < $min_delete_view_class ? 'p.status != \'deleted\' AND t.status != \'deleted\'  AND' : '')).'
- p.user_id = '.$member_id.' AND f.min_class_read <= '.$CURUSER['class'].'
+ p.user_id = '.sqlesc($member_id).' AND f.min_class_read <= '.$CURUSER['class'].'
 ORDER BY p.id '.$ASC_DESC.$LIMIT);
 
 //== get user info
-$user_res = sql_query('SELECT id, username, class, donor, suspended, warned, enabled, chatpost, leechwarn, pirate, king, title, avatar, offensive_avatar FROM users WHERE id = '.$member_id);
+$user_res = sql_query('SELECT id, username, class, donor, suspended, warned, enabled, chatpost, leechwarn, pirate, king, title, avatar, offensive_avatar FROM users WHERE id = '.sqlesc($member_id));
 $user_arr = mysqli_fetch_assoc($user_res);
 
 		if ($count == 0)
@@ -217,7 +217,7 @@ $user_arr = mysqli_fetch_assoc($user_res);
 		$class_alt = ($colour == 0 ? 'two' : 'one');
 		
 		//=== topic status
-		$topic_status = $arr['topic_status'];
+		$topic_status = htmlsafechars($arr['topic_status']);
 	
 		switch ($topic_status)
 		{
@@ -233,7 +233,7 @@ $user_arr = mysqli_fetch_assoc($user_res);
 		}
 		
 		//=== post status
-		$post_status = $arr['post_status'];
+		$post_status = htmlsafechars($arr['post_status']);
 	
 	  switch ($post_status)
 		{
@@ -255,8 +255,8 @@ $user_arr = mysqli_fetch_assoc($user_res);
 		break;
 		}
 	
-		$post_icon = ($arr['icon'] !== '' ? '<img src="pic/smilies/'.htmlspecialchars($arr['icon']).'.gif" alt="icon" /> ' : '<img src="pic/forums/topic_normal.gif" alt="icon" /> ');
-		$post_title = ($arr['post_title'] !== '' ? ' <span style="font-weight: bold; font-size: x-small;">'.htmlentities($arr['post_title'], ENT_QUOTES).'</span>' : 'Link to Post');
+		$post_icon = ($arr['icon'] !== '' ? '<img src="pic/smilies/'.htmlsafechars($arr['icon']).'.gif" alt="icon" /> ' : '<img src="pic/forums/topic_normal.gif" alt="icon" /> ');
+		$post_title = ($arr['post_title'] !== '' ? ' <span style="font-weight: bold; font-size: x-small;">'.htmlsafechars($arr['post_title'], ENT_QUOTES).'</span>' : 'Link to Post');
 		
 		$edited_by = '';
 		if ($arr['edit_date'] > 0)
@@ -264,27 +264,27 @@ $user_arr = mysqli_fetch_assoc($user_res);
 		$res_edited = sql_query('SELECT username FROM users WHERE id='.$arr['edited_by']);
 		$arr_edited = mysqli_fetch_assoc($res_edited);
 		
-		$edited_by = '<br /><br /><br /><span style="font-weight: bold; font-size: x-small;">Last edited by <a class="altlink" href="member_details.php?id='.$arr['edited_by'].'">'.$arr_edited['username'].'</a>
-				 at '.get_date($arr['edit_date'],'').' GMT '.($arr['edit_reason'] !== '' ? ' </span>[ Reason: '.htmlspecialchars($arr['edit_reason']).' ] <span style="font-weight: bold; font-size: x-small;">' : '').'
+		$edited_by = '<br /><br /><br /><span style="font-weight: bold; font-size: x-small;">Last edited by <a class="altlink" href="userdetails.php?id='.(int)$arr['edited_by'].'">'.htmlsafechars($arr_edited['username']).'</a>
+				 at '.get_date($arr['edit_date'],'').' GMT '.($arr['edit_reason'] !== '' ? ' </span>[ Reason: '.htmlsafechars($arr['edit_reason']).' ] <span style="font-weight: bold; font-size: x-small;">' : '').'
 				 '.(($CURUSER['class'] >= UC_STAFF && $arr['post_history'] !== '') ? 
-				 ' <a class="altlink" href="forums.php?action=view_post_history&amp;post_id='.$arr['post_id'].'&amp;forum_id='.$arr['forum_id'].'&amp;topic_id='.$arr['topic_id'].'">read post history</a></span><br />' : '');
+				 ' <a class="altlink" href="forums.php?action=view_post_history&amp;post_id='.(int)$arr['post_id'].'&amp;forum_id='.(int)$arr['forum_id'].'&amp;topic_id='.(int)$arr['topic_id'].'">read post history</a></span><br />' : '');
 		}
 		
 		$body = ($arr['bbcode'] == 'yes' ? format_comment($arr['body']) : format_comment_no_bbcode($arr['body']));
 		
-			$post_id = $arr['post_id'];
+			$post_id = (int)$arr['post_id'];
 			
 			$HTMLOUT .= '<tr>
 				<td class="forum_head_dark" colspan="3" align="left">Forum:  
 				<a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$arr['forum_id'].'" title="Link to Forum">
-				<span style="color: white;font-weight: bold;">'.htmlentities($arr['forum_name'], ENT_QUOTES).'</span></a>&nbsp;&nbsp;&nbsp;&nbsp;
-				Topic: <a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$arr['topic_id'].'" title="Link to Forum">
-				<span style="color: white;font-weight: bold;">'.htmlentities($arr['topic_name'], ENT_QUOTES).'</span></a>'.$topic_status_image.'</td>
+				<span style="color: white;font-weight: bold;">'.htmlsafechars($arr['forum_name'], ENT_QUOTES).'</span></a>&nbsp;&nbsp;&nbsp;&nbsp;
+				Topic: <a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.(int)$arr['topic_id'].'" title="Link to Forum">
+				<span style="color: white;font-weight: bold;">'.htmlsafechars($arr['topic_name'], ENT_QUOTES).'</span></a>'.$topic_status_image.'</td>
 			</tr>
 			<tr>
 				<td class="forum_head" align="left" width="100" valign="middle"><a name="'.$post_id.'"></a></td>
 				<td class="forum_head" align="left" valign="middle"> <span style="white-space:nowrap;">'.$post_icon.'
-				<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$arr['topic_id'].'&amp;page='.$page.'#'.$arr['post_id'].'" title="Link to Post">
+				<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.(int)$arr['topic_id'].'&amp;page='.$page.'#'.(int)$arr['post_id'].'" title="Link to Post">
 				'.$post_title.'</a>&nbsp;&nbsp;'.$post_status_image.' &nbsp;&nbsp; posted on: '.get_date($arr['added'],'').' ['.get_date($arr['added'],'',0,1).']</span></td>
 				<td class="forum_head" align="right" valign="middle"><span style="white-space:nowrap;"> 
 				<a href="forums.php?action=view_my_posts&amp;page='.$page.'#top"><img src="pic/forums/up.gif" alt="top" /></a> 
@@ -292,7 +292,7 @@ $user_arr = mysqli_fetch_assoc($user_res);
 			</tr>	
 			<tr>
 				<td class="'.$class_alt.'" align="center" width="100px" valign="top">'.avatar_stuff($user_arr).'<br />'.print_user_stuff($user_arr).($user_arr['title'] == '' ? '' : 
-				'<br /><span style=" font-size: xx-small;">['.htmlspecialchars($user_arr['title']).']</span>').'<br />
+				'<br /><span style=" font-size: xx-small;">['.htmlsafechars($user_arr['title']).']</span>').'<br />
 				<span style="font-weight: bold;">'.get_user_class_name($user_arr['class']).'</span><br /></td>
 				<td class="'.$post_status.'" align="left" valign="top" colspan="2">'.$body.$edited_by.'</td>
 			</tr>

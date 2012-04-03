@@ -34,11 +34,11 @@ $last_posts_read_res = sql_query('SELECT t.id, t.last_post FROM topics AS t LEFT
 		
 while ($last_posts_read_arr = mysqli_fetch_assoc($last_posts_read_res))
   {
-		$members_last_posts_read_res = sql_query('SELECT id, last_post_read FROM read_posts WHERE user_id='.$CURUSER['id'].' and topic_id='.$last_posts_read_arr['id']);
+		$members_last_posts_read_res = sql_query('SELECT id, last_post_read FROM read_posts WHERE user_id='.sqlesc($CURUSER['id']).' and topic_id='.sqlesc($last_posts_read_arr['id']));
 		
 		if (mysqli_num_rows($members_last_posts_read_res) === 0)
 		{
-			sql_query('INSERT INTO read_posts (user_id, topic_id, last_post_read) VALUES ('.$CURUSER['id'].', '.$last_posts_read_arr['id'].', '.$last_posts_read_arr['last_post'].')');
+			sql_query('INSERT INTO read_posts (user_id, topic_id, last_post_read) VALUES ('.sqlesc($CURUSER['id']).', '.sqlesc($last_posts_read_arr['id']).', '.sqlesc($last_posts_read_arr['last_post']).')');
 		}
 		else
 			{
@@ -46,7 +46,7 @@ while ($last_posts_read_arr = mysqli_fetch_assoc($last_posts_read_res))
 			
 				if ($members_last_posts_read_arr['last_post_read'] < $last_posts_read_arr['last_post'])
 				{
-				sql_query('UPDATE read_posts SET last_post_read='.$last_posts_read_arr['last_post'].' WHERE id='.$members_last_posts_read_arr['id']);
+				sql_query('UPDATE read_posts SET last_post_read='.sqlesc($last_posts_read_arr['last_post']).' WHERE id='.sqlesc($members_last_posts_read_arr['id']));
 				}
 			}
 

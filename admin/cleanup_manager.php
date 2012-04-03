@@ -163,10 +163,10 @@ function cleanup_show_edit() {
       stderr('Error', 'Why me?');
     
     $row = mysqli_fetch_assoc( $sql );
-    $row['clean_title'] = htmlspecialchars($row['clean_title'], ENT_QUOTES);
-    $row['clean_desc'] = htmlspecialchars($row['clean_desc'], ENT_QUOTES);
-    $row['clean_file'] = htmlspecialchars($row['clean_file'], ENT_QUOTES);
-    $row['clean_title'] = htmlspecialchars($row['clean_title'], ENT_QUOTES);
+    $row['clean_title'] = htmlsafechars($row['clean_title'], ENT_QUOTES);
+    $row['clean_desc'] = htmlsafechars($row['clean_desc'], ENT_QUOTES);
+    $row['clean_file'] = htmlsafechars($row['clean_file'], ENT_QUOTES);
+    $row['clean_title'] = htmlsafechars($row['clean_title'], ENT_QUOTES);
     $logyes = $row['clean_log'] ? 'checked="checked"' : '';
     $logno = !$row['clean_log'] ? 'checked="checked"' : '';
     $cleanon = $row['clean_on'] ? 'checked="checked"' : '';

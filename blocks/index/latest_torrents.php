@@ -22,12 +22,12 @@
    if ($top5torrents)
    {
    foreach($top5torrents as $top5torrentarr) {
-   $torrname = htmlspecialchars($top5torrentarr['name']);
+   $torrname = htmlsafechars($top5torrentarr['name']);
    if (strlen($torrname) > 50)
    $torrname = substr($torrname, 0,50) . "...";
-   $poster = empty($top5torrentarr["poster"]) ? "<img src=\'{$INSTALLER09['pic_base_url']}noposter.jpg\' width=\'150\' height=\'220\' />" : "<img src=\'".htmlspecialchars($top5torrentarr['poster'])."\' width=\'150\' height=\'220\' />";
+   $poster = empty($top5torrentarr["poster"]) ? "<img src=\'{$INSTALLER09['pic_base_url']}noposter.jpg\' width=\'150\' height=\'220\' />" : "<img src=\'".htmlsafechars($top5torrentarr['poster'])."\' width=\'150\' height=\'220\' />";
    $HTMLOUT .=" <tr>
-                <td class='table'><a href=\"{$INSTALLER09['baseurl']}/details.php?id=".(int)$top5torrentarr['id']."&amp;hit=1\" onmouseover=\"Tip('<b>Name:".htmlspecialchars($top5torrentarr['name'])."</b><br /><b>Seeders:".(int)$top5torrentarr['seeders']."</b><br /><b>Leechers:".(int)$top5torrentarr['leechers']."</b><br />$poster');\" onmouseout=\"UnTip();\">{$torrname}</a></td>
+                <td class='table'><a href=\"{$INSTALLER09['baseurl']}/details.php?id=".(int)$top5torrentarr['id']."&amp;hit=1\" onmouseover=\"Tip('<b>Name:".htmlsafechars($top5torrentarr['name'])."</b><br /><b>Seeders:".(int)$top5torrentarr['seeders']."</b><br /><b>Leechers:".(int)$top5torrentarr['leechers']."</b><br />$poster');\" onmouseout=\"UnTip();\">{$torrname}</a></td>
 <td align='center' width='100'>".(int)$top5torrentarr['seeders']."</td>
 <td align='center' width='100'>".(int)$top5torrentarr['leechers']."</td>
 </tr>\n";
@@ -59,11 +59,11 @@
    if ($last5torrents)
    {
    foreach($last5torrents as $last5torrentarr) {
-   $torrname = htmlspecialchars($last5torrentarr['name']);
+   $torrname = htmlsafechars($last5torrentarr['name']);
    if (strlen($torrname) > 50)
    $torrname = substr($torrname, 0,50) . "...";
-   $poster = empty($last5torrentarr["poster"]) ? "<img src=\'{$INSTALLER09['pic_base_url']}noposter.jpg\' width=\'150\' height=\'220\' />" : "<img src=\'".$last5torrentarr['poster']."\' width=\'150\' height=\'220\' />";
-   $HTMLOUT .="<tr><td><a href=\"{$INSTALLER09['baseurl']}/details.php?id=".(int)$last5torrentarr['id']."&amp;hit=1\"></a><a href=\"{$INSTALLER09['baseurl']}/details.php?id=".(int)$last5torrentarr['id']."&amp;hit=1\" onmouseover=\"Tip('<b>Name:".htmlspecialchars($last5torrentarr['name'])."</b><br /><b>Seeders:".(int)$last5torrentarr['seeders']."</b><br /><b>Leechers:".(int)$last5torrentarr['leechers']."</b><br />$poster');\" onmouseout=\"UnTip();\">{$torrname}</a></td>";
+   $poster = empty($last5torrentarr["poster"]) ? "<img src=\'{$INSTALLER09['pic_base_url']}noposter.jpg\' width=\'150\' height=\'220\' />" : "<img src=\'".htmlsafechars($last5torrentarr['poster'])."\' width=\'150\' height=\'220\' />";
+   $HTMLOUT .="<tr><td><a href=\"{$INSTALLER09['baseurl']}/details.php?id=".(int)$last5torrentarr['id']."&amp;hit=1\"></a><a href=\"{$INSTALLER09['baseurl']}/details.php?id=".(int)$last5torrentarr['id']."&amp;hit=1\" onmouseover=\"Tip('<b>Name:".htmlsafechars($last5torrentarr['name'])."</b><br /><b>Seeders:".(int)$last5torrentarr['seeders']."</b><br /><b>Leechers:".(int)$last5torrentarr['leechers']."</b><br />$poster');\" onmouseout=\"UnTip();\">{$torrname}</a></td>";
    $HTMLOUT .="<td align='center' width='100'>{$last5torrentarr['seeders']}</td>";
    $HTMLOUT .="<td align='center' width='100'>{$last5torrentarr['leechers']}</td>";
    $HTMLOUT .="</tr>";

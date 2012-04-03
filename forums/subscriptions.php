@@ -34,7 +34,7 @@ $links = '<span style="text-align: center;"><a class="altlink" href="forums.php"
 	$HTMLOUT .= '<h1>Subscribed Forums for '.print_user_stuff($CURUSER).'</h1>'.$links;
 
 	//=== Get count 
-	$res = sql_query('SELECT COUNT(id) FROM subscriptions WHERE user_id='.$CURUSER['id']);
+	$res = sql_query('SELECT COUNT(id) FROM subscriptions WHERE user_id='.sqlesc($CURUSER['id']));
 	$row = mysqli_fetch_row($res);
 	$count = $row[0];
 	
@@ -75,18 +75,18 @@ LEFT JOIN forums AS f ON f.id = t.forum_id
 LEFT JOIN users AS u ON u.id = p.user_id 
 WHERE '.($CURUSER['class'] < UC_STAFF ? 'p.status = \'ok\' AND t.status = \'ok\' AND' : 
 ($CURUSER['class'] < $min_delete_view_class ? 'p.status != \'deleted\' AND t.status != \'deleted\'  AND' : '')).' 
-s.user_id = '.$CURUSER['id'].' AND f.min_class_read < '.$CURUSER['class'].' AND s.user_id = '.$CURUSER['id'].'  ORDER BY t.id DESC '.$LIMIT);
+s.user_id = '.$CURUSER['id'].' AND f.min_class_read < '.sqlesc($CURUSER['class']).' AND s.user_id = '.sqlesc($CURUSER['id']).'  ORDER BY t.id DESC '.$LIMIT);
 
 	while ($topic_arr = mysqli_fetch_assoc($res))
 	{
 
-		$topic_id = $topic_arr['topic_id'];
+		$topic_id = (int)$topic_arr['topic_id'];
         $locked = $topic_arr['locked'] == 'yes';
         $sticky = $topic_arr['sticky'] == 'yes';
         $topic_poll = $topic_arr['poll_id'] > 0;
 	
-		$last_post_username = ($topic_arr['username'] !== '' ? print_user_stuff($topic_arr) : 'Lost ['.$topic_arr['id'].']');
-        $last_post_id = $topic_arr['last_post'];
+		$last_post_username = ($topic_arr['username'] !== '' ? print_user_stuff($topic_arr) : 'Lost ['.(int)$topic_arr['id'].']');
+        $last_post_id = (int)$topic_arr['last_post'];
 
 //=== Get author / first post info
 $first_post_res = sql_query('SELECT p.added, p.icon, p.body,
@@ -94,20 +94,20 @@ u.id, u.username, u.class, u.donor, u.suspended, u.warned, u.enabled, u.chatpost
 FROM posts AS p 
 LEFT JOIN users AS u ON p.user_id = u.id 
 WHERE '.($CURUSER['class'] < UC_STAFF ? 'p.status = \'ok\' AND' : 
-($CURUSER['class'] < $min_delete_view_class ? 'p.status != \'deleted\' AND' : '')).' topic_id='.$topic_id.'  
+($CURUSER['class'] < $min_delete_view_class ? 'p.status != \'deleted\' AND' : '')).' topic_id='.sqlesc($topic_id).'  
 ORDER BY id DESC LIMIT 1');
 
         $first_post_arr = mysqli_fetch_assoc($first_post_res);
 		
         $thread_starter = ($first_post_arr['username'] !== '' ? print_user_stuff($first_post_arr) : 'Lost ['.$first_post_arr['id'].']').'<br />'.get_date($first_post_arr['added'],'');
-		$icon = ($first_post_arr['icon'] == '' ? '<img src="pic/forums/topic_normal.gif" alt="Topic" title="Topic" />' : '<img src="pic/smilies/'.htmlspecialchars($first_post_arr['icon']).'.gif" alt="'.htmlspecialchars($first_post_arr['icon']).'" title="'.htmlspecialchars($first_post_arr['icon']).'" />');
+		$icon = ($first_post_arr['icon'] == '' ? '<img src="pic/forums/topic_normal.gif" alt="Topic" title="Topic" />' : '<img src="pic/smilies/'.htmlsafechars($first_post_arr['icon']).'.gif" alt="'.htmlsafechars($first_post_arr['icon']).'" title="'.htmlsafechars($first_post_arr['icon']).'" />');
         $first_post_text = tool_tip(' <img src="pic/forums/mg.gif" height="14" alt="Preview" title="Preview" />', format_comment($first_post_arr['body'], true, false, false), 'First Post Preview');
 	  
 	//=== last post read in topic
-        $last_unread_post_res = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.$CURUSER['id'].' AND topic_id='.$topic_id);
+        $last_unread_post_res = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.sqlesc($CURUSER['id']).' AND topic_id='.sqlesc($topic_id));
         $last_unread_post_arr = mysqli_fetch_row($last_unread_post_res);
 	
-		$did_i_post_here = sql_query('SELECT user_id FROM posts WHERE user_id='.$CURUSER['id'].' AND topic_id='.$topic_id);       
+		$did_i_post_here = sql_query('SELECT user_id FROM posts WHERE user_id='.sqlesc($CURUSER['id']).' AND topic_id='.sqlesc($topic_id));       
 		$posted = (mysqli_num_rows($did_i_post_here) > 0 ? 1 : 0);
         
       
@@ -150,7 +150,7 @@ ORDER BY id DESC LIMIT 1');
         $topicpic = ($posts < 30 ? ($locked ? ($new ? 'lockednew' : 'locked') : ($new ? 'topicnew' : 'topic')) : ($locked ? ($new ? 'lockednew' : 'locked') : ($new ? 'hot_topic_new' : 'hot_topic')));
         
         $topic_name = ($sticky ? '<img src="pic/forums/pinned2.gif" alt="Pinned" title="Pinned" /> ' : ' ').($topicpoll ? '<img src="pic/forums/poll.gif" alt="Poll" title="Poll" /> ' : ' '). '
-        		<a class="altlink" href="?action=view_topic&amp;topic_id='.$topic_id.'">'.htmlentities($topic_arr['topic_name'], ENT_QUOTES).'</a> '.$multi_pages;
+        		<a class="altlink" href="?action=view_topic&amp;topic_id='.$topic_id.'">'.htmlsafechars($topic_arr['topic_name'], ENT_QUOTES).'</a> '.$multi_pages;
 	   
 		//=== change colors
 		$colour= (++$colour)%2;
@@ -166,14 +166,14 @@ ORDER BY id DESC LIMIT 1');
 		<td class="'.$class.'" align="right">'.$rpic.'</td>
 		</tr>
 		</table>
-		'.($topic_arr ['topic_desc'] !== '' ? '&#9658; <span style="font-size: x-small;">'.htmlentities($topic_arr ['topic_desc'], ENT_QUOTES).'</span>' : '').'</td>
+		'.($topic_arr ['topic_desc'] !== '' ? '&#9658; <span style="font-size: x-small;">'.htmlsafechars($topic_arr ['topic_desc'], ENT_QUOTES).'</span>' : '').'</td>
 		<td align="center" class="'.$class.'">'.$thread_starter.'</td>
 		<td align="center" class="'.$class.'">'.number_format($topic_arr ['post_count'] - 1).'</td>
 		<td align="center" class="'.$class.'">'.number_format($topic_arr ['views']).'</td>
 		<td align="center" class="'.$class.'"><span style="white-space:nowrap;">'.get_date($topic_arr['added'],'').'</span><br />by&nbsp;'.$last_post_username.'</td>
 		<td align="center" class="'.$class.'"><a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$topic_id.'&amp;page=p'.$last_post_id.'#'.$last_post_id.'" title="last post in this thread">
 		<img src="pic/forums/last_post.gif" alt="Last post" title="Last post" /></a></td>
-		<td align="center" class="'.$class.'"><input type="checkbox" name="remove[]" value="'.$topic_arr['subscribed_id'].'" /></td>
+		<td align="center" class="'.$class.'"><input type="checkbox" name="remove[]" value="'.(int)$topic_arr['subscribed_id'].'" /></td>
 		</tr>';
 
 	}

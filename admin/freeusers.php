@@ -98,7 +98,7 @@ else
     while ($arr2 = mysqli_fetch_assoc($res2))
     {
 
-        $HTMLOUT .= "<tr><td><a href='userdetails.php?id=$arr2[id]'>".$arr2['username'].
+        $HTMLOUT .= "<tr><td><a href='userdetails.php?id=".(int)$arr2['id']."'>".htmlsafechars($arr2['username']).
             "</a></td><td align='left'>".get_user_class_name($arr2['class']);
         if ($arr2['class'] > UC_ADMINISTRATOR && $arr2['id'] != $CURUSER['id'])
             $HTMLOUT .= "</td><td align='left'>Until ".get_date($arr2['free_switch'], 'DATE')." 

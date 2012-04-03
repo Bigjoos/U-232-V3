@@ -9,7 +9,7 @@
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 dbconn();
 
-$passkey = (isset($_GET["passkey"]) ? htmlspecialchars($_GET["passkey"]) : '');
+$passkey = (isset($_GET["passkey"]) ? htmlsafechars($_GET["passkey"]) : '');
 $feed = (isset($_GET["type"]) && $_GET['type'] == 'dl'? 'dl' : 'web');
 $cats = (isset($_GET["cats"]) ? $_GET["cats"] : "");
 
@@ -40,7 +40,7 @@ $res = sql_query("SELECT t.id,t.name,t.descr,t.size,t.category,t.seeders,t.leech
 while ($a = mysqli_fetch_assoc($res)){
  $link = $INSTALLER09['baseurl'].($feed == "dl" ? "/download.php?torrent=".(int)$a['id'].'&amp;passkey='.$passkey : "/details.php?id=".(int)$a["id"]."&amp;hit=1");
  $br = "&lt;br/&gt;";
- $HTMLOUT .= "<item><title>".htmlspecialchars($a["name"])."</title><link>{$link}</link><description>{$br}Category: ".htmlspecialchars($a['catname'])." {$br} Size: ".mksize((int)$a["size"])." {$br} Leechers: ".(int)$a["leechers"]." {$br} Seeders: ".(int)$a["seeders"]." {$br} Added: ".get_date($a['added'],'DATE')." {$br} Description: ".htmlspecialchars(substr($a["descr"],0,450))." {$br}</description>\n</item>\n";
+ $HTMLOUT .= "<item><title>".htmlsafechars($a["name"])."</title><link>{$link}</link><description>{$br}Category: ".htmlsafechars($a['catname'])." {$br} Size: ".mksize((int)$a["size"])." {$br} Leechers: ".(int)$a["leechers"]." {$br} Seeders: ".(int)$a["seeders"]." {$br} Added: ".get_date($a['added'],'DATE')." {$br} Description: ".htmlsafechars(substr($a["descr"],0,450))." {$br}</description>\n</item>\n";
 }
 
 $HTMLOUT .= "</channel>\n</rss>\n";

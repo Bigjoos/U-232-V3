@@ -69,7 +69,7 @@ $highlight = " bgcolor='lightgrey'";
 <tr>
 
   <td valign="middle" class='rowhead'><?php echo $lang['usersearch_name'] ?></td>
-  <td <?php echo (isset($_POST['n'])&&!empty($_POST['n']))?$highlight:""?>><input name="n" type="text" value="<?php echo isset($_POST['n'])?htmlentities($_POST['n']):""?>" size='25' /></td>
+  <td <?php echo (isset($_POST['n'])&&!empty($_POST['n']))?$highlight:""?>><input name="n" type="text" value="<?php echo isset($_POST['n'])?htmlsafechars($_POST['n']):""?>" size='25' /></td>
 
   <td valign="middle" class='rowhead'><?php echo $lang['usersearch_ratio'] ?></td>
   <td <?php echo (isset($_POST['r'])&&!empty($_POST['r']))?$highlight:""?>><select name="rt">

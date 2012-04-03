@@ -66,7 +66,7 @@ class_check(UC_STAFF);
         {
           $first = long2ip($arr["first"]);
           $last = long2ip($arr["last"]);
-          $comment = htmlspecialchars($arr["comment"]);
+          $comment = htmlsafechars($arr["comment"]);
           $HTMLOUT .= "<tr><td>$first</td><td>$last</td><td>$comment</td></tr>\n";
         }
         

@@ -84,7 +84,7 @@ function invincible($id, $invincible = true, $bypass_bans = true) {
    }
     
    write_log('Member [b][url=userdetails.php?id='.$id.']'.
-               ($row['username']).'[/url][/b] is '.$display.' invincible thanks to [b]'.
+               (htmlsafechars($row['username'])).'[/url][/b] is '.$display.' invincible thanks to [b]'.
                $CURUSER['username'].'[/b]');
     
    // header ouput

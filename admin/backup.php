@@ -154,12 +154,12 @@ $HTMLOUT.="<script type='text/javascript'>
 		while ($arr = mysqli_fetch_assoc($res))
 		{
 		$HTMLOUT.="<tr>
-			<td><a href='staffpanel.php?tool=backup&amp;mode=download&amp;id=".(int)$arr['id']."'>".htmlspecialchars($arr['name'])."</a></td>
+			<td><a href='staffpanel.php?tool=backup&amp;mode=download&amp;id=".(int)$arr['id']."'>".htmlsafechars($arr['name'])."</a></td>
 			<td style='white-space:nowrap;'>".get_date($arr['added'], 'DATE',1,0)."</td>
       <td align='center'>";
 			if (!empty($arr['username']))
 			{
-			$HTMLOUT.="<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['uid']."'>".$arr['username']."</a>";
+			$HTMLOUT.="<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['uid']."'>".htmlsafechars($arr['username'])."</a>";
 			}
 			else
 			{
@@ -261,7 +261,7 @@ else if ($mode == "download")
 	}
 	
 	if ($write2log)
-		write_log($CURUSER['username'].'('.get_user_class_name($CURUSER['class']).') downloaded a database('.$arr['name'].').');
+		write_log($CURUSER['username'].'('.get_user_class_name($CURUSER['class']).') downloaded a database('.htmlsafechars($arr['name']).').');
 	
 	header('Refresh: 0; url=staffpanel.php'.($autodl && !$autodel ? '' : '?tool=backup&mode=delete&id='.$id));
 
@@ -311,7 +311,7 @@ else if ($mode == 'delete')
 	else
 		$location = 'noselection';
 	
-	header('Location:staffpanel.php?tool=backup&mode'.$location);
+	header('Location:staffpanel.php?tool=backup&mode='.$location);
 }
 else if ($mode == "check")
 {

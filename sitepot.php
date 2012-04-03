@@ -58,7 +58,7 @@ if ($want_pot && (isset($pot_options[$want_pot])))
         $Remaining = $potsize - $give;
 
         sql_query("UPDATE users SET seedbonus = seedbonus - ".sqlesc($want_pot)." 
-                     WHERE id = ".sqlesc($CURUSER['id'])."") 
+                     WHERE id = ".sqlesc($CURUSER['id'])) 
                      or sqlerr(__file__, __line__);
 	
       $update['seedbonus_donator'] = ($CURUSER['seedbonus']-$want_pot);

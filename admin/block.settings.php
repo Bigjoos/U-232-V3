@@ -46,7 +46,7 @@ function block_cache()
 		
 		foreach( $_POST as $k => $v)
 		{
-			$block_out .= ($k == 'block_undefined') ? "\t'{$k}' => '".htmlspecialchars($v)."',\n" : "\t'{$k}' => ".intval($v).",\n";
+			$block_out .= ($k == 'block_undefined') ? "\t'{$k}' => '".htmlsafechars($v)."',\n" : "\t'{$k}' => ".intval($v).",\n";
 		}
 		
 

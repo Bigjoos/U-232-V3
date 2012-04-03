@@ -22,7 +22,7 @@ loggedinorreturn();
       stderr('USER ERROR', 'Bad id');
 
 
-    $res = sql_query("SELECT COUNT(id) FROM files WHERE torrent =".sqlesc( $id ) ."") or sqlerr();
+    $res = sql_query("SELECT COUNT(id) FROM files WHERE torrent =".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
     $row = mysqli_fetch_row($res);
     $count = $row[0];
     $perpage = 100;
@@ -32,9 +32,7 @@ loggedinorreturn();
     if ($count > $perpage)
     $HTMLOUT .= $pager['pagertop'];
 		$HTMLOUT .= "<a name='top'></a><table class='main' border='1' cellspacing='0' cellpadding='5'>\n";
-
-		$subres = sql_query("SELECT * FROM files WHERE torrent = $id ORDER BY id {$pager['limit']}");
-
+		$subres = sql_query("SELECT * FROM files WHERE torrent = ".sqlesc($id)." ORDER BY id ".$pager['limit']);
       $HTMLOUT .= "<tr><td class='colhead'>{$lang["filelist_type"]}</td><td class='colhead'>{$lang["filelist_path"]}</td><td class='colhead' align='right'>{$lang["filelist_size"]}</td></tr>\n";
 		  $counter = 0;
 			while ($subrow = mysqli_fetch_assoc($subres)) {
@@ -45,7 +43,7 @@ loggedinorreturn();
 			$ext = "Unknown";
 			if($counter !== 0 && $counter % 10 == 0)
 			$HTMLOUT .= "<tr><td colspan='2' align='right'><a href='#top'><img src='{$INSTALLER09['pic_base_url']}/top.gif' alt='' /></a></td></tr>";
-			$HTMLOUT .= "<tr><td><img src='pic/icons/".$ext.".png' alt='$ext file' title='$ext file' /></td><td>" . htmlspecialchars($subrow["filename"]) ."</td><td align='right'>" . mksize((int)$subrow["size"]) . "</td></tr>\n";
+			$HTMLOUT .= "<tr><td><img src='pic/icons/".htmlsafechars($ext).".png' alt='".htmlsafechars($ext)." file' title='".htmlsafechars($ext)." file' /></td><td>" . htmlsafechars($subrow["filename"]) ."</td><td align='right'>".mksize($subrow["size"])."</td></tr>\n";
 			$counter++;
 			}
 			$HTMLOUT .= "</table>\n";

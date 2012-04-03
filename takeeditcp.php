@@ -49,7 +49,7 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
     return $out;
     }
     
-    $action = isset($_POST["action"]) ? htmlspecialchars(trim($_POST["action"])) : '';
+    $action = isset($_POST["action"]) ? htmlsafechars(trim($_POST["action"])) : '';
     $updateset = $curuser_cache = $user_cache = array();
     //== Avatars stuffs
     if ($action == "avatar") {
@@ -194,7 +194,7 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
     {
     if (!validemail($email))
     stderr("Error", $lang['takeeditcp_not_valid_email']);
-    $r = sql_query("SELECT id FROM users WHERE email=" . sqlesc($email)) or sqlerr();
+    $r = sql_query("SELECT id FROM users WHERE email=" . sqlesc($email)) or sqlerr( __FILE__, __LINE__ );
     if ( mysqli_num_rows($r) > 0 || ($CURUSER["passhash"] != make_passhash( $CURUSER['secret'], md5($chmailpass) ) ) )
     stderr("Error", $lang['takeeditcp_address_taken']);
     $changedemail = 1;
@@ -256,11 +256,11 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
     array($CURUSER['username'], $INSTALLER09['site_name'], $email, $_SERVER['REMOTE_ADDR'], "{$INSTALLER09['baseurl']}/confirmemail.php?uid={$CURUSER['id']}&key=$hash&email=$obemail"),
     $lang['takeeditcp_email_body']);
     mail($email, "$thisdomain {$lang['takeeditcp_confirm']}", $body, "From: {$INSTALLER09['site_email']}");
-    $emailquery = sql_query("SELECT id, username, email FROM users WHERE id={$CURUSER['id']}") or sqlerr(__FILE__, __LINE__);
+    $emailquery = sql_query("SELECT id, username, email FROM users WHERE id=".sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
     $spm = mysqli_fetch_assoc($emailquery);
     $dt = TIME_NOW;
     $subject = sqlesc("Email Alert");
-    $msg = sqlesc("User [url={$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$spm['id']."][b]".htmlspecialchars($spm['username'])."[/b][/url] changed email address : Old email was ".htmlspecialchars($spm['email'])." new email is $email, please check this was for a legitimate reason");
+    $msg = sqlesc("User [url={$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$spm['id']."][b]".htmlsafechars($spm['username'])."[/b][/url] changed email address : Old email was ".htmlsafechars($spm['email'])." new email is $email, please check this was for a legitimate reason");
     $pmstaff = sql_query('SELECT id FROM users WHERE class = '.UC_ADMINISTRATOR) or sqlerr(__FILE__, __LINE__);
     while ($arr = mysqli_fetch_assoc($pmstaff))
     sql_query("INSERT INTO messages(sender, receiver, added, msg, subject) VALUES(0, ".sqlesc($arr['id']).", $dt, $msg, $subject)") or sqlerr(__FILE__, __LINE__);
@@ -340,7 +340,7 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
      $status_archive = ((isset($CURUSER['archive']) && is_array(unserialize($CURUSER['archive']))) ? unserialize($CURUSER['archive']) : array());
      if(!empty($CURUSER['last_status']))
      $status_archive[] = array('status'=>$CURUSER['last_status'],'date'=>$CURUSER['last_update']);
-     sql_query('INSERT INTO ustatus(userid,last_status,last_update,archive) VALUES('.$CURUSER['id'].','.sqlesc($status).','.TIME_NOW.','.sqlesc(serialize($status_archive)).') ON DUPLICATE KEY UPDATE last_status=values(last_status),last_update=values(last_update),archive=values(archive)') or sqlerr(__FILE__,__LINE__);
+     sql_query('INSERT INTO ustatus(userid,last_status,last_update,archive) VALUES('.sqlesc($CURUSER['id']).','.sqlesc($status).','.TIME_NOW.','.sqlesc(serialize($status_archive)).') ON DUPLICATE KEY UPDATE last_status=values(last_status),last_update=values(last_update),archive=values(archive)') or sqlerr(__FILE__,__LINE__);
      $mc1->delete_value('userstatus_'.$CURUSER['id']);
      $mc1->delete_value('user_status_'.$CURUSER['id']);
      }
@@ -427,7 +427,7 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
     if ($day == '00')
     stderr("Error","Please set your birth day.");
     if (!checkdate($month, $day, $year))
-	  stderr("Error", "<br /><div align='center'><font color='red' size='+1'>The date entered is not a valid date, please try again</font></div><br />"); 
+	  stderr("Error", "<br /><div id='error' align='center'><font color='red' size='+1'>The date entered is not a valid date, please try again</font></div><br />"); 
     $updateset[] = "birthday = ".sqlesc($birthday);
     $curuser_cache['birthday'] = $birthday;
     $user_cache['birthday'] = $birthday;
@@ -480,7 +480,7 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
                    $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
                 }
     if (sizeof($updateset)>0) 
-    sql_query("UPDATE users SET " . implode(",", $updateset) . " WHERE id = " . $CURUSER["id"]) or sqlerr(__FILE__, __LINE__);
+    sql_query("UPDATE users SET ".implode(",", $updateset)." WHERE id = ".sqlesc($CURUSER["id"])) or sqlerr(__FILE__, __LINE__);
     
     header("Location: {$INSTALLER09['baseurl']}/usercp.php?edited=1&action=$action" . $urladd);
 ?>

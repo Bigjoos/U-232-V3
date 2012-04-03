@@ -40,15 +40,16 @@ if ($CURUSER["seedbonus"] < $points)
 
 $sql = sql_query('SELECT seedbonus '.
                        'FROM users '.
-                       'WHERE id = '.$userid) or sqlerr(__FILE__, __LINE__);
+                       'WHERE id = '.sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
       $User = mysqli_fetch_assoc($sql);
 
 sql_query("INSERT INTO coins (userid, torrentid, points) VALUES (" . sqlesc($CURUSER["id"]) . ", " . sqlesc($id) . ", " . sqlesc($points) . ")") or sqlerr(__FILE__, __LINE__);
-sql_query("UPDATE users SET seedbonus=seedbonus+" . $points . " WHERE id=" . sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
-sql_query("UPDATE users SET seedbonus=seedbonus-" . $points . " WHERE id=" . sqlesc($CURUSER["id"])) or sqlerr(__FILE__, __LINE__);
-sql_query("UPDATE torrents SET points=points+" . $points . " WHERE id=" . sqlesc($id)) or sqlerr(__FILE__, __LINE__);
-$msg = sqlesc("You have been given " . htmlspecialchars($points) . " points by " . $CURUSER["username"] . " for torrent [url=" . $INSTALLER09['baseurl'] . "/details.php?id=" . $id . "]" . htmlspecialchars($row["name"]) . "[/url].");
-sql_query("INSERT INTO messages (sender, receiver, msg, added, subject) VALUES({$INSTALLER09['bot_id']}, $userid, $msg, " . TIME_NOW . ", 'You have been given a gift')") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET seedbonus=seedbonus+".sqlesc($points)." WHERE id=".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET seedbonus=seedbonus-".sqlesc($points)." WHERE id=".sqlesc($CURUSER["id"])) or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE torrents SET points=points+".sqlesc($points)." WHERE id=".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
+$msg = sqlesc("You have been given ".htmlspecialchars($points)." points by ".$CURUSER["username"]." for torrent [url=".$INSTALLER09['baseurl']."/details.php?id=".$id."]".htmlspecialchars($row["name"])."[/url].");
+$subject = sqlesc("You have been given a gift");
+sql_query("INSERT INTO messages (sender, receiver, msg, added, subject) VALUES({$INSTALLER09['bot_id']}, ".sqlesc($userid).", $msg, ".TIME_NOW.", $subject)") or sqlerr(__FILE__, __LINE__);
 $update['points'] = ($row['points']+$points);
 $update['seedbonus_uploader'] = ($User['seedbonus']+$points);
 $update['seedbonus_donator'] = ($CURUSER['seedbonus']-$points);

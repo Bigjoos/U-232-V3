@@ -37,7 +37,7 @@ $HTMLOUT = $count = '';
 		$points = 0 + $_POST["bonuspoints"];
 		$pointspool = 0 + $_POST["pointspool"];
 		$minpoints = 0 + $_POST["minpoints"];
-		$descr = 	htmlspecialchars($_POST["description"]);
+		$descr = 	htmlsafechars($_POST["description"]);
 		$enabled = "yes";
 		if(isset($_POST["enabled"]) == ''){
 		$enabled = "no";
@@ -76,7 +76,7 @@ while($arr = mysqli_fetch_assoc($res)) {
 		<td class='$class'><input type='text' name='bonuspoints' value='".(int)$arr["points"]."' size='4' /></td>
 		<td class='$class'><input type='text' name='pointspool' value='".(int)$arr["pointspool"]."' size='4' /></td>
 		<td class='$class'><input type='text' name='minpoints' value='".(int)$arr["minpoints"]."' size='4' /></td>
-		<td class='$class'><textarea name='description' rows='4' cols='10'>{$arr["description"]}</textarea></td>
+		<td class='$class'><textarea name='description' rows='4' cols='10'>".htmlsafechars($arr["description"])."</textarea></td>
 		<td class='$class'>{$arr["art"]}</td>
 		<td class='$class'>". (($arr["art"] == "traffic" || $arr["art"] == "traffic2" || $arr["art"] == "gift_1" || $arr["art"] == "gift_2") ? ($arr["menge"] / 1024 / 1024 / 1024) . " GB" : $arr["menge"]) ."</td>
 		<td align='center'><input type='submit' value='{$lang['bonusmanager_submit']}' /></td>

@@ -38,27 +38,24 @@ $lang = array_merge( $lang );
 	
 $HTMLOUT='';
 	
-//=== if we got here from a members page, get their info... if not, ask for a username to get the info...
-$id = (isset($_GET['id']) ? intval($_GET['id']) :  (isset($_POST['id']) ? intval($_POST['id']) :  0));
+   //=== if we got here from a members page, get their info... if not, ask for a username to get the info...
+   $id = (isset($_GET['id']) ? intval($_GET['id']) :  (isset($_POST['id']) ? intval($_POST['id']) :  0));
 	if ($id !== 0)
 	{
-
-$rez_user = sql_query('SELECT username, warned, suspended, enabled, donor, invitedby FROM users WHERE id = '.$id);
-$arr_user = mysqli_fetch_assoc($rez_user);
-
-//=== start the page
-
-$HTMLOUT .= '<h1>'.htmlspecialchars($arr_user['username']).(substr($arr_user['username'], -1) == 's' ? '\'' : '\'s').' Invite Tree</h1>
-		<p>'.($arr_user['invitedby'] == 0 ? '<a title="'.htmlspecialchars($arr_user['username']).' was registered during open doors">go up one level</a>' :
+   $rez_user = sql_query('SELECT username, warned, suspended, enabled, donor, invitedby FROM users WHERE id = '.sqlesc($id));
+   $arr_user = mysqli_fetch_assoc($rez_user);
+   //=== start the page
+   $HTMLOUT .= '<h1>'.htmlsafechars($arr_user['username']).(substr($arr_user['username'], -1) == 's' ? '\'' : '\'s').' Invite Tree</h1>
+		<p>'.($arr_user['invitedby'] == 0 ? '<a title="'.htmlsafechars($arr_user['username']).' was registered during open doors">go up one level</a>' :
 		'<a href="staffpanel.php?tool=invite_tree&amp;action=invite_tree&amp;really_deep=1&amp;id='.$arr_user['invitedby'].'" title="go up one level">go up one level</a>').' | 
 		| <a href="staffpanel.php?tool=invite_tree&amp;action=invite_tree'.(isset($_GET['deeper']) ? '' : '&amp;deeper=1').'&amp;id='.$id.'" title="click to'.(isset($_GET['deeper']) ? ' shrink' : ' expand').' this tree">expand tree</a> | 
 		| <a href="staffpanel.php?tool=invite_tree&amp;action=invite_tree&amp;really_deep=1&amp;id='.$id.'" title="click to expand even more">expand even more</a></p>';
 
-$HTMLOUT .= '<table class="main" width="750px" border="0" cellspacing="0" cellpadding="0">
+   $HTMLOUT .= '<table class="main" width="750px" border="0" cellspacing="0" cellpadding="0">
 		<tr><td class="embedded" align="center">';	
 
  //=== members invites
-    $rez_invited = sql_query('SELECT id, username, email, uploaded, downloaded, status, warned, suspended, enabled, donor, email, ip, class, chatpost, leechwarn, pirate, king FROM users WHERE invitedby = '.sqlesc($id).' ORDER BY added');
+   $rez_invited = sql_query('SELECT id, username, email, uploaded, downloaded, status, warned, suspended, enabled, donor, email, ip, class, chatpost, leechwarn, pirate, king FROM users WHERE invitedby = '.sqlesc($id).' ORDER BY added');
     if(mysqli_num_rows($rez_invited) < 1)
 		$HTMLOUT .= 'No invitees yet.';
 		else 
@@ -77,7 +74,7 @@ $HTMLOUT .= '<table class="main" width="750px" border="0" cellspacing="0" cellpa
 				//=== if  deeper get the invitees invitees
 				if (isset($_GET['deeper']) || isset($_GET['really_deep']))
 				{
-    		$rez_invited_deeper = sql_query('SELECT id, username, email, uploaded, downloaded, status, warned, suspended, enabled, donor, email, ip, class, chatpost, leechwarn, pirate, king FROM users WHERE invitedby = '.$arr_invited['id'].' ORDER BY added');
+    		$rez_invited_deeper = sql_query('SELECT id, username, email, uploaded, downloaded, status, warned, suspended, enabled, donor, email, ip, class, chatpost, leechwarn, pirate, king FROM users WHERE invitedby = '.sqlesc($arr_invited['id']).' ORDER BY added');
     			if(mysqli_num_rows($rez_invited_deeper) > 0)
 						{
 						$deeper .= '<tr><td  class="two" colspan="6"><span style="font-weight: bold;">'.$arr_invited['username'].(substr($arr_invited['username'], -1) == 's' ? '\'' : '\'s').' Invites:</span><br />
@@ -95,11 +92,11 @@ $HTMLOUT .= '<table class="main" width="750px" border="0" cellspacing="0" cellpa
 				 //=== if  really_deep get the invitees invitees invitees
 				 if (isset($_GET['really_deep']))
 						{
-    				$rez_invited_really_deep = sql_query('SELECT id, username, email, uploaded, downloaded, status, warned, suspended, enabled, donor, email, ip, class, chatpost, leechwarn, pirate, king FROM users WHERE invitedby = '.$arr_invited_deeper['id'].' ORDER BY added');
+    				$rez_invited_really_deep = sql_query('SELECT id, username, email, uploaded, downloaded, status, warned, suspended, enabled, donor, email, ip, class, chatpost, leechwarn, pirate, king FROM users WHERE invitedby = '.sqlesc($arr_invited_deeper['id']).' ORDER BY added');
 
     									if(mysqli_num_rows($rez_invited_really_deep) > 0)
 										{
-										$really_deep .= '<tr><td  class="one" colspan="6"><span style="font-weight: bold;">'.htmlspecialchars($arr_invited_deeper['username']).(substr($arr_invited_deeper['username'], -1) == 's' ? '\'' : '\'s').' Invites:</span><br />
+										$really_deep .= '<tr><td  class="one" colspan="6"><span style="font-weight: bold;">'.htmlsafechars($arr_invited_deeper['username']).(substr($arr_invited_deeper['username'], -1) == 's' ? '\'' : '\'s').' Invites:</span><br />
 										<div align="center"><table width="95%" border="1" cellspacing="0" cellpadding="5">
 										<tr><td class="colhead"><span style="font-weight: bold;">Username / IP</span></td>
 										<td class="colhead"><span style="font-weight: bold;">Email</span></td>
@@ -112,9 +109,9 @@ $HTMLOUT .= '<table class="main" width="750px" border="0" cellspacing="0" cellpa
 
     											{
 
-									$really_deep .= '<tr><td class="one">'.($arr_invited_really_deep['status'] == 'pending' ? htmlspecialchars($arr_invited_really_deep['username']) : 
+									$really_deep .= '<tr><td class="one">'.($arr_invited_really_deep['status'] == 'pending' ? htmlsafechars($arr_invited_really_deep['username']) : 
 									format_username($arr_invited_really_deep).'<br />'.$arr_invited_really_deep['ip']).'
-											</td><td class="one">'.$arr_invited_really_deep['email'].'</td>
+											</td><td class="one">'.htmlsafechars($arr_invited_really_deep['email']).'</td>
 											<td class="one">'.mksize($arr_invited_really_deep['uploaded']).'</td>
 											<td class="one">'.mksize($arr_invited_really_deep['downloaded']).'</td>
 											<td class="one">'.member_ratio($arr_invited_really_deep['uploaded'], $arr_invited_really_deep['downloaded']).'</td>
@@ -125,9 +122,9 @@ $HTMLOUT .= '<table class="main" width="750px" border="0" cellspacing="0" cellpa
 										}
 								}
 
-					$deeper .= '<tr><td class="two">'.($arr_invited_deeper['status'] == 'pending' ? htmlspecialchars($arr_invited_deeper['username']) : 
+					$deeper .= '<tr><td class="two">'.($arr_invited_deeper['status'] == 'pending' ? htmlsafechars($arr_invited_deeper['username']) : 
 					format_username($arr_invited_deeper).'<br />'.$arr_invited_deeper['ip']).'</td>
-	`						<td class="two">'.$arr_invited_deeper['email'].'</td>
+	`						<td class="two">'.htmlsafechars($arr_invited_deeper['email']).'</td>
 							<td class="two">'.mksize($arr_invited_deeper['uploaded']).'</td>
 							<td class="two">'.mksize($arr_invited_deeper['downloaded']).'</td>
 							<td class="two">'.member_ratio($arr_invited_deeper['uploaded'], $arr_invited_deeper['downloaded']).'</td>
@@ -139,8 +136,8 @@ $HTMLOUT .= '<table class="main" width="750px" border="0" cellspacing="0" cellpa
 						}
 				}
 
-	$HTMLOUT .= '<tr><td>'.($arr_invited['status'] == 'pending' ? htmlspecialchars($arr_invited['username']) : format_username($arr_invited).'<br />'.$arr_invited['ip']).'</td>
-			<td>'.$arr_invited['email'].'</td>
+	$HTMLOUT .= '<tr><td>'.($arr_invited['status'] == 'pending' ? htmlsafechars($arr_invited['username']) : format_username($arr_invited).'<br />'.$arr_invited['ip']).'</td>
+			<td>'.htmlsafechars($arr_invited['email']).'</td>
 			<td>'.mksize($arr_invited['uploaded']).'</td>
 			<td>'.mksize($arr_invited['downloaded']).'</td>
 			<td>'.member_ratio($arr_invited['uploaded'], $arr_invited['downloaded']).'</td>
@@ -169,7 +166,7 @@ $HTMLOUT .= '<table class="main" width="750px" border="0" cellspacing="0" cellpa
     {
       $query = 'username LIKE '.sqlesc("%$search%").' AND status=\'confirmed\'';
       if ($search)
-          $q = 'search='.htmlspecialchars($search);
+          $q = 'search='.htmlsafechars($search);
     }
     else
     {
@@ -252,13 +249,13 @@ $HTMLOUT .= '<table class="main" width="750px" border="0" cellspacing="0" cellpa
  
     while($row = mysqli_fetch_assoc($res))
     {
-    $country = ($row['name'] != NULL) ? '<td style="padding: 0px" align="center"><img src="'.$INSTALLER09['pic_base_url'].'flag/'.$row['flagpic'].'" alt="'.htmlspecialchars($row['name']).'" /></td>' : '<td align="center">---</td>';
+    $country = ($row['name'] != NULL) ? '<td style="padding: 0px" align="center"><img src="'.$INSTALLER09['pic_base_url'].'flag/'.(int)$row['flagpic'].'" alt="'.htmlsafechars($row['name']).'" /></td>' : '<td align="center">---</td>';
     $HTMLOUT .= '<tr><td align="left">'.format_username($row).'</td>
 		<td>'.get_date( $row['added'],'' ).'</td><td>'.get_date( $row['last_access'], '').'</td>
 		<td align="left">'.get_user_class_name($row['class']).'</td>
 		'.$country.'
 		<td align="center">
-		<a href="staffpanel.php?tool=invite_tree&amp;action=invite_tree&amp;id='.$row['id'].'" title="Look at this members invite tree"><span class="btn">VIEW</span></a></td></tr>';
+		<a href="staffpanel.php?tool=invite_tree&amp;action=invite_tree&amp;id='.(int)$row['id'].'" title="Look at this members invite tree"><span class="btn">VIEW</span></a></td></tr>';
     }
     $HTMLOUT .='</table>';
     }

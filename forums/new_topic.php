@@ -47,9 +47,9 @@ if (!defined('BUNNY_FORUMS'))
       $topic_desc = strip_tags(isset($_POST['topic_desc']) ? $_POST['topic_desc'] : '');
 	  //=== post stuff
       $post_title = strip_tags(isset($_POST['post_title']) ? $_POST['post_title'] : '');
-      $icon = htmlspecialchars(isset($_POST['icon']) ? $_POST['icon'] : '');
+      $icon = htmlsafechars(isset($_POST['icon']) ? $_POST['icon'] : '');
 	  $body = (isset($_POST['body']) ? $_POST['body'] : '');
-      $ip = htmlspecialchars($CURUSER['ip'] == '' ? $_SERVER['REMOTE_ADDR'] : $CURUSER['ip']); 
+      $ip = htmlsafechars($CURUSER['ip'] == '' ? $_SERVER['REMOTE_ADDR'] : $CURUSER['ip']); 
       $bb_code = (isset($_POST['bb_code']) && $_POST['bb_code'] == 'no' ? 'no' : 'yes');
 
 	//=== poll stuff
@@ -118,8 +118,8 @@ if (!defined('BUNNY_FORUMS'))
       $post_id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
       $mc1->delete_value('last_posts_'.$CURUSER['class']);
       $mc1->delete_value('forum_posts_'.$CURUSER['id']);
-      sql_query('UPDATE `topics` SET last_post = '.$post_id.', first_post =  '.$post_id.', post_count = 1 WHERE id='.$topic_id);
-      sql_query('UPDATE `forums` SET post_count = post_count +1, topic_count = topic_count + 1 WHERE id ='.$forum_id);
+      sql_query('UPDATE `topics` SET last_post = '.$post_id.', first_post =  '.$post_id.', post_count = 1 WHERE id='.sqlesc($topic_id));
+      sql_query('UPDATE `forums` SET post_count = post_count +1, topic_count = topic_count + 1 WHERE id ='.sqlesc($forum_id));
       
       if($INSTALLER09['autoshout_on'] == 1){
 	   $message = $CURUSER['username'] . " Created a new topic [url={$INSTALLER09['baseurl']}/forums.php?action=view_topic&topic_id=$topic_id&page=last]{$topic_name}[/url]";
@@ -195,7 +195,7 @@ if ($CURUSER['class'] >= $min_upload_class)
       
       if ($subscribe == 'yes')
       {
-       sql_query('INSERT INTO `subscriptions` (`user_id`, `topic_id`) VALUES ('.$CURUSER['id'].', '.$topic_id.')');
+       sql_query('INSERT INTO `subscriptions` (`user_id`, `topic_id`) VALUES ('.sqlesc($CURUSER['id']).', '.sqlesc($topic_id).')');
      
       }
   
@@ -204,9 +204,9 @@ if ($CURUSER['class'] >= $min_upload_class)
       die();
       }
 
-	$res = sql_query('SELECT name FROM forums WHERE id='.$forum_id); 
+	$res = sql_query('SELECT name FROM forums WHERE id='.sqlesc($forum_id)); 
 	$arr = mysqli_fetch_assoc($res);
-	$section_name = htmlentities($arr['name'], ENT_QUOTES);
+	$section_name = htmlsafechars($arr['name'], ENT_QUOTES);
 
 	$HTMLOUT .= '<table align="center" class="main" width="750px" border="0" cellspacing="0" cellpadding="0">
     	<tr><td class="embedded" align="center">

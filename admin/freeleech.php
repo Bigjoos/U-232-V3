@@ -53,9 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
     $fl['expires'] = 1;
     else
     $fl['expires'] = (isset($_POST['expires']) ? ($_POST['expires'] * 86400 + TIME_NOW) : false);
-    $fl['setby'] = (isset($_POST['setby']) ? htmlspecialchars($_POST['setby']) : false);
-    $fl['title'] = (isset($_POST['title']) ? htmlspecialchars($_POST['title']) : false);
-    $fl['message'] = (isset($_POST['message']) ? htmlspecialchars($_POST['message']) : false);
+    $fl['setby'] = (isset($_POST['setby']) ? htmlsafechars($_POST['setby']) : false);
+    $fl['title'] = (isset($_POST['title']) ? htmlsafechars($_POST['title']) : false);
+    $fl['message'] = (isset($_POST['message']) ? htmlsafechars($_POST['message']) : false);
 
     //echo_r($fl);
     if ($fl['modifier'] === false || $fl['expires'] === false || $fl['setby'] === false ||

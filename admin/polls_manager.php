@@ -100,7 +100,7 @@ function update_poll() {
     if( !isset($_POST['poll_question']) OR empty($_POST['poll_question']) )
       stderr('USER ERROR', 'There is no title defined!');
     
-    $poll_title = sqlesc( htmlspecialchars( strip_tags($_POST['poll_question']), ENT_QUOTES ) );
+    $poll_title = sqlesc( htmlsafechars( strip_tags($_POST['poll_question']), ENT_QUOTES ) );
     
     //get the main crux of the poll data
     $poll_data = makepoll();
@@ -140,7 +140,7 @@ function insert_new_poll() {
     if( !isset($_POST['poll_question']) OR empty($_POST['poll_question']) )
       stderr('USER ERROR', 'There is no title defined!');
     
-    $poll_title = sqlesc( htmlspecialchars( strip_tags($_POST['poll_question']), ENT_QUOTES ) );
+    $poll_title = sqlesc( htmlsafechars( strip_tags($_POST['poll_question']), ENT_QUOTES ) );
     
     //get the main crux of the poll data
     $poll_data = makepoll();
@@ -397,7 +397,7 @@ function makepoll()
           continue;
         }
         
-        $questions[ $id ]['question'] = htmlspecialchars( strip_tags( $q ), ENT_QUOTES );
+        $questions[ $id ]['question'] = htmlsafechars( strip_tags( $q ), ENT_QUOTES );
       }
     }
 
@@ -433,7 +433,7 @@ function makepoll()
           continue;
         }
         
-        $questions[ $question_id ]['choice'][ $choice_id ] = htmlspecialchars( strip_tags(  $choice ), ENT_QUOTES );
+        $questions[ $question_id ]['choice'][ $choice_id ] = htmlsafechars( strip_tags(  $choice ), ENT_QUOTES );
         
         $_POST['votes'] = isset($_POST['votes']) ? $_POST['votes'] : 0;
           

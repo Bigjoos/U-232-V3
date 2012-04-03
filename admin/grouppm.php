@@ -54,8 +54,8 @@ function mkint($x) {
 	{
 		//$groups = isset($_POST["groups"]) ? $_POST["groups"] : "";
       $groups = isset($_POST["groups"]) ? array_map('mkint',$_POST["groups"]) : "";
-		$subject = isset($_POST["subject"]) ? htmlspecialchars($_POST["subject"]) : "";
-		$msg = isset($_POST["message"]) ? htmlspecialchars($_POST["message"]) : "";
+		$subject = isset($_POST["subject"]) ? htmlsafechars($_POST["subject"]) : "";
+		$msg = isset($_POST["message"]) ? htmlsafechars($_POST["message"]) : "";
 		$msg = str_replace("&amp","&", $_POST["message"]);
 		$sender = isset($_POST["system"]) && $_POST["system"] == "yes" ? 0 : $CURUSER["id"];
 		
@@ -93,7 +93,7 @@ function mkint($x) {
 							break;
 							case "all_friends" :
 							{
-								$fq = sql_query("SELECT friendid FROM friends WHERE userid=".$CURUSER["id"]."") or sqlerr(__FILE__, __LINE__);
+								$fq = sql_query("SELECT friendid FROM friends WHERE userid=".sqlesc($CURUSER["id"])) or sqlerr(__FILE__, __LINE__);
 								if(mysqli_num_rows($fq))
 									while($fa = mysqli_fetch_row($fq))
 										$ids[] = $fa[0];

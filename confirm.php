@@ -25,7 +25,7 @@ require_once(INCL_DIR.'user_functions.php');
     dbconn();
 
 
-    $res = sql_query("SELECT passhash, editsecret, status FROM users WHERE id = $id");
+    $res = sql_query("SELECT passhash, editsecret, status FROM users WHERE id =".sqlesc($id));
     $row = mysqli_fetch_assoc($res);
 
     if (!$row)
@@ -41,7 +41,7 @@ require_once(INCL_DIR.'user_functions.php');
     if ($md5 != $sec)
       stderr("{$lang['confirm_user_error']}", "{$lang['confirm_cannot_confirm']}");
 
-    sql_query("UPDATE users SET status='confirmed', editsecret='' WHERE id=$id AND status='pending'");
+    sql_query("UPDATE users SET status='confirmed', editsecret='' WHERE id=".sqlesc($id)." AND status='pending'");
     
     if (!mysqli_affected_rows($GLOBALS["___mysqli_ston"]))
       stderr("{$lang['confirm_user_error']}", "{$lang['confirm_cannot_confirm']}");

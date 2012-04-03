@@ -33,7 +33,7 @@ if (!defined('BUNNY_FORUMS'))
    
 
 	//=== first see if they are being norty...
-	$norty_res = sql_query('SELECT min_class_read FROM forums WHERE id = '.$forum_id);
+	$norty_res = sql_query('SELECT min_class_read FROM forums WHERE id = '.sqlesc($forum_id));
 	$norty_arr = mysqli_fetch_row($norty_res);
 
     if (!is_valid_id($topic_id) || $norty_arr[0] > $CURUSER['class'] || !is_valid_id($forum_id))
@@ -42,7 +42,7 @@ if (!defined('BUNNY_FORUMS'))
     }
 	
 	//=== see if they are subscribed already
-	$res = sql_query('SELECT id FROM subscriptions WHERE user_id = '.$CURUSER['id'].' AND topic_id = '.$topic_id);
+	$res = sql_query('SELECT id FROM subscriptions WHERE user_id = '.sqlesc($CURUSER['id']).' AND topic_id = '.sqlesc($topic_id));
 	$arr = mysqli_fetch_row($res);    
 
 	if ($arr[0] > 0)
@@ -51,7 +51,7 @@ if (!defined('BUNNY_FORUMS'))
 	}
 
 	//=== ok, that the hell, let's add it \o/
-	sql_query('INSERT INTO `subscriptions` (`user_id`, `topic_id`) VALUES ('.$CURUSER['id'].', '.$topic_id.')');
+	sql_query('INSERT INTO `subscriptions` (`user_id`, `topic_id`) VALUES ('.sqlesc($CURUSER['id']).', '.sqlesc($topic_id).')');
 	
 	header('Location: forums.php?action=view_topic&topic_id='.$topic_id.'&s=1'); 
 	

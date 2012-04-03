@@ -33,7 +33,7 @@ dbconn();
   if (!is_valid_id($id))
     stderr($lang['download_user_error'], $lang['download_no_id']);
 
-  $res = sql_query('SELECT name, owner, vip, category, filename FROM torrents WHERE id = '.$id) or sqlerr(__FILE__, __LINE__);
+  $res = sql_query('SELECT name, owner, vip, category, filename FROM torrents WHERE id = '.sqlesc($id)) or sqlerr(__FILE__, __LINE__);
   $row = mysqli_fetch_assoc($res);
 
   $fn = $INSTALLER09['torrent_dir'].'/'.$id.'.torrent';
@@ -44,7 +44,7 @@ dbconn();
   if ( happyHour('check') && happyCheck('checkid', $row['category'])) {
     $multiplier = happyHour('multiplier');
     happyLog($CURUSER['id'],$id,$multiplier);
-    sql_query('INSERT INTO happyhour (userid, torrentid, multiplier ) VALUES ('.$CURUSER['id'].','.$id.','.$multiplier.')' ) or sqlerr(__FILE__,__LINE__);
+    sql_query('INSERT INTO happyhour (userid, torrentid, multiplier ) VALUES ('.sqlesc($CURUSER['id']).','.sqlesc($id).','.sqlesc($multiplier).')' ) or sqlerr(__FILE__,__LINE__);
     $mc1-> delete_value($CURUSER['id'].'_happy');
   }
    
@@ -54,14 +54,14 @@ dbconn();
   if ($row['vip'] == 1 && $CURUSER['class'] < UC_VIP)
     stderr('VIP Access Required', 'You must be a VIP In order to view details or download this torrent! You may become a Vip By Donating to our site. Donating ensures we stay online to provide you more Vip-Only Torrents!');
  
-  sql_query("UPDATE torrents SET hits = hits + 1 WHERE id = $id");
+  sql_query("UPDATE torrents SET hits = hits + 1 WHERE id = ".sqlesc($id));
   /** free mod by pdq **/
   /** freeslots/doubleseed by pdq **/
   if (isset($_GET['slot'])) {
 
     $added = (TIME_NOW + 14*86400);
         
-    $slots_sql = sql_query('SELECT * FROM freeslots WHERE torrentid = '.$id.' AND userid = '.$CURUSER['id']);
+    $slots_sql = sql_query('SELECT * FROM freeslots WHERE torrentid = '.sqlesc($id).' AND userid = '.sqlesc($CURUSER['id']));
     $slot = mysqli_fetch_assoc($slots_sql);
         
     $used_slot = $slot['torrentid'] == $id && $slot['userid'] == $CURUSER['id'];
@@ -77,14 +77,14 @@ dbconn();
                 
       $CURUSER['freeslots'] = ($CURUSER['freeslots'] - 1);
             
-      sql_query('UPDATE users SET freeslots = freeslots - 1 WHERE id = '.$CURUSER['id'].' LIMIT 1') or sqlerr(__FILE__, __LINE__);
+      sql_query('UPDATE users SET freeslots = freeslots - 1 WHERE id = '.sqlesc($CURUSER['id']).' LIMIT 1') or sqlerr(__FILE__, __LINE__);
             
             if ($used_slot && $slot['doubleup'] == 'yes')
                 sql_query('UPDATE freeslots SET free = "yes", addedfree = '.$added.' WHERE torrentid = '.$id.' AND userid = '.$CURUSER['id'].' AND doubleup = "yes"') or sqlerr(__FILE__, __LINE__);
             elseif ($used_slot && $slot['doubleup'] == 'no')
-                sql_query('INSERT INTO freeslots (torrentid, userid, free, addedfree) VALUES ('.$id.', '.$CURUSER['id'].', "yes", '.$added.')') or sqlerr(__FILE__, __LINE__);
+                sql_query('INSERT INTO freeslots (torrentid, userid, free, addedfree) VALUES ('.sqlesc($id).', '.sqlesc($CURUSER['id']).', "yes", '.$added.')') or sqlerr(__FILE__, __LINE__);
             else
-                sql_query('INSERT INTO freeslots (torrentid, userid, free, addedfree) VALUES ('.$id.', '.$CURUSER['id'].', "yes", '.$added.')') or sqlerr(__FILE__, __LINE__);
+                sql_query('INSERT INTO freeslots (torrentid, userid, free, addedfree) VALUES ('.sqlesc($id).', '.sqlesc($CURUSER['id']).', "yes", '.$added.')') or sqlerr(__FILE__, __LINE__);
         }
         /** doubleslot **/
         elseif ($_GET['slot'] == 'double') {
@@ -97,14 +97,14 @@ dbconn();
             
             $CURUSER['freeslots'] = ($CURUSER['freeslots'] - 1);
             
-            sql_query('UPDATE users SET freeslots = freeslots - 1 WHERE id = '.$CURUSER['id'].' LIMIT 1') or sqlerr(__FILE__, __LINE__);
+            sql_query('UPDATE users SET freeslots = freeslots - 1 WHERE id = '.sqlesc($CURUSER['id']).' LIMIT 1') or sqlerr(__FILE__, __LINE__);
             
             if ($used_slot && $slot['free'] == 'yes')
-                sql_query('UPDATE freeslots SET doubleup = "yes", addedup = '.$added.' WHERE torrentid = '.$id.' AND userid = '.$CURUSER['id'].' AND free = "yes"') or sqlerr(__FILE__, __LINE__);
+                sql_query('UPDATE freeslots SET doubleup = "yes", addedup = '.$added.' WHERE torrentid = '.sqlesc($id).' AND userid = '.sqlesc($CURUSER['id']).' AND free = "yes"') or sqlerr(__FILE__, __LINE__);
             elseif ($used_slot && $slot['free'] == 'no')
-                sql_query('INSERT INTO freeslots (torrentid, userid, doubleup, addedup) VALUES ('.$id.', '.$CURUSER['id'].', "yes", '.$added.')') or sqlerr(__FILE__, __LINE__);
+                sql_query('INSERT INTO freeslots (torrentid, userid, doubleup, addedup) VALUES ('.sqlesc($id).', '.sqlesc($CURUSER['id']).', "yes", '.$added.')') or sqlerr(__FILE__, __LINE__);
             else
-                sql_query('INSERT INTO freeslots (torrentid, userid, doubleup, addedup) VALUES ('.$id.', '.$CURUSER['id'].', "yes", '.$added.')') or sqlerr(__FILE__, __LINE__);
+                sql_query('INSERT INTO freeslots (torrentid, userid, doubleup, addedup) VALUES ('.sqlesc($id).', '.sqlesc($CURUSER['id']).', "yes", '.$added.')') or sqlerr(__FILE__, __LINE__);
         }
         else
             stderr('ERROR', 'What\'s up doc?');

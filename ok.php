@@ -23,12 +23,12 @@ dbconn();
 
     if ( $type == "signup" && isset($_GET['email']) ) 
     {
-      stderr( "{$lang['ok_success']}", sprintf($lang['ok_email'], htmlentities($_GET['email'], ENT_QUOTES)) );
+      stderr( "{$lang['ok_success']}", sprintf($lang['ok_email'], htmlsafechars($_GET['email'], ENT_QUOTES)) );
     }
     
     elseif ( $type == "invite" && isset($_GET['email']) ) 
     {
-    stderr( "{$lang['ok_invsuccess']}", sprintf($lang['ok_email2'], htmlentities($_GET['email'], ENT_QUOTES)) );
+    stderr( "{$lang['ok_invsuccess']}", sprintf($lang['ok_email2'], htmlsafechars($_GET['email'], ENT_QUOTES)) );
     }
     
     elseif ($type == "sysop") 

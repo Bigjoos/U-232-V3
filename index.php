@@ -22,7 +22,7 @@ loggedinorreturn();
    if (curuser::$blocks['index_page'] & block_index::IE_ALERT && $BLOCKS['ie_user_alert']){
    require_once(BLOCK_DIR.'index/ie_user.php');
    }
-   
+
    if (curuser::$blocks['index_page'] & block_index::ANNOUNCEMENT && $BLOCKS['announcement_on']){
    require_once(BLOCK_DIR.'index/announcement.php');
    }

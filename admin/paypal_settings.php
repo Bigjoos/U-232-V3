@@ -58,10 +58,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
  $HTMLOUT .="<h3>Paypal Settings</h3>
 <form action='staffpanel.php?tool=paypal_settings' method='post'>
 <table width='100%' border='1' cellpadding='5' cellspacing='0' >
-<tr><td width='50%' class='table' align='left'>Amount of GB to add Per &#163;:</td><td class='table' align='left'><input type='text' name='gb' size='2' value='".$paypal_config['gb']."' /></td></tr>
-<tr><td width='50%' class='table' align='left'>How many weeks per &#163;5:</td><td class='table' align='left'><input type='text' name='weeks' size='2' value='".$paypal_config['weeks']."' /></td></tr>
-<tr><td width='50%' class='table' align='left'>How many invites per &#163;5:</td><td class='table' align='left'><input type='text' name='invites' size='2' value='".$paypal_config['invites']."' /></td></tr>
-<tr><td width='50%' class='table' align='left'>Your Paypal Email:</td><td class='table' align='left'><input type='text' name='email' size='25' value='".$paypal_config['email']."' /></td></tr>
+<tr><td width='50%' class='table' align='left'>Amount of GB to add Per &#163;:</td><td class='table' align='left'><input type='text' name='gb' size='2' value='".htmlsafechars($paypal_config['gb'])."' /></td></tr>
+<tr><td width='50%' class='table' align='left'>How many weeks per &#163;5:</td><td class='table' align='left'><input type='text' name='weeks' size='2' value='".htmlsafechars($paypal_config['weeks'])."' /></td></tr>
+<tr><td width='50%' class='table' align='left'>How many invites per &#163;5:</td><td class='table' align='left'><input type='text' name='invites' size='2' value='".htmlsafechars($paypal_config['invites'])."' /></td></tr>
+<tr><td width='50%' class='table' align='left'>Your Paypal Email:</td><td class='table' align='left'><input type='text' name='email' size='25' value='".htmlsafechars($paypal_config['email'])."' /></td></tr>
 <tr><td width='50%' class='table' align='left'>Paypal Donations Enabled:</td><td class='table' align='left'>Yes <input class='table' type='radio' name='enable' value='1' ".($paypal_config['enable'] ? 'checked=\'checked\'' : '')." /> No <input class='table' type='radio' name='enable' value='0' ".(!$paypal_config['enable'] ? 'checked=\'checked\'' : '')." /></td></tr>
 <tr><td colspan='2' class='table' align='center'><input type='submit' value='Apply changes' /></td></tr>
 </table></form>";

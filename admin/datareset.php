@@ -61,8 +61,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	{
 		$newd = ($a["ud"] > 0 ? $a["ud"]-$a["sd"] : 0 );
 		$new_download[] = "(".$a["uid"].",".$newd.")";
-		$tname = $a["name"];
-		$msg = "Hey , ".$a["username"]."\n";
+		$tname = htmlsafechars($a["name"]);
+		$msg = "Hey , ".htmlsafechars($a["username"])."\n";
 		$msg .= "Looks like torrent [b]".$a["name"]."[/b] is nuked and we want to take back the data you downloaded\n";
 		$msg .= "So you downloaded ".mksize($a["sd"])." your new download will be ".mksize($newd)."\n";
 		$pms[] = "(0,".$a["uid"].",".TIME_NOW.",".sqlesc($msg).")";

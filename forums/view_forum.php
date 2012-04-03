@@ -39,14 +39,14 @@ if (!defined('BUNNY_FORUMS'))
 
 	
 //=== who is here 
-sql_query('DELETE FROM now_viewing WHERE user_id = '.$CURUSER['id']);
-sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER['id'].', '.$forum_id.', '.TIME_NOW.')');	
+sql_query('DELETE FROM now_viewing WHERE user_id = '.sqlesc($CURUSER['id']));
+sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.sqlesc($CURUSER['id']).', '.sqlesc($forum_id).', '.TIME_NOW.')');	
 
 //=== Get forum data
-    $res = sql_query('SELECT name, min_class_read, min_class_write, min_class_create, forum_id, parent_forum FROM forums WHERE min_class_read <= '.$CURUSER['class'].' AND id='.$forum_id.' LIMIT 1');
+    $res = sql_query('SELECT name, min_class_read, min_class_write, min_class_create, forum_id, parent_forum FROM forums WHERE min_class_read <= '.sqlesc($CURUSER['class']).' AND id='.sqlesc($forum_id).' LIMIT 1');
     $arr = mysqli_fetch_assoc($res);
-    $forum_name = htmlentities($arr['name'], ENT_QUOTES);
-    $parent_forum_id =  $arr['parent_forum'];
+    $forum_name = htmlsafechars($arr['name'], ENT_QUOTES);
+    $parent_forum_id =  (int)$arr['parent_forum'];
     
     
     if ($CURUSER['class'] < $arr['min_class_read'])
@@ -57,7 +57,7 @@ sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER[
 	$may_post = ($CURUSER['class'] >= $arr['min_class_write'] && $CURUSER['class'] >= $arr['min_class_create'] && $CURUSER['forum_post'] == 'yes' && $CURUSER['suspended'] == 'no');
 	
     	 //=== if a sub forum, get the info!
-    	 $res_sub_forums = sql_query('SELECT id AS sub_forum_id, name AS sub_form_name, description AS sub_form_description, min_class_read, post_count AS sub_form_post_count, topic_count AS sub_form_topic_count FROM forums WHERE min_class_read <= '.$CURUSER['class'].' AND parent_forum='.$forum_id.' ORDER BY sort');
+    	 $res_sub_forums = sql_query('SELECT id AS sub_forum_id, name AS sub_form_name, description AS sub_form_description, min_class_read, post_count AS sub_form_post_count, topic_count AS sub_form_topic_count FROM forums WHERE min_class_read <= '.sqlesc($CURUSER['class']).' AND parent_forum='.sqlesc($forum_id).' ORDER BY sort');
     
     	 if ($res_sub_forums)
     	 {
@@ -82,7 +82,7 @@ sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER[
 												LEFT JOIN users AS u ON p.user_id = u.id 
 												WHERE '.($CURUSER['class'] < UC_STAFF ? ' p.status = \'ok\' AND t.status = \'ok\' AND' : 
 												($CURUSER['class'] < $min_delete_view_class ? ' p.status != \'deleted\'  AND t.status != \'deleted\'  AND' : '')).' 
-												t.forum_id='.$sub_forums_arr['sub_forum_id'].' ORDER BY p.id DESC LIMIT 1');
+												t.forum_id='.sqlesc($sub_forums_arr['sub_forum_id']).' ORDER BY p.id DESC LIMIT 1');
 					$post_arr = mysqli_fetch_assoc($post_res);
 
 						//=== only do more if there is a post there...
@@ -109,12 +109,12 @@ sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER[
 						
 						$last_post = '<span style="white-space:nowrap;">Last Post by: '.print_user_stuff($post_arr).' 
 						<span style="font-size: x-small;"> [ '.get_user_class_name($post_arr['class']).' ] </span><br />
-						in &#9658; <a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$last_topic_id.'&amp;page='.$last_post_id.'#'.$last_post_id.'" title="'.htmlentities($post_arr['topic_name'], ENT_QUOTES).'">
-						<span style="font-weight: bold;">'.CutName(htmlentities($post_arr['topic_name'], ENT_QUOTES), 30).'</span></a>'.$topic_status_image.'<br />
+						in &#9658; <a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$last_topic_id.'&amp;page='.$last_post_id.'#'.$last_post_id.'" title="'.htmlsafechars($post_arr['topic_name'], ENT_QUOTES).'">
+						<span style="font-weight: bold;">'.CutName(htmlsafechars($post_arr['topic_name'], ENT_QUOTES), 30).'</span></a>'.$topic_status_image.'<br />
 						'.get_date($post_arr['added'],'').'<br /></span>';
 
 						//=== last post read in topic
-						$last_unread_post_res = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.$CURUSER['id'].' AND topic_id='.$last_post_id);
+						$last_unread_post_res = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.sqlesc($CURUSER['id']).' AND topic_id='.sqlesc($last_post_id));
 						$last_unread_post_arr = mysqli_fetch_row($last_unread_post_res);
 						$last_unread_post_id = ($last_unread_post_arr[0] >= 0 ? $last_unread_post_arr[0] : $first_post_arr['first_post_id']);
 
@@ -131,13 +131,13 @@ sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER[
 								<td align="left" class="'.$class.'"><table border="0" cellspacing="0" cellpadding="0">
 								<tr>
 								<td class="'.$class.'" style="padding-right: 5px"><img src="pic/forums/'.$img.'.gif" alt="'.$img.'" title="'.$img.'" /></td>
-								<td class="'.$class.'"><a class="altlink" href="?action=view_forum&amp;forum_id='.$sub_forums_arr['sub_forum_id'].'">
-								'.htmlentities($sub_forums_arr['sub_form_name'], ENT_QUOTES).'</a>
+								<td class="'.$class.'"><a class="altlink" href="?action=view_forum&amp;forum_id='.(int)$sub_forums_arr['sub_forum_id'].'">
+								'.htmlsafechars($sub_forums_arr['sub_form_name'], ENT_QUOTES).'</a>
 								'.($CURUSER['class'] >= UC_ADMINISTRATOR ? '<span style="font-size: x-small;"> 
-								[<a class="altlink" href="staffpanel.php?tool=forum_manage&amp;action=forum_manage&amp;action2=edit_forum_page&amp;id='.$sub_forums_arr['sub_forum_id'].'">Edit</a>] 
-								[<a class="altlink" href="forums.php?action=delete_forum&amp;forum_id='.$sub_forums_arr['sub_forum_id'].'">Delete</a>]
+								[<a class="altlink" href="staffpanel.php?tool=forum_manage&amp;action=forum_manage&amp;action2=edit_forum_page&amp;id='.(int)$sub_forums_arr['sub_forum_id'].'">Edit</a>] 
+								[<a class="altlink" href="forums.php?action=delete_forum&amp;forum_id='.(int)$sub_forums_arr['sub_forum_id'].'">Delete</a>]
 								</span>' : '').'<br />
-								<span style="font-size: x-small;">'.htmlentities($sub_forums_arr['sub_form_description'], ENT_QUOTES).'</span></td>
+								<span style="font-size: x-small;">'.htmlsafechars($sub_forums_arr['sub_form_description'], ENT_QUOTES).'</span></td>
 								</tr>
 								</table>
 								</td>
@@ -155,19 +155,19 @@ sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER[
 	
 	 
     	 //=== now we need the parent forums name :P I'll try to get this into another query :P
-		$parent_forum_res = sql_query('SELECT name AS parent_forum_name FROM forums WHERE id='.$parent_forum_id.' LIMIT 1');
+		$parent_forum_res = sql_query('SELECT name AS parent_forum_name FROM forums WHERE id='.sqlesc($parent_forum_id).' LIMIT 1');
 		$parent_forum_arr = mysqli_fetch_assoc($parent_forum_res);
 		
 			if ($arr['parent_forum'] > 0)
 			{
 			$child = '<span style="font-size: x-small;"> [ child-board ]</span>';
 			$parent_forum_name = '<img src="pic/arrow_next.gif" alt="&#9658;" title="&#9658;" /> 
-			<a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$parent_forum_id.'">'.htmlentities($parent_forum_arr['parent_forum_name'], ENT_QUOTES).'</a>';
+			<a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$parent_forum_id.'">'.htmlsafechars($parent_forum_arr['parent_forum_name'], ENT_QUOTES).'</a>';
 			}
     	 }
     	 
 	//=== Get topic count 
-	$res = sql_query('SELECT COUNT(id) FROM topics 	WHERE  '.($CURUSER['class'] < UC_STAFF ? ' status = \'ok\' AND' : ($CURUSER['class'] < $min_delete_view_class ? ' status != \'deleted\'  AND' : '')).'  forum_id='.$forum_id);
+	$res = sql_query('SELECT COUNT(id) FROM topics 	WHERE  '.($CURUSER['class'] < UC_STAFF ? ' status = \'ok\' AND' : ($CURUSER['class'] < $min_delete_view_class ? ' status != \'deleted\'  AND' : '')).'  forum_id='.sqlesc($forum_id));
 	$row = mysqli_fetch_row($res);
 	$count = $row[0];
 	
@@ -191,13 +191,13 @@ sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER[
 	{
       while ($topic_arr = mysqli_fetch_assoc($topic_res))
       {
-        $topic_id = $topic_arr['id'];
+        $topic_id = (int)$topic_arr['id'];
         $locked = $topic_arr['locked'] == 'yes';
         $sticky = $topic_arr['sticky'] == 'yes';
-        $topic_poll = $topic_arr['poll_id'] > 0;
+        $topic_poll = (int)$topic_arr['poll_id'] > 0;
 		
 	//=== topic status
-	$topic_status = $topic_arr['status'];
+	$topic_status = htmlsafechars($topic_arr['status']);
 	
 	switch ($topic_status)
 	{
@@ -218,12 +218,12 @@ sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER[
 												FROM posts AS p 
 												LEFT JOIN users AS u ON p.user_id = u.id 
 												WHERE  '.($CURUSER['class'] < UC_STAFF ? ' p.status = \'ok\' AND' : 
-												($CURUSER['class'] < $min_delete_view_class ? ' p.status != \'deleted\'  AND' : '')).'  topic_id='.$topic_id.'
+												($CURUSER['class'] < $min_delete_view_class ? ' p.status != \'deleted\'  AND' : '')).'  topic_id='.sqlesc($topic_id).'
 												ORDER BY p.id DESC LIMIT 1');
          $arr_post_stuff = mysqli_fetch_assoc($res_post_stuff);
 		
 	//=== post status
-	$post_status = $arr_post_stuff['status'];
+	$post_status = htmlsafechars($arr_post_stuff['status']);
 	
 	switch ($post_status)
 	{
@@ -243,7 +243,7 @@ sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER[
 	}
 
         $last_post_username = ($arr_post_stuff['username'] !== '' ? print_user_stuff($arr_post_stuff) : 'Lost ['.$arr_post_stuff['id'].']');
-        $last_post_id = $arr_post_stuff['last_post_id'];
+        $last_post_id = (int)$arr_post_stuff['last_post_id'];
 
 	//=== Get author / first post info
         $first_post_res = sql_query('SELECT p.id AS first_post_id, p.added, p.icon, p.body, 
@@ -252,24 +252,24 @@ sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER[
 												LEFT JOIN users AS u ON p.user_id = u.id 
 												WHERE  '.($CURUSER['class'] < UC_STAFF ? ' p.status = \'ok\' AND' : 
 												($CURUSER['class'] < $min_delete_view_class ? ' p.status != \'deleted\'  AND' : '')).'  
-												topic_id='.$topic_id.' ORDER BY p.id ASC LIMIT 1');
+												topic_id='.sqlesc($topic_id).' ORDER BY p.id ASC LIMIT 1');
         $first_post_arr = mysqli_fetch_assoc($first_post_res);
 		
         $thread_starter = ($first_post_arr['username'] !== '' ? print_user_stuff($first_post_arr) : 'Lost ['.$topic_arr['user_id'].']').'<br />'.get_date($first_post_arr['added'],'');
 		
-        $icon = ($first_post_arr['icon'] == '' ? '<img src="pic/forums/topic_normal.gif" alt="Topic" title="Topic" />' : '<img src="pic/smilies/'.htmlspecialchars($first_post_arr['icon']).'.gif" alt="'.htmlspecialchars($first_post_arr['icon']).'" />');
+        $icon = ($first_post_arr['icon'] == '' ? '<img src="pic/forums/topic_normal.gif" alt="Topic" title="Topic" />' : '<img src="pic/smilies/'.htmlsafechars($first_post_arr['icon']).'.gif" alt="'.htmlsafechars($first_post_arr['icon']).'" />');
         $first_post_text = tool_tip('<img src="pic/forums/mg.gif" height="14" alt="Preview" title="Preview" />', format_comment($first_post_arr['body'], true, false, false), 'First Post Preview');
 
 	//=== last post read in topic
-        $last_unread_post_res = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.$CURUSER['id'].' AND topic_id='.$topic_id);
+        $last_unread_post_res = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.sqlesc($CURUSER['id']).' AND topic_id='.sqlesc($topic_id));
         $last_unread_post_arr = mysqli_fetch_row($last_unread_post_res);
         $last_unread_post_id = ($last_unread_post_arr[0] > 0 ? $last_unread_post_arr[0] : $first_post_arr['first_post_id']);
 	
-	$did_i_post_here = sql_query('SELECT user_id FROM posts WHERE user_id='.$CURUSER['id'].' AND topic_id='.$topic_id);       
+	$did_i_post_here = sql_query('SELECT user_id FROM posts WHERE user_id='.sqlesc($CURUSER['id']).' AND topic_id='.sqlesc($topic_id));       
         $posted = (mysqli_num_rows($did_i_post_here) > 0 ? 1 : 0);
 		
 	//=== add subscribed forum image 
-	$sub = sql_query('SELECT user_id FROM subscriptions WHERE user_id='.$CURUSER['id'].' AND topic_id='.$topic_id);
+	$sub = sql_query('SELECT user_id FROM subscriptions WHERE user_id='.sqlesc($CURUSER['id']).' AND topic_id='.sqlesc($topic_id));
         $subscriptions = (mysqli_num_rows($sub) > 0 ? 1 : 0);
 	    
 	         //=== make the multi pages thing...
@@ -311,7 +311,7 @@ sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER[
         $topic_pic = ($posts < 30 ? ($locked ? ($new ? 'lockednew' : 'locked') : ($new ? 'topicnew' : 'topic')) : ($locked ? ($new ? 'lockednew' : 'locked') : ($new ? 'hot_topic_new' : 'hot_topic')));
         
         $topic_name = ($sticky ? '<img src="pic/forums/pinned.gif" alt="Pinned" title="Pinned" /> ' : ' ').($topic_poll ? '<img src="pic/forums/poll.gif" alt="Poll:" title="Poll" /> ' : ' '). '
-        		<a class="altlink" href="?action=view_topic&amp;topic_id='.$topic_id.'">'.htmlentities($topic_arr['topic_name'], ENT_QUOTES).'</a>   
+        		<a class="altlink" href="?action=view_topic&amp;topic_id='.$topic_id.'">'.htmlsafechars($topic_arr['topic_name'], ENT_QUOTES).'</a>   
         		'.($posted ? '<img src="pic/forums/posted.gif" alt="Posted" title="Posted" /> ' : ' ').($subscriptions ? '<img src="pic/forums/subscriptions.gif" alt="subscribed" title="Subcribed" /> ' : ' ').
 				($new ? ' <img src="pic/forums/new.gif" alt="New post in topic!" title="New post in topic!" />' : '').$multi_pages;
 	   
@@ -338,7 +338,7 @@ sql_query('INSERT INTO now_viewing (user_id, forum_id, added) VALUES('.$CURUSER[
 		<td class="'.$class.'" align="right">'.$rpic.'</td>
 		</tr>
 		</table>
-		'.($topic_arr ['topic_desc'] !== '' ? '&#9658; <span style="font-size: x-small;">'.htmlentities($topic_arr ['topic_desc'], ENT_QUOTES).'</span>' : '').'</td>
+		'.($topic_arr ['topic_desc'] !== '' ? '&#9658; <span style="font-size: x-small;">'.htmlsafechars($topic_arr ['topic_desc'], ENT_QUOTES).'</span>' : '').'</td>
 		<td align="center" class="'.$class.'">'.$thread_starter.'</td>
 		<td align="center" class="'.$class.'">'.number_format($topic_arr['post_count']).'</td>
 		<td align="center" class="'.$class.'">'.number_format($topic_arr ['views']).'</td>

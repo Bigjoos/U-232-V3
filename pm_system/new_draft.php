@@ -32,7 +32,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
             $subject = sqlesc(strip_tags($_POST['subject']));
 
                 $go_for_it = sql_query('INSERT INTO messages (sender, receiver, added, msg, subject, location, draft, unread, saved) VALUES  
-                                                                        ('.$CURUSER['id'].', '.$CURUSER['id'].','.TIME_NOW.', '.$body.', '.$subject.', \'-2\', \'yes\',\'no\',\'yes\')') or sqlerr(__FILE__, __LINE__);
+                                                                        ('.sqlesc($CURUSER['id']).', '.sqlesc($CURUSER['id']).','.TIME_NOW.', '.$body.', '.$subject.', \'-2\', \'yes\',\'no\',\'yes\')') or sqlerr(__FILE__, __LINE__);
                 $mc1->delete_value('inbox_new_'.$CURUSER['id']);
                 $mc1->delete_value('inbox_new_sb_'.$CURUSER['id']);
                 $new_draft_id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
@@ -48,13 +48,13 @@ if (!defined('BUNNY_PM_SYSTEM'))
     //=== Code for preview Retros code
     if (isset($_POST['buttonval']) && $_POST['buttonval'] == 'preview')
         {
-        $subject = htmlspecialchars(trim($_POST['subject']));
+        $subject = htmlsafechars(trim($_POST['subject']));
         $draft = trim($_POST['body']);
 
     $preview = '
     <table border="0" cellspacing="0" cellpadding="5" align="center" style="max-width:780px">
     <tr>
-        <td align="left" colspan="2" class="colhead"><span style="font-weight: bold;">subject: </span>'. htmlspecialchars($subject).'</td>
+        <td align="left" colspan="2" class="colhead"><span style="font-weight: bold;">subject: </span>'. htmlsafechars($subject).'</td>
     </tr>
     <tr>
         <td align="center" valign="top" class="one" width="80px" id="photocol">'.avatar_stuff($CURUSER).'</td>
@@ -65,8 +65,6 @@ if (!defined('BUNNY_PM_SYSTEM'))
         
 
     //=== print out the page
-    //echo stdhead('New Draft');
-
     $HTMLOUT .= '<h1>New Draft</h1>'.$top_links.$preview.'
         <form name="compose" action="pm_system.php" method="post">
         <input type="hidden" name="id" value="'.$pm_id.'" />

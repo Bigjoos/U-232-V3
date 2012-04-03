@@ -68,7 +68,7 @@ stderr("Error", "Please contact Sysop.");
 //MAKE A REPORT IF PENDING//
 if ($payment_status == "pending"){
 $dt = TIME_NOW;
-sql_query("INSERT into reports (reported_by,reporting_what,reporting_type,reason,added) VALUES ('2','$id','User', 'Pending donation', $dt)") or sqlerr(__FILE__, __LINE__);
+sql_query("INSERT into reports (reported_by,reporting_what,reporting_type,reason,added) VALUES ('2',".sqlesc($id).",'User', 'Pending donation', $dt)") or sqlerr(__FILE__, __LINE__);
 $mc1->delete_value('new_report_');
 }
 //IF PENDING SEND THEM TO THE ECHECK PAGE TO TELL THEM THEY WONT BE UPDATED TILL STAFF SORT THERE SHIT OUT
@@ -89,7 +89,7 @@ if ($payment_amount > 1)
 settype($payment_amount, "string");
 $res = sql_query("SELECT * FROM users WHERE id = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
 $user = mysqli_fetch_array($res) or stderr("Error", "No user with that ID!");
-$modcomment = htmlspecialchars($user['modcomment']);
+$modcomment = htmlsafechars($user['modcomment']);
 
 //=== add donated amount  to user and to funds table /  Set donor status
 if (isset($_POST['mc_gross'])){
@@ -106,7 +106,7 @@ $user_cache['total_donated'] = ($user['total_donated'] + $donated);
 }
 
 //=== add to uploaded amount
-$curuploaded = $user['uploaded'];
+$curuploaded = (float)$user['uploaded'];
 $uploaded = $donated * $givegb; 
 $upadded = mksize($uploaded);
 $total = $uploaded + $curuploaded;
@@ -132,7 +132,7 @@ $donoruntil = TIME_NOW + $donorlength * $givetime; //===> 2419200 = 2 weeks for 
 $donoruntil_val = TIME_NOW + $donorlength * $givetime; //===> 1209600 = 2 weeks for 5$ --- 604800 = 1 week for 5£ donation
 $dur = $donorlength . " week" . ($donorlength > 1 ? "s" : ""); //=== I left the 1 ? "s" in case you want to have only one week...
 $subject = sqlesc("Thank You for Your Donation!");
-$msg = sqlesc("Dear " . htmlspecialchars($user['username']) ."
+$msg = sqlesc("Dear " . htmlsafechars($user['username']) ."
 :wave:
 Thanks for your support to ".$INSTALLER09['site_name']."!
 Your donation helps us in the costs of running the site. Everything above the current running costs will go towards server upgrades.
@@ -166,7 +166,7 @@ $donoruntil_val = $donorlengthadd * $givetime;
 }
 $dur = $donorlengthadd . " week" . ($donorlengthadd > 1 ? "s" : "");
 $subject = sqlesc("Thank You for Your Donation... Again!");
-$msg = sqlesc("Dear ".htmlspecialchars($user['username']) ."
+$msg = sqlesc("Dear ".htmlsafechars($user['username']) ."
 :wave:
 Thanks for your continued support to ".$INSTALLER09['site_name']."!
 Your donation helps us in the costs of running the site. Everything above the current running costs will go towards next months costs!
@@ -179,7 +179,7 @@ cheers,
 PS. Your donator status will last for an extra ".$dur." on top of your current donation status, and can be found on your user details page. It can only be seen by you.");
 $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - Donator status set for another $dur -- $upadded GB bonus added -- $invites_added new invites. added by system.\n".$modcomment;
 $donorlengthadd = $donoruntil_val;
-sql_query("UPDATE users SET donoruntil = donoruntil + $donorlengthadd, vipclass_before = ".sqlesc($vipbefore)." WHERE id = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET donoruntil = donoruntil + ".sqlesc($donorlengthadd).", vipclass_before = ".sqlesc($vipbefore)." WHERE id = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
 $curuser_cache['donoruntil'] = $donorlengthadd;
 $user_cache['donoruntil'] = $donorlengthadd;
 $curuser_cache['vipclass_before'] = $vipbefore;
@@ -189,7 +189,7 @@ $mc1->delete_value('inbox_new_sb_'.$id);
 }
 //=== end if adding to donor time...
 $added = TIME_NOW;
-sql_query("INSERT INTO messages (sender, subject, receiver, msg, added) VALUES (0, $subject, $id, $msg, $added)") or sqlerr(__FILE__, __LINE__);
+sql_query("INSERT INTO messages (sender, subject, receiver, msg, added) VALUES (0, $subject, ".sqlesc($id).", $msg, $added)") or sqlerr(__FILE__, __LINE__);
 if ($CURUSER['class'] < UC_UPLOADER) //=== set this to the lowest class you don't want changed to VIP
 $updateset[] = "class = '".UC_VIP."'";
 $curuser_cache['class'] = UC_VIP;
@@ -224,7 +224,7 @@ fclose ($fp);
 header("Location: {$INSTALLER09['baseurl']}/paypal_success.php"); //=== location of your success page
 }
 else
-$HTMLOUT .= stdmsg("Thanks for your support", "Please pm the sysops with the transaction details to recieve your status and gigs.");
+$HTMLOUT .= stdmsg("Thanks for your support", "Please pm the sysops with the transaction details.");
 echo $HTMLOUT;
 die();
 ?>

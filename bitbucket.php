@@ -53,7 +53,7 @@ make_month(BITBUCKET_DIR);
 
 if (!isset($_FILES['file'])) {
     if (isset($_GET["delete"])) {
-        $getfile = htmlspecialchars($_GET['delete']);
+        $getfile = htmlsafechars($_GET['delete']);
         $delfile = urldecode(decrypt($getfile));
         $delhash = md5($delfile.$USERSALT.$SaLt);
         //$delhash = md5($delfile . $CURUSER['username'] . $SaLt);
@@ -99,7 +99,7 @@ if (!isset($_FILES['file'])) {
     }
     
     if (isset($_GET["updated"]) && $_GET["updated"] == 'avatar') {
-    $HTMLOUT .="<h3>{$lang['bitbucket_updated']}<img src='".htmlspecialchars($CURUSER['avatar'])."' border='0' alt='' /></h3>";
+    $HTMLOUT .="<h3>{$lang['bitbucket_updated']}<img src='".htmlsafechars($CURUSER['avatar'])."' border='0' alt='' /></h3>";
     }
 
     $HTMLOUT .="<form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\" enctype=\"multipart/form-data\">
@@ -163,7 +163,6 @@ document.getElementById(id).select();
       $folder_month = (!isset($_GET['month'])?date('m'):($_GET['month'] < 10?'0':'').(int)$_GET['month']);
      $folder_name = (!isset($_GET['year'])?date('Y').'/':(int)$_GET['year'].'/').$folder_month;
       $bucketlink2 = ((isset($_POST["avy"]) || (isset($_GET['images']) && $_GET['images'] == 2)) ? 'avatars/' : $folder_name.'/');
-        // foreach ((array) glob((($_GET['images'] == 2)?'avatars/':'bitbucket/') . $CURUSER['username'] . '_*') as $filename) {
          foreach ((array) glob(($_GET['images'] == 2 ? AVATAR_DIR.'/'.$USERSALT : BITBUCKET_DIR.'/'.$folder_name.'/'.$USERSALT).'_*') as $filename) {
             if (!empty($filename)) {
                 $filename = basename($filename);
@@ -206,14 +205,12 @@ if ($it1 != IMAGETYPE_GIF && $it1 != IMAGETYPE_JPEG && $it1 != IMAGETYPE_PNG) {
 }
 
 $file = strtolower($file);
-//$path = $bucketdir . $CURUSER['username'] . '_' . $file;
 $path = $bucketdir.$USERSALT.'_'.$file;
 $pathlink = $bucketlink.$USERSALT.'_'.$file;
 $loop = 0;
 while (true) {
     if ($loop > 10) stderr($lang['bitbucket_error'], $lang['bitbucket_upfail']);
     if (!file_exists($path)) break;
-    //$path = $bucketdir . $CURUSER['username'] . '_' . bucketrand() . $file;
     $randb = bucketrand();
 $path = $bucketdir.$USERSALT.'_'.$randb.$file;
 $pathlink = $bucketlink.$USERSALT.'_'.$randb.$file;
@@ -277,7 +274,6 @@ function decrypt($text)
 /* Sanity checking by pdq */
 function valid_path($root, $input) {
     $fullpath = $root.$input;
-    //echo $fullpath.PHP_EOL;
     $fullpath = realpath($fullpath);
     $root = realpath($root);
     $rl = strlen($root);

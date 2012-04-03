@@ -36,7 +36,7 @@ $stdfoot = array(/** include js **/'js' => array('shout','check_selected'));
 $lang = array_merge( $lang, load_language('ad_news') );
 
 $possible_modes = array('add','delete','edit','news');      
-$mode = (isset($_GET['mode']) ? htmlspecialchars($_GET['mode']) : '');
+$mode = (isset($_GET['mode']) ? htmlsafechars($_GET['mode']) : '');
 
         if (!in_array($mode, $possible_modes)) 
             stderr('Error', 'A ruffian that will swear, drink, dance, revel the night, rob, murder and commit the oldest of ins the newest kind of ways.');
@@ -69,11 +69,11 @@ if ($mode == 'delete') {
 
 //==Add news
 if ($mode == 'add') {
-    $body = isset($_POST['body']) ? htmlspecialchars($_POST['body']) : '';
+    $body = isset($_POST['body']) ? htmlsafechars($_POST['body']) : '';
     $sticky = isset($_POST['sticky']) ? $_POST['sticky'] : 'yes';
     if (!$body)
         stderr("Error", "The news item cannot be empty!");
-    $title = htmlentities($_POST['title']);
+    $title = htmlsafechars($_POST['title']);
     if (!$title)
         stderr("Error", "The news title cannot be empty!");
     $added = isset($_POST["added"]) ?$_POST["added"] : '';
@@ -96,11 +96,11 @@ if ($mode == 'edit') {
         stderr("Error", "No news item with that ID .");
     $arr = mysqli_fetch_assoc($res);
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $body = isset($_POST['body']) ? htmlspecialchars($_POST['body']) : '';
+        $body = isset($_POST['body']) ? htmlsafechars($_POST['body']) : '';
         $sticky = isset($_POST['sticky']) ? $_POST['sticky'] : 'yes';
         if ($body == "")
         stderr("Error", "Body cannot be empty!");
-        $title = htmlentities($_POST['title']);
+        $title = htmlsafechars($_POST['title']);
         if ($title == "")
         stderr("Error", "Title cannot be empty!");
         sql_query("UPDATE news SET body=".sqlesc($body).", sticky=".sqlesc($sticky).", title=".sqlesc($title)." WHERE id=".sqlesc($newsid)) or sqlerr(__FILE__, __LINE__);
@@ -111,9 +111,9 @@ if ($mode == 'edit') {
         $HTMLOUT .="<h1>Edit News Item</h1>
         <form method='post' name='compose' action='staffpanel.php?tool=news&amp;mode=edit&amp;newsid=$newsid'>
         <table border='1' cellspacing='0' cellpadding='5'>
-        <tr><td><input type='text' name='title' value='" . htmlspecialchars($arr['title']) . "' /></td></tr>
+        <tr><td><input type='text' name='title' value='" . htmlsafechars($arr['title']) . "' /></td></tr>
         <tr><td align='left' style='padding: 0px'>
-         ".BBcode(htmlspecialchars($arr["body"]), FALSE)."
+         ".BBcode(htmlsafechars($arr["body"]), FALSE)."
         </td></tr>
         <tr><td colspan='2' class='rowhead'>Sticky<input type='radio' " . ($arr["sticky"] == "yes" ? " checked='checked'" : "") . " name='sticky' value='yes' />Yes<input name='sticky' type='radio' value='no' " . ($arr["sticky"] == "no" ? " checked='checked'" : "") . " />No</td></tr>
         <tr><td colspan='2' align='center'><input type='submit' value='Okay' class='btn' /></td></tr>
@@ -150,7 +150,7 @@ if ($mode == 'edit') {
         - [<a href='staffpanel.php?tool=news&amp;mode=delete&amp;newsid=$newsid&amp;sure=1&amp;h=$hash'><b>Delete</b></a>]
         </td></tr></table>\n";
         $HTMLOUT .= begin_table(true);
-        $HTMLOUT .="<tr valign='top'><td class='comment'><b>" . htmlspecialchars($title) . "</b><br />" . format_comment($body) . "</td></tr>\n";
+        $HTMLOUT .="<tr valign='top'><td class='comment'><b>" . htmlsafechars($title) . "</b><br />" . format_comment($body) . "</td></tr>\n";
         $HTMLOUT .= end_table();
         $HTMLOUT .= "<br />";
     }

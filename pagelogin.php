@@ -18,13 +18,13 @@ $res = sql_query("SELECT SUM(attempts) FROM failedlogins WHERE ip=$ip") or sqler
 list($total) = mysqli_fetch_row($res);
 if ($total >= $INSTALLER09['failedlogins']) {
 sql_query("UPDATE failedlogins SET banned = 'yes' WHERE ip=$ip") or sqlerr(__FILE__, __LINE__);
-stderr("Login Locked!", "You have been <b>Exceeded</b> the allowed maximum login attempts without successful login, therefore your ip address <b>(".htmlspecialchars($ip).")</b> has been locked for 24 hours.");
+stderr("Login Locked!", "You have been <b>Exceeded</b> the allowed maximum login attempts without successful login, therefore your ip address <b>(".htmlsafechars($ip).")</b> has been locked for 24 hours.");
 }
 }
 //==End
 
 failedloginscheck();
-if (!mkglobal("qlogin") || (strlen($qlogin=htmlspecialchars($qlogin))!=96))
+if (!mkglobal("qlogin") || (strlen($qlogin=$qlogin)!=96))
 	die(n00b);
 
  function bark($text = 'Username or password incorrect') {
@@ -56,7 +56,7 @@ $fail = (mysqli_fetch_row(sql_query("SELECT COUNT(id) from failedlogins where ip
 if ($fail[0] == 0)
 sql_query("INSERT INTO failedlogins (ip, added, attempts) VALUES ($ip, $added, 1)") or sqlerr(__FILE__, __LINE__);
 else
-sql_query("UPDATE failedlogins SET attempts = attempts + 1 where ip=$ip") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE failedlogins SET attempts = attempts + 1 WHERE ip=$ip") or sqlerr(__FILE__, __LINE__);
 bark();
 }
 if ($row['enabled'] == 'no')
@@ -82,7 +82,7 @@ $HTMLOUT .="<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'
 <p><br /></p>
 <p><br /></p>
 <p></p>
-<p align='center'><strong>Welcome Back - ".htmlspecialchars($row['username']).".</strong></p><br />
+<p align='center'><strong>Welcome Back - ".htmlsafechars($row['username']).".</strong></p><br />
 <p align='center'><strong>Click <a href='index.php'>here</a> if you are not redirected automatically.</strong></p><br />
 </body>
 </html>";

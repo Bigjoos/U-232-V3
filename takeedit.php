@@ -64,7 +64,7 @@ if (!function_exists('is_valid_url')) {
 */
 $nfoaction = '';
 
-$select_torrent = sql_query('SELECT name, descr, category, visible, vip, release_group, poster, url, newgenre, description, anonymous, sticky, owner, allow_comments, nuked, nukereason, filename, save_as, youtube, tags FROM torrents WHERE id = '.sqlesc($id)) or sqlerr(__FILE__, __LINE__);
+$select_torrent = sql_query('SELECT name, descr, category, visible, vip, release_group, poster, url, newgenre, description, anonymous, sticky, owner, allow_comments, nuked, nukereason, filename, save_as, youtube, recommended, tags FROM torrents WHERE id = '.sqlesc($id)) or sqlerr(__FILE__, __LINE__);
 $fetch_assoc = mysqli_fetch_assoc($select_torrent) or stderr('Error', 'No torrent with this ID!');
 
 if ($CURUSER['id'] != $fetch_assoc['owner'] && $CURUSER['class'] < MIN_CLASS)
@@ -153,6 +153,11 @@ if ((isset($_POST['nfoaction'])) && ($_POST['nfoaction'] == 'update')) {
    $updateset[] = "banned = 'no'";
    $torrent_cache['banned'] = 'no';
    }
+   if (isset($_POST['recommended']) && ($recommended = $_POST['recommended']) != $fetch_assoc['recommended']){
+        $updateset[] = 'recommended = ' . sqlesc($recommended);
+        $torrent_cache['recommended'] = $recommended;
+        $mc1-> delete_value('rec_tor_');
+        }
     /**
     *
     * @Custom Mods
@@ -277,7 +282,7 @@ if ((isset($_POST['nfoaction'])) && ($_POST['nfoaction'] == 'update')) {
                    $mc1->commit_transaction($INSTALLER09['expires']['torrent_details_text']);
                 }
                 
-                write_log("torrent edited - " . htmlspecialchars($name) . ' was edited by ' . (($fetch_assoc['anonymous'] == 'yes') ? 'Anonymous' : htmlspecialchars($CURUSER['username'])) . "");
+                write_log("torrent edited - " . htmlsafechars($name) . ' was edited by ' . (($fetch_assoc['anonymous'] == 'yes') ? 'Anonymous' : htmlsafechars($CURUSER['username'])) . "");
                 $modfile = 'cache/details/'.$id.'_moddin.txt';
                 if (file_exists($modfile))
                 unlink($modfile);

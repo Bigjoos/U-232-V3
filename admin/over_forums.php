@@ -59,7 +59,7 @@ $min_class_view = (isset($_POST['min_class_view']) ? intval($_POST['min_class_vi
 		stderr('ERROR', 'Bad ID'); 
 		}
 
-		sql_query ('DELETE FROM over_forums where id = '.$id);
+		sql_query ('DELETE FROM over_forums where id = '.sqlesc($id));
 		header('Location: staffpanel.php?tool=over_forums');
 		die();
 				
@@ -73,14 +73,14 @@ $min_class_view = (isset($_POST['min_class_view']) ? intval($_POST['min_class_vi
 			stderr('ERROR', 'Missing form data!'); 
 			}
 			
-			$res = sql_query ('SELECT sort FROM over_forums WHERE sort = '.$sort);
+			$res = sql_query ('SELECT sort FROM over_forums WHERE sort = '.sqlesc($sort));
 			
 			if (mysqli_num_rows($res) > 0)
 			{
 			stderr('ERROR', 'Over forum Sort number in use. Please select another Over forum Sort number!'); 
 			}
 
-			sql_query('UPDATE over_forums SET sort = '.$sort.', name = '.sqlesc($name).', description = '.sqlesc($desc).', min_class_view = '.$min_class_view.' WHERE id = '.$id);
+			sql_query('UPDATE over_forums SET sort = '.sqlesc($sort).', name = '.sqlesc($name).', description = '.sqlesc($desc).', min_class_view = '.sqlesc($min_class_view).' WHERE id = '.sqlesc($id));
 		  header('Location: staffpanel.php?tool=over_forums');
 			die();
 	
@@ -94,14 +94,14 @@ $min_class_view = (isset($_POST['min_class_view']) ? intval($_POST['min_class_vi
 			stderr('ERROR', 'Missing form data'); 
 			}
 			
-			$res = sql_query ('SELECT sort FROM over_forums WHERE sort = '.$sort);
+			$res = sql_query ('SELECT sort FROM over_forums WHERE sort = '.sqlesc($sort));
 			
 			if (mysqli_num_rows($res) > 0)
 			{
 			stderr('ERROR', 'Over forum Sort number in use. Please select another Over forum Sort number!'); 
 			}
 			
-			sql_query('INSERT INTO over_forums (sort, name,  description,  min_class_view) VALUES ('.$sort.', '.sqlesc($name).', '.sqlesc($desc).', '.$min_class_view.')');
+			sql_query('INSERT INTO over_forums (sort, name,  description,  min_class_view) VALUES ('.sqlesc($sort).', '.sqlesc($name).', '.sqlesc($desc).', '.sqlesc($min_class_view).')');
 			header('Location: staffpanel.php?tool=over_forums');
 			die();
 	
@@ -110,7 +110,7 @@ $min_class_view = (isset($_POST['min_class_view']) ? intval($_POST['min_class_vi
 	//=== edit over forum stuff
 	case 'edit_forum_page':
 	
-	$res = sql_query ('SELECT * FROM over_forums where id ='.$id);
+	$res = sql_query ('SELECT * FROM over_forums where id ='.sqlesc($id));
 	
 	if (mysqli_num_rows($res) > 0) 
 	{
@@ -122,14 +122,14 @@ $HTMLOUT .=  $main_links.'<form method="post" action="staffpanel.php?tool=over_f
 			<input type="hidden" name="id" value="'.$id.'">
 		<table width="600"  border="0" cellspacing="0" cellpadding="3" align="center">
 		<tr>
-		    <td colspan="2" class="forum_head_dark">edit overforum: '.htmlentities($row['name'], ENT_QUOTES).'</td>
+		    <td colspan="2" class="forum_head_dark">edit overforum: '.htmlsafechars($row['name'], ENT_QUOTES).'</td>
 		  </tr>
 		    <td align="right" class="three"><span style="font-weight: bold;">Overforum name:</span></td>
-		    <td align="left" class="three"><input name="name" type="text" class="text_default" size="20" maxlength="60" value="'.htmlentities($row['name'], ENT_QUOTES).'" /></td>
+		    <td align="left" class="three"><input name="name" type="text" class="text_default" size="20" maxlength="60" value="'.htmlsafechars($row['name'], ENT_QUOTES).'" /></td>
 		  </tr>
 		  <tr>
 		    <td align="right"  class="three"><span style="font-weight: bold;">Overforum description:</span>  </td>
-		    <td align="left" class="three"><input name="desc" type="text" class="text_default" size="30" maxlength="200" value="'.htmlentities($row['description'], ENT_QUOTES).'" /></td>
+		    <td align="left" class="three"><input name="desc" type="text" class="text_default" size="30" maxlength="200" value="'.htmlsafechars($row['description'], ENT_QUOTES).'" /></td>
  		 </tr>
 		    <tr>
 		    <td align="right" class="three"><span style="font-weight: bold;">Minimun view permission: </span></td>
@@ -186,14 +186,14 @@ $HTMLOUT .=  $main_links.'<table width="750"  border="0" align="center" cellpadd
 		$class = ($count == 0 ? 'one' : 'two');	
 		
 	$over_forums .= '<tr>
-			<td class="'.$class.'" align="center">'.$row['sort'].'</td>
+			<td class="'.$class.'" align="center">'.(int)$row['sort'].'</td>
 			<td class="'.$class.'">
-			<a class="altlink" href="forums.php?action=forum_view&amp;fourm_id='.$row['id'].'">'.htmlentities($row['name'], ENT_QUOTES).'</a><br />
-			'.htmlentities($row['description'], ENT_QUOTES).'</td>
+			<a class="altlink" href="forums.php?action=forum_view&amp;fourm_id='.(int)$row['id'].'">'.htmlsafechars($row['name'], ENT_QUOTES).'</a><br />
+			'.htmlsafechars($row['description'], ENT_QUOTES).'</td>
 			<td class="'.$class.'" align="center">'. get_user_class_name($row['min_class_view']).'</td>
 			<td align="center" class="'.$class.'">
-			<a class="altlink" href="staffpanel.php?tool=over_forums&amp;action=over_forums&amp;action2=edit_forum_page&amp;id='.$row['id'].'">Edit</a>&nbsp;|&nbsp;
-			<a href="javascript:confirm_delete(\''.$row['id'].'\');"><span style="font-weight: bold;">Delete</span></a></td>
+			<a class="altlink" href="staffpanel.php?tool=over_forums&amp;action=over_forums&amp;action2=edit_forum_page&amp;id='.(int)$row['id'].'">Edit</a>&nbsp;|&nbsp;
+			<a href="javascript:confirm_delete(\''.(int)$row['id'].'\');"><span style="font-weight: bold;">Delete</span></a></td>
 			</tr>';
 		} //=== end while	
 	}//=== end if

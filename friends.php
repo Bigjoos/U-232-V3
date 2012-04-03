@@ -14,7 +14,7 @@ loggedinorreturn();
 
    $lang = array_merge( load_language('global'), load_language('friends') );
    $userid = isset($_GET['id']) ? (int)$_GET['id'] : $CURUSER['id'];
-   $action = isset($_GET['action']) ? htmlspecialchars($_GET['action']) : '';
+   $action = isset($_GET['action']) ? htmlsafechars($_GET['action']) : '';
    if (!is_valid_id($userid))
    stderr($lang['friends_error'], $lang['friends_invalid_id']);
    if ($userid != $CURUSER["id"])
@@ -51,7 +51,7 @@ loggedinorreturn();
    $mc1->delete_value('inbox_new_'.$targetid);
    $mc1->delete_value('inbox_new_sb_'.$targetid);
    if (mysqli_num_rows($r) == 1)
-	stderr("Error", "User ID is already in your ".htmlentities($table_is)." list.");
+	stderr("Error", "User ID is already in your ".htmlsafechars($table_is)." list.");
 	sql_query("INSERT INTO $table_is VALUES (0, ".sqlesc($userid).", ".sqlesc($targetid).", 'no')") or sqlerr(__FILE__, __LINE__);
    stderr("Request Added!", "The user will be informed of your Friend Request, you will be informed via PM upon confirmation.<br /><br /><a href='friends.php?id=$userid#$frag'><b>Go to your Friends List</b></a>", FALSE);
    die;
@@ -59,7 +59,7 @@ loggedinorreturn();
    if ($type == 'block') {
    $r = sql_query("SELECT id FROM $table_is WHERE userid=".sqlesc($userid)." AND $field_is=".sqlesc($targetid)) or sqlerr(__FILE__, __LINE__);
    if (mysqli_num_rows($r) == 1)
-   stderr("Error", "User ID is already in your ".htmlentities($table_is)." list.");
+   stderr("Error", "User ID is already in your ".htmlsafechars($table_is)." list.");
 	sql_query("INSERT INTO $table_is VALUES (0, ".sqlesc($userid).", ".sqlesc($targetid).")") or sqlerr(__FILE__, __LINE__);
    $mc1 -> delete_value('Blocks_'.$userid);
    $mc1 -> delete_value('Friends_'.$userid);
@@ -109,7 +109,7 @@ loggedinorreturn();
    {
 	$targetid = (int)$_GET['targetid'];
 	$sure = isset($_GET['sure']) ? intval($_GET['sure']) : false;
-	$type = htmlentities($_GET['type']);
+	$type = htmlsafechars($_GET['type']);
    if (!is_valid_id($targetid))
    stderr("Error", "Invalid ID.");
    $hash = md5('c@@me'.$CURUSER['id'].$targetid.$type.'confirm'.'sa7t');
@@ -134,7 +134,7 @@ loggedinorreturn();
   {
   $targetid = (int)$_GET['targetid'];
   $sure = isset($_GET['sure']) ? intval($_GET['sure']) : false;
-  $type = htmlentities($_GET['type']);
+  $type = htmlsafechars($_GET['type']);
   if (!is_valid_id($targetid))
   stderr("Error", "Invalid ID.");
   $hash = md5('c@@me'.$CURUSER['id'].$targetid.$type.'confirm'.'sa7t');
@@ -183,13 +183,13 @@ loggedinorreturn();
   {
   $dt = TIME_NOW - 180;
   $online = ($friendp["last_access"] >= $dt ? '&nbsp;<img src="'.$INSTALLER09['baseurl'].'/images/staff/online.png" border="0" alt="Online" title="Online" />' : '<img src="'.$INSTALLER09['baseurl'].'/images/staff/offline.png" border="0" alt="Offline" title="Offline" />');
-  $title = htmlspecialchars($friendp["title"]);
+  $title = htmlsafechars($friendp["title"]);
   if (!$title)
   $title = get_user_class_name($friendp["class"]);
   $linktouser = "<a href='userdetails.php?id=".(int)$friendp['id']."'><b>".format_username($friendp)."</b></a>($title)<br />{$lang['friends_last_seen']} ".get_date($friendp['last_access'],'');
   $confirm ="<br /><span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=confirm&amp;type=friend&amp;targetid=".(int)$friendp['id']."'>Confirm</a></span>";
   $block = "&nbsp;<span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?action=add&amp;type=block&amp;targetid=".(int)$friendp['id']."'>Block</a></span>";
-  $avatar = ($CURUSER["avatars"] == "yes" ? htmlspecialchars($friendp["avatar"]) : "");
+  $avatar = ($CURUSER["avatars"] == "yes" ? htmlsafechars($friendp["avatar"]) : "");
   if (!$avatar)
   $avatar = "{$INSTALLER09['pic_base_url']}default_avatar.gif";
   $reject = "&nbsp;<span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=delpending&amp;type=friend&amp;targetid=".(int)$friendp['id']."'>{$lang['friends_reject']}</a></span>";
@@ -228,14 +228,14 @@ loggedinorreturn();
   {
   $dt = TIME_NOW - 180;
   $online = ($friend["last_access"] >= $dt ? '&nbsp;<img src="'.$INSTALLER09['baseurl'].'/images/staff/online.png" border="0" alt="Online" title="Online" />' : '<img src="'.$INSTALLER09['baseurl'].'/images/staff/offline.png" border="0" alt="Offline" title="Offline" />');
-  $title = htmlspecialchars($friend["title"]);
+  $title = htmlsafechars($friend["title"]);
   if (!$title)
   $title = get_user_class_name($friend["class"]);
   $ratio = member_ratio($friend['uploaded'], $friend['downloaded'],2);
   $linktouser = "<a href='userdetails.php?id=".(int)$friend['id']."'><b>".format_username($friend)."</b></a>[$title]&nbsp;[$ratio]<br />{$lang['friends_last_seen']} ".get_date($friend['last_access'],'');
   $delete = "<span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=delete&amp;type=friend&amp;targetid=".(int)$friend['id']."'>{$lang['friends_remove']}</a></span>";
   $pm_link = "&nbsp;<span class='btn'><a href='{$INSTALLER09['baseurl']}/pm_system.php?action=send_message&amp;receiver=".(int)$friend['id']."'>{$lang['friends_pm']}</a></span>";
-  $avatar = ($CURUSER["avatars"] == "yes" ? htmlspecialchars($friend["avatar"]) : "");
+  $avatar = ($CURUSER["avatars"] == "yes" ? htmlsafechars($friend["avatar"]) : "");
   if (!$avatar)
   $avatar = "{$INSTALLER09['pic_base_url']}default_avatar.gif";
  
@@ -276,12 +276,12 @@ loggedinorreturn();
   $countries = countries();
   foreach ($countries as $cntry)
   if ($cntry['id'] == $user['country']) {
-  $country = "<img src=\"{$INSTALLER09['pic_base_url']}flag/{$cntry['flagpic']}\" alt=\"". htmlspecialchars($cntry['name']) ."\" style='margin-left: 8pt' />";
+  $country = "<img src=\"{$INSTALLER09['pic_base_url']}flag/{$cntry['flagpic']}\" alt=\"". htmlsafechars($cntry['name']) ."\" style='margin-left: 8pt' />";
   break;
   }
   $HTMLOUT .= "<br />
   <table class='main' border='0' cellspacing='0' cellpadding='0'>
-  <tr><td class='embedded'><h1 style='margin:0px'>&nbsp;{$lang['friends_personal']}&nbsp;".htmlentities($user['username'], ENT_QUOTES)."&nbsp;$country</h1></td></tr></table>
+  <tr><td class='embedded'><h1 style='margin:0px'>&nbsp;{$lang['friends_personal']}&nbsp;".htmlsafechars($user['username'], ENT_QUOTES)."&nbsp;$country</h1></td></tr></table>
   <br /><table class='main' width='750' border='0' cellspacing='0' cellpadding='0'>
   <tr>
   <td class='colhead'><h2 align='left' style='width:50%;'><a name='friends'>&nbsp;{$lang['friends_friends_list']}</a></h2></td>
@@ -303,5 +303,5 @@ loggedinorreturn();
   <td style='padding:10px;background-color:#777777;' valign='top'>$friendreqs</td>
   </tr>
   </table><p><a href='users.php'><b>{$lang['friends_user_list']}</b></a></p>";
-echo stdhead("{$lang['friends_stdhead']} ".htmlentities($user['username'])) . $HTMLOUT . stdfoot();
+echo stdhead("{$lang['friends_stdhead']} ".htmlsafechars($user['username'])) . $HTMLOUT . stdfoot();
 ?>

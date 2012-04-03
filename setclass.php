@@ -22,7 +22,7 @@ if (isset($_GET["action"]) && $_GET["action"] == "editclass") //Process the quer
 {	
 //then the actual class mean absoluetly nothing.
 $newclass = 0 + $_GET['class'];
-$returnto = htmlspecialchars($_GET['returnto']);
+$returnto = htmlsafechars($_GET['returnto']);
 sql_query("UPDATE users SET override_class = ".sqlesc($newclass)." WHERE id = ".sqlesc($CURUSER['id'])); // Set temporary class
 $mc1->begin_transaction('MyUser_'.$CURUSER['id']);
 $mc1->update_row(false, array('override_class' => $newclass));

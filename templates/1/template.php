@@ -14,18 +14,18 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
     if ($title == "")
     $title = $INSTALLER09['site_name'] .(isset($_GET['tbv'])?" (".TBVERSION.")":'');
     else
-    $title = $INSTALLER09['site_name'].(isset($_GET['tbv'])?" (".TBVERSION.")":''). " :: " . htmlspecialchars($title);  
+    $title = $INSTALLER09['site_name'].(isset($_GET['tbv'])?" (".TBVERSION.")":''). " :: " . htmlsafechars($title);  
     
     if ($CURUSER)
     {
-    $INSTALLER09['language'] = isset($CURUSER['language']) ? "{$CURUSER['language']}" : $INSTALLER09['language'];
     $INSTALLER09['stylesheet'] = isset($CURUSER['stylesheet']) ? "{$CURUSER['stylesheet']}.css" : $INSTALLER09['stylesheet'];
     $INSTALLER09['categorie_icon'] = isset($CURUSER['categorie_icon']) ? "{$CURUSER['categorie_icon']}" : $INSTALLER09['categorie_icon'];
     }
     /** ZZZZZZZZZZZZZZZZZZZZZZZZZZip it!
     if (!isset($_NO_COMPRESS))
     if (!ob_start('ob_gzhandler'))
-    ob_start();*/
+    ob_start();
+    */
     //== Include js files needed only for the page being used by pdq
     $js_incl = '';
     $js_incl .= '<!-- javascript goes here or in footer -->';
@@ -43,12 +43,13 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
     if (isset($INSTALLER09['xhtml_strict'])) { //== Use strict mime type/doctype
     //== Only if browser/user agent supports xhtml
     if (stristr($_SERVER['HTTP_ACCEPT'],'application/xhtml+xml') && ($INSTALLER09['xhtml_strict'] === 1 || $INSTALLER09['xhtml_strict'] == $CURUSER['username'])) {
-    header('Content-type:application/xhtml+xml; charset='.charset());
-    $doctype ='<?xml version="1.0" encoding="'.charset().'"?>'.'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '.'"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'.'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="'.$INSTALLER09['language'].'">';
+    header('Content-type:application/xhtml+xml; charset='.$INSTALLER09['char_set']);
+    $doctype ='<?xml version="1.0" encoding="'.$INSTALLER09['char_set'].'"?>'.'<!DOCTYPE html PUBLIC  "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'.'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">';
     }
     }
     if (!isset($doctype)) {
-    header('Content-type:text/html; charset='.charset());
+    header('Content-type:text/html; charset='.$INSTALLER09['char_set']);
     $doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'.'"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'.'<html xmlns="http://www.w3.org/1999/xhtml">';
     }
     $htmlout = $doctype."<head>
@@ -108,7 +109,6 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
         <li><a href='index.php'><span class='nav'>HOME</span></a></li>
         <li><a href='browse.php'><span class='nav'>TORRENTS</span></a></li>
         <li><a href='requests.php'><span class='nav'>REQUEST</span></a></li>
-        <li><a href='offers.php'><span class='nav'>OFFERS</span></a></li>
         <li><a href='upload.php'><span class='nav'>UPLOAD</span></a></li>
         <li><a href='casino.php'><span class='nav'>CASINO</span></a></li>
         <li><a href='blackjack.php'><span class='nav'>CARDS</span></a></li>
@@ -116,9 +116,8 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
         <li><a href='chat.php'><span class='nav'>IRC</span></a></li>
         <li><a href='topten.php'><span class='nav'>STATISTIC</span></a></li>
         <li><a href='faq.php'><span class='nav'>FAQ</span></a></li>
-        <li><a href='rules.php'><span class='nav'>RULES</span></a></li>
         <li><a href='staff.php'><span class='nav'>STAFF</span></a></li>
-        <li><a href='announcement.php'><span class='nav'>ANNOUNCEMENTS</span></a></li>
+	     <li><a href='offers.php'><span class='nav'>OFFERS</span></a></li>
         </ul>
         </div></div>
         <!-- U-232 Source - Print Global Messages -->
@@ -167,6 +166,7 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
         }
         $htmlout .="</div>     
         <table class='mainouter' width='100%' border='0' cellspacing='0' cellpadding='10'>
+
         <tr><td align='center' class='outer' style='padding-bottom: 10px'>";
         return $htmlout;
         } // stdhead
@@ -191,7 +191,8 @@ global $CURUSER, $INSTALLER09, $start, $query_stat, $mc1, $querytime;
 
     // load averages - pdq
     if ($debug) {
-     if(($uptime = $mc1->get_value('uptime')) === false) {
+     $uptime = $mc1->get_value('uptime');
+        if ($uptime === false) {
      $uptime = `uptime`;
      $mc1->cache_value('uptime', $uptime, 25);
         }
@@ -229,7 +230,7 @@ global $CURUSER, $INSTALLER09, $start, $query_stat, $mc1, $querytime;
 		"<font color='red' title='You should optimize this query.'>".
     $value['seconds']."</font>" : "<font color='green' title='Query good.'>".
 	  $value['seconds']."</font>")."</b></td>
-		<td align='left'>".htmlspecialchars($value['query'])."<br /></td>
+		<td align='left'>".htmlsafechars($value['query'])."<br /></td>
 		</tr>";	   		   
     }
     $htmlfoot .='</table></div>';
@@ -245,7 +246,7 @@ global $CURUSER, $INSTALLER09, $start, $query_stat, $mc1, $querytime;
             /** take a dump :< **/                
             $htmlfoot .=  '<a name="flush"></a><br /><br />
             <h2><strong>Memcached values:</strong></h2>
-            <hr /><div id="footer"><pre>'.htmlspecialchars($mc1->flush()).'</pre></div>';
+            <hr /><div id="footer"><pre>'.htmlsafechars($mc1->flush()).'</pre></div>';
 	  }
    }
 
@@ -272,7 +273,7 @@ global $CURUSER, $INSTALLER09, $start, $query_stat, $mc1, $querytime;
        }
 
     $htmlfoot .="</div>
-    </div><!-- Ends Footer -->
+    </div> <!-- Ends Footer -->
     </body></html>\n";
     return $htmlfoot;
     } 
@@ -311,11 +312,8 @@ function hey()
             default: return "{$lang['gl_stdhey7']}";
         }
     }
-
-
-
 function StatusBar() {
-	global $CURUSER, $INSTALLER09, $lang, $mc1, $msgalert;
+	global $CURUSER, $INSTALLER09, $lang, $rep_is_on, $mc1, $msgalert;
 	if (!$CURUSER)
 	return "";
 	$upped = mksize($CURUSER['uploaded']);
@@ -323,18 +321,21 @@ function StatusBar() {
    $salty = md5("Th15T3xtis5add3dto66uddy6he@water...".$CURUSER['ip']."");
    //==Memcache unread pms
 	$PMCount=0;
-	if(($unread1 = $mc1->get_value('inbox_new_sb_'.$CURUSER['id'])) === false) {
-	$res1 = sql_query("SELECT COUNT(id) FROM messages WHERE receiver='".$CURUSER['id']."' AND unread = 'yes' AND location = '1'") or sqlerr(__LINE__,__FILE__);
+	$unread1 = $mc1->get_value('inbox_new_sb_'.$CURUSER['id']);
+   if ($unread1 === false) {
+	$res1 = sql_query("SELECT COUNT(id) FROM messages WHERE receiver=".sqlesc($CURUSER['id'])." AND unread = 'yes' AND location = '1'") or sqlerr(__LINE__,__FILE__);
 	list($PMCount) = mysqli_fetch_row($res1); 
   $PMCount= (int)$PMCount;
   $unread1 = $mc1->cache_value('inbox_new_sb_'.$CURUSER['id'], $PMCount, $INSTALLER09['expires']['unread']);
   }
 	$inbox = ($unread1 == 1 ? "$unread1&nbsp;{$lang['gl_msg_singular']}" : "$unread1&nbsp;{$lang['gl_msg_plural']}");
   //==Memcache peers
-  if(($MyPeersCache = $mc1->get_value('MyPeers_'.$CURUSER['id'])) === false) {
+  $MyPeersCache = $mc1->get_value('MyPeers_'.$CURUSER['id']);
+if ($MyPeersCache == false) {
     $seed['yes'] = $seed['no'] = 0;
     $seed['conn'] = 3;
-      $r = sql_query("SELECT COUNT(id) AS count, seeder, connectable FROM peers WHERE userid=".$CURUSER['id']." GROUP BY seeder") ; 
+    
+      $r = sql_query("select count(id) as count, seeder, connectable FROM peers WHERE userid=".sqlesc($CURUSER['id'])." group by seeder") ; 
        while($a = mysqli_fetch_assoc($r)) {
         $key = $a['seeder'] == 'yes' ? 'yes' : 'no'; 
         $seed[$key] = number_format(0+$a['count']);    
@@ -363,7 +364,7 @@ function StatusBar() {
 	//////////// REP SYSTEM /////////////
     $member_reputation = get_reputation($CURUSER);
     ////////////// REP SYSTEM END //////////
-    $usrclass = $clock = '';
+    $usrclass="";
     if ($CURUSER['override_class'] != 255) $usrclass = "&nbsp;<b>(".get_user_class_name($CURUSER['class']).")</b>&nbsp;";
     else
     if ($CURUSER['class'] >= UC_STAFF)
@@ -379,17 +380,17 @@ function StatusBar() {
        //]]>
        </script>
       <div id='base_header_fly'>
-       <div id='base_usermenu'>".hey()."&nbsp;".format_username($CURUSER)."&nbsp;<span id='clock'>{$clock}</span>&nbsp;<span class='base_usermenu_arrow'><a href='#' onclick='showSlidingDiv(); return false;'><img src='templates/1/images/usermenu_arrow.png' alt='' /></a></span></div>
+       <div id='base_usermenu'>".hey().",&nbsp;".format_username($CURUSER)."<span class='base_usermenu_arrow'><a href='#' onclick='showSlidingDiv(); return false;'><img src='templates/1/images/usermenu_arrow.png' alt='' /></a></span></div>
         <div id='slidingDiv'>
          <div class='slide_head'>:: Personal Stats</div>
          <div class='slide_a'>User Class</div><div class='slide_b'>{$usrclass}</div>
          <div class='slide_c'>Reputation</div><div class='slide_d'>$member_reputation</div>
-         <div class='slide_a'>Invites</div><div class='slide_b'><a href='./invite.php'>".htmlspecialchars($CURUSER['invites'])."</a></div>
-         <div class='slide_c'>Bonus Points</div><div class='slide_d'><a href='./mybonus.php'>".htmlspecialchars($CURUSER['seedbonus'])."</a></div>
+         <div class='slide_a'>Invites</div><div class='slide_b'><a href='./invite.php'>{$CURUSER['invites']}</a></div>
+         <div class='slide_c'>Bonus Points</div><div class='slide_d'><a href='./mybonus.php'>{$CURUSER['seedbonus']}</a></div>
          <div class='slide_head'>:: Torrent Stats</div>
          <div class='slide_a'>Share Ratio</div><div class='slide_b'>".member_ratio($CURUSER['uploaded'], $CURUSER['downloaded'])."</div>
-         <div class='slide_c'>Uploaded</div><div class='slide_d'>".htmlspecialchars($upped)."</div>
-         <div class='slide_a'>Downloaded</div><div class='slide_b'>".htmlspecialchars($downed)."</div>
+         <div class='slide_c'>Uploaded</div><div class='slide_d'>$upped</div>
+         <div class='slide_a'>Downloaded</div><div class='slide_b'>$downed</div>
          <div class='slide_c'>Uploading Files</div><div class='slide_d'>{$seed['yes']}</div>
          <div class='slide_a'>Downloading Files</div><div class='slide_b'>{$seed['no']}</div>
          <div class='slide_c'>Connectable</div><div class='slide_d'>{$connectable}</div>
@@ -406,11 +407,9 @@ function StatusBar() {
          ".(isset($CURUSER) && $CURUSER['class'] >= UC_STAFF ? "<div class='slide_c'>Bug Tracker</div><div class='slide_d'><a href='./bugs.php?action=bugs'>Respond</a></div>":"")."
          ".(isset($CURUSER) && $CURUSER['class'] <= UC_VIP ? "<div class='slide_a'>Uploader App</div><div class='slide_b'><a href='./uploadapp.php'>Send Application</a></div>":"")."
          <div class='slide_a'>Wiki</div><div class='slide_b'><a href='./wiki.php'>Click here</a></div>
-         <div class='slide_c'>Rss Feeds</div><div class='slide_d'><a href='./getrss.php'>Click here</a></div>
          ".(isset($CURUSER) && $CURUSER['got_blocks'] == 'yes' ? "<div class='slide_head'>:: Site Config</div><div class='slide_a'>My Blocks</div><div class='slide_b'><a href='./user_blocks.php'>Click here</a></div>":"")."
          ".(isset($CURUSER) && $CURUSER['got_moods'] == 'yes' ? "<div class='slide_c'>My Unlocks</div><div class='slide_d'><a href='./user_unlocks.php'>Click here</a></div>":"")."
          <div class='slide_a'>Need seeds</div><div class='slide_b'><a href='./needseed.php?needed=seeders'>Click here</a></div>
-         <div class='slide_c'>Update status</div><div class='slide_d'><a href='javascript:void(0)' onclick='status_showbox()'>Click here</a></div>
          </div>
          <div id='base_icons'>
          <ul class='um_menu'>
@@ -421,27 +420,6 @@ function StatusBar() {
         </ul>
        </div>
       </div>";
-      $StatusBar .='<script type="text/javascript">
-      function refrClock(){
-      var d=new Date();
-      var s=d.getSeconds();
-      var m=d.getMinutes();
-      var h=d.getHours();
-      var day=d.getDay();
-      var date=d.getDate();
-      var month=d.getMonth();
-      var year=d.getFullYear();
-      var am_pm;
-      if (s<10) {s="0" + s}
-      if (m<10) {m="0" + m}
-      if (h>12) {h-=12;am_pm = "Pm"}
-      else {am_pm="Am"}
-      if (h<10) {h="0" + h}
-      document.getElementById("clock").innerHTML=h + ":" + m + ":" + s + " " + am_pm;
-      setTimeout("refrClock()",1000);
-      }
-      refrClock();
-      </script>';
     return $StatusBar;
     }
 ?>

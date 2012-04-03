@@ -23,7 +23,7 @@ loggedinorreturn();
 $HTMLOUT = $sure ='';
 $lang = array_merge( load_language('global'), load_language('invite_code') );
 
-$do = (isset($_GET["do"]) ? htmlspecialchars($_GET["do"]) : (isset($_POST["do"]) ? htmlspecialchars($_POST["do"]) : ''));	
+$do = (isset($_GET["do"]) ? htmlsafechars($_GET["do"]) : (isset($_POST["do"]) ? htmlsafechars($_POST["do"]) : ''));	
 $valid_actions = array('create_invite', 'delete_invite', 'confirm_account', 'view_page', 'send_email');
 $do = (($do && in_array($do,$valid_actions,true)) ? $do : '') or header("Location: ?do=view_page");
 
@@ -57,12 +57,12 @@ $HTMLOUT .= "<tr class='one'>
 for ($i = 0; $i < $rows; ++$i) { 
 $arr = mysqli_fetch_assoc($query);
 if ($arr['status'] == 'pending')
-$user = "<td align='center'>" . htmlspecialchars($arr['username']) . "</td>";
+$user = "<td align='center'>".htmlsafechars($arr['username'])."</td>";
 else
-$user = "<td align='center'><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['id']."'>".htmlspecialchars($arr['username'])."</a>" .($arr["warned"] == "yes" ? "&nbsp;<img src='{$INSTALLER09['pic_base_url']}warned.gif' border='0' alt='Warned' />" : "")."&nbsp;" .($arr["enabled"] == "no" ? "&nbsp;<img src='{$INSTALLER09['pic_base_url']}disabled.gif' border='0' alt='Disabled' />" : "")."&nbsp;" .($arr["donor"] == "yes" ? "<img src='{$INSTALLER09['pic_base_url']}star.gif' border='0' alt='Donor' />" : "")."</td>";
+$user = "<td align='center'><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['id']."'>".htmlsafechars($arr['username'])."</a>" .($arr["warned"] >= 1 ? "&nbsp;<img src='{$INSTALLER09['pic_base_url']}warned.gif' border='0' alt='Warned' />" : "")."&nbsp;" .($arr["enabled"] == "no" ? "&nbsp;<img src='{$INSTALLER09['pic_base_url']}disabled.gif' border='0' alt='Disabled' />" : "")."&nbsp;" .($arr["donor"] == "yes" ? "<img src='{$INSTALLER09['pic_base_url']}star.gif' border='0' alt='Donor' />" : "")."</td>";
 if ($arr['downloaded'] > 0) {
 $ratio = number_format($arr['uploaded'] / $arr['downloaded'], 3);
-$ratio = "<font color='" . get_ratio_color($ratio) . "'>".$ratio."</font>";
+$ratio = "<font color='".get_ratio_color($ratio)."'>".$ratio."</font>";
 } else {
 if ($arr['uploaded'] > 0) {
 $ratio = 'Inf.';
@@ -75,7 +75,7 @@ if ($arr["status"] == 'confirmed')
 $status = "<font color='#1f7309'>{$lang['invites_confirm1']}</font>";
 else
 $status = "<font color='#ca0226'>{$lang['invites_pend']}</font>";
-$HTMLOUT .= "<tr class='one'>".$user."<td align='center'>".mksize((int)$arr['uploaded'])."</td><td align='center'>".mksize((int)$arr['downloaded'])."</td><td align='center'>".$ratio."</td><td align='center'>".$status."</td>";
+$HTMLOUT .= "<tr class='one'>".$user."<td align='center'>".mksize($arr['uploaded'])."</td><td align='center'>".mksize($arr['downloaded'])."</td><td align='center'>".$ratio."</td><td align='center'>".$status."</td>";
 if ($arr['status'] == 'pending') {
 $HTMLOUT .= "<td align='center'><a href='?do=confirm_account&amp;userid=".(int)$arr['id']."&amp;sender=".(int)$CURUSER['id']."'><img src='{$INSTALLER09['pic_base_url']}confirm.png' alt='confirm' title='Confirm' border='0' /></a></td></tr>";
 } 
@@ -84,7 +84,7 @@ $HTMLOUT .= "<td align='center'>---</td></tr>";
 }
 }
 $HTMLOUT .= "</table><br />";
-$select = sql_query("SELECT * FROM invite_codes WHERE sender = ".$CURUSER['id']." AND status = 'Pending'") or sqlerr(__FILE__, __LINE__);
+$select = sql_query("SELECT * FROM invite_codes WHERE sender = ".sqlesc($CURUSER['id'])." AND status = 'Pending'") or sqlerr(__FILE__, __LINE__);
 $num_row = mysqli_num_rows($select);
 $HTMLOUT .= "<table border='1' width='750' cellspacing='0' cellpadding='5'>"."<tr class='tabletitle'><td colspan='6' class='colhead'><b>{$lang['invites_codes']}</b></td></tr>";
 if(!$num_row) {
@@ -95,10 +95,10 @@ for ($i = 0; $i < $num_row; ++$i)
 {
 $fetch_assoc = mysqli_fetch_assoc($select);                                  
 $HTMLOUT .= "<tr class='one'>
-<td>".$fetch_assoc['code']." <a href='?do=send_email&amp;id=".(int)$fetch_assoc['id']."'><img src='{$INSTALLER09['pic_base_url']}email.gif' border='0' alt='Email' title='Send Email' /></a></td>
+<td>".htmlsafechars($fetch_assoc['code'])." <a href='?do=send_email&amp;id=".(int)$fetch_assoc['id']."'><img src='{$INSTALLER09['pic_base_url']}email.gif' border='0' alt='Email' title='Send Email' /></a></td>
 <td>".get_date($fetch_assoc['invite_added'], '', 0,1)."</td>";
 $HTMLOUT .= "<td><a href='?do=delete_invite&amp;id=".(int)$fetch_assoc['id']."&amp;sender=".(int)$CURUSER['id']."'><img src='{$INSTALLER09['pic_base_url']}del.png' border='0' alt='Delete'/></a></td>
-<td>".$fetch_assoc['status']."</td></tr>";
+<td>".htmlsafechars($fetch_assoc['status'])."</td></tr>";
 }
 }
 $HTMLOUT .= "<tr class='one'><td colspan='6' align='center'><form action='?do=create_invite' method='post'><input type='submit' value='{$lang['invites_create']}' style='height: 20px' /></form></td></tr>";
@@ -139,14 +139,14 @@ header("Location: ?do=view_page");
 
 elseif ($do =='send_email') {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-$email = (isset($_POST['email'])? htmlentities($_POST['email']) : '');
-$invite = (isset($_POST['code'])? htmlentities($_POST['code']) : '');
+$email = (isset($_POST['email'])? htmlsafechars($_POST['email']) : '');
+$invite = (isset($_POST['code'])? htmlsafechars($_POST['code']) : '');
 if (!$email) stderr($lang['invites_error'], $lang['invites_noemail']);
 $check = (mysqli_fetch_row(sql_query('SELECT COUNT(id) FROM users WHERE email = '.sqlesc($email)))) or sqlerr(__FILE__, __LINE__);
 if ($check[0] != 0) stderr('Error', 'This email address is already in use!');
 if (!validemail($email)) stderr($lang['invites_error'], $lang['invites_invalidemail']);
 
-$inviter = htmlspecialchars($CURUSER['username']);
+$inviter = htmlsafechars($CURUSER['username']);
 $body = <<<EOD
 You have been invited to {$INSTALLER09['site_name']} by $inviter. They have
 specified this address ($email) as your email. If you do not know this person, please ignore this email. Please do not reply.
@@ -180,7 +180,7 @@ if (!is_valid_id($id)) stderr($lang['invites_error'], $lang['invites_invalid']);
 $query = sql_query('SELECT * FROM invite_codes WHERE id = '.sqlesc($id).' AND sender = '.sqlesc($CURUSER['id']).' AND status = "Pending"') or sqlerr(__FILE__, __LINE__);
 $fetch = mysqli_fetch_assoc($query) or stderr($lang['invites_error'], $lang['invites_noexsist']);
 $HTMLOUT .= "<form method='post' action='?do=send_email'><table border='1' cellspacing='0' cellpadding='10'>
-<tr><td class='rowhead'>E-Mail</td><td><input type='text' size='40' name='email' /></td></tr><tr><td colspan='2' align='center'><input type='hidden' name='code' value='".$fetch['code']."' /></td></tr><tr><td colspan='2' align='center'><input type='submit' value='Send e-mail' class='btn' /></td></tr></table></form>";
+<tr><td class='rowhead'>E-Mail</td><td><input type='text' size='40' name='email' /></td></tr><tr><td colspan='2' align='center'><input type='hidden' name='code' value='".htmlsafechars($fetch['code'])."' /></td></tr><tr><td colspan='2' align='center'><input type='submit' value='Send e-mail' class='btn' /></td></tr></table></form>";
 echo stdhead('Invites') . $HTMLOUT . stdfoot();
 }
 
@@ -194,7 +194,7 @@ $query = sql_query('SELECT * FROM invite_codes WHERE id = '.sqlesc($id).' AND se
 $assoc = mysqli_fetch_assoc($query);
 if (!$assoc)
 stderr($lang['invites_error'],$lang['invites_noexsist']);
-isset($_GET['sure']) && $sure = htmlspecialchars($_GET['sure']);
+isset($_GET['sure']) && $sure = htmlsafechars($_GET['sure']);
 if (!$sure)
 stderr($lang['invites_delete1'], $lang['invites_sure'].' Click <a href="'.$_SERVER['PHP_SELF'].'?do=delete_invite&amp;id='.$id.'&amp;sender='.$CURUSER['id'].'&amp;sure=yes">here</a> to delete it or <a href="?do=view_page">here</a> to go back.');
 sql_query('DELETE FROM invite_codes WHERE id = '.sqlesc($id) .' AND sender ='.sqlesc($CURUSER['id'].' AND status = "Pending"')) or sqlerr(__FILE__, __LINE__);
@@ -221,9 +221,9 @@ $select = sql_query('SELECT id, username FROM users WHERE id = '.sqlesc($userid)
 $assoc = mysqli_fetch_assoc($select);
 if (!$assoc)
 stderr($lang['invites_error'], $lang['invites_errorid']);
-isset($_GET['sure']) && $sure = htmlspecialchars($_GET['sure']);
+isset($_GET['sure']) && $sure = htmlsafechars($_GET['sure']);
 if (!$sure)
-stderr($lang['invites_confirm1'], $lang['invites_sure1'].' '.htmlspecialchars($assoc['username']).'\'s account? Click <a href="?do=confirm_account&amp;userid='.$userid.'&amp;sender='.$CURUSER['id'].'&amp;sure=yes">here</a> to confirm it or <a href="?do=view_page">here</a> to go back.');
+stderr($lang['invites_confirm1'], $lang['invites_sure1'].' '.htmlsafechars($assoc['username']).'\'s account? Click <a href="?do=confirm_account&amp;userid='.$userid.'&amp;sender='.(int)$CURUSER['id'].'&amp;sure=yes">here</a> to confirm it or <a href="?do=view_page">here</a> to go back.');
 sql_query('UPDATE users SET status = "confirmed" WHERE id = '.sqlesc($userid).' AND invitedby = '.sqlesc($CURUSER['id']).' AND status="pending"') or sqlerr(__FILE__, __LINE__);
 //==pm to new invitee/////
 $msg = sqlesc("Hey there :wave:
@@ -243,7 +243,7 @@ cheers,
 $id = (int)$assoc["id"];
 $subject = sqlesc("Welcome to {$INSTALLER09['site_name']} !");
 $added = TIME_NOW;
-sql_query("INSERT INTO messages (sender, subject, receiver, msg, added) VALUES (0, $subject, $id, $msg, $added)") or sqlerr(__FILE__, __LINE__);
+sql_query("INSERT INTO messages (sender, subject, receiver, msg, added) VALUES (0, $subject, ".sqlesc($id).", $msg, $added)") or sqlerr(__FILE__, __LINE__);
 ///////////////////end////////////
 header("Location: ?do=view_page");
 }

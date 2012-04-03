@@ -74,12 +74,11 @@ $main_links = '<p><a class="altlink" href="staffpanel.php?tool=over_forums&amp;a
 		die();
 		}
 
-			$res = sql_query ('SELECT * FROM topics where forum_id = '.$id);
+			$res = sql_query ('SELECT * FROM topics where forum_id = '.sqlesc($id));
 			$row = mysqli_fetch_array($res);
-				sql_query ('DELETE FROM posts where topic_id ='.$row['id']);
-				sql_query ('DELETE FROM topics where forum_id = '.$id);
-				sql_query ('DELETE FROM forums where id = '.$id);
-
+				sql_query ('DELETE FROM posts where topic_id ='.sqlesc($row['id']));
+				sql_query ('DELETE FROM topics where forum_id = '.sqlesc($id));
+				sql_query ('DELETE FROM forums where id = '.sqlesc($id));
 				header('Location: staffpanel.php?tool=forum_manage&action=forum_manage'); 
 				die();
 	break;
@@ -93,7 +92,7 @@ $main_links = '<p><a class="altlink" href="staffpanel.php?tool=over_forums&amp;a
 			die();
 			}
 
-			sql_query('UPDATE forums SET sort = '.$sort.', name = '.sqlesc($name).', parent_forum = '.$parent_forum.', description = '.sqlesc($desc).', forum_id = '.$over_forums.', min_class_read = '.$min_class_read.', min_class_write = '.$min_class_write.', min_class_create = '.$min_class_create.' where id = '.$id);
+			sql_query('UPDATE forums SET sort = '.sqlesc($sort).', name = '.sqlesc($name).', parent_forum = '.sqlesc($parent_forum).', description = '.sqlesc($desc).', forum_id = '.sqlesc($over_forums).', min_class_read = '.sqlesc($min_class_read).', min_class_write = '.sqlesc($min_class_write).', min_class_create = '.sqlesc($min_class_create).' where id = '.sqlesc($id));
 			header('Location: staffpanel.php?tool=forum_manage&action=forum_manage'); 
 			die();
 	
@@ -108,7 +107,7 @@ $main_links = '<p><a class="altlink" href="staffpanel.php?tool=over_forums&amp;a
 			die();
 			}
 
-		sql_query('INSERT INTO forums (sort, name, parent_forum, description,  min_class_read,  min_class_write, min_class_create, forum_id) VALUES ('.$sort.', '.sqlesc($name).', '.$parent_forum.', '.sqlesc($desc).', '.$min_class_read.', '.$min_class_write.', '.$min_class_create.', '.$over_forums.')');
+		sql_query('INSERT INTO forums (sort, name, parent_forum, description,  min_class_read,  min_class_write, min_class_create, forum_id) VALUES ('.sqlesc($sort).', '.sqlesc($name).', '.sqlesc($parent_forum).', '.sqlesc($desc).', '.sqlesc($min_class_read).', '.sqlesc($min_class_write).', '.sqlesc($min_class_create).', '.sqlesc($over_forums).')');
 		header('Location: staffpanel.php?tool=forum_manage&action=forum_manage'); 
 		die();
 
@@ -117,7 +116,7 @@ $main_links = '<p><a class="altlink" href="staffpanel.php?tool=over_forums&amp;a
 	//=== edit forum stuff
 	case 'edit_forum_page':
 
-	$res = sql_query ('SELECT * FROM forums where id = '.$id);
+	$res = sql_query ('SELECT * FROM forums where id = '.sqlesc($id));
 	
 		if (mysqli_num_rows($res) > 0)
 				{
@@ -126,28 +125,28 @@ $main_links = '<p><a class="altlink" href="staffpanel.php?tool=over_forums&amp;a
 		$HTMLOUT .= $main_links.'<form method="post" action="staffpanel.php?tool=forum_manage&amp;action=forum_manage">
 					<table  border="0" cellspacing="0" cellpadding="3" align="center">
 					<tr>
-					<td colspan="2" class="forum_head_dark">Edit forum: '.htmlentities($row['name'], ENT_QUOTES).'</td>
+					<td colspan="2" class="forum_head_dark">Edit forum: '.htmlsafechars($row['name'], ENT_QUOTES).'</td>
 					</tr>
 					<tr>
 					<td align="right" class="three"><span style="font-weight: bold;">Forum name:</span></td>
-					<td align="left" class="three"><input name="name" type="text" class="text_default" size="20" maxlength="60" value="'.htmlentities($row['name'], ENT_QUOTES).'" /></td>
+					<td align="left" class="three"><input name="name" type="text" class="text_default" size="20" maxlength="60" value="'.htmlsafechars($row['name'], ENT_QUOTES).'" /></td>
 					</tr>
 					<tr>
 					<td align="right" class="three"><span style="font-weight: bold;">Forum description:</span></td>
-					<td align="left" class="three"><input name="desc" type="text" class="text_default" size="30" maxlength="200" value="'.htmlentities($row['description'], ENT_QUOTES).'" /></td>
+					<td align="left" class="three"><input name="desc" type="text" class="text_default" size="30" maxlength="200" value="'.htmlsafechars($row['description'], ENT_QUOTES).'" /></td>
 					</tr>
 					<tr>
 					<td align="right" class="three"><span style="font-weight: bold;">OverForum:</span></td>
 					<td  align="left" class="three">
 					<select name="over_forums">';
 					
-		$forum_id = $row['forum_id'];
+		$forum_id = (int)$row['forum_id'];
 		$res = sql_query('SELECT * FROM over_forums');
 
 			while ($arr = mysqli_fetch_array($res)) 
 			{
-			$i = $arr['id'];
-			$options .= '<option class="body" value="'.$i.'"'.($forum_id == $i ? ' selected="selected"' : '').'>'.htmlentities($arr['name'], ENT_QUOTES).'</option>';
+			$i = (int)$arr['id'];
+			$options .= '<option class="body" value="'.$i.'"'.($forum_id == $i ? ' selected="selected"' : '').'>'.htmlsafechars($arr['name'], ENT_QUOTES).'</option>';
 			}
 					
 	$HTMLOUT .= $options.'</select></td></tr>
@@ -162,7 +161,7 @@ $main_links = '<p><a class="altlink" href="staffpanel.php?tool=over_forums&amp;a
 			while ($arr = mysqli_fetch_array($res)) 
 			{
 			 if (is_valid_id($arr['id']))
-			$options_2 .= '<option class="body" value="'.$arr['id'].'"'.($parent_forum == $arr['id'] ? ' selected="selected"' : '').'>'.htmlentities($arr['name'], ENT_QUOTES).'</option>';
+			$options_2 .= '<option class="body" value="'.$arr['id'].'"'.($parent_forum == $arr['id'] ? ' selected="selected"' : '').'>'.htmlsafechars($arr['name'], ENT_QUOTES).'</option>';
 			}
 
 	$HTMLOUT .= $options_2.'</select></td></tr>
@@ -238,19 +237,19 @@ $HTMLOUT .= $main_links.'<table width="750"  border="0" align="center" cellpaddi
 	while($row = mysqli_fetch_array($res))
 	{
 	
-	$forum_id = $row['forum_id'];
+	$forum_id = (int)$row['forum_id'];
 		
-		$res2 = sql_query('SELECT name FROM over_forums WHERE id='.$forum_id);
+		$res2 = sql_query('SELECT name FROM over_forums WHERE id='.sqlesc($forum_id));
 		$arr2 = mysqli_fetch_assoc($res2);
 
-			$name = htmlentities($arr2['name'], ENT_QUOTES);
-			$subforum = $row['parent_forum'];
+			$name = htmlsafechars($arr2['name'], ENT_QUOTES);
+			$subforum = (int)$row['parent_forum'];
 
 				if ($subforum)
 				{
-				$res3 = sql_query('SELECT name FROM forums WHERE id='.$subforum);
+				$res3 = sql_query('SELECT name FROM forums WHERE id='.sqlesc($subforum));
 				$arr3 = mysqli_fetch_assoc($res3);
-				$subforum_name = htmlentities($arr3['name'], ENT_QUOTES);
+				$subforum_name = htmlsafechars($arr3['name'], ENT_QUOTES);
 				}
 				else
 				{
@@ -262,8 +261,8 @@ $HTMLOUT .= $main_links.'<table width="750"  border="0" align="center" cellpaddi
 	$class = ($count == 0 ? 'one' : 'two');
 		
 $HTMLOUT .= '<tr><td class="'.$class.'"><a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$row['id'].'">
-			<span style="font-weight: bold;">'.htmlentities($row['name'], ENT_QUOTES).'</span></a><br />
-			'.htmlentities($row['description'], ENT_QUOTES).'</td>
+			<span style="font-weight: bold;">'.htmlsafechars($row['name'], ENT_QUOTES).'</span></a><br />
+			'.htmlsafechars($row['description'], ENT_QUOTES).'</td>
 			<td class="'.$class.'" align="center"><span style="font-weight: bold;">'.$subforum_name.'</span></td>
 			<td class="'.$class.'" align="center">'.$name.'</td>
 			<td class="'.$class.'" align="center">'.get_user_class_name($row['min_class_read']).'</td>
@@ -271,7 +270,7 @@ $HTMLOUT .= '<tr><td class="'.$class.'"><a class="altlink" href="forums.php?acti
 			<td class="'.$class.'" align="center">'.get_user_class_name($row['min_class_create']).'</td>
 			<td align="center" class="'.$class.'"><a href="staffpanel.php?tool=forum_manage&amp;action=forum_manage&amp;action2=edit_forum_page&amp;id='.$row['id'].'">
 			<span style="font-weight: bold;">Edit</span></a>&nbsp;
-			<a href="javascript:confirm_delete(\''.$row['id'].'\');"><span style="font-weight: bold;">Delete</span></a>
+			<a href="javascript:confirm_delete(\''.(int)$row['id'].'\');"><span style="font-weight: bold;">Delete</span></a>
 			</td></tr>';
 
 	
@@ -297,13 +296,13 @@ $HTMLOUT .= '</table><br /><br />
 			<td align="left" class="three">
 			<select name="over_forums">';
 
-            $forum_id = $row['forum_id'];
+            $forum_id = (int)$row['forum_id'];
             $res = sql_query('SELECT * FROM over_forums');
              
              	while ($arr = mysqli_fetch_array($res)) 
 		{
-		$i = $arr['id'];
-		$option_7 .= '<option class="body" value="'.$i.'"'.($forum_id == $i ? ' selected="selected"' : '').'>'.htmlentities($arr['name'], ENT_QUOTES).'</option>';
+		$i = (int)$arr['id'];
+		$option_7 .= '<option class="body" value="'.$i.'"'.($forum_id == $i ? ' selected="selected"' : '').'>'.htmlsafechars($arr['name'], ENT_QUOTES).'</option>';
 		}
 
 
@@ -314,13 +313,13 @@ $HTMLOUT .= $option_7.'</select></td></tr>
 			<select name="parent_forum">
 			<option class="body" value="0"> none </option>';
 
-            $forum_id = $row['forum_id'];
+            $forum_id = (int)$row['forum_id'];
             $res = sql_query('SELECT * FROM forums');
              	
              	while ($arr = mysqli_fetch_array($res)) 
              	{
-		$i = $arr['id'];
-		$option_8 .= '<option class="body" value="'.$i.'"'.($forum_id == $i ? ' selected="selected"' : '').'>'.htmlentities($arr['name'], ENT_QUOTES).'</option>';
+		$i = (int)$arr['id'];
+		$option_8 .= '<option class="body" value="'.$i.'"'.($forum_id == $i ? ' selected="selected"' : '').'>'.htmlsafechars($arr['name'], ENT_QUOTES).'</option>';
 		}
 
 $HTMLOUT .= $option_8.'</select></td></tr><tr>

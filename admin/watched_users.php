@@ -17,7 +17,7 @@ $HTMLOUT .= '
 <title>404 Not Found</title>
 </head><body>
 <h1>Not Found</h1>
-<p>The requested URL '.htmlspecialchars($_SERVER['SCRIPT_NAME'],strrpos($_SERVER['SCRIPT_NAME'],'/')+1).' was not found on this server.</p>
+<p>The requested URL '.htmlsafechars($_SERVER['SCRIPT_NAME'],strrpos($_SERVER['SCRIPT_NAME'],'/')+1).' was not found on this server.</p>
 <hr>
 <address>'.$_SERVER['SERVER_SOFTWARE'].' Server at '.$INSTALLER09['baseurl'].' Port 80</address>
 </body></html>';
@@ -65,7 +65,7 @@ if (isset($_GET['remove']))
          $mc1->update_row(false, array('modcomment' => $modcomment));
          $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
          $count = 1;
-			$removed_log = '<a href="userdetails.php?id='.$remove_me_Ive_been_good.'" class="altlink">'.$user['username'].'</a>';
+			$removed_log = '<a href="userdetails.php?id='.$remove_me_Ive_been_good.'" class="altlink">'.htmlsafechars($user['username']).'</a>';
 			}
 		}
 		else
@@ -90,7 +90,7 @@ if (isset($_GET['remove']))
             $mc1->update_row(false, array('modcomment' => $modcomment));
             $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
             $count = (++$count);
-				$removed_log .= '<a href="userdetails.php?id='.$id.'" class="altlink">'.$user['username'].'</a> ';
+				$removed_log .= '<a href="userdetails.php?id='.$id.'" class="altlink">'.htmlsafechars($user['username']).'</a> ';
 				}
 			}
 		}
@@ -105,7 +105,7 @@ if (isset($_GET['remove']))
 //=== to add members to the watched user list... all staff!
 if (isset($_GET['add']))
 	{
-	$member_whos_been_bad = $_GET['id'];
+	$member_whos_been_bad = (int)$_GET['id'];
 		if (is_valid_id($member_whos_been_bad)) 
 			{
 			
@@ -113,7 +113,7 @@ if (isset($_GET['add']))
 			$res = sql_query('SELECT modcomment, watched_user, watched_user_reason, username FROM users WHERE id='.sqlesc($member_whos_been_bad)) or sqlerr(__FILE__, __LINE__);
 			$user = mysqli_fetch_assoc($res);
 		  if ($user['watched_user'] > 0)
-			stderr('Error', $user['username'].' is on the watched user list already! <a href="userdetails.php?id='.$member_whos_been_bad.'" >back to '.$user['username'].'\'s profile</a>');
+			stderr('Error', htmlsafechars($user['username']).' is on the watched user list already! <a href="userdetails.php?id='.$member_whos_been_bad.'" >back to '.htmlsafechars($user['username']).'\'s profile</a>');
 					
   //== ok they are not watched yet let's add the info part 1
   if ($_GET['add'] && $_GET['add'] == 1)
@@ -125,8 +125,8 @@ if (isset($_GET['add']))
  <td class="colhead">Add '.$user['username'].'To Watched Users</td>
  </tr>
  <tr>
- <td align="center"><b>please fill in the reason for adding '.$user['username'].' to the watched user list.</b><br />
- <textarea cols="60" rows="6" name="reason">'.htmlspecialchars($user['watched_user_reason']).'</textarea><br /></td>
+ <td align="center"><b>please fill in the reason for adding '.htmlsafechars($user['username']).' to the watched user list.</b><br />
+ <textarea cols="60" rows="6" name="reason">'.htmlsafechars($user['watched_user_reason']).'</textarea><br /></td>
  </tr>
  <tr>
  <td class="colhead">
@@ -139,7 +139,7 @@ if (isset($_GET['add']))
 			
 			
 			//=== all is good, let's enter them \o/
-			$watched_user_reason = htmlspecialchars($_POST['reason']);
+			$watched_user_reason = htmlsafechars($_POST['reason']);
 			$modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - Added to watched users by $CURUSER[username].\n". $user['modcomment'];
 			sql_query('UPDATE users SET watched_user = '.TIME_NOW.', modcomment='.sqlesc($modcomment).', watched_user_reason = '.sqlesc($watched_user_reason).' WHERE id='.sqlesc($member_whos_been_bad)) or sqlerr(__FILE__,__LINE__);
          $mc1->begin_transaction('MyUser_'.$member_whos_been_bad);
@@ -155,8 +155,8 @@ if (isset($_GET['add']))
 			//=== Check if member was added
 			if (mysqli_affected_rows($GLOBALS["___mysqli_ston"]) > 0)
 			{
-				$H1_thingie = '<h1>Sucess!'. $user['username'].' added!</h1>';
-				write_log('<b>'.$CURUSER['username'].'</b> added <a href="userdetails.php?id='.$member_whos_been_bad.'" class="altlink">'.$user['username'].'</a> to the <a href="staffpanel.php?tool=watched_users&amp;action=watched_users" class="altlink">watched users list</a>.');
+				$H1_thingie = '<h1>Sucess!'. htmlsafechars($user['username']).' added!</h1>';
+				write_log('<b>'.$CURUSER['username'].'</b> added <a href="userdetails.php?id='.$member_whos_been_bad.'" class="altlink">'.htmlsafechars($user['username']).'</a> to the <a href="staffpanel.php?tool=watched_users&amp;action=watched_users" class="altlink">watched users list</a>.');
 			}
 	}
 

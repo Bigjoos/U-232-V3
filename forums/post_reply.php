@@ -38,7 +38,7 @@ if (!defined('BUNNY_FORUMS'))
       $res = sql_query('SELECT t.topic_name, t.locked, f.min_class_read, f.min_class_write, f.id AS real_forum_id, s.id AS subscribed_id 
 								FROM topics AS t LEFT JOIN forums AS f ON t.forum_id = f.id LEFT JOIN subscriptions AS s ON s.topic_id = t.id 
 								WHERE '.($CURUSER['class'] < UC_STAFF ? 't.status = \'ok\' AND' : 
-								($CURUSER['class'] < $min_delete_view_class ? 't.status != \'deleted\'  AND' : '')).' t.id='.$topic_id);
+								($CURUSER['class'] < $min_delete_view_class ? 't.status != \'deleted\'  AND' : '')).' t.id='.sqlesc($topic_id));
       $arr = mysqli_fetch_assoc($res);
     
     		//=== stop them, they shouldn't be here lol
@@ -59,19 +59,19 @@ if (!defined('BUNNY_FORUMS'))
 	$key = (isset($_GET['key']) ? intval($_GET['key']) :  0);
 	$body = (isset($_POST['body']) ? $_POST['body'] : '');
 	$post_title = strip_tags((isset($_POST['post_title']) ? $_POST['post_title'] : ''));
-	$icon = htmlspecialchars((isset($_POST['icon']) ? $_POST['icon'] : ''));
+	$icon = htmlsafechars((isset($_POST['icon']) ? $_POST['icon'] : ''));
 	$bb_code = (isset($_POST['bb_code']) && $_POST['bb_code'] == 'no' ? 'no' : 'yes');
 	$subscribe = ((isset($_POST['subscribe']) && $_POST['subscribe'] == 'yes') ? 'yes' : ((!isset($_POST['subscribe']) && $arr['subscribed_id'] > 0) ? 'yes' : 'no'));
-  $topic_name = $arr['topic_name'];
+  $topic_name = htmlsafechars($arr['topic_name']);
       
       //== if it's a quote
       if ($quote !== 0 && $body == '')
       {
-      $res_quote = sql_query('SELECT p.body, p.staff_lock, u.username FROM posts AS p LEFT JOIN users AS u ON p.user_id = u.id WHERE p.id='.$quote);
+      $res_quote = sql_query('SELECT p.body, p.staff_lock, u.username FROM posts AS p LEFT JOIN users AS u ON p.user_id = u.id WHERE p.id='.sqlesc($quote));
       $arr_quote = mysqli_fetch_array($res_quote);
       //=== if member exists, then add username, and then link back to post that was quoted with date :-D
-      $quoted_member = ($arr_quote['username'] == '' ? 'Lost member' : htmlspecialchars($arr_quote['username']));
-      $body = '[quote='.$quoted_member.($quote > 0 ? ' | post='.$quote : '').($key > 0 ? ' | key='.$key : '').']'.htmlspecialchars($arr_quote['body']).'[/quote]';
+      $quoted_member = ($arr_quote['username'] == '' ? 'Lost member' : htmlsafechars($arr_quote['username']));
+      $body = '[quote='.$quoted_member.($quote > 0 ? ' | post='.$quote : '').($key > 0 ? ' | key='.$key : '').']'.htmlsafechars($arr_quote['body']).'[/quote]';
            
       
       if ($arr_quote['staff_lock'] != 0)
@@ -92,16 +92,15 @@ if (!defined('BUNNY_FORUMS'))
       }
       
       
-      $ip = ($CURUSER['ip'] == '' ? htmlspecialchars($_SERVER['REMOTE_ADDR']) : $CURUSER['ip']);
+      $ip = ($CURUSER['ip'] == '' ? htmlsafechars($_SERVER['REMOTE_ADDR']) : $CURUSER['ip']);
       
-      sql_query('INSERT INTO `posts` (`topic_id`, `user_id`, `added`, `body`, `icon`, `post_title`, `bbcode`, `ip`) VALUES ('.$topic_id.', '.$CURUSER['id'].', '.TIME_NOW.', '.sqlesc($body).', '.sqlesc($icon).', '.sqlesc($post_title).', '.sqlesc($bb_code).', '.sqlesc($ip).')');
+      sql_query('INSERT INTO `posts` (`topic_id`, `user_id`, `added`, `body`, `icon`, `post_title`, `bbcode`, `ip`) VALUES ('.sqlesc($topic_id).', '.sqlesc($CURUSER['id']).', '.TIME_NOW.', '.sqlesc($body).', '.sqlesc($icon).', '.sqlesc($post_title).', '.sqlesc($bb_code).', '.sqlesc($ip).')');
       $mc1->delete_value('last_posts_'.$CURUSER['class']);
       $mc1->delete_value('forum_posts_'.$CURUSER['id']);
       $post_id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
-      sql_query('UPDATE topics SET last_post='.$post_id.', post_count = post_count + 1 WHERE id='.$topic_id);
-      
-      sql_query('UPDATE `forums` SET post_count = post_count +1 WHERE id ='.$arr['real_forum_id']);
-	    
+      sql_query('UPDATE topics SET last_post='.sqlesc($post_id).', post_count = post_count + 1 WHERE id='.sqlesc($topic_id));
+      sql_query('UPDATE `forums` SET post_count = post_count +1 WHERE id ='.sqlesc($arr['real_forum_id']));
+
 	   if($INSTALLER09['autoshout_on'] == 1){ 
       $message = $CURUSER['username'] . " replied to topic [url={$INSTALLER09['baseurl']}/forums.php?action=view_topic&topic_id=$topic_id&page=last]{$topic_name}[/url]"; 	
  	   //////remember to edit the ids to your staffforum ids :)
@@ -124,21 +123,21 @@ if (!defined('BUNNY_FORUMS'))
 			
       if ($subscribe == 'yes' && $arr['subscribed_id'] < 1)
       {
-       sql_query('INSERT INTO `subscriptions` (`user_id`, `topic_id`) VALUES ('.$CURUSER['id'].', '.$topic_id.')');
+       sql_query('INSERT INTO `subscriptions` (`user_id`, `topic_id`) VALUES ('.sqlesc($CURUSER['id']).', '.sqlesc($topic_id).')');
       }
       elseif ($subscribe == 'no' && $arr['subscribed_id'] > 0)
       {
-      sql_query('DELETE FROM `subscriptions` WHERE `user_id`= '.$CURUSER['id'].' AND  `topic_id` = '.$topic_id);
+      sql_query('DELETE FROM `subscriptions` WHERE `user_id`= '.sqlesc($CURUSER['id']).' AND  `topic_id` = '.sqlesc($topic_id));
       }
       
       // === PM subscribed members
-      $res_sub = sql_query("SELECT user_id FROM subscriptions WHERE topic_id = {$topic_id}") or sqlerr(__FILE__, __LINE__);
+      $res_sub = sql_query("SELECT user_id FROM subscriptions WHERE topic_id =".sqlesc($topic_id)) or sqlerr(__FILE__, __LINE__);
       while ($row = mysqli_fetch_assoc($res_sub)) {
-      $res_yes = sql_query("SELECT subscription_pm, username FROM users WHERE id = {$row['user_id']}") or sqlerr(__FILE__, __LINE__);
+      $res_yes = sql_query("SELECT subscription_pm, username FROM users WHERE id = ".sqlesc($row['user_id'])) or sqlerr(__FILE__, __LINE__);
       $arr_yes = mysqli_fetch_array($res_yes);
-      $msg = "Hey there!!! \n a thread you subscribed to: {$arr['topic_name']} has had a new post!\n click [url={$INSTALLER09['baseurl']}/forums.php?action=view_topic&amp;topic_id={$topic_id}&page=last][b]Here[/b][/url] to read it!\n\nTo view your subscriptions or un-subscribe, click [url={$INSTALLER09['baseurl']}/forums.php?action=subscriptions][b]Here[/b][/url].\n\nCheers.";
+      $msg = "Hey there!!! \n a thread you subscribed to: ".htmlsafechars($arr['topic_name'])." has had a new post!\n click [url={$INSTALLER09['baseurl']}/forums.php?action=view_topic&amp;topic_id={$topic_id}&page=last][b]Here[/b][/url] to read it!\n\nTo view your subscriptions or un-subscribe, click [url={$INSTALLER09['baseurl']}/forums.php?action=subscriptions][b]Here[/b][/url].\n\nCheers.";
       if ($arr_yes["subscription_pm"] == 'yes' && $row["user_id"] != $CURUSER["id"])
-      sql_query("INSERT INTO messages (sender, subject, receiver, added, msg) VALUES(0, 'New post in subscribed thread!', {$row['user_id']}, '".time()."', " . sqlesc($msg) . ")") or sqlerr(__FILE__, __LINE__);
+      sql_query("INSERT INTO messages (sender, subject, receiver, added, msg) VALUES(0, 'New post in subscribed thread!', ".sqlesc($row['user_id']).", '".TIME_NOW."', " . sqlesc($msg) . ")") or sqlerr(__FILE__, __LINE__);
       }
       // ===end
       
@@ -185,7 +184,7 @@ if ($CURUSER['class'] >= $min_upload_class)
 			$upload_to  = $upload_folder.$name.'(id-'.$post_id.')'.$file_extension; 
 			//===plop it into the DB all safe and snuggly			
 			 sql_query('INSERT INTO `attachments` (`post_id`, `user_id`, `file`, `file_name`, `added`, `extension`, `size`) VALUES 
-( '.$post_id.', '.$CURUSER['id'].', '.sqlesc($name.'(id-'.$post_id.')'.$file_extension).', '.sqlesc($name).', '.TIME_NOW.', '.($file_extension === '.zip' ? '\'zip\'' : '\'rar\'').', '.$size.')');
+( '.sqlesc($post_id).', '.sqlesc($CURUSER['id']).', '.sqlesc($name.'(id-'.$post_id.')'.$file_extension).', '.sqlesc($name).', '.TIME_NOW.', '.($file_extension === '.zip' ? '\'zip\'' : '\'rar\'').', '.$size.')');
 				copy($_FILES['attachment']['tmp_name'][$key], $upload_to ); 
 				chmod($upload_to, 0777);      
 				}
@@ -201,7 +200,7 @@ if ($CURUSER['class'] >= $min_upload_class)
 
 	$HTMLOUT .= '<table class="main" width="750px" border="0" cellspacing="0" cellpadding="0">
    	 <tr><td class="embedded" align="center">
-	<h1 style="text-align: center;">Reply in topic "<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$topic_id.'">'.htmlentities($arr['topic_name'], ENT_QUOTES).'</a>"</h1>
+	<h1 style="text-align: center;">Reply in topic "<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$topic_id.'">'.htmlsafechars($arr['topic_name'], ENT_QUOTES).'</a>"</h1>
 	 '.(isset($_POST['button']) && $_POST['button'] == 'Preview' ? '
 	<table width="80%" border="0" cellspacing="5" cellpadding="5" align="center">
 	<tr><td class="forum_head" colspan="2"><span style="font-weight: bold;">Preview</span></td></tr>
@@ -289,7 +288,7 @@ if ($CURUSER['class'] >= $min_upload_class)
 				u.id, u.username, u.class, u.donor, u.suspended, u.chatpost, u.leechwarn, u.pirate, u.king, u.warned, u.enabled, u.avatar, u.offensive_avatar 
 				FROM posts AS p LEFT JOIN users AS u ON p.user_id = u.id 
 				WHERE '.($CURUSER['class'] < UC_STAFF ? 'p.status = \'ok\' AND' : 
-				($CURUSER['class'] < $min_delete_view_class ? 'p.status != \'deleted\' AND' : '')).' topic_id='.$topic_id.' ORDER BY p.id DESC LIMIT 0, 10');	
+				($CURUSER['class'] < $min_delete_view_class ? 'p.status != \'deleted\' AND' : '')).' topic_id='.sqlesc($topic_id).' ORDER BY p.id DESC LIMIT 0, 10');	
 				
 	$HTMLOUT .= '<br /><span style="text-align: center;">last ten posts in reverse order</span>
 	<table border="0" cellspacing="5" cellpadding="10" width="90%" align="center">';
@@ -303,7 +302,7 @@ if ($CURUSER['class'] >= $min_upload_class)
 		$class_alt = ($colour == 0 ? 'two' : 'one');
 						
 			$HTMLOUT .= '<tr><td class="forum_head" align="left" width="100" valign="middle">#
-			<span style="font-weight: bold;">'.htmlspecialchars($arr['username']).'</span></td>
+			<span style="font-weight: bold;">'.htmlsafechars($arr['username']).'</span></td>
 			<td class="forum_head" align="left" valign="middle"><span style="white-space:nowrap;"> posted on: '.get_date($arr['added'],'').' ['.get_date($arr['added'],'',0,1).']</span></td></tr>
 			<tr><td class="'.$class_alt.'" align="center" width="100" valign="top">'.avatar_stuff($arr).'<br />
 			'.print_user_stuff($arr).'</td>

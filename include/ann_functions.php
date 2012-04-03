@@ -139,7 +139,7 @@ function get_torrent_from_hash($info_hash) {
       $torrent['leechers']        = $mc1->get_value($leech_key);
       $torrent['times_completed'] = $mc1->get_value($comp_key);
       if ($torrent['seeders'] === false || $torrent['leechers'] === false || $torrent['times_completed'] === false) {
-         $res = mysqli_query($GLOBALS["___mysqli_ston"], 'SELECT seeders, leechers, times_completed FROM torrents WHERE id = '.$torrent['id']) or ann_sqlerr(__FILE__, __LINE__);
+         $res = mysqli_query($GLOBALS["___mysqli_ston"], 'SELECT seeders, leechers, times_completed FROM torrents WHERE id = '.ann_sqlesc($torrent['id'])) or ann_sqlerr(__FILE__, __LINE__);
          if (mysqli_num_rows($res)) {
             $torrentq = mysqli_fetch_assoc($res);
             $torrent['seeders']         = (int)$torrentq['seeders'];
@@ -215,7 +215,7 @@ function get_slots($torrentid, $userid) {
     $torrent['freeslot'] = $torrent['doubleslot'] = 0;
     $slot = $mc1->get_value('fllslot_'.$userid);
     if ($slot === false) {
-       $res_slots = mysqli_query($GLOBALS["___mysqli_ston"], 'SELECT * FROM freeslots WHERE userid = '.$userid) or ann_sqlerr(__FILE__, __LINE__);
+       $res_slots = mysqli_query($GLOBALS["___mysqli_ston"], 'SELECT * FROM freeslots WHERE userid = '.ann_sqlesc($userid)) or ann_sqlerr(__FILE__, __LINE__);
         $slot = array();
          if (mysqli_num_rows($res_slots)) {
               while ($rowslot = mysqli_fetch_assoc($res_slots))

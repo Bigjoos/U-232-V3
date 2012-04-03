@@ -46,7 +46,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
                          'comments, categorie_icon, reputation, perms, mood, got_moods, pms_per_page, show_pm_avatar, watched_user, watched_user_reason, staff_notes, game_access';
      
         if(($user = $mc1->get_value('user'.$id)) === false) {
-        $r1 = sql_query("SELECT ".$user_fields." FROM users WHERE id=".sqlesc($id)."") or sqlerr(__FILE__,__LINE__);
+        $r1 = sql_query("SELECT ".$user_fields." FROM users WHERE id=".sqlesc($id)) or sqlerr(__FILE__,__LINE__);
         $user = mysqli_fetch_assoc($r1) or stderr("Error", "{$lang['userdetails_no_user']}");
         $user['id'] = (int)$user['id'];
           $user['added'] = (int)$user['added'];
@@ -119,7 +119,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
      
         // user stats
         if(($user_stats = $mc1->get_value('user_stats_'.$id)) === false) {
-          $sql_1 = sql_query('SELECT uploaded, downloaded, seedbonus, bonuscomment, modcomment FROM users WHERE id = '.$id) or sqlerr(__FILE__, __LINE__);
+          $sql_1 = sql_query('SELECT uploaded, downloaded, seedbonus, bonuscomment, modcomment FROM users WHERE id = '.sqlesc($id)) or sqlerr(__FILE__, __LINE__);
           $user_stats = mysqli_fetch_assoc($sql_1);
           $user_stats['seedbonus'] = (float)$user_stats['seedbonus'];
           $user_stats['uploaded'] = (float)$user_stats['uploaded'];
@@ -130,7 +130,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
         }
        
         if(($user_status = $mc1->get_value('user_status_'.$id)) === false) {
-           $sql_2 = sql_query('SELECT * FROM ustatus WHERE userid = '.$id);
+           $sql_2 = sql_query('SELECT * FROM ustatus WHERE userid = '.sqlesc($id));
            if (mysqli_num_rows($sql_2))
                $user_status = mysqli_fetch_assoc($sql_2);
            else
@@ -152,7 +152,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
                             if (!is_valid_id($delete_me))
                                     stderr('Error!','Bad ID');
      
-        sql_query('UPDATE snatched SET hit_and_run = \'0\', mark_of_cain = \'no\' WHERE id = '.$delete_me) or sqlerr(__FILE__,__LINE__);
+        sql_query('UPDATE snatched SET hit_and_run = \'0\', mark_of_cain = \'no\' WHERE id = '.sqlesc($delete_me)) or sqlerr(__FILE__,__LINE__);
                     if (@mysqli_affected_rows($GLOBALS["___mysqli_ston"]) === 0)
                     {
                     stderr('Error!','H&R not deleted!');
@@ -162,15 +162,15 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
         die();
         }
        
-        $r = sql_query("SELECT t.id, t.name, t.seeders, t.leechers, c.name AS cname, c.image FROM torrents t LEFT JOIN categories c ON t.category = c.id WHERE t.owner = $id ORDER BY t.name") or sqlerr(__FILE__,__LINE__);
+        $r = sql_query("SELECT t.id, t.name, t.seeders, t.leechers, c.name AS cname, c.image FROM torrents t LEFT JOIN categories c ON t.category = c.id WHERE t.owner = ".sqlesc($id)." ORDER BY t.name") or sqlerr(__FILE__,__LINE__);
         if (mysqli_num_rows($r) > 0)
         {
           $torrents = "<table class='main' border='1' cellspacing='0' cellpadding='5'>\n" .
             "<tr><td class='colhead'>{$lang['userdetails_type']}</td><td class='colhead'>{$lang['userdetails_name']}</td><td class='colhead'>{$lang['userdetails_seeders']}</td><td class='colhead'>{$lang['userdetails_leechers']}</td></tr>\n";
           while ($a = mysqli_fetch_assoc($r))
           {
-            $cat = "<img src=\"". htmlspecialchars("{$INSTALLER09['pic_base_url']}/caticons/{$CURUSER['categorie_icon']}/{$a['image']}") ."\" title=\"{$a['cname']}\" alt=\"{$a['cname']}\" />";
-              $torrents .= "<tr><td style='padding: 0px'>$cat</td><td><a href='details.php?id=" . (int)$a['id'] . "&amp;hit=1'><b>" . htmlspecialchars($a["name"]) . "</b></a></td>" .
+            $cat = "<img src=\"{$INSTALLER09['pic_base_url']}/caticons/{$CURUSER['categorie_icon']}/".htmlsafechars($a['image'])."\" title=\"".htmlsafechars($a['cname'])."\" alt=\"".htmlsafechars($a['cname'])."\" />";
+              $torrents .= "<tr><td style='padding: 0px'>$cat</td><td><a href='details.php?id=".(int)$a['id']."&amp;hit=1'><b>".htmlsafechars($a["name"])."</b></a></td>" .
                 "<td align='right'>".(int)$a['seeders']."</td><td align='right'>".(int)$a['leechers']."</td></tr>\n";
           }
           $torrents .= "</table>";
@@ -221,11 +221,11 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
         $countries = countries();
         foreach ($countries as $cntry)
         if ($cntry['id'] == $user['country']) {
-        $country = "<img src=\"{$INSTALLER09['pic_base_url']}flag/{$cntry['flagpic']}\" alt=\"". htmlspecialchars($cntry['name']) ."\" style='margin-left: 8pt' />";
+        $country = "<img src=\"{$INSTALLER09['pic_base_url']}flag/{$cntry['flagpic']}\" alt=\"". htmlsafechars($cntry['name']) ."\" style='margin-left: 8pt' />";
         break;
         }
      
-        $res = sql_query("SELECT p.torrent, p.uploaded, p.downloaded, p.seeder, t.added, t.name as torrentname, t.size, t.category, t.seeders, t.leechers, c.name as catname, c.image FROM peers p LEFT JOIN torrents t ON p.torrent = t.id LEFT JOIN categories c ON t.category = c.id WHERE p.userid=$id") or sqlerr();
+        $res = sql_query("SELECT p.torrent, p.uploaded, p.downloaded, p.seeder, t.added, t.name as torrentname, t.size, t.category, t.seeders, t.leechers, c.name as catname, c.image FROM peers p LEFT JOIN torrents t ON p.torrent = t.id LEFT JOIN categories c ON t.category = c.id WHERE p.userid=".sqlesc($id)) or sqlerr(__FILE__,__LINE__);
         while ($arr = mysqli_fetch_assoc($res))
         {
             if ($arr['seeder'] == 'yes')
@@ -236,11 +236,11 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
        
         //==userhits update by pdq
         if (!(isset($_GET["hit"])) && $CURUSER["id"] <> $user["id"]) {
-        $res = sql_query("SELECT added FROM userhits WHERE userid ={$CURUSER['id']} AND hitid = ".sqlesc($id)." LIMIT 1") or sqlerr(__FILE__, __LINE__);
+        $res = sql_query("SELECT added FROM userhits WHERE userid =".sqlesc($CURUSER['id'])." AND hitid = ".sqlesc($id)." LIMIT 1") or sqlerr(__FILE__, __LINE__);
         $row = mysqli_fetch_row($res);
         if (!($row[0] > TIME_NOW - 3600)) {
             $hitnumber = $user['hits'] + 1;
-            sql_query("UPDATE users SET hits = hits + 1 WHERE id = ".sqlesc($id)."") or sqlerr(__FILE__, __LINE__);
+            sql_query("UPDATE users SET hits = hits + 1 WHERE id = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
             // do update hits userdetails cache
             $update['user_hits'] = ($user['hits'] + 1);
             $mc1->begin_transaction('MyUser_'.$id);
@@ -259,10 +259,10 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
               $HTMLOUT .= "<table width='100%' border='1' cellspacing='0' cellpadding='5' class='main'>";
               $HTMLOUT .= "<tr><td colspan='2' align='center'>{$lang['userdetails_anonymous']}</td></tr>";
               if ($user["avatar"])
-              $HTMLOUT .= "<tr><td colspan='2' align='center'><img src='" . htmlspecialchars($user["avatar"]) . "'></td></tr>\n";
+              $HTMLOUT .= "<tr><td colspan='2' align='center'><img src='".htmlsafechars($user["avatar"])."'></td></tr>\n";
               if ($user["info"])
-              $HTMLOUT .= "<tr valign='top'><td align='left' colspan='2' class=text bgcolor='#F4F4F0'>'" . format_comment($user["info"]) . "'</td></tr>\n";
-        $HTMLOUT .= "<tr><td colspan='2' align='center'><form method='get' action='{$INSTALLER09['baseurl']}/sendmessage.php'><input type='hidden' name='receiver' value='".(int)$user["id"]."' /><input type='submit' value='{$lang['userdetails_sendmess']}' style='height: 23px' /></form>";
+              $HTMLOUT .= "<tr valign='top'><td align='left' colspan='2' class=text bgcolor='#F4F4F0'>'".format_comment($user["info"])."'</td></tr>\n";
+        $HTMLOUT .= "<tr><td colspan='2' align='center'><form method='get' action='{$INSTALLER09['baseurl']}/pm_system.php?action=send_message'><input type='hidden' name='receiver' value='".(int)$user["id"]."' /><input type='submit' value='{$lang['userdetails_sendmess']}' style='height: 23px' /></form>";
               if ($CURUSER['class'] < UC_STAFF && $user["id"] != $CURUSER["id"])
               {
               $HTMLOUT .= end_main_frame();
@@ -290,13 +290,13 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
           elseif ($CURUSER["id"] <> $user["id"])
           {
           if(($friends = $mc1->get_value('Friends_'.$id)) === false) {
-          $r3 = sql_query("SELECT id FROM friends WHERE userid={$CURUSER['id']} AND friendid=$id") or sqlerr(__FILE__, __LINE__);
+          $r3 = sql_query("SELECT id FROM friends WHERE userid=".sqlesc($CURUSER['id'])." AND friendid=".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
           $friends = mysqli_num_rows($r3);
           $mc1->cache_value('Friends_'.$id, $friends, $INSTALLER09['expires']['user_friends']);
           }
          
           if(($blocks = $mc1->get_value('Blocks_'.$id)) === false) {
-          $r4 = sql_query("SELECT id FROM blocks WHERE userid={$CURUSER['id']} AND blockid=$id") or sqlerr(__FILE__, __LINE__);
+          $r4 = sql_query("SELECT id FROM blocks WHERE userid=".sqlesc($CURUSER['id'])." AND blockid=".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
           $blocks = mysqli_num_rows($r4);
           $mc1->cache_value('Blocks_'.$id, $blocks, $INSTALLER09['expires']['user_blocks']);
           }
@@ -316,7 +316,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
         if ($CURUSER['class'] >= UC_STAFF){
         $shitty = '';
         if(($shit_list = $mc1->get_value('shit_list_'.$id)) === false) {
-        $check_if_theyre_shitty = sql_query("SELECT suspect FROM shit_list WHERE userid=".sqlesc($CURUSER['id'])." AND suspect=".$id) or sqlerr(__FILE__, __LINE__);
+        $check_if_theyre_shitty = sql_query("SELECT suspect FROM shit_list WHERE userid=".sqlesc($CURUSER['id'])." AND suspect=".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
         list($shit_list) = mysqli_fetch_row($check_if_theyre_shitty);
         $mc1->cache_value('shit_list_'.$id, $shit_list, $INSTALLER09['expires']['shit_list']);
         }
@@ -331,7 +331,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
         }
        // ===donor count down
        if ($user["donor"] && $CURUSER["id"] == $user["id"] || $CURUSER["class"] == UC_SYSOP) {
-       $donoruntil = htmlspecialchars($user['donoruntil']);
+       $donoruntil = htmlsafechars($user['donoruntil']);
        if ($donoruntil == '0')
        $HTMLOUT.= "";
        else {
@@ -343,10 +343,6 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
         if ($CURUSER['id'] == $user['id'])
         $HTMLOUT.="<h1><a href='{$INSTALLER09['baseurl']}/usercp.php?action=default'>Edit My Profile</a></h1>
               <h1><a href='{$INSTALLER09['baseurl']}/view_announce_history.php'>View My Announcements</a></h1>";
-       
-        if ($CURUSER['class'] >= UC_STAFF)
-              $HTMLOUT .= "<h1><a href='{$INSTALLER09['baseurl']}/userimages.php?user=".htmlspecialchars($user['username'])."'>{$lang['userdetails_viewimages']}</a></h1>";
-       
         if ($CURUSER['id'] != $user['id'])
         $HTMLOUT .="<h1><a href='{$INSTALLER09['baseurl']}/sharemarks.php?id=$id'>View sharemarks</a></h1>\n";
        
@@ -399,7 +395,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
               if (curuser::$blocks['userdetails_page'] & block_userdetails::SEEDTIME_RATIO && $BLOCKS['userdetails_seedtime_ratio_on']){
               require_once(BLOCK_DIR.'userdetails/seedtimeratio.php');
               }
-               
+             
               if (curuser::$blocks['userdetails_page'] & block_userdetails::TORRENTS_BLOCK && $BLOCKS['userdetails_torrents_block_on']){
               require_once(BLOCK_DIR.'userdetails/torrents_block.php');
               }
@@ -436,7 +432,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
                             <input type="radio" value="no" name="add_to_watched_users"'.($user['watched_user'] == 0 ? ' checked="checked"' : '').' /> no <br />
                             <span id="desc_text" style="color:red;font-size: xx-small;">* you must select yes or no if you wish to change the watched user status!<br />
                             you may add, edit or delete the text below without changing their status.</span><br />
-                            <textarea id="watched_reason" cols="50" rows="6" name="watched_reason">'.htmlspecialchars($user['watched_user_reason']).'</textarea><br />
+                            <textarea id="watched_reason" cols="50" rows="6" name="watched_reason">'.htmlsafechars($user['watched_user_reason']).'</textarea><br />
                             <input id="watched_user_button" type="submit" value="Submit!" class="btn" name="watched_user_button" />
                             </form></div> </td></tr>';
              //=== staff Notes
@@ -447,7 +443,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
                             <form method="post" action="member_input.php" name="notes_for_staff">
                             <input name="id" type="hidden" value="'.(int)$user['id'].'" />
                             <input type="hidden" value="staff_notes" name="action" id="action" />
-                            <textarea id="new_staff_note" cols="50" rows="6" name="new_staff_note">'.htmlspecialchars($user['staff_notes']).'</textarea>
+                            <textarea id="new_staff_note" cols="50" rows="6" name="new_staff_note">'.htmlsafechars($user['staff_notes']).'</textarea>
                             <br /><input id="staff_notes_button" type="submit" value="Submit!" class="btn" name="staff_notes_button"/>
                             </form>
                             </div> </td></tr>';
@@ -520,12 +516,12 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
      
     $HTMLOUT .= "<div id='activity'>";
     $HTMLOUT .= "<table align='center' width='100%' border='1' cellspacing='0' cellpadding='5'>\n";  
-        $moodname = (isset($mood['name'][$user['mood']]) ? htmlspecialchars($mood['name'][$user['mood']]) : 'is feeling neutral');
-        $moodpic  = (isset($mood['image'][$user['mood']]) ? htmlspecialchars($mood['image'][$user['mood']]) : 'noexpression.gif');
+        $moodname = (isset($mood['name'][$user['mood']]) ? htmlsafechars($mood['name'][$user['mood']]) : 'is feeling neutral');
+        $moodpic  = (isset($mood['image'][$user['mood']]) ? htmlsafechars($mood['image'][$user['mood']]) : 'noexpression.gif');
         $HTMLOUT .='<tr><td class="rowhead">Current Mood</td><td align="left"><span class="tool">
        <a href="javascript:;" onclick="PopUp(\'usermood.php\',\'Mood\',530,500,1,1);">
        <img src="'.$INSTALLER09['pic_base_url'].'smilies/'.$moodpic.'" alt="'.$moodname.'" border="0" />
-       <span class="tip">'.htmlspecialchars($user['username']).' '.$moodname.' !</span></a></span></td></tr>';
+       <span class="tip">'.htmlsafechars($user['username']).' '.$moodname.' !</span></a></span></td></tr>';
              
               if (curuser::$blocks['userdetails_page'] & block_userdetails::SEEDBONUS && $BLOCKS['userdetails_seedbonus_on']){
               require_once(BLOCK_DIR.'userdetails/seedbonus.php');
@@ -597,8 +593,8 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
           $HTMLOUT .= "<input type='hidden' name='returnto' value='userdetails.php?id=$id' />\n";
           $HTMLOUT .= "
          <table class='main' border='1' cellspacing='0' cellpadding='5'>\n";
-          $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_title']}</td><td colspan='2' align='left'><input type='text' size='60' name='title' value='" . htmlspecialchars($user['title']) . "' /></td></tr>\n";
-          $avatar = htmlspecialchars($user["avatar"]);
+          $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_title']}</td><td colspan='2' align='left'><input type='text' size='60' name='title' value='" . htmlsafechars($user['title']) . "' /></td></tr>\n";
+          $avatar = htmlsafechars($user["avatar"]);
           $HTMLOUT .="<tr><td class='rowhead'>{$lang['userdetails_avatar_url']}</td><td colspan='2' align='left'><input type='text' size='60' name='avatar' value='$avatar' /></td></tr>\n";
           $HTMLOUT .="<tr>
                       <td class='rowhead'>Signature Rights</td>
@@ -612,32 +608,32 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
                 </tr>
                 <tr>
                       <td class='rowhead'>Signature</td>
-                      <td colspan='2' align='left'><textarea cols='60' rows='2' name='signature'>".htmlspecialchars($user['signature'])."</textarea></td>
+                      <td colspan='2' align='left'><textarea cols='60' rows='2' name='signature'>".htmlsafechars($user['signature'])."</textarea></td>
                 </tr>
      
                 <tr>
                       <td class='rowhead'>Google Talk</td>
-                      <td colspan='2' align='left'><input type='text' size='60' name='google_talk' value='".htmlspecialchars($user['google_talk'])."' /></td>
+                      <td colspan='2' align='left'><input type='text' size='60' name='google_talk' value='".htmlsafechars($user['google_talk'])."' /></td>
                 </tr>
                 <tr>
                       <td class='rowhead'>MSN</td>
-                      <td colspan='2' align='left'><input type='text' size='60' name='msn' value='".htmlspecialchars($user['msn'])."' /></td>
+                      <td colspan='2' align='left'><input type='text' size='60' name='msn' value='".htmlsafechars($user['msn'])."' /></td>
                 </tr>
                 <tr>
                       <td class='rowhead'>AIM</td>
-                      <td colspan='2' align='left'><input type='text' size='60' name='aim' value='".htmlspecialchars($user['aim'])."' /></td>
+                      <td colspan='2' align='left'><input type='text' size='60' name='aim' value='".htmlsafechars($user['aim'])."' /></td>
                 </tr>
                 <tr>
                       <td class='rowhead'>Yahoo</td>
-                      <td colspan='2' align='left'><input type='text' size='60' name='yahoo' value='".htmlspecialchars($user['yahoo'])."' /></td>
+                      <td colspan='2' align='left'><input type='text' size='60' name='yahoo' value='".htmlsafechars($user['yahoo'])."' /></td>
                 </tr>
                 <tr>
                       <td class='rowhead'>ICQ</td>
-                      <td colspan='2' align='left'><input type='text' size='60' name='icq' value='".htmlspecialchars($user['icq'])."' /></td>
+                      <td colspan='2' align='left'><input type='text' size='60' name='icq' value='".htmlsafechars($user['icq'])."' /></td>
                 </tr>
                 <tr>
                       <td class='rowhead'>Website</td>
-                      <td colspan='2' align='left'><input type='text' size='60' name='website' value='".htmlspecialchars($user['website'])."' /></td>
+                      <td colspan='2' align='left'><input type='text' size='60' name='website' value='".htmlsafechars($user['website'])."' /></td>
                 </tr>";
           //== we do not want mods to be able to change user classes or amount donated...
           // === Donor mod time based by snuggles
@@ -657,7 +653,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
          "<option value='6'>6 weeks</option><option value='8'>2 months</option><option value='10'>10 weeks</option>" .
          "<option value='12'>3 months</option><option value='255'>Unlimited</option></select>\n";
          }
-         $HTMLOUT .="<br /><b>{$lang['userdetails_cdonation']}</b><input type='text' size='6' name='donated' value=\"" .htmlspecialchars($user["donated"]) . "\" />" . "<b>{$lang['userdetails_tdonations']}</b>" . htmlspecialchars($user["total_donated"]) . "";
+         $HTMLOUT .="<br /><b>{$lang['userdetails_cdonation']}</b><input type='text' size='6' name='donated' value=\"" .htmlsafechars($user["donated"]) . "\" />" . "<b>{$lang['userdetails_tdonations']}</b>" . htmlsafechars($user["total_donated"]) . "";
          if ($donor) {
          $HTMLOUT .="<br /><b>{$lang['userdetails_adonor']}</b> <select name='donorlengthadd'><option value='0'>------</option><option value='4'>1 month</option>" .
          "<option value='6'>6 weeks</option><option value='8'>2 months</option><option value='10'>10 weeks</option>" .
@@ -681,11 +677,11 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
               $HTMLOUT .= "<option value='$i'" . ($user["class"] == $i ? " selected='selected'" : "") . ">" . get_user_class_name($i) . "</option>\n";
             $HTMLOUT .= "</select></td></tr>\n";
           }
-          $supportfor = htmlspecialchars($user["supportfor"]);
+          $supportfor = htmlsafechars($user["supportfor"]);
           $HTMLOUT .="<tr><td class='rowhead'>{$lang['userdetails_support']}</td><td colspan='2' align='left'><input type='radio' name='support' value='yes'" .($user["support"] == "yes" ? " checked='checked'" : "")." />{$lang['userdetails_yes']}<input type='radio' name='support' value='no'" .($user["support"] == "no" ? " checked='checked'" : "")." />{$lang['userdetails_no']}</td></tr>\n";
           $HTMLOUT .="<tr><td class='rowhead'>{$lang['userdetails_supportfor']}</td><td colspan='2' align='left'><textarea cols='60' rows='2' name='supportfor'>{$supportfor}</textarea></td></tr>\n";
      
-          $modcomment = htmlspecialchars($user_stats["modcomment"]);
+          $modcomment = htmlsafechars($user_stats["modcomment"]);
           if ($CURUSER["class"] < UC_SYSOP) {
           $HTMLOUT .="<tr><td class='rowhead'>{$lang['userdetails_comment']}</td><td colspan='2' align='left'><textarea cols='60' rows='6' name='modcomment' readonly='readonly'>$modcomment</textarea></td></tr>\n";
           }
@@ -694,7 +690,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
           }
           $HTMLOUT .="<tr><td class='rowhead'>{$lang['userdetails_add_comment']}</td><td colspan='2' align='left'><textarea cols='60' rows='2' name='addcomment'></textarea></td></tr>\n";
           //=== bonus comment
-          $bonuscomment = htmlspecialchars($user_stats["bonuscomment"]);
+          $bonuscomment = htmlsafechars($user_stats["bonuscomment"]);
           $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_bonus_comment']}</td><td colspan='2' align='left'><textarea cols='60' rows='6' name='bonuscomment' readonly='readonly' style='background:purple;color:yellow;'>$bonuscomment</textarea></td></tr>\n";
           //==end
           $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_enabled']}</td><td colspan='2' align='left'><input name='enabled' value='yes' type='radio'" . ($enabled ? " checked='checked'" : "") . " />{$lang['userdetails_yes']} <input name='enabled' value='no' type='radio'" . (!$enabled ? " checked='checked'" : "") . " />{$lang['userdetails_no']}</td></tr>\n";
@@ -975,7 +971,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
           // ==end
           //==Invites
           $HTMLOUT .= "<tr><td class='rowhead'>{$lang['userdetails_invright']}</td><td colspan='2' align='left'><input type='radio' name='invite_on' value='yes'" .($user["invite_on"]=="yes" ? " checked='checked'" : "") . " />{$lang['userdetails_yes']}<input type='radio' name='invite_on' value='no'" .($user["invite_on"]=="no" ? " checked='checked'" : "") . " />{$lang['userdetails_no']}</td></tr>\n";
-          $HTMLOUT .= "<tr><td class='rowhead'><b>{$lang['userdetails_invites']}</b></td><td colspan='2' align='left'><input type='text' size='3' name='invites' value='" . htmlspecialchars($user['invites']) . "' /></td></tr>\n";
+          $HTMLOUT .= "<tr><td class='rowhead'><b>{$lang['userdetails_invites']}</b></td><td colspan='2' align='left'><input type='text' size='3' name='invites' value='" . htmlsafechars($user['invites']) . "' /></td></tr>\n";
          
           $HTMLOUT.="<tr>
                       <td class='rowhead'>Avatar Rights</td>

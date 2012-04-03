@@ -42,12 +42,7 @@ if (!defined('BUNNY_FORUMS'))
     }	
 
 	//=== get the post info
-	$res_post = sql_query('SELECT p.added, p.user_id AS puser_id, p.body, p.icon, p.post_title, p.bbcode, p.post_history, p.edited_by, p.edit_date, p.edit_reason, p.staff_lock, a.file,
-						u.id, u.username, u.class, u.donor, u.suspended, u.warned, u.enabled, u.chatpost, u.leechwarn, u.pirate, u.king, 
-						t.topic_name, t.locked, t.user_id, t.topic_desc, f.min_class_read, f.min_class_write, f.id AS forum_id 
-      					FROM posts AS p LEFT JOIN attachments as a ON p.id = a.post_id
-						LEFT JOIN users AS u ON p.user_id = u.id LEFT JOIN topics AS t ON t.id = p.topic_id 
-						LEFT JOIN forums AS f ON t.forum_id = f.id WHERE p.id='.$post_id);
+	$res_post = sql_query('SELECT p.added, p.user_id AS puser_id, p.body, p.icon, p.post_title, p.bbcode, p.post_history, p.edited_by, p.edit_date, p.edit_reason, p.staff_lock, a.file, u.id, u.username, u.class, u.donor, u.suspended, u.warned, u.enabled, u.chatpost, u.leechwarn, u.pirate, u.king, t.topic_name, t.locked, t.user_id, t.topic_desc, f.min_class_read, f.min_class_write, f.id AS forum_id FROM posts AS p LEFT JOIN attachments as a ON p.id = a.post_id LEFT JOIN users AS u ON p.user_id = u.id LEFT JOIN topics AS t ON t.id = p.topic_id LEFT JOIN forums AS f ON t.forum_id = f.id WHERE p.id='.sqlesc($post_id));
 	$arr_post = mysqli_fetch_assoc($res_post);
 	
 	//=== get any attachments
@@ -63,19 +58,19 @@ if (!defined('BUNNY_FORUMS'))
 		<td class="forum_head" align="left" valign="middle" colspan="2"><span style="font-weight: bold">Delete</span></td>
 	</tr>';
 		
-		$attachments_res = sql_query('SELECT id, file_name, extension, size FROM attachments WHERE post_id ='.$post_id.' AND user_id = '.$arr_post['id']);
+		$attachments_res = sql_query('SELECT id, file_name, extension, size FROM attachments WHERE post_id ='.sqlesc($post_id).' AND user_id = '.sqlesc($arr_post['id']));
 		
 		while ($attachments_arr = mysqli_fetch_assoc($attachments_res))
 		{
 		$attachments .= '
 	<tr>
 		<td class="three" align="center" valign="middle" width="18">
-		<input type="checkbox" name="attachment_to_delete[]" value="'.$attachments_arr ['id'].'" /></td>
+		<input type="checkbox" name="attachment_to_delete[]" value="'.(int)$attachments_arr ['id'].'" /></td>
 		<td class="three" align="left" valign="middle">
 		<span style="white-space:nowrap;">'.($attachments_arr['extension'] === 'zip' ? ' <img src="pic/forums/zip.gif" alt="Zip" title="Zip" width="18" style="vertical-align: middle;" /> ' :
 		' <img src="pic/forums/rar.gif" alt="Rar" title="Rar" width="18" /> ').' 
-		<a class="altlink" href="forums.php?action=download_attachment&amp;id='.$attachments_arr ['id'].'" title="Download Attachment" target="_blank">
-		'.htmlspecialchars($attachments_arr['file_name']).'</a> <span style="font-weight: bold; font-size: xx-small;">['.mksize($attachments_arr['size']).']</span></span>
+		<a class="altlink" href="forums.php?action=download_attachment&amp;id='.(int)$attachments_arr ['id'].'" title="Download Attachment" target="_blank">
+		'.htmlsafechars($attachments_arr['file_name']).'</a> <span style="font-weight: bold; font-size: xx-small;">['.mksize($attachments_arr['size']).']</span></span>
 		</td>
 	</tr>';
 		}
@@ -120,7 +115,7 @@ if (!defined('BUNNY_FORUMS'))
 		}
 
 	$post_title = strip_tags(isset($_POST['post_title']) ? $_POST['post_title'] : $arr_post['post_title']);
-	$icon = (isset($_POST['icon']) ? htmlspecialchars($_POST['icon']) : $arr_post['icon']);
+	$icon = (isset($_POST['icon']) ? htmlsafechars($_POST['icon']) : $arr_post['icon']);
 	$show_bbcode = (isset($_POST['show_bbcode']) ? $_POST['show_bbcode'] : $arr_post['bbcode']);
 	
 	$edit_reason = strip_tags(isset($_POST['edit_reason']) ? ($_POST['edit_reason']) : '');
@@ -166,13 +161,13 @@ if (!defined('BUNNY_FORUMS'))
 		//=== let the sysop have the power to not show they edited their own post if they wish...
      		if ($show_edited_by == 'no' && $CURUSER['class'] == UC_SYSOP)
      		{
-     		$edit_reason = $arr_post['edit_reason'];
-     		$edited_by = $arr_post['edited_by'];
-     		$edit_date = $arr_post['edit_date'];
-     		$post_history = $arr_post['post_history'];
+     		$edit_reason = htmlsafechars($arr_post['edit_reason']);
+     		$edited_by = htmlsafechars($arr_post['edited_by']);
+     		$edit_date = (int)$arr_post['edit_date'];
+     		$post_history = htmlsafechars($arr_post['post_history']);
      		}
 		
-      sql_query('UPDATE posts SET body = '.sqlesc($body).', icon = '.sqlesc($icon).', post_title = '.sqlesc($post_title).', bbcode = '.sqlesc($show_bbcode).', edit_reason = '.sqlesc($edit_reason).', edited_by = '.sqlesc($edited_by).', edit_date = '.sqlesc($edit_date).', post_history = '.sqlesc($post_history).' WHERE id = '.$post_id);
+      sql_query('UPDATE posts SET body = '.sqlesc($body).', icon = '.sqlesc($icon).', post_title = '.sqlesc($post_title).', bbcode = '.sqlesc($show_bbcode).', edit_reason = '.sqlesc($edit_reason).', edited_by = '.sqlesc($edited_by).', edit_date = '.sqlesc($edit_date).', post_history = '.sqlesc($post_history).' WHERE id = '.sqlesc($post_id));
       $mc1->delete_value('last_posts_'.$CURUSER['class']);
 		  $mc1->delete_value('forum_posts_'.$CURUSER['id']);
 		//=== update topic stuff
@@ -218,7 +213,7 @@ if ($CURUSER['class'] >= $min_upload_class)
 			$upload_to  = $upload_folder.$name.'(id-'.$post_id.')'.$file_extension; 
 			//===plop it into the DB all safe and snuggly			
 			 sql_query('INSERT INTO `attachments` (`post_id`, `user_id`, `file`, `file_name`, `added`, `extension`, `size`) VALUES 
-( '.$post_id.', '.$CURUSER['id'].', '.sqlesc($name.'(id-'.$post_id.')'.$file_extension).', '.sqlesc($name).', '.TIME_NOW.', '.($file_extension === '.zip' ? '\'zip\'' : '\'rar\'').', '.$size.')');
+( '.sqlesc($post_id).', '.sqlesc($CURUSER['id']).', '.sqlesc($name.'(id-'.$post_id.')'.$file_extension).', '.sqlesc($name).', '.TIME_NOW.', '.($file_extension === '.zip' ? '\'zip\'' : '\'rar\'').', '.$size.')');
 				copy($_FILES['attachment']['tmp_name'][$key], $upload_to ); 
 				chmod($upload_to, 0777);      
 				}
@@ -236,13 +231,13 @@ if (isset($_POST['attachment_to_delete']))
 		$attachment_to_delete = intval($var);
 	
 			//=== get attachment info
-			$attachments_res = sql_query('SELECT file FROM attachments WHERE id = '.$attachment_to_delete);
+			$attachments_res = sql_query('SELECT file FROM attachments WHERE id = '.sqlesc($attachment_to_delete));
 			$attachments_arr = mysqli_fetch_array($attachments_res);
        
 			//=== delete the file
 			unlink($upload_folder.$attachments_arr['file']);
 			//=== delete them from the DB
-			sql_query('DELETE FROM attachments WHERE id = '.$attachment_to_delete.' AND post_id = '.$post_id);
+			sql_query('DELETE FROM attachments WHERE id = '.sqlesc($attachment_to_delete).' AND post_id = '.sqlesc($post_id));
 	
 		}
 }//=== end attachment stuff
@@ -250,7 +245,7 @@ if (isset($_POST['attachment_to_delete']))
 		//=== only write to staff actions if it's a staff editing and not their own post
 		if ($CURUSER['class'] >= UC_STAFF && $CURUSER['id'] !== $arr_post['user_id'])
 		{
-		write_log(''.$CURUSER['username'].' edited a post by '.htmlspecialchars($arr_post['username']).'. Here is the <a class="altlink" href="forums.php?action=view_post_history&amp;post_id='.$post_id.'&amp;forum_id='.$arr_post['forum_id'].'&amp;topic_id='.$topic_id.'">LINK.</a> to the post history', $CURUSER['id']);
+		write_log(''.$CURUSER['username'].' edited a post by '.htmlsafechars($arr_post['username']).'. Here is the <a class="altlink" href="forums.php?action=view_post_history&amp;post_id='.$post_id.'&amp;forum_id='.(int)$arr_post['forum_id'].'&amp;topic_id='.$topic_id.'">LINK.</a> to the post history', $CURUSER['id']);
 		}
       
       //header('Location: forums.php?action=view_topic&topic_id='.$topic_id.'&page='.$page.'#'.$post_id); 
@@ -261,7 +256,7 @@ if (isset($_POST['attachment_to_delete']))
 	$HTMLOUT .= '<table class="main" width="750px" border="0" cellspacing="0" cellpadding="0">
 	<tr><td class="embedded" align="center">
 	<h1 style="text-align: center;">Edit post by:'.print_user_stuff($arr_post).' in topic 
-	"<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$topic_id.'">'.htmlentities($arr_post['topic_name'], ENT_QUOTES).'</a>"</h1>
+	"<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$topic_id.'">'.htmlsafechars($arr_post['topic_name'], ENT_QUOTES).'</a>"</h1>
 	<form method="post" action="forums.php?action=edit_post&amp;topic_id='.$topic_id.'&amp;post_id='.$post_id.'&amp;page='.$page.'" enctype="multipart/form-data">
 	
 	'.(isset($_POST['button']) && $_POST['button'] == 'Preview' ? '<br />
@@ -365,7 +360,7 @@ if (isset($_POST['attachment_to_delete']))
 				u.id, u.username, u.class, u.donor, u.suspended, u.warned, u.enabled, u.avatar, u.chatpost, u.leechwarn, u.pirate, u.king, u.offensive_avatar 
 				FROM posts AS p LEFT JOIN users AS u ON p.user_id = u.id 
 				WHERE '.($CURUSER['class'] < UC_STAFF ? 'p.status = \'ok\' AND' : 
-				($CURUSER['class'] < $min_delete_view_class ? 'p.status != \'deleted\' AND' : '')).'  topic_id='.$topic_id.' ORDER BY p.id DESC LIMIT 1, 10');	
+				($CURUSER['class'] < $min_delete_view_class ? 'p.status != \'deleted\' AND' : '')).'  topic_id='.sqlesc($topic_id).' ORDER BY p.id DESC LIMIT 1, 10');	
 				
 	 $HTMLOUT .= '<br /><span style="text-align: center;">last ten posts in reverse order</span>
 	  <table border="0" cellspacing="5" cellpadding="10" width="90%" align="center">';
@@ -380,9 +375,9 @@ if (isset($_POST['attachment_to_delete']))
 				
 		
 						
-			$HTMLOUT .='<tr><td class="forum_head" align="left" width="100" valign="middle"><a name="'.$arr['post_id'].'"></a>
-			<span style="white-space:nowrap;">#'.$arr['post_id'].'
-			<span style="font-weight: bold;">'.htmlspecialchars($arr['username']).'</span></span></td>
+			$HTMLOUT .='<tr><td class="forum_head" align="left" width="100" valign="middle"><a name="'.(int)$arr['post_id'].'"></a>
+			<span style="white-space:nowrap;">#'.(int)$arr['post_id'].'
+			<span style="font-weight: bold;">'.htmlsafechars($arr['username']).'</span></span></td>
 			<td class="forum_head" align="left" valign="middle"><span style="white-space:nowrap;"> posted on: '.get_date($arr['added'],'').' ['.get_date($arr['added'],'',0,1).']</span></td></tr>
 			<tr><td class="'.$class_alt.'" align="center" width="100" valign="top">'.avatar_stuff($arr).'<br />
 			'.print_user_stuff($arr).'</td>

@@ -122,7 +122,7 @@ function show_level()
 		{
 			$html .= "<tr>\n".
 					"	<td>#".$res['reputationlevelid']."</td>\n".
-					"	<td>User <b>".htmlentities( $res['level'] )."</b></td>\n".
+					"	<td>User <b>".htmlsafechars( $res['level'] )."</b></td>\n".
 					"	<td align='center'><input type='text' name='reputation[".$res['reputationlevelid']."]' value='".$res['minimumreputation']."' size='12' /></td>\n".
 					"	<td align='center'><span class='btn'><a href='staffpanel.php?tool=reputation_ad&amp;mode=edit&amp;reputationlevelid=".$res['reputationlevelid']."'>Edit</a></span>&nbsp;<span class='btn'><a href='staffpanel.php?tool=reputation_ad&amp;mode=dodelete&amp;reputationlevelid=".$res['reputationlevelid']."'>Delete</a></span></td>\n".
 					"</tr>\n";
@@ -158,7 +158,7 @@ function show_form($type='edit')
 			}
 
 			$title  = "Edit Reputation Level";
-			$html .= "<br /><span style='font-weight:normal;'>".htmlspecialchars($res['level'])." (ID:#{$res['reputationlevelid']})</span><br />";
+			$html .= "<br /><span style='font-weight:normal;'>".htmlsafechars($res['level'])." (ID:#{$res['reputationlevelid']})</span><br />";
 			$button = "Update";
 			$extra  = "<input type='button' class='button' value='Back' accesskey='b' class='btn' onclick='javascript:history.back(1)' />";
 			$mode   = 'doedit';
@@ -223,7 +223,7 @@ function do_update($type="")
 			$level = sqlesc( $level );
 			$minrep = sqlesc( intval( $input['minimumreputation'] ) );
 			
-			$redirect = 'Saved Reputation Level <i>'.htmlentities( $input['level'], ENT_QUOTES ).'</i> Successfully.';
+			$redirect = 'Saved Reputation Level <i>'.htmlsafechars( $input['level'], ENT_QUOTES ).'</i> Successfully.';
 		}
 
 		// what we gonna do?
@@ -341,10 +341,10 @@ function show_form_rep()
 		$html .= "<h2>Edit Reputation</h2>";
 		$html .= "<table cellpadding='5px'>";
 
-		$html .= "<tr><td width='37%'>Topic</td><td width='63%'><a href='forums.php?action=viewtopic&amp;topicid={$res['topic_id']}&amp;page=p{$res['postid']}#{$res['postid']}' target='_blank'>".htmlspecialchars($res['topic_name'])."</a></td></tr>";
+		$html .= "<tr><td width='37%'>Topic</td><td width='63%'><a href='forums.php?action=viewtopic&amp;topicid={$res['topic_id']}&amp;page=p{$res['postid']}#{$res['postid']}' target='_blank'>".htmlsafechars($res['topic_name'])."</a></td></tr>";
 		$html .= "<tr><td>Left By</td><td>{$res['leftby_name']}</td></tr>";
 		$html .= "<tr><td>Left For</td><td width='63%'>{$res['leftfor_name']}</td></tr>";
-		$html .= "<tr><td>Comment</td><td width='63%'><input type='text' name='reason' value='".htmlspecialchars($res['reason'])."' size='35' maxlength='250' /></td></tr>";
+		$html .= "<tr><td>Comment</td><td width='63%'><input type='text' name='reason' value='".htmlsafechars($res['reason'])."' size='35' maxlength='250' /></td></tr>";
 		$html .= "<tr><td>Reputation</td><td><input type='text' name='reputation' value='{$res['reputation']}' size='35' maxlength='10' /></td></tr>";
 
 		$html .= "<tr><td colspan='2' align='center'><input type='submit' value='Save' accesskey='s' class='btn' /> <input type='reset' tabindex='1' value='Reset' accesskey='r' class='btn' /></td></tr>";
@@ -437,7 +437,7 @@ function view_list()
 
 				if( ! mysqli_num_rows($left_b) )
 				{
-					stderr( 'DB ERROR', 'Could not find user '.htmlentities($input['leftby'], ENT_QUOTES) );
+					stderr( 'DB ERROR', 'Could not find user '.htmlsafechars($input['leftby'], ENT_QUOTES) );
 				}
 				$leftby = mysqli_fetch_assoc($left_b);
 				$who  = $leftby['id'];
@@ -450,7 +450,7 @@ function view_list()
 
 				if( ! mysqli_num_rows($left_f) )
 				{
-					stderr( 'DB ERROR', 'Could not find user '.htmlentities($input['leftfor'], ENT_QUOTES) );
+					stderr( 'DB ERROR', 'Could not find user '.htmlsafechars($input['leftfor'], ENT_QUOTES) );
 				}
 				$leftfor = mysqli_fetch_assoc($left_f);
 				$user  = $leftfor['id'];
@@ -545,7 +545,7 @@ function view_list()
 				$html .= "<td><a href='userdetails.php?id={$r['leftfor_id']}' target='_blank'>{$r['leftfor_name']}</a></td>";
 				$html .= "<td>{$r['dateadd']}</td>";
 				$html .= "<td align='right'>{$r['reputation']}</td>";
-				$html .= "<td><a href='forums.php?action=viewtopic&amp;topicid={$r['topic_id']}&amp;page=p{$r['postid']}#{$r['postid']}' target='_blank'>".htmlspecialchars($r['reason'])."</a></td>";
+				$html .= "<td><a href='forums.php?action=viewtopic&amp;topicid={$r['topic_id']}&amp;page=p{$r['postid']}#{$r['postid']}' target='_blank'>".htmlsafechars($r['reason'])."</a></td>";
 				$html .= "<td><a href='staffpanel.php?tool=reputation_ad&amp;mode=editrep&amp;reputationid={$r['reputationid']}'><span class='btn'>Edit</span></a>&nbsp;<a href='reputation_ad.php?mode=dodelrep&amp;reputationid={$r['reputationid']}'><span class='btn'>Delete</span></a></td></tr>";
 				
 			}

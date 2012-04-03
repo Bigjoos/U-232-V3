@@ -42,12 +42,14 @@ $HTMLOUT = <<<HTML
 <tr>
 	<td align="right" valign="top">{$lang['getrss_cat']}</td><td align="left" width="100%">
 HTML;
-	$q1 = sql_query('SELECT id,name,image FROM categories order by id') or sqlerr();
+	$q1 = sql_query('SELECT id, name, image FROM categories ORDER BY id') or sqlerr(__FILE__, __LINE__);
 	$i=0;
 	while($a = mysqli_fetch_assoc($q1)) {
 		if($i%5 == 0 && $i>0)
 			$HTMLOUT .="<br/>";
-		$HTMLOUT .= "<label for=\"cat_{$a['id']}\"><img src=\"{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/{$a['image']}\" alt=\"{$a['name']}\" title=\"{$a['name']}\" /><input type=\"checkbox\" name=\"cats[]\" id=\"cat_{$a['id']}\" value=\"{$a['id']}\" /></label>\n";
+		$HTMLOUT .= "<label for=\"cat_".(int)$a['id']."\">
+      <img src=\"{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/".htmlsafechars($a['image'])."\" alt=\"".htmlsafechars($a['name'])."\" title=\"".htmlsafechars($a['name'])."\" />
+     <input type=\"checkbox\" name=\"cats[]\" id=\"cat_".(int)$a['id']."\" value=\"".(int)$a['id']."\" /></label>\n";
 		$i++;
 	}
 $HTMLOUT .= <<<HTML

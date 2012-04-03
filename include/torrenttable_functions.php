@@ -15,7 +15,7 @@ function linkcolor($num) {
 
 function readMore($text, $char, $link)
 {
-    return (strlen($text) > $char ? substr(htmlspecialchars($text), 0, $char-1) . "...<br /><a href='$link'>Read more...</a>": htmlspecialchars($text));
+    return (strlen($text) > $char ? substr(htmlsafechars($text), 0, $char-1) . "...<br /><a href='$link'>Read more...</a>": htmlsafechars($text));
 }
 
 
@@ -79,7 +79,6 @@ if ($oldlink > 0)
    <td class='colhead' align='center'>{$lang["torrenttable_type"]}</td>
    <td class='colhead' align='left'><a href='{$_SERVER["PHP_SELF"]}?{$oldlink}sort=1&amp;type={$link1}'>{$lang["torrenttable_name"]}</a></td>
    <td class='colhead' align='left'><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download' title='Download' /></td>";
-   
    $htmlout.= ($variant == 'index' ? "<td class='colhead' align='center'><a href='{$INSTALLER09['baseurl']}/bookmarks.php'><img src='{$INSTALLER09['pic_base_url']}bookmarks.png'  border='0' alt='Bookmark' title='Go To My Bookmarks' /></a></td>" : '');
 
    if ($variant == "mytorrents")
@@ -114,8 +113,8 @@ if ($oldlink > 0)
        $htmlout .="<tr><td colspan='12' class='colhead' align='left'><b>{$lang['torrenttable_upped']} ".get_date($row['added'], 'DATE')."</b></td></tr>";
        $prevdate = get_date($row['added'], 'DATE');
        }
-       $row['cat_name'] = htmlspecialchars($change[$row['category']]['name']);
-       $row['cat_pic'] = htmlspecialchars($change[$row['category']]['image']);
+       $row['cat_name'] = htmlsafechars($change[$row['category']]['name']);
+       $row['cat_pic'] = htmlsafechars($change[$row['category']]['image']);
        /** Freeslot/doubleslot in Use **/
        $id = $row["id"]; 
        foreach ($slot as $sl) 
@@ -129,10 +128,10 @@ if ($oldlink > 0)
        {
        $htmlout .= "<a href='browse.php?cat=".(int)$row['category']."'>";
        if (isset($row["cat_pic"]) && $row["cat_pic"] != "")
-       $htmlout .= "<img border='0' src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/{$row['cat_pic']}' alt='{$row['cat_name']}' />";
+       $htmlout .= "<img border='0' src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/".htmlsafechars($row['cat_pic'])."' alt='".htmlsafechars($row['cat_name'])."' />";
        else
        {
-       $htmlout .= $row["cat_name"];
+       $htmlout .= htmlsafechars($row["cat_name"]);
        }
        $htmlout .= "</a>";
        }
@@ -141,12 +140,12 @@ if ($oldlink > 0)
        $htmlout .= "-";
        }
        $htmlout .= "</td>\n";
-       $dispname = htmlspecialchars($row["name"]);
-       $smalldescr = (!empty($row['description']) ? "<i>[" . htmlspecialchars($row['description']) . "]</i>" : "" );
-       $checked = ((!empty($row['checked_by']) && $CURUSER['class'] >= UC_USER) ? "&nbsp;<img src='{$INSTALLER09['pic_base_url']}mod.gif' width='15' border='0' alt='Checked - by ".htmlspecialchars($row['checked_by'])."' title='Checked - by ".htmlspecialchars($row['checked_by'])."' />" : "");
-       $poster = empty($row["poster"]) ? "<img src=\'{$INSTALLER09['pic_base_url']}noposter.png\' width=\'150\' height=\'220\' border=\'0\' alt=\'Poster\' title=\'poster\' />" : "<img src=\'".htmlspecialchars($row['poster'])."\' width=\'150\' height=\'220\' border=\'0\' alt=\'Poster\' title=\'poster\' />";
-       $rating = empty($row["rating"]) ? "No votes yet":"".ratingpic((int)$row["rating"]).""; 
-       $youtube = (!empty($row['youtube']) ? "<a href='".htmlspecialchars($row['youtube'])."' target='_blank'><img src='{$INSTALLER09['pic_base_url']}youtube.png' width='14' height='14' border='0' alt='Youtube Trailer' title='Youtube Trailer' /></a>" : "" );
+       $dispname = htmlsafechars($row["name"]);
+       $smalldescr = (!empty($row['description']) ? "<i>[" . htmlsafechars($row['description']) . "]</i>" : "" );
+       $checked = ((!empty($row['checked_by']) && $CURUSER['class'] >= UC_USER) ? "&nbsp;<img src='{$INSTALLER09['pic_base_url']}mod.gif' width='15' border='0' alt='Checked - by ".htmlsafechars($row['checked_by'])."' title='Checked - by ".htmlsafechars($row['checked_by'])."' />" : "");
+       $poster = empty($row["poster"]) ? "<img src=\'{$INSTALLER09['pic_base_url']}noposter.png\' width=\'150\' height=\'220\' border=\'0\' alt=\'Poster\' title=\'poster\' />" : "<img src=\'".htmlsafechars($row['poster'])."\' width=\'150\' height=\'220\' border=\'0\' alt=\'Poster\' title=\'poster\' />";
+       $rating = empty($row["rating"]) ? "No votes yet":"".ratingpic($row["rating"])."";
+       $youtube = (!empty($row['youtube']) ? "<a href='".htmlsafechars($row['youtube'])."' target='_blank'><img src='{$INSTALLER09['pic_base_url']}youtube.png' width='14' height='14' border='0' alt='Youtube Trailer' title='Youtube Trailer' /></a>" : "" );
        if (isset($row["descr"]))
        $descr = str_replace("\"", "&quot;", readMore($row["descr"], 350, "details.php?id=".(int)$row["id"]."&amp;hit=1"));
        $descr = str_replace('&','&amp;',$descr);
@@ -165,7 +164,7 @@ if ($oldlink > 0)
 			$newgenre = '<i>'.join(', ',$newgenre).'</i>';
 		}	
        $sticky = ($row['sticky']=="yes" ? "<img src='{$INSTALLER09['pic_base_url']}sticky.gif' style='border:none' alt='Sticky' title='Sticky !' />" : "");
-       $nuked = ($row["nuked"] == "yes" ? "<img src='{$INSTALLER09['pic_base_url']}nuked.gif' style='border:none' alt='Nuked'  align='right' title='Reason :".htmlspecialchars($row["nukereason"])."' />" : "");
+       $nuked = ($row["nuked"] == "yes" ? "<img src='{$INSTALLER09['pic_base_url']}nuked.gif' style='border:none' alt='Nuked'  align='right' title='Reason :".htmlsafechars($row["nukereason"])."' />" : "");
        $release_group = ($row['release_group']=="scene" ? "&nbsp;<img src='{$INSTALLER09['pic_base_url']}scene.gif' title='Scene' alt='Scene' style='border:none' />" : ($row['release_group']=="p2p" ? "&nbsp;<img src='{$INSTALLER09['pic_base_url']}p2p.gif' title='P2P' alt='P2P' />" : "")); 
        $viponly = ($row["vip"]== "1" ? "<img src='{$INSTALLER09['pic_base_url']}star.png' border='0' alt='Vip Torrent' title='Vip Torrent' />" : "");
        $bump = ($row['bump'] == "yes" ? "<img src='{$INSTALLER09['pic_base_url']}up.gif' width='12px' alt='Re-Animated torrent' title='This torrent was ReAnimated!' />" : "");
@@ -180,7 +179,7 @@ if ($oldlink > 0)
                     if ($free_slot && $double_slot)
                         break;
        }
-       $freeslot = ($INSTALLER09['mods']['slots'] ? ($free_slot ?'&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'freedownload.gif" width="12px" alt="Free Slot" title="Free Slot in Use" />&nbsp;<small>Free Slot</small>' : '').($double_slot ?'&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'doubleseed.gif" width="12px" alt="Double Upload Slot" title="Double Upload Slot in Use" />&nbsp;<small>Double Slot</small>' : ''):'').($row['nuked'] != 'no' && $row['nuked'] != '' ? '&nbsp;<span title="Nuked '.htmlspecialchars($row['nuked']).'" class="browse-icons-nuked"></span>' : '');
+       $freeslot = ($INSTALLER09['mods']['slots'] ? ($free_slot ?'&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'freedownload.gif" width="12px" alt="Free Slot" title="Free Slot in Use" />&nbsp;<small>Free Slot</small>' : '').($double_slot ?'&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'doubleseed.gif" width="12px" alt="Double Upload Slot" title="Double Upload Slot in Use" />&nbsp;<small>Double Slot</small>' : ''):'').($row['nuked'] != 'no' && $row['nuked'] != '' ? '&nbsp;<span title="Nuked '.htmlsafechars($row['nuked']).'" class="browse-icons-nuked"></span>' : '');
        //==
        $Subs='';
        if (in_array($row["category"], $INSTALLER09['movie_cats']) && !empty($row["subs"]) )
@@ -195,7 +194,7 @@ if ($oldlink > 0)
        }
        }else
        $Subs ="---";
-       $htmlout .= "' onmouseover=\"Tip('<b>" . CutName($dispname, 80) . "</b><br /><b>Added:&nbsp;".get_date($row['added'],'DATE',0,1)."</b><br /><b>Size:&nbsp;".mksize(htmlspecialchars($row["size"])) ."</b><br /><b>Subtitle:&nbsp;{$Subs}</b><br /><b>Seeders:&nbsp;".htmlspecialchars($row["seeders"]) ."</b><br /><b>Leechers:&nbsp;".htmlspecialchars($row["leechers"]) ."</b><br /><b>Rating:&nbsp;".htmlspecialchars($rating) ."</b><br />$poster');\" onmouseout=\"UnTip();\"><b>" . CutName($dispname, 45) . "</b></a>&nbsp;&nbsp;<a href=\"javascript:klappe_descr('descr" . (int)$row["id"] . "');\" ><img src=\"{$INSTALLER09['pic_base_url']}plus.png\" border=\"0\" alt=\"Show torrent info in this page\" title=\"Show torrent info in this page\" /></a>&nbsp;&nbsp;$youtube&nbsp;$viponly&nbsp;$release_group&nbsp;$sticky&nbsp;".($row['added'] >= $CURUSER['last_browse'] ? " <img src='{$INSTALLER09['pic_base_url']}newb.png' border='0' alt='New !' title='New !' />" : "")."&nbsp;$checked&nbsp;$free_tag&nbsp;$nuked<br />\n".$freeslot."&nbsp;$newgenre&nbsp;$bump&nbsp;$smalldescr</td>\n";
+       $htmlout .= "' onmouseover=\"Tip('<b>" . CutName($dispname, 80) . "</b><br /><b>Added:&nbsp;".get_date($row['added'],'DATE',0,1)."</b><br /><b>Size:&nbsp;".mksize(htmlsafechars($row["size"])) ."</b><br /><b>Subtitle:&nbsp;{$Subs}</b><br /><b>Seeders:&nbsp;".htmlsafechars($row["seeders"]) ."</b><br /><b>Leechers:&nbsp;".htmlsafechars($row["leechers"]) ."</b><br /><b>Rating:&nbsp;".htmlsafechars($rating) ."</b><br />$poster');\" onmouseout=\"UnTip();\"><b>" . CutName($dispname, 45) . "</b></a>&nbsp;&nbsp;<a href=\"javascript:klappe_descr('descr" . (int)$row["id"] . "');\" ><img src=\"{$INSTALLER09['pic_base_url']}plus.png\" border=\"0\" alt=\"Show torrent info in this page\" title=\"Show torrent info in this page\" /></a>&nbsp;&nbsp;$youtube&nbsp;$viponly&nbsp;$release_group&nbsp;$sticky&nbsp;".($row['added'] >= $CURUSER['last_browse'] ? " <img src='{$INSTALLER09['pic_base_url']}newb.png' border='0' alt='New !' title='New !' />" : "")."&nbsp;$checked&nbsp;$free_tag&nbsp;$nuked<br />\n".$freeslot."&nbsp;$newgenre&nbsp;$bump&nbsp;$smalldescr</td>\n";
 	    
        if ($variant == "mytorrents")
        $htmlout .= "<td align='center'><a href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."\"><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download This Torrent!' title='Download This Torrent!' /></a></td>\n";
@@ -310,7 +309,7 @@ if ($oldlink > 0)
        $htmlout .= "<td align='right'>0</td>\n";
         
        if ($variant == "index") {
-       $htmlout .= "<td align='center'>" . (isset($row["username"]) ? (($row["anonymous"] == "yes" && $CURUSER['class'] < UC_STAFF && $row['owner'] != $CURUSER['id']) ? "<i>".$lang['torrenttable_anon']."</i>" : "<a href='userdetails.php?id=" .(int)$row["owner"] . "'><b>" . htmlspecialchars($row["username"]) . "</b></a>") : "<i>(".$lang["torrenttable_unknown_uploader"].")</i>") . "</td>\n";
+       $htmlout .= "<td align='center'>" . (isset($row["username"]) ? (($row["anonymous"] == "yes" && $CURUSER['class'] < UC_STAFF && $row['owner'] != $CURUSER['id']) ? "<i>".$lang['torrenttable_anon']."</i>" : "<a href='userdetails.php?id=" .(int)$row["owner"] . "'><b>" . htmlsafechars($row["username"]) . "</b></a>") : "<i>(".$lang["torrenttable_unknown_uploader"].")</i>") . "</td>\n";
        }
     
        $htmlout .= "</tr>\n";

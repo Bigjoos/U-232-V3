@@ -25,8 +25,8 @@ if ($CURUSER['class'] < UC_POWER_USER)
 
 $mb = 1024*1024*1024;
 $now = TIME_NOW;
-$game = isset($_POST["game"]) ? htmlspecialchars($_POST["game"]) : '';
-$start_ = isset($_POST["start_"]) ? htmlspecialchars($_POST["start_"]) : '';
+$game = isset($_POST["game"]) ? htmlsafechars($_POST["game"]) : '';
+$start_ = isset($_POST["start_"]) ? htmlsafechars($_POST["start_"]) : '';
 
 
 if ($game)
@@ -45,7 +45,7 @@ if ($game)
   
      $sql = sql_query('SELECT uploaded, downloaded, bjwins, bjlosses '.
                        'FROM users '.
-                       'WHERE id = '.$CURUSER['id']) or sqlerr(__FILE__, __LINE__);
+                       'WHERE id = '.sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
       $User = mysqli_fetch_assoc($sql);
 
    $User['uploaded'] = (float)$User['uploaded'];
@@ -71,7 +71,7 @@ if ($game)
 		{
 		$used_card = sql_query("SELECT * FROM cards WHERE id=".sqlesc($card_id));
 		$used_cards = mysqli_fetch_assoc($used_card);
-		$showcards .= "<img src='{$INSTALLER09['pic_base_url']}cards/".$used_cards["pic"]."' width='71' height='96' border='0' alt='Cards' title='Cards' />";
+		$showcards .= "<img src='{$INSTALLER09['pic_base_url']}cards/".htmlsafechars($used_cards["pic"])."' width='71' height='96' border='0' alt='Cards' title='Cards' />";
 		if ($used_cards["points"] > 1)
 		$points += (int)$used_cards['points'];
 		else
@@ -100,7 +100,7 @@ if ($game)
 			if ($arr['status'] == 'waiting')
 			stderr("Sorry", "You'll have to wait until your last game completes before you play a new one.");
 			elseif ($arr['status'] == 'playing')
-			stderr("Sorry", "You must finish your old game first.<form method='post' action='".$_SERVER['PHP_SELF']."'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='hidden' name='continue' value='yes' readonly='readonly' /><input type='submit' value='Continue old game' /></form>");
+			stderr("Sorry", "You must finish your old game first.<form method='post' action='blackjack.php'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='hidden' name='continue' value='yes' readonly='readonly' /><input type='submit' value='Continue old game' /></form>");
 	
 			$HTMLOUT .= cheater_check($arr['gameover'] == 'yes');
 			$cardids = array();
@@ -110,20 +110,20 @@ if ($game)
 			{
 			while (in_array($cardid, $cardids))
 			$cardid = rand(1, $cardcount);
-			$cardres = sql_query("SELECT points, pic FROM cards WHERE id=".sqlesc($cardid)."");
+			$cardres = sql_query("SELECT points, pic FROM cards WHERE id=".sqlesc($cardid));
 			$cardarr = mysqli_fetch_assoc($cardres);
 			if ($cardarr["points"] > 1)
 			$points += $cardarr["points"];
 			else
 			$aces++;
-			$showcards .= "<img src='{$INSTALLER09['pic_base_url']}cards/".$cardarr['pic']."' width='71' height='96' border='0' alt='Cards' title='Cards' />";
+			$showcards .= "<img src='{$INSTALLER09['pic_base_url']}cards/".htmlsafechars($cardarr['pic'])."' width='71' height='96' border='0' alt='Cards' title='Cards' />";
 			$cardids2[] = $cardid;
 			}
 
 			for ($i = 0; $i < $aces; $i++)
 			$points += ($points < 11 && $aces - $i == 1 ? 11 : 1);
 			sql_query("INSERT INTO blackjack (userid, points, cards, date) VALUES(".sqlesc($CURUSER['id']).", ".sqlesc($points).", '".join(" ",$cardids2)."', $now)");
-			//$message = " BlackJack :- " . htmlspecialchars($CURUSER['username']) . " Placed A Bet"; //win not 21
+			//$message = " BlackJack :- " . htmlsafechars($CURUSER['username']) . " Placed A Bet"; //win not 21
       //autoshout($message);
 			
 			if ($points < 21)
@@ -133,15 +133,15 @@ if ($game)
 				<tr><td colspan='2'>
 				<table class='message' width='100%' cellspacing='0' cellpadding='5'>
 				<tr><td align='center'>".trim($showcards)."</td></tr>
-				<tr><td align='center'><b>Points = {$points}</b></td></tr>
+				<tr><td align='center'><b>Points = ".htmlsafechars($points)."</b></td></tr>
 				<tr><td align='center'>
-				<form method='post' action='".$_SERVER['PHP_SELF']."'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='submit' value='Hitme' /></form>
+				<form method='post' action='blackjack.php'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='submit' value='Hitme' /></form>
 				</td></tr>";
 				
 				if ($points >= 10)
 				{
 				$HTMLOUT .="<tr><td align='center'>
-				<form method='post' action='".$_SERVER['PHP_SELF']."'><input type='hidden' name='game' value='stop' readonly='readonly' /><input type='submit' value='Stay' /></form>
+				<form method='post' action='blackjack.php'><input type='hidden' name='game' value='stop' readonly='readonly' /><input type='submit' value='Stay' /></form>
 				</td></tr>";
 				}
 				
@@ -156,9 +156,9 @@ if ($game)
 			$cardid = rand(1, $cardcount);
 			while (in_array($cardid, $arr))
 			$cardid = rand(1, $cardcount);
-			$cardres = sql_query("SELECT points, pic FROM cards WHERE id='$cardid'");
+			$cardres = sql_query("SELECT points, pic FROM cards WHERE id=".sqlesc($cardid));
 			$cardarr = mysqli_fetch_assoc($cardres);
-			$showcards .= "<img src='{$INSTALLER09['pic_base_url']}cards/".$cardarr['pic']."' width='71' height='96' border='0' alt='Cards' title='Cards' />";
+			$showcards .= "<img src='{$INSTALLER09['pic_base_url']}cards/".htmlsafechars($cardarr['pic'])."' width='71' height='96' border='0' alt='Cards' title='Cards' />";
 			
 			if ($cardarr["points"] > 1)
 			$points += $cardarr["points"];
@@ -167,7 +167,7 @@ if ($game)
 				
 			for ($i = 0; $i < $aces; $i++)
 		  $points += ($points < 11 && $aces - $i == 1 ? 11 : 1);
-			sql_query("UPDATE blackjack SET points='$points', cards='".$cards." ".$cardid."' WHERE userid=".sqlesc($CURUSER['id']));
+			sql_query("UPDATE blackjack SET points=".sqlesc($points).", cards=".sqlesc($cards.$cardid)." WHERE userid=".sqlesc($CURUSER['id']));
 		  }
 		
 		if ($points == 21 || $points > 21)
@@ -179,7 +179,7 @@ if ($game)
 			<tr><td colspan='2'>
 			<table width='100%' cellspacing='0' cellpadding='5'>
 			<tr><td align='center'>".trim($showcards)."</td></tr>
-			<tr><td align='center'><b>Points = {$points}</b></td></tr>";
+			<tr><td align='center'><b>Points = ".htmlsafechars($points)."</b></td></tr>";
 		}
 
 		if ($points == 21)
@@ -193,8 +193,8 @@ if ($game)
 				{
 					$subject = sqlesc("Blackjack Results");
 					$winorlose = "you won ".mksize($mb);
-					sql_query("UPDATE users SET uploaded = uploaded + $mb, bjwins = bjwins + 1 WHERE id=".sqlesc($CURUSER['id']));
-					sql_query("UPDATE users SET uploaded = uploaded - $mb, bjlosses = bjlosses + 1 WHERE id=".sqlesc($a['userid']));
+					sql_query("UPDATE users SET uploaded = uploaded + ".sqlesc($mb).", bjwins = bjwins + 1 WHERE id=".sqlesc($CURUSER['id']));
+					sql_query("UPDATE users SET uploaded = uploaded - ".sqlesc($mb).", bjlosses = bjlosses + 1 WHERE id=".sqlesc($a['userid']));
           
           $update['uploaded'] = ($User['uploaded'] + $mb);
           $update['uploaded_loser'] = ($a['uploaded'] - $mb);
@@ -232,16 +232,16 @@ if ($game)
           $mc1->delete_value('inbox_new_'.$a['userid']);
           $mc1->delete_value('inbox_new_sb_'.$a['userid']);
           
-					$msg = sqlesc("You lost to ".$CURUSER['username']." (You had ".htmlspecialchars($a['points'])." points, ".$CURUSER['username']." had 21 points).\n\n");
-				  //$message = " BlackJack :- " . htmlspecialchars($CURUSER['username']) . " Beat ".get_user_name($a["userid"]).""; //win not 21
+					$msg = sqlesc("You lost to ".$CURUSER['username']." (You had ".htmlsafechars($a['points'])." points, ".$CURUSER['username']." had 21 points).\n\n");
+				  //$message = " BlackJack :- " . htmlsafechars($CURUSER['username']) . " Beat ".get_user_name($a["userid"]).""; //win not 21
           //autoshout($message);
 				}
 				else
 				{
 				$subject = sqlesc("Blackjack Results");
 				$winorlose = "nobody won";
-				$msg = sqlesc("You tied with ".$CURUSER['username']." (You both had ".$a['points']." points).\n\n");
-				//$message = " BlackJack :- ".get_user_name($a["userid"])." Tied " . htmlspecialchars($CURUSER['username']) . ""; //win not 21
+				$msg = sqlesc("You tied with ".$CURUSER['username']." (You both had ".htmlsafechars($a['points'])." points).\n\n");
+				//$message = " BlackJack :- ".get_user_name($a["userid"])." Tied " . htmlsafechars($CURUSER['username']) . ""; //win not 21
         //autoshout($message);
 				//==pms
 			  $mc1->delete_value('inbox_new_'.$CURUSER['id']);
@@ -252,12 +252,12 @@ if ($game)
 
 				sql_query("INSERT INTO messages (sender, receiver, added, msg, subject) VALUES(0, ".sqlesc($a['userid']).", $now, $msg, $subject)");
 				sql_query("DELETE FROM blackjack WHERE userid IN (".sqlesc($CURUSER['id']).", ".sqlesc($a['userid']).")");
-			  $HTMLOUT .="<tr><td align='center'>Your opponent was ".htmlspecialchars($a["username"]).", he/she had ".htmlspecialchars($a['points'])." points, $winorlose.<br /><br /><b><a href='/blackjack.php'>Play again</a></b></td></tr>";
+			  $HTMLOUT .="<tr><td align='center'>Your opponent was ".htmlsafechars($a["username"]).", he/she had ".htmlsafechars($a['points'])." points, $winorlose.<br /><br /><b><a href='/blackjack.php'>Play again</a></b></td></tr>";
 			  }
 			else
 			{
-			sql_query("UPDATE blackjack SET status = 'waiting', date=".$now.", gameover = 'yes' WHERE userid = ".sqlesc($CURUSER['id']));
-			//$message = " BlackJack :- " . htmlspecialchars($CURUSER['username']) . " Has Placed A Bet1"; //21 new bet
+			sql_query("UPDATE blackjack SET status = 'waiting', date=".sqlesc($now).", gameover = 'yes' WHERE userid = ".sqlesc($CURUSER['id']));
+			//$message = " BlackJack :- " . htmlsafechars($CURUSER['username']) . " Has Placed A Bet1"; //21 new bet
       //autoshout($message);
 			$HTMLOUT .="<tr><td align='center'>There are no other players, so you'll have to wait until someone plays against you.<br />You will receive a PM with the game results.<br /><br /><b><a href='/blackjack.php'>Back</a></b><br /></td></tr>";
 			}
@@ -276,14 +276,14 @@ if ($game)
 				{
 					$subject = sqlesc("Blackjack Results");
 					$winorlose = "nobody won";
-					$msg = sqlesc("Your opponent was ".htmlspecialchars($CURUSER['username']).", nobody won.\n\n");
+					$msg = sqlesc("Your opponent was ".htmlsafechars($CURUSER['username']).", nobody won.\n\n");
 				}
 				else
 				{
 					$subject = sqlesc("Blackjack Results");
 					$winorlose = "you lost ".mksize($mb);
-					sql_query("UPDATE users SET uploaded = uploaded + $mb, bjwins = bjwins + 1 WHERE id=".sqlesc($a['userid']));
-					sql_query("UPDATE users SET uploaded = uploaded - $mb, bjlosses = bjlosses + 1 WHERE id=".sqlesc($CURUSER['id']));
+					sql_query("UPDATE users SET uploaded = uploaded + ".sqlesc($mb).", bjwins = bjwins + 1 WHERE id=".sqlesc($a['userid']));
+					sql_query("UPDATE users SET uploaded = uploaded - ".sqlesc($mb).", bjlosses = bjlosses + 1 WHERE id=".sqlesc($CURUSER['id']));
           
           $update['uploaded'] = ($a['uploaded'] + $mb);
           $update['uploaded_loser'] = ($User['uploaded'] - $mb);
@@ -321,19 +321,19 @@ if ($game)
           $mc1->delete_value('inbox_new_'.$a['userid']);
           $mc1->delete_value('inbox_new_sb_'.$a['userid']);
 
-					$msg = sqlesc("You beat ".$CURUSER['username']." (You had ".$a['points']." points, ".$CURUSER['username']." had $points points).\n\n");
-				  //$message = " BlackJack :- ".get_user_name($a["userid"])."  Lost To " . htmlspecialchars($CURUSER['username']) . ""; //win not 21
+					$msg = sqlesc("You beat ".$CURUSER['username']." (You had ".htmlsafechars($a['points'])." points, ".$CURUSER['username']." had ".htmlsafechars($points)." points).\n\n");
+				  //$message = " BlackJack :- ".get_user_name($a["userid"])."  Lost To " . htmlsafechars($CURUSER['username']) . ""; //win not 21
           //autoshout($message);
 				}
 
-				sql_query("INSERT INTO messages (sender, receiver, added, msg, subject) VALUES(0, ".sqlesc($a['userid']).", $now, $msg, $subject)");
+				sql_query("INSERT INTO messages (sender, receiver, added, msg, subject) VALUES(0, ".sqlesc($a['userid']).", ".sqlesc($now).", $msg, $subject)");
 				sql_query("DELETE FROM blackjack WHERE userid IN (".sqlesc($CURUSER['id']).", ".sqlesc($a['userid']).")");
 				
-				$HTMLOUT .="<tr><td align='center'>Your opponent was ".htmlspecialchars($a["username"]).", he/she had ".htmlspecialchars($a['points'])." points, $winorlose.<br /><br /><b><a href='blackjack.php'>Play again</a></b></td></tr>";
+				$HTMLOUT .="<tr><td align='center'>Your opponent was ".htmlsafechars($a["username"]).", he/she had ".htmlsafechars($a['points'])." points, $winorlose.<br /><br /><b><a href='blackjack.php'>Play again</a></b></td></tr>";
 			}
 			else
 			{
-				sql_query("UPDATE blackjack SET status = 'waiting', date=".$now.", gameover='yes' WHERE userid = ".sqlesc($CURUSER['id']));
+				sql_query("UPDATE blackjack SET status = 'waiting', date=".sqlesc($now).", gameover='yes' WHERE userid = ".sqlesc($CURUSER['id']));
 				
 			$HTMLOUT .="<tr><td align='center'>There are no other players, so you'll have to wait until someone plays against you.<br />You will receive a PM with the game results.<br /><br /><b><a href='/blackjack.php'>Back</a></b><br /></td></tr>";
 			}
@@ -349,12 +349,12 @@ if ($game)
 			<tr><td colspan='2'>
 			<table class='message' width='100%' cellspacing='0' cellpadding='5'>
 			<tr><td align='center'>{$showcards}</td></tr>
-			<tr><td align='center'><b>Points = {$points}</b></td></tr>";
+			<tr><td align='center'><b>Points = ".htmlsafechars($points)."</b></td></tr>";
 			$HTMLOUT .="<tr>
-      <td align='center'><form method='post' action='".$_SERVER['PHP_SELF']."'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='submit' value='HitMe' /></form></td>
+      <td align='center'><form method='post' action='blackjack.php'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='submit' value='HitMe' /></form></td>
       </tr>";
 			$HTMLOUT .="<tr>
-      <td align='center'><form method='post' action='".$_SERVER['PHP_SELF']."'><input type='hidden' name='game' value='stop' readonly='readonly' /><input type='submit' value='Stay' /></form></td>
+      <td align='center'><form method='post' action='blackjack.php'><input type='hidden' name='game' value='stop' readonly='readonly' /><input type='submit' value='Stay' /></form></td>
       </tr>";
 			$HTMLOUT .="</table></td></tr></table><br />";
 			echo stdhead('Blackjack') . $HTMLOUT . stdfoot();
@@ -370,7 +370,7 @@ if ($game)
 		<tr><td colspan='2'>
 		<table class='message' width='100%' cellspacing='0' cellpadding='5'>
 		<tr><td align='center'>{$showcards}</td></tr>
-		<tr><td align='center'><b>Points = ".htmlspecialchars($playerarr['points'])."</b></td></tr>";
+		<tr><td align='center'><b>Points = ".htmlsafechars($playerarr['points'])."</b></td></tr>";
 		
 		if ($waitarr['c'] > 0)
 		{
@@ -381,14 +381,14 @@ if ($game)
 			{
 				$subject = sqlesc("Blackjack Results");
 				$winorlose = "nobody won";
-				$msg = sqlesc("Your opponent was ".$CURUSER['username'].", you both had ".$a['points']." points - it was a tie.\n\n");
+				$msg = sqlesc("Your opponent was ".$CURUSER['username'].", you both had ".htmlsafechars($a['points'])." points - it was a tie.\n\n");
 			}
 			else
 			{
 				if (($a["points"] < $playerarr['points'] && $a['points'] < 21) || ($a["points"] > $playerarr['points'] && $a['points'] > 21))
 				{
 					$subject = sqlesc("Blackjack Results");
-					$msg = sqlesc("You lost to ".$CURUSER['username']." (You had ".htmlspecialchars($a['points'])." points, ".$CURUSER['username']." had ".htmlspecialchars($playerarr['points'])." points).\n\n");
+					$msg = sqlesc("You lost to ".$CURUSER['username']." (You had ".htmlsafechars($a['points'])." points, ".$CURUSER['username']." had ".htmlsafechars($playerarr['points'])." points).\n\n");
 					$winorlose = "you won ".mksize($mb);
 					$st_query = "+ ".$mb.", bjwins = bjwins +";
 					$nd_query = "- ".$mb.", bjlosses = bjlosses +";
@@ -396,14 +396,14 @@ if ($game)
 				elseif (($a["points"] > $playerarr['points'] && $a['points'] < 21) || $a["points"] == 21 || ($a["points"] < $playerarr['points'] && $a['points'] > 21))
 				{
 					$subject = sqlesc("Blackjack Results");
-					$msg = sqlesc("You beat ".$CURUSER['username']." (You had ".htmlspecialchars($a['points'])." points, ".$CURUSER['username']." had ".htmlspecialchars($playerarr['points'])." points).\n\n");
+					$msg = sqlesc("You beat ".$CURUSER['username']." (You had ".htmlsafechars($a['points'])." points, ".$CURUSER['username']." had ".htmlsafechars($playerarr['points'])." points).\n\n");
 					$winorlose = "you lost ".mksize($mb);
 				  $st_query = "- ".$mb.", bjlosses = bjlosses +";
 					$nd_query = "+ ".$mb.", bjwins = bjwins +";
 				}
 
-      sql_query("UPDATE users SET uploaded = uploaded ".$st_query." 1 WHERE id=".sqlesc($CURUSER['id']));
-	   sql_query("UPDATE users SET uploaded = uploaded ".$nd_query." 1 WHERE id=".sqlesc($a['userid']));  
+      sql_query("UPDATE users SET uploaded = uploaded ".sqlesc($st_query)." 1 WHERE id=".sqlesc($CURUSER['id']));
+	   sql_query("UPDATE users SET uploaded = uploaded ".sqlesc($nd_query)." 1 WHERE id=".sqlesc($a['userid']));  
       $update['uploaded'] = ($a['uploaded'] + $mb);
       $update['uploaded_loser'] = ($User['uploaded'] - $mb);
       $update['bjwins'] = ($a['bjwins'] + 1);
@@ -441,13 +441,13 @@ if ($game)
       $mc1->delete_value('inbox_new_sb_'.$a['userid']);
 			}
 
-			sql_query("INSERT INTO messages (sender, receiver, added, msg, subject) VALUES(0, ".sqlesc($a['userid']).", $now, $msg, $subject)");
+			sql_query("INSERT INTO messages (sender, receiver, added, msg, subject) VALUES(0, ".sqlesc($a['userid']).", ".sqlesc($now).", $msg, $subject)");
 			sql_query("DELETE FROM blackjack WHERE userid IN (".sqlesc($CURUSER['id']).", ".sqlesc($a['userid']).")");
-			$HTMLOUT .="<tr><td align='center'>Your opponent was ".htmlspecialchars($a["username"]).", he/she had ".htmlspecialchars($a['points'])." points, $winorlose.<br /><br /><b><a href='/blackjack.php'>Play again</a></b></td></tr>";
+			$HTMLOUT .="<tr><td align='center'>Your opponent was ".htmlsafechars($a["username"]).", he/she had ".htmlsafechars($a['points'])." points, $winorlose.<br /><br /><b><a href='/blackjack.php'>Play again</a></b></td></tr>";
 		}
 		else
 		{
-		sql_query("UPDATE blackjack SET status = 'waiting', date=".$now.", gameover='yes' WHERE userid = ".sqlesc($CURUSER['id']));
+		sql_query("UPDATE blackjack SET status = 'waiting', date=".sqlesc($now).", gameover='yes' WHERE userid = ".sqlesc($CURUSER['id']));
 		$HTMLOUT .="<tr><td align='center'>There are no other players, so you'll have to wait until someone plays against you.<br />You will receive a PM with the game results.<br /><br /><b><a href='/blackjack.php'>Back</a></b><br /></td></tr>";
 		}
 		$HTMLOUT .="</table></td></tr></table><br />";
@@ -458,7 +458,7 @@ else
 {
  $sql = sql_query('SELECT bjwins, bjlosses '.
                        'FROM users '.
-                       'WHERE id = '.$CURUSER['id']) or sqlerr(__FILE__, __LINE__);
+                       'WHERE id = '.sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
       $User = mysqli_fetch_assoc($sql);
 
    $User['bjwins'] = (int)$User['bjwins'];
@@ -476,7 +476,7 @@ else
 	<tr><td align='left'>You must collect 21 points without going over.<br /><br />
 	<b>NOTE:</b> By playing blackjack, you are betting 1 GB of upload credit!</td></tr>
 	<tr><td align='center'>
-	<form method='post' action='".$_SERVER['PHP_SELF']."'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='hidden' name='start_' value='yes' readonly='readonly' /><input type='submit' value='Start!' /></form>
+	<form method='post' action='blackjack.php'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='hidden' name='start_' value='yes' readonly='readonly' /><input type='submit' value='Start!' /></form>
 	</td></tr></table>
 	</td></tr></table>
 	<br /><br /><br />

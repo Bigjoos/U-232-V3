@@ -44,7 +44,7 @@ $lang = array_merge( load_language('global'));
     while ((list($code, $url) = each($staff_smilies))) {
     if ($count % 3==0)
  	  $htmlout .= "<tr>";
- 	  $htmlout .= "<td align='center'><a href=\"javascript: SmileIT('".str_replace("'","\'",$code)."','".htmlspecialchars($_GET['form'])."','".htmlspecialchars($_GET['text'])."')\"><img border='0' src='./pic/smilies/".$url."' alt='' /></a></td>";
+ 	  $htmlout .= "<td align='center'><a href=\"javascript: SmileIT('".str_replace("'","\'",$code)."','".htmlsafechars($_GET['form'])."','".htmlsafechars($_GET['text'])."')\"><img border='0' src='./pic/smilies/".$url."' alt='' /></a></td>";
  	  $count++;
 
    if ($count % 3==0)

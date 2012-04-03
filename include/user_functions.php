@@ -420,7 +420,7 @@ break;
   global $CURUSER, $INSTALLER09;
   $avatar_show = ($CURUSER['avatars'] == 'no' ? '' : (!$avatar['avatar'] ? '<img style="max-width:'.$width.'px;" src="'.$INSTALLER09['pic_base_url'].'default_avatar.gif" alt="avatar" />' : 
   (($avatar['offensive_avatar'] === 'yes' && $CURUSER['view_offensive_avatar'] === 'no') ? 
-  '<img style="max-width:'.$width.'px;" src="'.$INSTALLER09['pic_base_url'].'fuzzybunny.gif" alt="avatar" />' : '<img style="max-width:'.$width.'px;" src="'.htmlspecialchars($avatar['avatar']).'" alt="avatar" />')));   
+  '<img style="max-width:'.$width.'px;" src="'.$INSTALLER09['pic_base_url'].'fuzzybunny.gif" alt="avatar" />' : '<img style="max-width:'.$width.'px;" src="'.htmlsafechars($avatar['avatar']).'" alt="avatar" />')));   
   return $avatar_show;
 }
 

@@ -36,7 +36,7 @@
     $HTMLOUT .="
     <div class='newshead'>
     <a href=\"javascript: klappe_news('a".(int)$array['nid']."')\">
-    <img border=\"0\" src='pic/plus.png' id=\"pica".(int)$array['nid']."\" alt=\"Show/Hide\" />&nbsp;" .get_date( $array['added'],'DATE') . "&nbsp;-&nbsp;" ."".htmlspecialchars($array['title'])."</a>&nbsp;-&nbsp;Added by <b>".format_username($array)."</b>
+    <img border=\"0\" src='pic/plus.png' id=\"pica".(int)$array['nid']."\" alt=\"Show/Hide\" />&nbsp;" .get_date( $array['added'],'DATE') . "&nbsp;-&nbsp;" ."".htmlsafechars($array['title'])."</a>&nbsp;-&nbsp;Added by <b>".format_username($array)."</b>
     {$button}
     </div></div>";
     $HTMLOUT .="
@@ -48,7 +48,7 @@
     $HTMLOUT .="
     <div class='newshead'>
     <a href=\"javascript: klappe_news('a".(int)$array['nid']."')\">
-    <img border=\"0\" src='pic/plus.png' id=\"pica".(int)$array['nid']."\" alt=\"Show/Hide\" />&nbsp;" .get_date( $array['added'],'DATE') . "&nbsp;-&nbsp;" ."".htmlspecialchars($array['title'])."</a>&nbsp;-&nbsp;Added by <b>".format_username($array)."</b></a>
+    <img border=\"0\" src='pic/plus.png' id=\"pica".(int)$array['nid']."\" alt=\"Show/Hide\" />&nbsp;" .get_date( $array['added'],'DATE') . "&nbsp;-&nbsp;" ."".htmlsafechars($array['title'])."</a>&nbsp;-&nbsp;Added by <b>".format_username($array)."</b></a>
     {$button}
     </div></div>";
     $HTMLOUT .="

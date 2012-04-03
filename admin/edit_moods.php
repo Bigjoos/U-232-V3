@@ -57,9 +57,9 @@ if ($edit_mood['action'] == 'edit' && $edit_mood['id']) {
             <form method='post' action='staffpanel.php?tool=edit_moods&amp;action=edited'>
             <table border='1' cellspacing='0' cellpadding='5'>
             <tr><td class='colhead'>Name</td>
-            <td><input type='text' name='name' size='40' value ='".htmlspecialchars($edit_mood['arr']['name'])."' /></td></tr>
+            <td><input type='text' name='name' size='40' value ='".htmlsafechars($edit_mood['arr']['name'])."' /></td></tr>
             <tr><td class='colhead'>Image</td>
-            <td><input type='text' name='image' size='40' value ='". htmlspecialchars($edit_mood['arr']['image'])."' /></td></tr>
+            <td><input type='text' name='image' size='40' value ='". htmlsafechars($edit_mood['arr']['image'])."' /></td></tr>
             <tr><td class='colhead'>Bonus</td>
             <td><input type='checkbox' name='bonus'".($edit_mood['arr']['bonus'] ? ' checked="checked"' : '')." /></td></tr>
             <tr><td colspan='2' align='center'>
@@ -101,9 +101,9 @@ if (mysqli_num_rows($res)) {
    $color = true;
    while ($arr = mysqli_fetch_assoc($res)) {
       $HTMLOUT .= '<tr '.(($color = !$color)?' style="background-color:#000000;"' : 'style="background-color:#0f0f0f;"').'>
-      <td><img src="'.$INSTALLER09['pic_base_url'].'smilies/'.htmlspecialchars($arr['image']).'" alt="" /></td>
-      <td align="left">'.htmlspecialchars($arr['name']).'</td>
-      <td align="left">'.htmlspecialchars($arr['image']).'</td>
+      <td><img src="'.$INSTALLER09['pic_base_url'].'smilies/'.htmlsafechars($arr['image']).'" alt="" /></td>
+      <td align="left">'.htmlsafechars($arr['name']).'</td>
+      <td align="left">'.htmlsafechars($arr['image']).'</td>
       <td align="left">'.($arr['bonus'] != 0 ? 'Yes' : 'No').'</td>
       <td><a style="color:#FF0000" href="staffpanel.php?tool=edit_moods&amp;id='.(int)$arr['id'].'&amp;action=edit">Edit</a></td></tr>'.
       //<td><a style="color:#FF0000" href="staffpanel.php?tool=edit_moods&amp;action=remove$amp;id='.$arr['id'].'&amp;hash='.$form_hash.'>Remove</a></td></tr>

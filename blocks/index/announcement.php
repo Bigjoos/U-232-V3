@@ -9,7 +9,7 @@
    <div class='headbody'>
    <table width='100%' border='1' cellspacing='0' cellpadding='5'>
    <tr><td bgcolor='transparent'><b><font color='red'>Announcement&nbsp;: 
-   ".htmlspecialchars($ann_subject)."</font></b></td></tr>
+   ".htmlsafechars($ann_subject)."</font></b></td></tr>
    <tr><td style='padding: 10px; background:lightgrey'>
    ".format_comment($ann_body)."
    <br /><hr /><br />

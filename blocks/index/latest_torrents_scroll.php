@@ -21,8 +21,8 @@
     foreach($scroll_torrents as $s_t) {
      $i = $INSTALLER09['latest_torrents_limit_scroll'];
         $id = (int) $s_t['id'];
-        $name = htmlspecialchars($s_t['name']);
-        $poster = ($s_t['poster'] == '' ? ''.$INSTALLER09['pic_base_url'].'noposter.png' : htmlspecialchars( $s_t['poster'] ));
+        $name = htmlsafechars($s_t['name']);
+        $poster = ($s_t['poster'] == '' ? ''.$INSTALLER09['pic_base_url'].'noposter.png' : htmlsafechars( $s_t['poster'] ));
         $seeders = number_format((int)$s_t['seeders']);
         $leechers = number_format((int)$s_t['leechers']);
         $name = str_replace( '_', ' ' , $name );
@@ -30,7 +30,7 @@
         $name = substr( $name, 0, 50 );
         if ( $i == 0 )
         $HTMLOUT .= "</span></span><span id=\"vmarquee2\" style=\"position: absolute; width: 98%;\"></span></div></div><div style=\"overflow:hidden\"><div id=\"marqueecontainer\" onmouseover=\"copyspeed=pausespeed\" onmouseout=\"copyspeed=marqueespeed\"> <span id=\"vmarquee\" style=\"position: absolute; width: 98%;\"><span style=\"white-space: nowrap;\">";
-        $HTMLOUT .= "<a href='{$INSTALLER09['baseurl']}/details.php?id=$id'><img src='" . htmlspecialchars($poster) . "' alt='{$name}' title='{$name} - Seeders : {$seeders} - Leechers : {$leechers}' width='100' height='120' border='0' /></a>&nbsp;&nbsp;&nbsp;";
+        $HTMLOUT .= "<a href='{$INSTALLER09['baseurl']}/details.php?id=$id'><img src='" . htmlsafechars($poster) . "' alt='{$name}' title='{$name} - Seeders : {$seeders} - Leechers : {$leechers}' width='100' height='120' border='0' /></a>&nbsp;&nbsp;&nbsp;";
         $i++;
     }
     $HTMLOUT .= "</span></span><span id=\"vmarquee2\" style=\"position: absolute; width: 98%;\"></span></div></div></div><br />\n";

@@ -33,17 +33,12 @@ global $INSTALLER09, $CURUSER, $lang;
    <tr>
    <td class='colhead' align='center'>{$lang["torrenttable_type"]}</td>
    <td class='colhead' align='left'>{$lang["torrenttable_name"]}</td>";
-   
-
    $htmlout.= ($variant == 'index' ? '<td class="colhead" align="center">Delete</td><td class="colhead" align="right">' : '') . 'Download</td><td class="colhead" align="right">Share</td>';
-    
-
    if ($variant == "mytorrents")
    {
    $htmlout .= "<td class='colhead' align='center'>{$lang["torrenttable_edit"]}</td>\n";
    $htmlout .= "<td class='colhead' align='center'>{$lang["torrenttable_visible"]}</td>\n";
    }
-
    $htmlout .= "<td class='colhead' align='right'>{$lang["torrenttable_files"]}</td>
    <td class='colhead' align='right'>{$lang["torrenttable_comments"]}</td>
    <td class='colhead' align='center'>{$lang["torrenttable_added"]}</td>
@@ -61,19 +56,19 @@ global $INSTALLER09, $CURUSER, $lang;
     $change[$value['id']] = array('id' => $value['id'], 'name'  => $value['name'], 'image' => $value['image']);
     while ($row = mysqli_fetch_assoc($res)) 
     {
-        $row['cat_name'] = htmlspecialchars($change[$row['category']]['name']);
-        $row['cat_pic'] = htmlspecialchars($change[$row['category']]['image']);
+        $row['cat_name'] = htmlsafechars($change[$row['category']]['name']);
+        $row['cat_pic'] = htmlsafechars($change[$row['category']]['image']);
         $id = (int)$row["id"];
         $htmlout .= "<tr>\n";
         $htmlout .= "<td align='center' style='padding: 0px'>";
         if (isset($row["cat_name"])) 
         {
-            $htmlout .= '<a href="browse.php?cat='.htmlentities($row['category']).'">';
+            $htmlout .= '<a href="browse.php?cat='.(int)$row['category'].'">';
             if (isset($row["cat_pic"]) && $row["cat_pic"] != "")
-                $htmlout .= "<img border='0' src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/{$row['cat_pic']}' alt='{$row['cat_name']}' />";
+                $htmlout .= "<img border='0' src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/".htmlsafechars($row['cat_pic'])."' alt='".htmlsafechars($row['cat_name'])."' />";
             else
             {
-                $htmlout .= $row["cat_name"];
+                $htmlout .= htmlsafechars($row["cat_name"]);
             }
             $htmlout .= "</a>";
         }
@@ -83,7 +78,7 @@ global $INSTALLER09, $CURUSER, $lang;
         }
         $htmlout .= "</td>\n";
 
-        $dispname = htmlspecialchars($row["name"]);
+        $dispname = htmlsafechars($row["name"]);
         $htmlout .= "<td align='left'><a href='details.php?";
         if ($variant == "mytorrents")
             $htmlout .= "returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;";
@@ -99,7 +94,7 @@ global $INSTALLER09, $CURUSER, $lang;
       $htmlout.= ($variant == "index" ? "<td align='center'><a href='download.php?torrent={$id}'><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download Bookmark!' title='Download Bookmark!' /></a></td>" : "");
 
   
-        $bm = sql_query("SELECT * FROM bookmarks WHERE torrentid=$id && userid={$CURUSER['id']}");
+        $bm = sql_query("SELECT * FROM bookmarks WHERE torrentid=".sqlesc($id)." && userid=".sqlesc($CURUSER['id']));
 		    $bms = mysqli_fetch_assoc($bm);    
         if ($bms['private'] == 'yes' && $bms['userid'] == $CURUSER['id']) {
         $makepriv = "<a href='bookmark.php?torrent={$id}&amp;action=public'><img src='{$INSTALLER09['pic_base_url']}key.gif' border='0' alt='Mark Bookmark Public!' title='Mark Bookmark Public!' /></a>";
@@ -113,7 +108,7 @@ global $INSTALLER09, $CURUSER, $lang;
         }    
 
         if ($variant == "mytorrents")
-            $htmlout .= "</td><td align='center'><a href='edit.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;id=".htmlentities($row["id"])."'>{$lang["torrenttable_edit"]}</a>\n";
+            $htmlout .= "</td><td align='center'><a href='edit.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;id=".(int)$row["id"]."'>{$lang["torrenttable_edit"]}</a>\n";
         
         if ($variant == "mytorrents") 
         {
@@ -127,33 +122,33 @@ global $INSTALLER09, $CURUSER, $lang;
 
         if ($row["type"] == "single")
         {
-            $htmlout .= "<td align='right'>".$row['numfiles']."</td>\n";
+            $htmlout .= "<td align='right'>".(int)$row['numfiles']."</td>\n";
         }
         else 
         {
             if ($variant == "index")
             {
-                $htmlout .= "<td align='right'><b><a href='filelist.php?id=$id'>".htmlentities($row['numfiles'])."</a></b></td>\n";
+                $htmlout .= "<td align='right'><b><a href='filelist.php?id=$id'>".(int)$row['numfiles']."</a></b></td>\n";
             }
             else
             {
-                $htmlout .= "<td align='right'><b><a href='filelist.php?id=$id'>".htmlentities($row['numfiles'])."</a></b></td>\n";
+                $htmlout .= "<td align='right'><b><a href='filelist.php?id=$id'>".(int)$row['numfiles']."</a></b></td>\n";
             }
         }
 
-        if (!(int)$row["comments"])
+        if (!$row["comments"])
         {
-            $htmlout .= "<td align='right'>".$row['comments']."</td>\n";
+            $htmlout .= "<td align='right'>".(int)$row['comments']."</td>\n";
         }
         else 
         {
             if ($variant == "index")
             {
-                $htmlout .= "<td align='right'><b><a href='details.php?id=$id&amp;hit=1&amp;tocomm=1'>".htmlentities($row['comments'])."</a></b></td>\n";
+                $htmlout .= "<td align='right'><b><a href='details.php?id=$id&amp;hit=1&amp;tocomm=1'>".(int)$row['comments']."</a></b></td>\n";
             }
             else
             {
-                $htmlout .= "<td align='right'><b><a href='details.php?id=$id&amp;page=0#startcomments'>".htmlentities($row['comments'])."</a></b></td>\n";
+                $htmlout .= "<td align='right'><b><a href='details.php?id=$id&amp;page=0#startcomments'>".(int)$row['comments']."</a></b></td>\n";
             }
         }
 
@@ -165,36 +160,36 @@ global $INSTALLER09, $CURUSER, $lang;
            $_s = "".$lang["torrenttable_time_plural"]."";
            else
            $_s = "".$lang["torrenttable_time_singular"]."";
-           $htmlout .= "<td align='center'><a href='snatches.php?id=$id'>" . number_format((int)$row["times_completed"]) . "<br />$_s</a></td>\n";
+           $htmlout .= "<td align='center'><a href='snatches.php?id=$id'>" . number_format($row["times_completed"]) . "<br />$_s</a></td>\n";
 
         if ((int)$row["seeders"]) 
         {
             if ($variant == "index")
             {
             if ($row["leechers"]) $ratio = (int)$row["seeders"] / (int)$row["leechers"]; else $ratio = 1;
-            $htmlout .= "<td align='right'><b><a href='peerlist.php?id=$id#seeders'><font color='" .get_slr_color($ratio) . "'>".htmlentities($row['seeders'])."</font></a></b></td>\n";
+            $htmlout .= "<td align='right'><b><a href='peerlist.php?id=$id#seeders'><font color='" .get_slr_color($ratio) . "'>".(int)$row['seeders']."</font></a></b></td>\n";
             }
             else
             {
-           $htmlout .= "<td align='right'><b><a class='" . linkcolor((int)$row["seeders"]) . "' href='peerlist.php?id=$id#seeders'>".htmlentities($row['seeders'])."</a></b></td>\n";
+           $htmlout .= "<td align='right'><b><a class='" . linkcolor($row["seeders"]) . "' href='peerlist.php?id=$id#seeders'>".(int)$row['seeders']."</a></b></td>\n";
             }
         }
         else
         {
-           $htmlout .= "<td align='right'><span class='" . linkcolor((int)$row["seeders"]) . "'>".htmlentities($row['seeders'])."</span></td>\n";
+           $htmlout .= "<td align='right'><span class='" . linkcolor($row["seeders"]) . "'>".(int)$row['seeders']."</span></td>\n";
         }
 
         if ((int)$row["leechers"]) 
         {
             if ($variant == "index")
-            $htmlout .= "<td align='right'><b><a href='peerlist.php?id=$id#leechers'>" .number_format((int)$row["leechers"]) . "</a></b></td>\n";
+            $htmlout .= "<td align='right'><b><a href='peerlist.php?id=$id#leechers'>" .number_format($row["leechers"]) . "</a></b></td>\n";
             else
-            $htmlout .= "<td align='right'><b><a class='" . linkcolor((int)$row["leechers"]) . "' href='peerlist.php?id=$id#leechers'>".htmlentities($row['leechers'])."</a></b></td>\n";
+            $htmlout .= "<td align='right'><b><a class='" . linkcolor($row["leechers"]) . "' href='peerlist.php?id=$id#leechers'>".(int)$row['leechers']."</a></b></td>\n";
         }
         else
             $htmlout .= "<td align='right'>0</td>\n";
             if ($variant == "index")
-            $htmlout .= "<td align='center'>" . (isset($row["username"]) ? ("<a href='userdetails.php?id=".htmlentities($row['owner'])."'><b>" . htmlspecialchars($row["username"]) . "</b></a>") : "<i>(".$lang["torrenttable_unknown_uploader"].")</i>") . "</td>\n";
+            $htmlout .= "<td align='center'>" . (isset($row["username"]) ? ("<a href='userdetails.php?id=".(int)$row['owner']."'><b>" . htmlsafechars($row["username"]) . "</b></a>") : "<i>(".$lang["torrenttable_unknown_uploader"].")</i>") . "</td>\n";
             $htmlout .= "</tr>\n";
             }
             $htmlout .= "</table>\n";
@@ -209,12 +204,12 @@ stderr("Error", "Invalid ID.");
 if ($userid != $CURUSER["id"])
 stderr("Error", "Access denied. Try <a href=\"sharemarks.php?id=".$userid."\">Here</a>");
 
-$res = sql_query("SELECT id, username FROM users WHERE id = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT id, username FROM users WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $arr = mysqli_fetch_array($res);
 $htmlout.="<h1>My Bookmarks</h1>";
 $htmlout.="<b><a href='sharemarks.php?id=".$CURUSER['id']."'>My Sharemarks</a></b>";
 
-$res = sql_query("SELECT COUNT(id) FROM bookmarks WHERE userid = ".sqlesc($userid)."") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT COUNT(id) FROM bookmarks WHERE userid = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $row = mysqli_fetch_array($res);
 $count = $row[0];
 

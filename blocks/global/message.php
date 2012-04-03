@@ -3,7 +3,7 @@
     if ($INSTALLER09['msg_alert'] && $CURUSER)
     {
       if(($unread = $mc1->get_value('inbox_new_'.$CURUSER['id'])) === false) {
-      $res = sql_query('SELECT count(id) FROM messages WHERE receiver='.$CURUSER['id'].' && unread="yes" AND location = "1"') or sqlerr(__FILE__,__LINE__);
+      $res = sql_query('SELECT count(id) FROM messages WHERE receiver='.sqlesc($CURUSER['id']).' && unread="yes" AND location = "1"') or sqlerr(__FILE__,__LINE__);
       $arr = mysqli_fetch_row($res);
       $unread = (int)$arr[0];
       $mc1->cache_value('inbox_new_'.$CURUSER['id'], $unread, $INSTALLER09['expires']['unread']);

@@ -9,9 +9,9 @@
     }
     $arr = $hash1;
     if ($arr['hash1'] != '') { 
-    $HTMLOUT.="<tr><td class='rowhead'>Login Link<br /><a href='createlink.php?action=reset&amp;id=".$CURUSER['id']."' target='_blank'>Reset Link</a></td><td align='left'>{$INSTALLER09['baseurl']}/pagelogin.php?qlogin=".$arr['hash1']."</td></tr>";
+    $HTMLOUT.="<tr><td class='rowhead'>Login Link<br /><a href='createlink.php?action=reset&amp;id=".(int)$CURUSER['id']."' target='_blank'>Reset Link</a></td><td align='left'>{$INSTALLER09['baseurl']}/pagelogin.php?qlogin=".htmlsafechars($arr['hash1'])."</td></tr>";
     } else { 
-    $HTMLOUT.="<tr><td class='rowhead'>Login Link</td><td align='left'><a href='createlink.php?id=".$CURUSER['id']."' target='_blank'>Create link</a></td></tr>";
+    $HTMLOUT.="<tr><td class='rowhead'>Login Link</td><td align='left'><a href='createlink.php?id=".(int)$CURUSER['id']."' target='_blank'>Create link</a></td></tr>";
     } 
     }
 //==End

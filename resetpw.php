@@ -14,7 +14,7 @@ get_template();
 dbconn();
 session_start();
 $lang = array_merge( load_language('global'), load_language('passhint') );
-
+$stdhead = array(/** include js **/'js' => array('jquery','jquery.simpleCaptcha-0.2'));
 $HTMLOUT = '';
 
 global $CURUSER;
@@ -147,8 +147,6 @@ stderr("{$lang['stderr_successhead']}","{$lang['stderr_error14']} <a href='{$INS
 }else {
 
     $HTMLOUT .= "
-    <script type='text/javascript' src='scripts/jquery.js'></script>
-    <script type='text/javascript' src='scripts/jquery.simpleCaptcha-0.2.js'></script>
     <script type='text/javascript'>
 	  /*<![CDATA[*/
 	  $(document).ready(function () {
@@ -167,6 +165,6 @@ stderr("{$lang['stderr_successhead']}","{$lang['stderr_error14']} <a href='{$INS
 </tr>
 <tr><td colspan='2' align='center'><input type='submit' value='{$lang['main_recover']}' style='height: 25px' /></td></tr></table>
 </form>";
-echo stdhead('Reset Lost Password'). $HTMLOUT . stdfoot();
+echo stdhead('Reset Lost Password', true, $stdhead). $HTMLOUT . stdfoot();
 }
 ?>

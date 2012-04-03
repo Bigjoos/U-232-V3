@@ -681,7 +681,7 @@ $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
         $updateset[] = "av_w = " . sqlesc($image['img_width']);
         $updateset[] = "av_h = " . sqlesc($image['img_height']);
       }
-      $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . "{$lang['modtask_avatar_change']}".htmlspecialchars($curavatar)."{$lang['modtask_to']}".htmlspecialchars($avatar)."{$lang['modtask_by']}" . $CURUSER['username'] . ".\n" . $modcomment;
+      $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . "{$lang['modtask_avatar_change']}".htmlsafechars($curavatar)."{$lang['modtask_to']}".htmlsafechars($avatar)."{$lang['modtask_by']}" . $CURUSER['username'] . ".\n" . $modcomment;
       $updateset[] = "avatar = ".sqlesc($avatar);
       $useredit['update'][] = 'Avatar changed';
       $curuser_cache['avatar'] = $avatar;
@@ -731,7 +731,7 @@ $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
         $updateset[] = "sig_w = " . sqlesc($image['img_width']);
         $updateset[] = "sig_h = " . sqlesc($image['img_height']);
       }
-      $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . "{$lang['modtask_signature_change']}".htmlspecialchars($cursignature)."{$lang['modtask_to']}".htmlspecialchars($signature)."{$lang['modtask_by']}" . $CURUSER['username'] . ".\n" . $modcomment;
+      $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . "{$lang['modtask_signature_change']}".htmlsafechars($cursignature)."{$lang['modtask_to']}".htmlsafechars($signature)."{$lang['modtask_by']}" . $CURUSER['username'] . ".\n" . $modcomment;
       $updateset[] = "signature = ".sqlesc($signature);
       $useredit['update'][] = 'Signature changed';
       $curuser_cache['signature'] = $signature;
@@ -742,7 +742,7 @@ $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
      if ((isset($_POST['invite_on'])) && (($invite_on = $_POST['invite_on']) != $user['invite_on'])){  
      $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - Invites allowed changed from $user[invite_on] to $invite_on by " . $CURUSER['username'] . ".\n" . $modcomment;
      $updateset[] = "invite_on = " . sqlesc($invite_on);
-     $useredit['update'][] = 'Invites enabled = '.htmlspecialchars($invite_on).'';
+     $useredit['update'][] = 'Invites enabled = '.htmlsafechars($invite_on).'';
      $curuser_cache['invites_on'] = $invites_on;
      $user_cache['invites_on'] = $invites_on;
      }
@@ -1129,7 +1129,7 @@ $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
     //=== website
     if ((isset($_POST['website'])) && (($website = $_POST['website']) != $user['website']))
     {
-    $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - website changed to '".strip_tags($_POST['website'])."' from '".htmlspecialchars($user['website'])."' by " . $CURUSER['username'] . ".\n" . $modcomment;
+    $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - website changed to '".strip_tags($_POST['website'])."' from '".htmlsafechars($user['website'])."' by " . $CURUSER['username'] . ".\n" . $modcomment;
     $updateset[] = 'website = ' . sqlesc($website);
     $useredit['update'][] = 'Website changed';
     $curuser_cache['website'] = $website;
@@ -1138,7 +1138,7 @@ $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
     //=== google_talk
     if ((isset($_POST['google_talk'])) && (($google_talk = $_POST['google_talk']) != $user['google_talk']))
     {
-    $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - google_talk changed to '".strip_tags($_POST['google_talk'])."' from '".htmlspecialchars($user['google_talk'])."' by " . $CURUSER['username'] . ".\n" . $modcomment;
+    $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - google_talk changed to '".strip_tags($_POST['google_talk'])."' from '".htmlsafechars($user['google_talk'])."' by " . $CURUSER['username'] . ".\n" . $modcomment;
     $updateset[] = 'google_talk = ' . sqlesc($google_talk);
     $useredit['update'][] = 'Google talk address changed';
     $curuser_cache['google_talk'] = $google_talk;
@@ -1147,7 +1147,7 @@ $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
     //=== msn
     if ((isset($_POST['msn'])) && (($msn = $_POST['msn']) != $user['msn']))
     {
-    $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - msn changed to '".strip_tags($_POST['msn'])."' from '".htmlspecialchars($user['msn'])."' by " . $CURUSER['username'] . ".\n" . $modcomment;
+    $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - msn changed to '".strip_tags($_POST['msn'])."' from '".htmlsafechars($user['msn'])."' by " . $CURUSER['username'] . ".\n" . $modcomment;
     $updateset[] = 'msn = ' . sqlesc($msn);
     $useredit['update'][] = 'Msn address changed';
     $curuser_cache['msn'] = $msn;
@@ -1156,7 +1156,7 @@ $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
     //=== aim
     if ((isset($_POST['aim'])) && (($aim = $_POST['aim']) != $user['aim']))
     {
-    $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - aim changed to '".strip_tags($_POST['aim'])."' from '".htmlspecialchars($user['aim'])."' by " . $CURUSER['username'] . ".\n" . $modcomment;
+    $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - aim changed to '".strip_tags($_POST['aim'])."' from '".htmlsafechars($user['aim'])."' by " . $CURUSER['username'] . ".\n" . $modcomment;
     $updateset[] = 'aim = ' . sqlesc($aim);
     $useredit['update'][] = 'AIM address changed';
     $curuser_cache['aim'] = $aim;
@@ -1165,7 +1165,7 @@ $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
     //=== yahoo
     if ((isset($_POST['yahoo'])) && (($yahoo = $_POST['yahoo']) != $user['yahoo']))
     {
-    $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - yahoo changed to '".strip_tags($_POST['yahoo'])."' from '".htmlspecialchars($user['yahoo'])."' by " . $CURUSER['username'] . ".\n" . $modcomment;
+    $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - yahoo changed to '".strip_tags($_POST['yahoo'])."' from '".htmlsafechars($user['yahoo'])."' by " . $CURUSER['username'] . ".\n" . $modcomment;
     $updateset[] = 'yahoo = ' . sqlesc($yahoo);
     $useredit['update'][] = 'Yahoo address changed';
     $curuser_cache['yahoo'] = $yahoo;
@@ -1174,7 +1174,7 @@ $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
     //=== icq
     if ((isset($_POST['icq'])) && (($icq = $_POST['icq']) != $user['icq']))
     {
-    $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - icq changed to '".strip_tags($_POST['icq'])."' from '".htmlspecialchars($user['icq'])."' by " . $CURUSER['username'] . ".\n" . $modcomment;
+    $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - icq changed to '".strip_tags($_POST['icq'])."' from '".htmlsafechars($user['icq'])."' by " . $CURUSER['username'] . ".\n" . $modcomment;
     $updateset[] = 'icq = ' . sqlesc($icq);
     $useredit['update'][] = 'ICQ address changed';
     $curuser_cache['icq'] = $icq;
@@ -1217,7 +1217,7 @@ $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
     }
     //== 09 Updated Sysop log - thanks to pdq
      write_info("User account $userid (<a href='userdetails.php?id=$userid'>$user[username]</a>)\nThings edited: ".join(', ', $useredit['update'])." by <a href='userdetails.php?id=$CURUSER[id]'>$CURUSER[username]</a>");
-    $returnto = htmlentities($_POST["returnto"]);
+    $returnto = htmlsafechars($_POST["returnto"]);
     header("Location: {$INSTALLER09['baseurl']}/$returnto");
     stderr("{$lang['modtask_user_error']}", "{$lang['modtask_try_again']}");
     }

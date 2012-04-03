@@ -33,7 +33,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
                     {
                     case 'change_pm':
                         $change_pm_number = (isset($_POST['change_pm_number']) ? intval($_POST['change_pm_number']) : 20);
-                            sql_query('UPDATE users SET pms_per_page = '.$change_pm_number.' WHERE id = '.$CURUSER['id']) or sqlerr(__FILE__,__LINE__);
+                            sql_query('UPDATE users SET pms_per_page = '.sqlesc($change_pm_number).' WHERE id = '.sqlesc($CURUSER['id'])) or sqlerr(__FILE__,__LINE__);
                             $mc1->begin_transaction('user'.$CURUSER['id']);
                             $mc1->update_row(false, array('pms_per_page' => $change_pm_number));
                             $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -51,7 +51,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
                         stderr('Error', 'to add new PM boxes you MUST enter at least one PM box name!');
 
                         //=== Get current highest box number
-                        $res = sql_query('SELECT boxnumber FROM pmboxes WHERE userid = '.$CURUSER['id'].' ORDER BY boxnumber  DESC LIMIT 1') or sqlerr(__FILE__,__LINE__);
+                        $res = sql_query('SELECT boxnumber FROM pmboxes WHERE userid = '.sqlesc($CURUSER['id']).' ORDER BY boxnumber  DESC LIMIT 1') or sqlerr(__FILE__,__LINE__);
                         $box_arr = mysqli_fetch_row($res);
                         $box = ($box_arr[0] < 2 ? 2 : ($box_arr[0] + 1));
 
@@ -62,8 +62,8 @@ if (!defined('BUNNY_PM_SYSTEM'))
                 {
                 if (validusername($add_it) && $add_it !== '')
                     {
-                    $name = sqlesc(htmlspecialchars($add_it));
-                    sql_query('INSERT INTO pmboxes (userid, name, boxnumber) VALUES ('.$CURUSER['id'].', '.$name.', '.$box.')') or sqlerr(__FILE__,__LINE__);
+                    $name = sqlesc(htmlsafechars($add_it));
+                    sql_query('INSERT INTO pmboxes (userid, name, boxnumber) VALUES ('.sqlesc($CURUSER['id']).', '.sqlesc($name).', '.sqlesc($box).')') or sqlerr(__FILE__,__LINE__);
                     }
                 ++$box;
                 $worked = '&boxes=1';
@@ -78,7 +78,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
         case 'edit_boxes':
 
             //=== get info
-            $res = sql_query('SELECT * FROM pmboxes WHERE userid='.$CURUSER['id']) or sqlerr(__FILE__,__LINE__);
+            $res = sql_query('SELECT * FROM pmboxes WHERE userid='.sqlesc($CURUSER['id'])) or sqlerr(__FILE__,__LINE__);
 
                 if (mysqli_num_rows($res) === 0) 
                     stderr(' Error','No Mailboxes to edit');
@@ -89,8 +89,8 @@ if (!defined('BUNNY_PM_SYSTEM'))
                     //=== if name different AND safe, update it
                     if (validusername($_POST['edit'.$row['id']]) && $_POST['edit'.$row['id']] !== '' && $_POST['edit'.$row['id']] !== $row['name'])
                         {
-                        $name = sqlesc(htmlspecialchars($_POST['edit'.$row['id']]));
-                        sql_query('UPDATE pmboxes SET name='.$name.' WHERE id='.sqlesc($row['id']).' LIMIT 1') or sqlerr(__FILE__,__LINE__);
+                        $name = sqlesc(htmlsafechars($_POST['edit'.$row['id']]));
+                        sql_query('UPDATE pmboxes SET name='.sqlesc($name).' WHERE id='.sqlesc($row['id']).' LIMIT 1') or sqlerr(__FILE__,__LINE__);
                         $worked = '&name=1';		
                         }
 	
@@ -98,7 +98,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
                     if ($_POST['edit'.$row['id']] == '')
                         {
                         //=== get messages to move
-                        $remove_messages_res = sql_query('SELECT id FROM messages WHERE location='.$row['boxnumber'].'  AND receiver='.$CURUSER['id']) or sqlerr(__FILE__,__LINE__);
+                        $remove_messages_res = sql_query('SELECT id FROM messages WHERE location='.sqlesc($row['boxnumber']).'  AND receiver='.sqlesc($CURUSER['id'])) or sqlerr(__FILE__,__LINE__);
 	
                             //== move the messages to the inbox
                             while ($remove_messages_arr = mysqli_fetch_assoc($remove_messages_res))
@@ -107,7 +107,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
                                 }
 
                             //== delete the box
-                            sql_query('DELETE FROM pmboxes WHERE id='.$row['id'].'  LIMIT 1') or sqlerr(__FILE__,__LINE__);
+                            sql_query('DELETE FROM pmboxes WHERE id='.sqlesc($row['id']).'  LIMIT 1') or sqlerr(__FILE__,__LINE__);
                             $deleted = '&box_delete=1';
                         }
 	
@@ -177,7 +177,7 @@ if ($curuser_cache) {
                    $mc1->update_row(false, $user_cache);
                    $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
                 }
-                sql_query('UPDATE users SET '.implode(', ', $updateset).' WHERE id = '.$CURUSER['id']) or sqlerr(__FILE__,__LINE__);
+                sql_query('UPDATE users SET '.implode(', ', $updateset).' WHERE id = '.sqlesc($CURUSER['id'])) or sqlerr(__FILE__,__LINE__);
                 $worked = '&pms=1';
             //=== redirect back with messages :P
             header('Location: pm_system.php?action=edit_mailboxes'.$worked);
@@ -188,7 +188,7 @@ if ($curuser_cache) {
     
     
 //=== main page here :D
-            $res = sql_query('SELECT * FROM pmboxes WHERE userid='.$CURUSER['id'].' ORDER BY name ASC') or sqlerr(__FILE__,__LINE__);
+            $res = sql_query('SELECT * FROM pmboxes WHERE userid='.sqlesc($CURUSER['id']).' ORDER BY name ASC') or sqlerr(__FILE__,__LINE__);
             
             if (mysqli_num_rows($res) > 0)
                 {
@@ -197,7 +197,7 @@ if ($curuser_cache) {
                 while ($row = mysqli_fetch_assoc($res))
                     {
                     //==== get count from PM boxes
-                    $res_count = sql_query('SELECT COUNT(id) FROM messages WHERE  location = '.$row['boxnumber'].' AND receiver = '.$CURUSER['id']) or sqlerr(__FILE__,__LINE__);
+                    $res_count = sql_query('SELECT COUNT(id) FROM messages WHERE  location = '.sqlesc($row['boxnumber']).' AND receiver = '.sqlesc($CURUSER['id'])) or sqlerr(__FILE__,__LINE__);
                     $arr_count = mysqli_fetch_row($res_count);
                     $messages = $arr_count[0];
                     
@@ -207,8 +207,8 @@ if ($curuser_cache) {
                         <form action="pm_system.php" method="post">
                         <input type="hidden" name="action" value="edit_mailboxes" />
                         <input type="hidden" name="action2" value="edit_boxes" />
-                        Box # '.($row['boxnumber'] -1).' <span style="font-weight: bold;">'.htmlspecialchars($row['name']).':</span></td>
-                        <td class="one" colspan="2" align="left"><input type="text" name="edit'.(0 + $row['id']).'" value="'.htmlspecialchars($row['name']).'" style="text_default" /> [ contains '.$messages.' messages ]</td>
+                        Box # '.($row['boxnumber'] -1).' <span style="font-weight: bold;">'.htmlsafechars($row['name']).':</span></td>
+                        <td class="one" colspan="2" align="left"><input type="text" name="edit'.(0 + $row['id']).'" value="'.htmlsafechars($row['name']).'" style="text_default" /> [ contains '.$messages.' messages ]</td>
                     </tr>';
                     }
 

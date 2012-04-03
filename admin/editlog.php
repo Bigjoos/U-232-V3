@@ -38,6 +38,7 @@ if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
 require_once(INCL_DIR.'user_functions.php');
 require_once(CLASS_DIR.'class_check.php');
 class_check(UC_SYSOP, true, true);
+loggedinorreturn();
 //== ID list - Add individual user IDs to this list for access to this script
 $allowed_ids = array(1); //== 1 Is Sysop - add userids you want access
 if (!in_array($CURUSER['id'], $allowed_ids))
@@ -45,30 +46,6 @@ if (!in_array($CURUSER['id'], $allowed_ids))
     
 $lang = array_merge( $lang, load_language('editlog') );
 $HTMLOUT='';
-
-function unsafeChar($var)
-{
-    return str_replace(array("&gt;", "&lt;", "&quot;", "&amp;"), array(">", "<", "\"", "&"), $var);
-}
-function safeChar($var)
-{
-    return htmlspecialchars(unsafeChar($var));
-}
-function makeSafeText($arr)
-{
-    foreach ($arr as $k => $v) {
-        if (is_array($v))
-            $arr[$k] = makeSafeText($v);
-        else
-            $arr[$k] = safeChar($v);
-    }
-    return $arr;
-}
-// Makes the data safe
-if (!empty($_GET)) $_GET = makeSafeText($_GET);
-if (!empty($_POST)) $_POST = makeSafeText($_POST);
-if (!empty($_COOKIE)) $_COOKIE = makeSafeText($_COOKIE);
-loggedinorreturn();
 
 $file_data = './dir_list/data_'.$CURUSER['username'].'.txt';
 
@@ -186,7 +163,7 @@ if ($x['status'] == 'new')
 $HTMLOUT .="
 <tr>
 <td align='center'>";
-$HTMLOUT .= safeChar(substr($x['name'],2));
+$HTMLOUT .= htmlsafechars(substr($x['name'],2));
 $HTMLOUT .="</td>
 <td align='center'>";
 $HTMLOUT .= get_date($x['modify'], 'DATE',0,1);
@@ -220,7 +197,7 @@ if ($x['status'] == 'modified')
 $HTMLOUT .="
 <tr>
 <td align='center'>";
-$HTMLOUT .= safeChar(substr($x['name'],2));
+$HTMLOUT .= htmlsafechars(substr($x['name'],2));
 $HTMLOUT .="</td>
 <td align='center'>";
 $HTMLOUT .= get_date($x['modify'], 'DATE',0,1);
@@ -253,7 +230,7 @@ if ($x['status'] == 'deleted')
 $HTMLOUT .="
 <tr>
 <td align='center'>";
-$HTMLOUT .= safeChar(substr($x['name'],2));
+$HTMLOUT .= htmlsafechars(substr($x['name'],2));
 $HTMLOUT .="</td>
 <td align='center'>";
 $HTMLOUT .= get_date($x['modify'], 'DATE',0,1);

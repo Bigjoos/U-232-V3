@@ -33,7 +33,6 @@ if((isset($_GET['pass']) && $_GET['pass'] == $password) && (isset($_GET['hash'])
     if(isset($_GET['search'])){
         $search = trim($_GET['search']);
         $query = "username = " . sqlesc("$search") . " AND status='confirmed'";
-
         $res = sql_query("SELECT * FROM users WHERE $query ORDER BY username") or sqlerr(__FILE__, __LINE__);
         $num = mysqli_num_rows($res);
 
@@ -43,16 +42,16 @@ if((isset($_GET['pass']) && $_GET['pass'] == $password) && (isset($_GET['hash'])
         if($num > 0){
             $arr = mysqli_fetch_assoc($res);
             $id = (isset($arr['id'])?0 + $arr['id']:0);
-            $seedingbonus = (isset($arr['seedbonus'])?htmlspecialchars($arr['seedbonus']):'');
-            $username = htmlspecialchars($arr['username']);
+            $seedingbonus = (isset($arr['seedbonus']) ? (int)$arr['seedbonus'] : '');
+            $username = htmlsafechars($arr['username']);
             if(isset($_GET['func']) && $_GET['func'] == "stats"){
                 $ratio = (($arr["downloaded"] > 0) ? ($arr["uploaded"] / $arr["downloaded"]) : "0.00");
-                $lastseen = htmlspecialchars($arr["last_access"]);
+                $lastseen = htmlsafechars($arr["last_access"]);
 
-                echo($arr['username'] . " - Uploaded: (" . mksize($arr['uploaded']) . ") - Downloaded: (" . mksize($arr['downloaded']) . ") - Ratio: (" . number_format($ratio, 2) . ") - Invites: (" . $arr['invites'] . ") - Joined: (" . get_date($arr["added"], 'DATE',0,1) . "" . ") - Online time: (" .time_return($arr["onlinetime"]).") - Last Seen: (" . get_date($lastseen, 'DATE',0,1) . ")");
+                echo(htmlsafechars($arr['username']). " - Uploaded: (" . mksize($arr['uploaded']) . ") - Downloaded: (" . mksize($arr['downloaded']) . ") - Ratio: (" . number_format($ratio, 2) . ") - Invites: (" . (int)$arr['invites'] . ") - Joined: (" . get_date($arr["added"], 'DATE',0,1) . "" . ") - Online time: (" .time_return($arr["onlinetime"]).") - Last Seen: (" . get_date($lastseen, 'DATE',0,1) . ")");
             }
 			elseif(isset($_GET['func']) && $_GET['func'] == "check"){
-                echo($arr['username'] . " - Seedbonus: (" . number_format($arr['seedbonus'], 1) . ")");
+                echo(htmlsafechars($arr['username'])." - Seedbonus: (" . number_format($arr['seedbonus'], 1) . ")");
             }
             elseif(isset($_GET['func']) && $_GET['func'] == "ircbonus"){
 			$ircbonus = (!empty($arr['irctotal'])?number_format($arr["irctotal"] / ($INSTALLER09['autoclean_interval'] * 4), 1):'0.0');
@@ -63,7 +62,7 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
 				echo($arr['username'] . " - IRC Total: (" . $irctotal . ")");
 			}
 			elseif(isset($_GET['func']) && $_GET['func'] == "connectable"){
-                $res5 = sql_query("SELECT connectable FROM peers WHERE userid=$arr[id]") or sqlerr(__FILE__, __LINE__);
+                $res5 = sql_query("SELECT connectable FROM peers WHERE userid=".sqlesc($arr['id'])) or sqlerr(__FILE__, __LINE__);
                 if($row = mysqli_fetch_row($res5)){
                     $connect = $row[0];
                     if($connect == "yes")
@@ -95,15 +94,15 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
         $nsetusername = mysqli_fetch_assoc($res);
         $res2 = sql_query("SELECT id FROM users WHERE username = $newname LIMIT 1") or sqlerr(__FILE__, __LINE__);
         $nnewname = mysqli_fetch_assoc($res2);
-        $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+        $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
         if($nsetusername < 1)
             echo $who . " - No such user or is staff, please try again.";
         else{
             if($nnewname)
                 echo $newname . " - Is taken, please try again.";
             else{
-                $modd = (isset($_GET['mod'])?htmlspecialchars($_GET['mod']):'');
-                $newusername = (isset($_GET['newname'])?htmlspecialchars($_GET['newname']):'');
+                $modd = (isset($_GET['mod'])?htmlsafechars($_GET['mod']):'');
+                $newusername = (isset($_GET['newname'])?htmlsafechars($_GET['newname']):'');
                 $modcomment = sqlesc(get_date( TIME_NOW, 'DATE', 1 ) . " IRC: " . $who . "s name was changed from: " . $who . " to " . $newusername . " by " . $modd . "\n");
                 sql_query("UPDATE users SET username = $newname, modcomment = CONCAT($modcomment,modcomment) WHERE username = $whom") or sqlerr(__FILE__, __LINE__);
                 $mc1->begin_transaction('user'.$nsetusername['id']);
@@ -170,7 +169,7 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
             $res = sql_query("SELECT id, seedbonus FROM users WHERE username = $whom LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $nbonus = mysqli_fetch_assoc($res);
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             if($nbonus < 1)
                 echo $who . " - No such user, please try again.";
             else{
@@ -192,7 +191,7 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
         
         elseif(isset($_GET['invites'])){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res3 = sql_query("SELECT id, invites FROM users WHERE username = $whom LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $ninvites = mysqli_fetch_assoc($res3);
 
@@ -215,7 +214,7 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
             }
         }elseif(isset($_GET['freeslots'])){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res5 = sql_query("SELECT id, freeslots FROM users WHERE username = $whom LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $nfreeslots = mysqli_fetch_assoc($res5);
 
@@ -238,7 +237,7 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
             }
         }elseif(isset($_GET['reputation'])){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res3 = sql_query("SELECT id, reputation FROM users WHERE username = $whom LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $nreputation = mysqli_fetch_assoc($res3);
 
@@ -265,7 +264,7 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
             $res = sql_query("SELECT id, seedbonus FROM users WHERE username = $whom LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $nbonus = mysqli_fetch_assoc($res);
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             if($nbonus < 1)
                 echo $who . " - No such user, please try again.";
             else{
@@ -287,7 +286,7 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
        
         elseif(isset($_GET['invites'])){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res3 = sql_query("SELECT id, invites FROM users WHERE username = $whom LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $ninvites = mysqli_fetch_assoc($res3);
 
@@ -310,7 +309,7 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
             }
         }elseif(isset($_GET['freeslots'])){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res5 = sql_query("SELECT id, freeslots FROM users WHERE username = $whom LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $nfreeslots = mysqli_fetch_assoc($res5);
 
@@ -333,7 +332,7 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
             }
         }elseif(isset($_GET['reputation'])){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res5 = sql_query("SELECT id, reputation FROM users WHERE username = $whom LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $nreputation = mysqli_fetch_assoc($res5);
 
@@ -361,8 +360,8 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
         if(isset($_GET['bonus'])){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
             $me = (isset($_GET['me'])?sqlesc($_GET['me']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
-            $m = (isset($_GET['me'])?htmlspecialchars($_GET['me']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
+            $m = (isset($_GET['me'])?htmlsafechars($_GET['me']):'');
             $res9 = sql_query("SELECT id, seedbonus FROM users WHERE username = $me LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $mebonus = mysqli_fetch_assoc($res9);
             $res99 = sql_query("SELECT id, seedbonus FROM users WHERE username = $whom LIMIT 1") or sqlerr(__FILE__, __LINE__);
@@ -403,8 +402,8 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
         }elseif(isset($_GET['freeslots'])){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
             $me = (isset($_GET['me'])?sqlesc($_GET['me']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
-            $m = (isset($_GET['me'])?htmlspecialchars($_GET['me']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
+            $m = (isset($_GET['me'])?htmlsafechars($_GET['me']):'');
             $res9 = sql_query("SELECT id, freeslots FROM users WHERE username = $me LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $mefreeslots = mysqli_fetch_assoc($res9);
             $res99 = sql_query("SELECT id, freeslots FROM users WHERE username = $whom LIMIT 1") or sqlerr(__FILE__, __LINE__);
@@ -444,8 +443,8 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
         }elseif(isset($_GET['reputation'])){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
             $me = (isset($_GET['me'])?sqlesc($_GET['me']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
-            $m = (isset($_GET['me'])?htmlspecialchars($_GET['me']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
+            $m = (isset($_GET['me'])?htmlsafechars($_GET['me']):'');
             $res9 = sql_query("SELECT id, reputation FROM users WHERE username = $me LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $mereputation = mysqli_fetch_assoc($res9);
             $res99 = sql_query("SELECT id, reputation FROM users WHERE username = $whom LIMIT 1") or sqlerr(__FILE__, __LINE__);
@@ -485,8 +484,8 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
         }elseif(isset($_GET['invites'])){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
             $me = (isset($_GET['me'])?sqlesc($_GET['me']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
-            $m = (isset($_GET['me'])?htmlspecialchars($_GET['me']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
+            $m = (isset($_GET['me'])?htmlsafechars($_GET['me']):'');
             $res9 = sql_query("SELECT id, invites FROM users WHERE username = $me LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $meinvites = mysqli_fetch_assoc($res9);
             $res99 = sql_query("SELECT id, invites FROM users WHERE username = $whom LIMIT 1") or sqlerr(__FILE__, __LINE__);
@@ -529,16 +528,16 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
     elseif(isset($_GET['uploadpos'])){
         if((isset($_GET['toggle']) && $_GET['toggle'] == 1) || (isset($_GET['toggle']) && $_GET['toggle'] == 0)){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res = sql_query("SELECT id, uploadpos FROM users WHERE username = $whom AND class < $modclass LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $upos = mysqli_fetch_assoc($res);
 
             if($upos < 1)
                 echo $who . " - No such user or is staff, please try again.";
             else{
-                $newpos = (isset($upos['uploadpos'])?htmlspecialchars($upos['uploadpos']):'');
-                $modd = (isset($_GET['mod'])?htmlspecialchars($_GET['mod']):'');
-                $toggle = (isset($_GET['toggle'])?htmlspecialchars($_GET['toggle']):'');
+                $newpos = (isset($upos['uploadpos'])?htmlsafechars($upos['uploadpos']):'');
+                $modd = (isset($_GET['mod'])?htmlsafechars($_GET['mod']):'');
+                $toggle = (isset($_GET['toggle'])?htmlsafechars($_GET['toggle']):'');
                 $modcomment = sqlesc( get_date( TIME_NOW, 'DATE', 1 ) . " IRC: " . $who . "s uploadpos changed from: " . $newpos . " to " . $toggle . " by " . $modd . "\n");
                 sql_query("UPDATE users SET uploadpos = '$toggle', modcomment = CONCAT($modcomment,modcomment) WHERE username = $whom") or sqlerr(__FILE__, __LINE__);
                 $mc1->begin_transaction('user'.$upos['id']);
@@ -559,16 +558,16 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
     }elseif(isset($_GET['downloadpos'])){
         if((isset($_GET['toggle']) && $_GET['toggle'] == 1) || (isset($_GET['toggle']) && $_GET['toggle'] == 0)){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res = sql_query("SELECT id, downloadpos FROM users WHERE username = $whom AND class < $modclass LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $dpos = mysqli_fetch_assoc($res);
 
             if($dpos < 1)
                 echo $who . " - No such user or is staff, please try again.";
             else{
-                $newpos = (isset($dpos['downloadpos'])?htmlspecialchars($dpos['downloadpos']):'');
-                $modd = (isset($_GET['mod'])?htmlspecialchars($_GET['mod']):'');
-                $toggle = (isset($_GET['toggle'])?htmlspecialchars($_GET['toggle']):'');
+                $newpos = (isset($dpos['downloadpos'])?htmlsafechars($dpos['downloadpos']):'');
+                $modd = (isset($_GET['mod'])?htmlsafechars($_GET['mod']):'');
+                $toggle = (isset($_GET['toggle'])?htmlsafechars($_GET['toggle']):'');
                 $modcomment = sqlesc( get_date( TIME_NOW, 'DATE', 1 ) . " IRC: " . $who . "s downloadpos changed from: " . $newpos . " to " . $toggle . " by " . $modd . "\n");
                 sql_query("UPDATE users SET downloadpos = '$toggle', modcomment = CONCAT($modcomment,modcomment) WHERE username = $whom") or sqlerr(__FILE__, __LINE__);
                 $mc1->begin_transaction('user'.$dpos['id']);
@@ -589,16 +588,16 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
     }elseif(isset($_GET['forum_post'])){
         if((isset($_GET['toggle']) && $_GET['toggle'] == "yes") || (isset($_GET['toggle']) && $_GET['toggle'] == "no")){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res = sql_query("SELECT id, forum_post FROM users WHERE username = $whom AND class < $modclass LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $fpos = mysqli_fetch_assoc($res);
 
             if($fpos < 1)
                 echo $who . " - No such user or is staff, please try again.";
             else{
-                $newpos = (isset($fpos['forum_post'])?htmlspecialchars($fpos['forum_post']):'');
-                $modd = (isset($_GET['mod'])?htmlspecialchars($_GET['mod']):'');
-                $toggle = (isset($_GET['toggle'])?htmlspecialchars($_GET['toggle']):'');
+                $newpos = (isset($fpos['forum_post'])?htmlsafechars($fpos['forum_post']):'');
+                $modd = (isset($_GET['mod'])?htmlsafechars($_GET['mod']):'');
+                $toggle = (isset($_GET['toggle'])?htmlsafechars($_GET['toggle']):'');
                 $modcomment = sqlesc( get_date( TIME_NOW, 'DATE', 1 ) . " IRC: " . $who . "s forumpost changed from: " . $newpos . " to " . $toggle . " by " . $modd . "\n");
                 sql_query("UPDATE users SET forum_post = '$toggle', modcomment = CONCAT($modcomment,modcomment) WHERE username = $whom") or sqlerr(__FILE__, __LINE__);
                 $mc1->begin_transaction('user'.$fpos['id']);
@@ -619,16 +618,16 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
     }elseif(isset($_GET['chatpost'])){
         if((isset($_GET['toggle']) && $_GET['toggle'] == 1) || (isset($_GET['toggle']) && $_GET['toggle'] == 0)){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res = sql_query("SELECT id, chatpost FROM users WHERE username = $whom AND class < $modclass LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $cpos = mysqli_fetch_assoc($res);
 
             if($cpos < 1)
                 echo $who . " - No such user or is staff, please try again.";
             else{
-                $newpos = (isset($cpos['chatpost'])?htmlspecialchars($cpos['chatpost']):'');
-                $modd = (isset($_GET['mod'])?htmlspecialchars($_GET['mod']):'');
-                $toggle = (isset($_GET['toggle'])?htmlspecialchars($_GET['toggle']):'');
+                $newpos = (isset($cpos['chatpost'])?htmlsafechars($cpos['chatpost']):'');
+                $modd = (isset($_GET['mod'])?htmlsafechars($_GET['mod']):'');
+                $toggle = (isset($_GET['toggle'])?htmlsafechars($_GET['toggle']):'');
                 $modcomment = sqlesc( get_date( TIME_NOW, 'DATE', 1 ) . " IRC: " . $who . "s chatpost changed from: " . $newpos . " to " . $toggle . " by " . $modd . "\n");
                 sql_query("UPDATE users SET chatpost = '$toggle', modcomment = CONCAT($modcomment,modcomment) WHERE username = $whom") or sqlerr(__FILE__, __LINE__);
                 $mc1->begin_transaction('user'.$cpos['id']);
@@ -649,16 +648,16 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
     }elseif(isset($_GET['avatarpos'])){
         if((isset($_GET['toggle']) && $_GET['toggle'] == 1) || (isset($_GET['toggle']) && $_GET['toggle'] == 0)){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res = sql_query("SELECT id, avatarpos FROM users WHERE username = $whom AND class < $modclass LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $apos = mysqli_fetch_assoc($res);
 
             if($apos < 1)
                 echo $who . " - No such user or is staff, please try again.";
             else{
-                $newpos = (isset($apos['avatarpos'])?htmlspecialchars($apos['avatarpos']):'');
-                $modd = (isset($_GET['mod'])?htmlspecialchars($_GET['mod']):'');
-                $toggle = (isset($_GET['toggle'])?htmlspecialchars($_GET['toggle']):'');
+                $newpos = (isset($apos['avatarpos'])?htmlsafechars($apos['avatarpos']):'');
+                $modd = (isset($_GET['mod'])?htmlsafechars($_GET['mod']):'');
+                $toggle = (isset($_GET['toggle'])?htmlsafechars($_GET['toggle']):'');
                 $modcomment = sqlesc( get_date( TIME_NOW, 'DATE', 1 ) . " IRC: " . $who . "s avatarpos changed from: " . $newpos . " to " . $toggle . " by " . $modd . "\n");
                 sql_query("UPDATE users SET avatarpos = '$toggle', modcomment = CONCAT($modcomment,modcomment) WHERE username = $whom") or sqlerr(__FILE__, __LINE__);
                 $mc1->begin_transaction('user'.$apos['id']);
@@ -680,16 +679,16 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
     elseif(isset($_GET['invite_rights'])){
         if((isset($_GET['toggle']) && $_GET['toggle'] == "yes") || (isset($_GET['toggle']) && $_GET['toggle'] == "no")){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res = sql_query("SELECT id, invite_rights FROM users WHERE username = $whom AND class < $modclass LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $ipos = mysqli_fetch_assoc($res);
 
             if($ipos < 1)
                 echo $who . " - No such user or is staff, please try again.";
             else{
-                $newpos = (isset($ipos['invite_on'])?htmlspecialchars($ipos['invite_on']):'');
-                $modd = (isset($_GET['mod'])?htmlspecialchars($_GET['mod']):'');
-                $toggle = (isset($_GET['toggle'])?htmlspecialchars($_GET['toggle']):'');
+                $newpos = (isset($ipos['invite_on'])?htmlsafechars($ipos['invite_on']):'');
+                $modd = (isset($_GET['mod'])?htmlsafechars($_GET['mod']):'');
+                $toggle = (isset($_GET['toggle'])?htmlsafechars($_GET['toggle']):'');
                 $modcomment = sqlesc( get_date( TIME_NOW, 'DATE', 1 ) . " IRC: " . $who . "s invite rights changed from: " . $newpos . " to " . $toggle . " by " . $modd . "\n");
                 sql_query("UPDATE users SET invite_rights = '$toggle', modcomment = CONCAT($modcomment,modcomment) WHERE username = $whom") or sqlerr(__FILE__, __LINE__);
                 $mc1->begin_transaction('user'.$ipos['id']);
@@ -710,16 +709,16 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
     }elseif(isset($_GET['enabled'])){
         if((isset($_GET['toggle']) && $_GET['toggle'] == "yes") || (isset($_GET['toggle']) && $_GET['toggle'] == "no")){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res = sql_query("SELECT id, enabled FROM users WHERE username = $whom AND class < $modclass LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $epos = mysqli_fetch_assoc($res);
 
             if($epos < 1)
                 echo $who . " - No such user or is staff, please try again.";
             else{
-                $newpos = (isset($epos['enabled'])?htmlspecialchars($epos['enabled']):'');
-                $modd = (isset($_GET['mod'])?htmlspecialchars($_GET['mod']):'');
-                $toggle = (isset($_GET['toggle'])?htmlspecialchars($_GET['toggle']):'');
+                $newpos = (isset($epos['enabled'])?htmlsafechars($epos['enabled']):'');
+                $modd = (isset($_GET['mod'])?htmlsafechars($_GET['mod']):'');
+                $toggle = (isset($_GET['toggle'])?htmlsafechars($_GET['toggle']):'');
                 $modcomment = sqlesc( get_date( TIME_NOW, 'DATE', 1 ) . " IRC: " . $who . "s enabled changed from: " . $newpos . " to " . $toggle . " by " . $modd . "\n");
                 sql_query("UPDATE users SET enabled = '$toggle', modcomment = CONCAT($modcomment,modcomment) WHERE username = $whom") or sqlerr(__FILE__, __LINE__);
                 $mc1->begin_transaction('user'.$epos['id']);
@@ -740,16 +739,16 @@ $irctotal = (!empty($arr['irctotal'])?calctime($arr['irctotal']):$arr['username'
     }elseif(isset($_GET['addsupport'])){
             //if((isset($_GET['toggle']) && $_GET['toggle'] == "yes") || (isset($_GET['toggle']) && $_GET['toggle'] == "no")){
             $whom = (isset($_GET['whom'])?sqlesc($_GET['whom']):'');
-            $who = (isset($_GET['whom'])?htmlspecialchars($_GET['whom']):'');
+            $who = (isset($_GET['whom'])?htmlsafechars($_GET['whom']):'');
             $res = sql_query("SELECT id, support, supportfor FROM users WHERE username = $whom AND class < $modclass LIMIT 1") or sqlerr(__FILE__, __LINE__);
             $support = mysqli_fetch_assoc($res);
             if($support < 1)
                 echo $who . " - No such user or is staff, please try again.";
             else{
-                $newsupp = (isset($support['support'])?htmlspecialchars($support['support']):'');
-                $modd = (isset($_GET['mod'])?htmlspecialchars($_GET['mod']):'');
-                $supportfors = (isset($_GET['supportfor'])?htmlspecialchars($_GET['supportfor']):'');
-                $toggle = (isset($_GET['toggle'])?htmlspecialchars($_GET['toggle']):'');
+                $newsupp = (isset($support['support'])?htmlsafechars($support['support']):'');
+                $modd = (isset($_GET['mod'])?htmlsafechars($_GET['mod']):'');
+                $supportfors = (isset($_GET['supportfor'])?htmlsafechars($_GET['supportfor']):'');
+                $toggle = (isset($_GET['toggle'])?htmlsafechars($_GET['toggle']):'');
                 $modcomment = sqlesc(get_date( TIME_NOW, 'DATE', 1 ) . " IRC: " . $who . "s support changed by " . $modd . "\n");
                 sql_query("UPDATE users SET support = 'yes', supportfor ='$supportfors', modcomment = CONCAT($modcomment,modcomment) WHERE username = $whom") or sqlerr(__FILE__, __LINE__);
                 $mc1->begin_transaction('user'.$support['id']);

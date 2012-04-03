@@ -41,34 +41,21 @@ if (get_magic_quotes_gpc()) {
     array_walk($_COOKIE, 'cleanquotes');
     array_walk($_REQUEST, 'cleanquotes');
 }
+
+//==  Coldfusion Tbdev
+function htmlsafechars($txt='') {
+  $txt = preg_replace("/&(?!#[0-9]+;)(?:amp;)?/s", '&amp;', $txt );
+  $txt = str_replace( array("<",">",'"',"'"), array("&lt;", "&gt;", "&quot;", '&#039;'), $txt );
+  return $txt;
+}
+
 /**** validip/getip courtesy of manolete <manolete@myway.com> ****/
-// IP Validation
+// IP Validation - Coldfusion
 function validip($ip)
 {
-	if (!empty($ip) && $ip == long2ip(ip2long($ip)))
-	{
-		// reserved IANA IPv4 addresses
-		// http://www.iana.org/assignments/ipv4-address-space
-		$reserved_ips = array (
-				array('0.0.0.0','0.255.255.255'),
-				array('10.0.0.0','10.255.255.255'),
-				array('127.0.0.0','127.255.255.255'),
-				array('169.254.0.0','169.254.255.255'),
-				array('172.16.0.0','172.31.255.255'),
-				array('192.0.2.0','192.0.2.255'),
-				array('192.168.0.0','192.168.255.255'),
-				array('255.255.255.0','255.255.255.255')
-		);
-
-		foreach ($reserved_ips as $r)
-		{
-				$min = ip2long($r[0]);
-				$max = ip2long($r[1]);
-				if ((ip2long($ip) >= $min) && (ip2long($ip) <= $max)) return false;
-		}
-		return true;
-	}
-	else return false;
+	return filter_var($ip, FILTER_VALIDATE_IP,
+                  array('flags' => FILTER_FLAG_NO_PRIV_RANGE, FILTER_FLAG_NO_RES_RANGE)
+                  ) ? true : false;
 }
 
 //=== new and faster get IP function by Pandora
@@ -183,7 +170,7 @@ function check_bans($ip, &$reason = '') {
                      'avatar_rights, offensive_avatar, view_offensive_avatar, paranoia, google_talk, msn, aim, yahoo, website, '.
                      'icq, show_email, parked_until, gotgift, hash1, suspended, bjwins, bjlosses, warn_reason, onirc, irctotal, '.
                      'birthday, got_blocks, last_access_numb, onlinetime, pm_on_delete, commentpm, split, browser, hits, '.
-                     'comments, categorie_icon, reputation, perms, mood, got_moods, pms_per_page, show_pm_avatar, watched_user, game_access';
+                     'comments, categorie_icon, reputation, perms, mood, got_moods, pms_per_page, show_pm_avatar, watched_user, game_access, logout';
       
       $res = sql_query("SELECT ".$user_fields." ".
                        "FROM users ".
@@ -288,7 +275,7 @@ function check_bans($ip, &$reason = '') {
       <title>Forbidden</title>
       </head><body>
       <h1>403 Forbidden</h1>Unauthorized IP address!
-      <p>Reason: <strong>'.htmlspecialchars($reason).'</strong></p>
+      <p>Reason: <strong>'.htmlsafechars($reason).'</strong></p>
       </body></html>';
       die;
    }
@@ -297,7 +284,7 @@ function check_bans($ip, &$reason = '') {
    if ($row["class"] >= UC_STAFF) {
       $allowed_ID = $INSTALLER09['allowed_staff']['id'];
       if (!in_array(((int)$row["id"]), $allowed_ID, true)) {
-         $msg = "Fake Account Detected: Username: ".htmlspecialchars($row["username"])." - UserID: ".(int)$row["id"]." - UserIP : ".getip();
+         $msg = "Fake Account Detected: Username: ".htmlsafechars($row["username"])." - UserID: ".(int)$row["id"]." - UserIP : ".getip();
          // Demote and disable
          sql_query("UPDATE users SET enabled = 'no', class = 0 WHERE id =".sqlesc($row["id"])."") or sqlerr(__file__, __line__);
          $mc1->begin_transaction('MyUser_'.$row['id']);
@@ -379,6 +366,15 @@ function check_bans($ip, &$reason = '') {
       $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
    }
    //==
+/*
+   //== logout for inactivity
+   if ($row['logout'] === 'yes' && $row['last_access'] >= $row['last_login']  && $row['last_access'] <= TIME_NOW - 900)
+   {
+   logoutcookie();	
+   return;
+   }
+   //
+*/
    if ($row['override_class'] < $row['class']) $row['class'] = $row['override_class']; // Override class and save in GLOBAL array below.
       $GLOBALS["CURUSER"] = $row;
       get_template();
@@ -625,9 +621,9 @@ function httperr($code = 404) {
 
 function logincookie($id, $passhash, $updatedb = 1, $expires = 0x7fffffff)
 {
-    set_mycookie( "uid", $id, $expires );
-    set_mycookie( "pass", $passhash, $expires );
-    set_mycookie( "hashv", hashit($id,$passhash), $expires );
+    set_mycookie("uid", $id, $expires);
+    set_mycookie("pass", $passhash, $expires);
+    set_mycookie("hashv", hashit($id,$passhash), $expires);
     if ($updatedb)
     sql_query("UPDATE users SET last_login = ".TIME_NOW." WHERE id = $id") or sqlerr(__file__, __line__);
 }
@@ -767,7 +763,7 @@ function sqlerr($file = '', $line = '') {
 	    		   <blockquote>\n<h1>MySQLI Error</h1><b>There appears to be an error with the database.</b><br />
 	    		   You can try to refresh the page by clicking <a href=\"javascript:window.location=window.location;\">here</a>.
 	    		   <br /><br /><b>Error Returned</b><br />
-	    		   <form name='mysql'><textarea rows=\"15\" cols=\"60\">".htmlentities($the_error, ENT_QUOTES)."</textarea></form><br>We apologise for any inconvenience</blockquote></body></html>";
+	    		   <form name='mysql'><textarea rows=\"15\" cols=\"60\">".htmlsafechars($the_error, ENT_QUOTES)."</textarea></form><br>We apologise for any inconvenience</blockquote></body></html>";
     		   
     
 	       	echo $out;

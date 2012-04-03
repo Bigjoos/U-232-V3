@@ -35,7 +35,7 @@ $id = 0 + $_GET["id"];
 if (!is_valid_id($id) || $CURUSER['id'] <> $id && $CURUSER['class'] < UC_STAFF)
     $id = $CURUSER['id'];
 
-$res = sql_query("SELECT COUNT(id) FROM userhits WHERE hitid = ".sqlesc($id)."") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT COUNT(id) FROM userhits WHERE hitid = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
 $row = mysqli_fetch_row($res);
 $count = $row[0];
 $perpage = 15;
@@ -46,11 +46,11 @@ if (!$count)
 
 
 
-$res = sql_query("SELECT username FROM users WHERE id = ".sqlesc($id)."") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT username FROM users WHERE id = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
 $user = mysqli_fetch_assoc($res);
 
-$HTMLOUT .="<h1>Profile views of <a href=\"userdetails.php?id=".(int)$id."\">".htmlspecialchars($user['username'])."</a></h1>
-<h2>In total ".htmlspecialchars($count)." views</h2>";
+$HTMLOUT .="<h1>Profile views of <a href=\"userdetails.php?id=".$id."\">".htmlsafechars($user['username'])."</a></h1>
+<h2>In total ".htmlsafechars($count)." views</h2>";
 
 if ($count > $perpage)
 $HTMLOUT .= $pager['pagertop'];
@@ -62,13 +62,13 @@ $HTMLOUT .="
 <td class='colhead'>Viewed at</td>
 </tr>\n";
 
-$res = sql_query("SELECT uh.*, username, users.id as uid FROM userhits uh LEFT JOIN users ON uh.userid = users.id WHERE hitid =".sqlesc($id)." ORDER BY uh.id DESC {$pager['limit']}") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT uh.*, username, users.id as uid FROM userhits uh LEFT JOIN users ON uh.userid = users.id WHERE hitid =".sqlesc($id)." ORDER BY uh.id DESC ".$pager['limit']) or sqlerr(__FILE__, __LINE__);
 while ($arr = mysqli_fetch_assoc($res)){
 
 
 $HTMLOUT .="
-<tr><td>".number_format((int)$arr['number'])."</td>
-<td><b><a href=\"userdetails.php?id=".(int)$arr['uid']."\">".htmlspecialchars($arr['username'])."</a></b></td>
+<tr><td>".number_format($arr['number'])."</td>
+<td><b><a href=\"userdetails.php?id=".(int)$arr['uid']."\">".htmlsafechars($arr['username'])."</a></b></td>
 <td>".get_date($arr['added'], 'DATE',0,1)."</td>
 </tr>\n";
 }
@@ -76,6 +76,6 @@ $HTMLOUT .="</table>";
 if ($count > $perpage)
 $HTMLOUT .= $pager['pagerbottom'];
 
-echo stdhead('Profile views of '.htmlspecialchars($user['username']).'') . $HTMLOUT . stdfoot();
+echo stdhead('Profile views of '.htmlsafechars($user['username']).'') . $HTMLOUT . stdfoot();
 die();
 ?>

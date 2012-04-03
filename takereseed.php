@@ -20,7 +20,7 @@ $pm_msg = "User " . $CURUSER["username"] . " asked for a reseed on torrent ".$IN
 
 $pms = array();
 if ($pm_what == "last10" ) {
-	$res = sql_query("SELECT snatched.userid, snatched.torrentid FROM snatched  where snatched.torrentid =$reseedid AND snatched.seeder='yes' LIMIT 10") or sqlerr(__FILE__, __LINE__);
+	$res = sql_query("SELECT snatched.userid, snatched.torrentid FROM snatched  where snatched.torrentid =".sqlesc($reseedid)." AND snatched.seeder='yes' LIMIT 10") or sqlerr(__FILE__, __LINE__);
 	while($row = mysqli_fetch_assoc($res))
 		$pms[] = "(0,".$row["userid"].",".TIME_NOW.",".sqlesc($pm_msg).($use_subject ? ",".sqlesc($subject) : "").")";
 }
@@ -29,13 +29,13 @@ elseif($pm_what == "owner")
 		
 if(count($pms) > 0)		
 sql_query("INSERT INTO messages (sender, receiver, added, msg ".($use_subject ? ", subject" : "")." ) VALUES ".join(",",$pms)) or sqlerr(__FILE__, __LINE__);
-sql_query("UPDATE torrents set last_reseed=".TIME_NOW." WHERE id= $reseedid ") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE torrents set last_reseed=".TIME_NOW." WHERE id=".sqlesc($reseedid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('torrent_details_'.$reseedid);
 $mc1->update_row(false, array('last_reseed' => TIME_NOW));
 $mc1->commit_transaction($INSTALLER09['expires']['torrent_details']);
 if($INSTALLER09['seedbonus_on'] == 1){
 //===remove karma 
-sql_query("UPDATE users SET seedbonus = seedbonus-10.0 WHERE id = ".sqlesc($CURUSER["id"])."") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET seedbonus = seedbonus-10.0 WHERE id = ".sqlesc($CURUSER["id"])) or sqlerr(__FILE__, __LINE__);
 $update['seedbonus'] = ($CURUSER['seedbonus'] - 10);
 $mc1->begin_transaction('userstats_'.$CURUSER["id"]);
 $mc1->update_row(false, array('seedbonus' => $update['seedbonus']));

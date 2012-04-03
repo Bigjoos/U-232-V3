@@ -46,7 +46,7 @@ $HTMLOUT .="<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http
           <select name='stylesheet' onchange='this.form.submit();' size='1' style='font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #ececec'>";
    $ss_r = sql_query("SELECT id, name from stylesheets ORDER BY id ASC") or sqlerr(__FILE__,__LINE__);
    while($ar = mysqli_fetch_assoc($ss_r))
-   $out .= '<option value="'.(int)$ar['id'].'" '.($ar['id'] == $CURUSER['stylesheet'] ? 'selected=\'selected\'' : '').'>'.htmlspecialchars($ar['name']).'</option>';
+   $out .= '<option value="'.(int)$ar['id'].'" '.($ar['id'] == $CURUSER['stylesheet'] ? 'selected=\'selected\'' : '').'>'.htmlsafechars($ar['name']).'</option>';
    $HTMLOUT .= $out;
    $HTMLOUT .="</select>
    <input type='button' value='Close' onclick='self.close()' /></p></form></fieldset></div></body></html>";

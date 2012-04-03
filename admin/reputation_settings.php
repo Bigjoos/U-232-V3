@@ -51,7 +51,7 @@ function rep_cache()
 		
 		foreach( $_POST as $k => $v)
 		{
-			$rep_out .= ($k == 'rep_undefined') ? "\t'{$k}' => '".htmlentities($v, ENT_QUOTES)."',\n" : "\t'{$k}' => ".intval($v).",\n";
+			$rep_out .= ($k == 'rep_undefined') ? "\t'{$k}' => '".htmlsafechars($v, ENT_QUOTES)."',\n" : "\t'{$k}' => ".intval($v).",\n";
 		}
 		
 		$rep_out .= "\t'g_rep_negative' => TRUE,\n";

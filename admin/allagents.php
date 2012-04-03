@@ -71,7 +71,7 @@
 	<tr><td class='colhead'>Client</td><td class='colhead'>Peer ID</td></tr>";
 	while($arr = mysqli_fetch_assoc($res))
 	{
-	$HTMLOUT .="<tr><td align='left'>".htmlspecialchars($arr["agent"])."</td><td align='left'>".htmlspecialchars($arr["peer_id"])."</td></tr>\n";
+	$HTMLOUT .="<tr><td align='left'>".htmlsafechars($arr["agent"])."</td><td align='left'>".htmlsafechars($arr["peer_id"])."</td></tr>\n";
 	}
   $HTMLOUT .="</table>\n";
 echo stdhead("All Clients") . $HTMLOUT . stdfoot();

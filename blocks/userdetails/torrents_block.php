@@ -22,8 +22,8 @@ $htmlout = '';
  $ratio = ($arr["downloaded"] > 0 ? number_format($arr["uploaded"] / $arr["downloaded"], 3) : ($arr["uploaded"] > 0 ? "Inf." : "---"));
 
  $htmlout .= "<tr>
- <td style='padding: 0px'><img src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/".htmlspecialchars($arr["catimg"])."' alt='".htmlspecialchars($arr["catname"])."' width='42' height='42' /></td>
- <td><a href='details.php?id=".(int)$arr['torrentid']."'><b>".(strlen($arr["name"]) > 50 ? substr($arr["name"], 0, 50 - 3)."..." : htmlspecialchars($arr["name"]))."</b></a></td>
+ <td style='padding: 0px'><img src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/".htmlsafechars($arr["catimg"])."' alt='".htmlsafechars($arr["catname"])."' width='42' height='42' /></td>
+ <td><a href='details.php?id=".(int)$arr['torrentid']."'><b>".(strlen($arr["name"]) > 50 ? substr($arr["name"], 0, 50 - 3)."..." : htmlsafechars($arr["name"]))."</b></a></td>
  <td>".mksize($arr["uploaded"])."</td>
  <td>$upspeed/s</td>
  <td>".mksize($arr["downloaded"])."</td>
@@ -60,15 +60,15 @@ function maketable($res)
           else
             $ratio = "---";
       $catimage = "{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/{$arr['image']}";
-      $catname = htmlspecialchars($arr["catname"]);
-      $catimage = "<img src=\"".htmlspecialchars($catimage) ."\" title=\"$catname\" alt=\"$catname\" width='42' height='42' />";
+      $catname = htmlsafechars($arr["catname"]);
+      $catimage = "<img src=\"".htmlsafechars($catimage) ."\" title=\"$catname\" alt=\"$catname\" width='42' height='42' />";
       $size = str_replace(" ", "<br />", mksize($arr["size"]));
       $uploaded = str_replace(" ", "<br />", mksize($arr["uploaded"]));
       $downloaded = str_replace(" ", "<br />", mksize($arr["downloaded"]));
       $seeders = number_format($arr["seeders"]);
       $leechers = number_format($arr["leechers"]);
         $htmlout .= "<tr><td style='padding: 0px'>$catimage</td>\n" .
-        "<td><a href='details.php?id=".(int)$arr['torrent']."&amp;hit=1'><b>" . htmlspecialchars($arr['torrentname']) .
+        "<td><a href='details.php?id=".(int)$arr['torrent']."&amp;hit=1'><b>" . htmlsafechars($arr['torrentname']) .
         "</b></a></td><td align='center'>$size</td><td align='right'>$seeders</td><td align='right'>$leechers</td><td align='center'>$uploaded</td>\n" .
         "<td align='center'>$downloaded</td><td align='center'>$ratio</td></tr>\n";
       }
@@ -126,7 +126,7 @@ function maketable($res)
     //==Snatched
     $user_snatches_data = $mc1->get_value('user_snatches_data_'.$id);
     if ($user_snatches_data === false) {
-    $ressnatch = sql_query("SELECT s.*, t.name AS name, c.name AS catname, c.image AS catimg FROM snatched AS s INNER JOIN torrents AS t ON s.torrentid = t.id LEFT JOIN categories AS c ON t.category = c.id WHERE s.userid = $user[id]") or sqlerr(__FILE__, __LINE__);
+    $ressnatch = sql_query("SELECT s.*, t.name AS name, c.name AS catname, c.image AS catimg FROM snatched AS s INNER JOIN torrents AS t ON s.torrentid = t.id LEFT JOIN categories AS c ON t.category = c.id WHERE s.userid =".sqlesc($user['id'])) or sqlerr(__FILE__, __LINE__);
     $user_snatches_data = snatchtable($ressnatch);
     $mc1->cache_value('user_snatches_data_'.$id, $user_snatches_data, $INSTALLER09['expires']['user_snatches_data']);
     }

@@ -30,7 +30,7 @@ $htmlout ='';
 
 function readMore($text, $char, $link)
 {
-return (strlen($text) > $char ? substr(htmlspecialchars($text), 0, $char-1) . "...<br /><a href='$link'>Read more</a>": htmlspecialchars($text));
+return (strlen($text) > $char ? substr(htmlsafechars($text), 0, $char-1) . "...<br /><a href='$link'>Read more</a>": htmlsafechars($text));
 }
 
             function peer_list($array)
@@ -50,8 +50,8 @@ return (strlen($text) > $char ? substr(htmlspecialchars($text), 0, $char-1) . ".
        foreach ($array as $p) {
        $time = max(1, (TIME_NOW - $p["started"]) - (TIME_NOW - $p["last_action"]));
 			 $htmlout.="<tr>
-       		<td align='center'><a href='userdetails.php?id=".(int)$p["p_uid"]."' >".htmlspecialchars($p["p_user"])."</a></td>
-            <td align='center'>".($CURUSER['class'] >= UC_MODERATOR ? (int)$p["ip"] . ":" . (int)$p["port"] : "xx.xx.xx.xx:xxxx")."</td>
+       		<td align='center'><a href='userdetails.php?id=".(int)$p["p_uid"]."' >".htmlsafechars($p["p_user"])."</a></td>
+            <td align='center'>".($CURUSER['class'] >= UC_STAFF ? htmlsafechars($p["ip"])." : ".(int)$p["port"] : "xx.xx.xx.xx:xxxx")."</td>
             <td align='center'>".($p["downloaded"] > 0 ? number_format(($p["uploaded"] / $p["downloaded"]), 2) : ($p["uploaded"] > 0 ? "&infin;" : "---"))."</td>
             <td align='center'>".($p["downloaded"] > 0 ? mksize($p["downloaded"]) . " @" . (mksize(($p["downloaded"] - $p["downloadoffset"]) / $time)) . "s": "0kb")."</td>
             <td align='center'>".($p["uploaded"] > 0 ? mksize($p["uploaded"]) . " @" . (mksize(($p["uploaded"] - $p["uploadoffset"]) / $time)) . "s": "0kb")."</td>
@@ -63,8 +63,8 @@ return (strlen($text) > $char ? substr(htmlspecialchars($text), 0, $char-1) . ".
     return $htmlout;
 }
 
-$letter = (isset($_GET["letter"]) ? htmlspecialchars($_GET["letter"]) : "");
-$search = (isset($_GET["search"]) ? htmlspecialchars($_GET["search"]) : "");
+$letter = (isset($_GET["letter"]) ? htmlsafechars($_GET["letter"]) : "");
+$search = (isset($_GET["search"]) ? htmlsafechars($_GET["search"]) : "");
 
 if (strlen($search) > 4) {
     $where = "WHERE t.name LIKE" . sqlesc("%" . $search . "%");
@@ -78,7 +78,7 @@ if (strlen($search) > 4) {
     $letter = "a";
 }
 
-$count = mysqli_fetch_row(sql_query("SELECT count(*) from torrents as t $where"));
+$count = mysqli_fetch_row(sql_query("SELECT count(*) FROM torrents AS t $where"));
 $perpage = 10;
 
 $pager = pager($perpage, $count[0], $_SERVER["PHP_SELF"] . "?" . $p);
@@ -89,7 +89,7 @@ $bottom='';
 $rows = array();
 $tids = array(); 
 
-$t = sql_query("SELECT t.id,t.name,t.leechers,t.seeders,t.poster,t.times_completed as snatched,t.owner,t.size,t.added,t.descr, u.username as user FROM torrents as t LEFT JOIN users AS u on u.id=t.owner $where ORDER BY t.name ASC ".$pager['limit']."") or sqlerr(__FILE__, __LINE__);
+$t = sql_query("SELECT t.id,t.name,t.leechers,t.seeders,t.poster,t.times_completed as snatched,t.owner,t.size,t.added,t.descr, u.username as user FROM torrents as t LEFT JOIN users AS u on u.id=t.owner $where ORDER BY t.name ASC ".$pager['limit']) or sqlerr(__FILE__, __LINE__);
 while ($ta = mysqli_fetch_assoc($t)) {
     $rows[] = $ta;
     $tid[] = (int)$ta["id"];
@@ -131,8 +131,8 @@ if (count($rows) > 0) {
 		$htmlout.="<tr>
 		 <td align='center' valign='top' nowrap='nowrap'>
         	<table align='center' width='160' border='1' cellpadding='2'>
-            	<tr><td align='center' class='colhead'>Upper : <a href='userdetails.php?id=".(int)$row["owner"]."'>".($row["user"] ? htmlspecialchars($row["user"]) : "unknown[" . (int)$row["owner"] . "]")."</a></td></tr>
-                <tr><td align='center'>".(htmlspecialchars($row["poster"]) ? "<a href=\"".htmlspecialchars($row["poster"]) . "\"><img src=\"".htmlspecialchars($row["poster"])."\" border=\"0\" width=\"150\" height=\"195\" alt=\"No Poster\" title=\"No Poster\" /></a>" : "<img src=\"pic/noposter.png\" border=\"0\" width=\"150\" alt=\"No Poster\" title=\"No Poster\" />")."</td></tr>
+            	<tr><td align='center' class='colhead'>Upper : <a href='userdetails.php?id=".(int)$row["owner"]."'>".($row["user"] ? htmlsafechars($row["user"]) : "unknown[" . (int)$row["owner"] . "]")."</a></td></tr>
+                <tr><td align='center'>".($row["poster"] ? "<a href=\"".htmlsafechars($row["poster"]) . "\"><img src=\"".htmlsafechars($row["poster"])."\" border=\"0\" width=\"150\" height=\"195\" alt=\"No Poster\" title=\"No Poster\" /></a>" : "<img src=\"pic/noposter.png\" border=\"0\" width=\"150\" alt=\"No Poster\" title=\"No Poster\" />")."</td></tr>
             </table>
 
         </td>
@@ -140,7 +140,7 @@ if (count($rows) > 0) {
             <td align='center' width='100%' valign='top'>
 			<table width='100%' cellpadding='3' cellspacing='0' border='1' style='border-collapse:collapse;font-weight:bold;'>
 			<tr>
-				<td align='center' width='100%' rowspan='2' ><a href='details.php?id=".(int)$row["id"]."&amp;hit=1'><b>".substr(htmlspecialchars($row["name"]), 0, 60)."</b></a></td>
+				<td align='center' width='100%' rowspan='2' ><a href='details.php?id=".(int)$row["id"]."&amp;hit=1'><b>".substr(htmlsafechars($row["name"]), 0, 60)."</b></a></td>
 				<td align='center' class='colhead'>Added</td>
 				<td align='center' class='colhead'>Size</td>
 				<td align='center' class='colhead'>Snatched</td>
@@ -149,7 +149,7 @@ if (count($rows) > 0) {
 			</tr>
 			<tr>
 				<td align='center'>".get_date($row["added"], 'LONG',0,1)."</td>
-				<td align='center' nowrap='nowrap'>".(mksize((int)$row["size"]))."</td>
+				<td align='center' nowrap='nowrap'>".(mksize($row["size"]))."</td>
 				<td align='center' nowrap='nowrap'>".($row["snatched"] > 0 ? ($row["snatched"] == 1 ? (int)$row["snatched"] . " time" : (int)$row["snatched"] . " times") : 0)."</td>
 				<td align='center'>".(int)$row["seeders"]."</td>
 				<td align='center'>".(int)$row["leechers"]."</td>
@@ -162,7 +162,7 @@ if (count($rows) > 0) {
 		 }
   
 		$htmlout.="<tr><td align='left' colspan='2' >{$bottom}</td></tr>
-		<tr><td align='right' colspan='2' class='colhead'>Original By EnzoF1 recoded by Putyn, Updated for 09 by Bigjoos</td></tr>
+		<tr><td align='right' colspan='2' class='colhead'>Original By EnzoF1 recoded by Putyn</td></tr>
 		</table>";
 } else
     $htmlout.="<h2>Nothing found!</h2>";

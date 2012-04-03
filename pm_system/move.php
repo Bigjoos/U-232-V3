@@ -16,7 +16,7 @@ if (!defined('BUNNY_PM_SYSTEM'))
 	exit();
 }
 
-    sql_query('UPDATE messages SET location = '.$mailbox.' WHERE id='.$pm_id.' AND receiver = '.$CURUSER['id']);
+    sql_query('UPDATE messages SET location = '.sqlesc($mailbox).' WHERE id='.sqlesc($pm_id).' AND receiver = '.sqlesc($CURUSER['id']));
 
         if (mysqli_affected_rows($GLOBALS["___mysqli_ston"]) === 0) 
             stderr('Error','Message could not be moved! <a class="altlink" href="pm_system.php?action=view_message&id='.$pm_id.'>BACK</a> to message.');

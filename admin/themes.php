@@ -32,8 +32,7 @@ $HTML='';
 	
 	if(!function_exists("html")){
 		function html($VAL){
-			//return htmlentities($VAL, ENT_QUOTES);
-			return htmlspecialchars($VAL);
+			return htmlsafechars($VAL, ENT_QUOTES);
 		}
 	}
 	
@@ -43,25 +42,33 @@ $HTML='';
 		
 		
 		if($ACT==1){//--EDIT
-			if(!isset($_GET['id']))stderr("{$lang['themes_error']}", "{$lang['themes_inv_id']}");
+			if(!isset($_GET['id']))
+         stderr("{$lang['themes_error']}", "{$lang['themes_inv_id']}");
 			$ID = (int) $_GET['id'];
-			if(!is_valid_id($ID))stderr("{$lang['themes_error']}", "{$lang['themes_inv_id']}");
+			if(!is_valid_id($ID))
+         stderr("{$lang['themes_error']}", "{$lang['themes_inv_id']}");
 			$TEMPLATE=sql_query("SELECT * FROM stylesheets WHERE id=".sqlesc($ID)." LIMIT 1");
 			$TEM=mysqli_fetch_array($TEMPLATE);
 			$HTML.="
-			<form action='{$INSTALLER09['baseurl']}/staffpanel.php?tool=themes&amp;action=themes&amp;act=4' method='post'><input type='hidden' value='{$TEM['id']}' name='uri' /><table width='50%'>
-			<tr><td colspan='2' class='colhead' align='center'>{$lang['themes_edit_tem']} $TEM[name]</td></tr>
-			<tr><td class='rowhead'>{$lang['themes_id']}<br/>{$lang['themes_explain_id']}</td><td><input type='text' value='{$TEM['id']}' name='id' /></td></tr>
-			<tr><td class='rowhead'>{$lang['themes_uri']}</td><td><input type='text' value='{$TEM['uri']}' name='uri' /></td></tr>
-			<tr><td class='rowhead'>{$lang['themes_name']}</td><td><input type='text' value='{$TEM['name']}' name='title' /></td></tr>
+			<form action='{$INSTALLER09['baseurl']}/staffpanel.php?tool=themes&amp;action=themes&amp;act=4' method='post'>
+         <input type='hidden' value='".(int)$TEM['id']."' name='uri' />
+         <table width='50%'>
+			<tr><td colspan='2' class='colhead' align='center'>{$lang['themes_edit_tem']} ".htmlsafechars($TEM['name'])."</td></tr>
+			<tr><td class='rowhead'>{$lang['themes_id']}<br/>{$lang['themes_explain_id']}</td>
+         <td><input type='text' value='".(int)$TEM['id']."' name='id' /></td></tr>
+			<tr><td class='rowhead'>{$lang['themes_uri']}</td>
+         <td><input type='text' value='".(int)$TEM['uri']."' name='uri' /></td></tr>
+			<tr><td class='rowhead'>{$lang['themes_name']}</td>
+         <td><input type='text' value='".htmlsafechars($TEM['name'])."' name='title' /></td></tr>
 			<tr><td class='rowhead'>{$lang['themes_is_folder']}</td><td>
-			<b>".(file_exists("templates/".$TEM['id']."/template.php")?"{$lang['themes_file_exists']}":"{$lang['themes_not_exists']}")."</b>
+			<b>".(file_exists("templates/".(int)$TEM['id']."/template.php")?"{$lang['themes_file_exists']}":"{$lang['themes_not_exists']}")."</b>
 			</td></tr>
 			<tr><td class='colhead' colspan='2' align='center'><input type='submit' value='{$lang['themes_save']}' /></td></tr></table></form>
 			";
 		}
 		if($ACT==2){//--DELETE
-			if(!isset($_GET['id']))stderr("{$lang['themes_error']}", "{$lang['themes_inv_id']}");
+			if(!isset($_GET['id']))
+         stderr("{$lang['themes_error']}", "{$lang['themes_inv_id']}");
 			$ID = (int) $_GET['id'];
 			if(!is_valid_id($ID))stderr("{$lang['themes_error']}", "{$lang['themes_inv_id']}");
 			stderr("{$lang['themes_delete_q']}", "{$lang['themes_delete_sure_q']}<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=themes&amp;action=themes&amp;act=5&amp;id=$ID&amp;sure=1'>
@@ -70,7 +77,7 @@ $HTML='';
 		if($ACT==3){//--ADD NEW
 			$IDS=sql_query("SELECT id FROM stylesheets");
 			while($ID=mysqli_fetch_array($IDS)){
-				if(file_exists("templates/".$ID['id']."/template.php"))$TAKEN[]="<font color='green'>$ID[id]</font>";
+				if(file_exists("templates/".(int)$ID['id']."/template.php"))$TAKEN[]="<font color='green'>$ID[id]</font>";
 				else $TAKEN[]="<font color='red'>$ID[id]</font>";
 			}
 			$HTML.="
@@ -92,8 +99,8 @@ $HTML='';
 			if(!isset($_POST['uri']))stderr("{$lang['themes_error']}", "{$lang['themes_inv_uri']}");
 			if(!isset($_POST['title']))stderr("{$lang['themes_error']}", "{$lang['themes_inv_name']}");
 			$ID = (int) $_POST['id'];
-			$URI=$_POST['uri'];
-			$NAME=$_POST['title'];
+			$URI= (int) $_POST['uri'];
+			$NAME=htmlsafechars($_POST['title']);
 			if(!is_valid_id($ID))stderr("{$lang['themes_error']}", "{$lang['themes_inv_id']}");
 			$CURRENT=sql_query("SELECT * FROM stylesheets WHERE id=".sqlesc($URI));
 			$CUR=mysqli_fetch_array($CURRENT);
@@ -119,7 +126,7 @@ $HTML='';
 			if(!isset($_POST['uri']))stderr("{$lang['themes_error']}", "{$lang['themes_inv_uri']}");
 			if(!isset($_POST['name']))stderr("{$lang['themes_error']}", "{$lang['themes_inv_name']}");
 			if(!file_exists("templates/".$_POST['id']."/template.php"))stderr("{$lang['themes_nofile']}",
-			"{$lang['themes_inv_file']}<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=themes&amp;action=themes&amp;act=7&amp;id=$_POST[id]&amp;uri=$_POST[uri]&amp;name=$_POST[name]'>{$lang['themes_file_exists']}</a>/
+			"{$lang['themes_inv_file']}<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=themes&amp;action=themes&amp;act=7&amp;id=".(int)$_POST['id']."&amp;uri=".(int)$_POST['uri']."&amp;name=".htmlsafechars($_POST['name'])."'>{$lang['themes_file_exists']}</a>/
 			<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=themes'>{$lang['themes_not_exists']}</a>");
 			sql_query("INSERT INTO stylesheets(id, uri, name)VALUES(".sqlesc($_POST['id']).", ".sqlesc($_POST['uri']).", ".sqlesc($_POST['name']).")");
 			header("Location: {$INSTALLER09['baseurl']}/staffpanel.php?tool=themes&action=themes&msg=3");
@@ -129,8 +136,8 @@ $HTML='';
 			if(!isset($_GET['uri']))stderr("{$lang['themes_error']}", "{$lang['themes_inv_uri']}");
 			if(!isset($_GET['name']))stderr("{$lang['themes_error']}", "{$lang['themes_inv_name']}");
 			$ID = (int) $_GET['id'];
-			$URI = $_GET['uri'];
-			$NAME=$_GET['name'];
+			$URI = (int)$_GET['uri'];
+			$NAME=htmlsafechars($_GET['name']);
 			sql_query("INSERT INTO stylesheets(id, uri, name)VALUES(".sqlesc($ID).", ".sqlesc($URI).",  ".sqlesc($NAME).")");
 			header("Location: staffpanel.php?tool=themes&action=themes&msg=3");
 		}
@@ -159,9 +166,9 @@ $HTML='';
 			<td align='left'>$TE[id]</td>
 			<td align='left'>".html($TE['uri'])."</td>
 			<td align='left'>".html($TE['name'])."</td>
-			<td align='left'><b>".(file_exists("templates/".$TE['id']."/template.php")?"{$lang['themes_file_exists']}":"{$lang['themes_not_exists']}")."</b></td>
-			<td align='left'><a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=themes&amp;action=themes&amp;act=1&amp;id=$TE[id]'>[{$lang['themes_edit']}]</a>
-			<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=themes&amp;action=themes&amp;act=2&amp;id=$TE[id]'>[{$lang['themes_delete']}]</a></td>
+			<td align='left'><b>".(file_exists("templates/".(int)$TE['id']."/template.php")?"{$lang['themes_file_exists']}":"{$lang['themes_not_exists']}")."</b></td>
+			<td align='left'><a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=themes&amp;action=themes&amp;act=1&amp;id=".(int)$TE['id']."'>[{$lang['themes_edit']}]</a>
+			<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=themes&amp;action=themes&amp;act=2&amp;id=".(int)$TE['id']."'>[{$lang['themes_delete']}]</a></td>
 			</tr>
 			";
 		}

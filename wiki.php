@@ -25,8 +25,8 @@ global $CURUSER;
 function newmsg($heading = '', $text = '', $div = 'success', $htmlstrip = false)
 {
     if ($htmlstrip) {
-        $heading = htmlspecialchars(trim($heading));
-        $text = htmlspecialchars(trim($text));
+        $heading = htmlsafechars(trim($heading));
+        $text = htmlsafechars(trim($text));
     }
     $htmlout='';
     $htmlout.="<table class=\"main\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td class=\"embedded\">\n";
@@ -104,7 +104,7 @@ function wikimenu()
 {
     $res2 = sql_query("SELECT name FROM wiki ORDER BY id DESC LIMIT 1");
     $latest = mysqli_fetch_assoc($res2);
-    $latestarticle = articlereplace($latest["name"]);
+    $latestarticle = articlereplace(htmlsafechars($latest["name"]));
     $ret = "<div id=\"wiki-content-right\">
 					<div id=\"details\">
 						<ul>
@@ -113,7 +113,7 @@ function wikimenu()
 							Write: User<br />
 							Edit: Staff
 							<ul><li><b>Latest Article:</b></li></ul>
-							<a href=\"wiki.php?action=article&amp;name=$latestarticle\">".htmlspecialchars($latest['name'])."</a>
+							<a href=\"wiki.php?action=article&amp;name=$latestarticle\">".htmlsafechars($latest['name'])."</a>
 					</div>
 				</div>
 		";
@@ -122,21 +122,21 @@ function wikimenu()
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["article-add"])) {
-        $name = sqlesc($_POST["article-name"]);
-        $body = sqlesc($_POST["article-body"]);
+        $name = htmlsafechars($_POST["article-name"]);
+        $body = htmlsafechars($_POST["article-body"]);
         sql_query("INSERT INTO `wiki` ( `name` , `body` , `userid`, `time` )
-VALUES ($name, $body, '" . $CURUSER["id"] . "', '" . TIME_NOW . "')") or sqlerr(__FILE__, __LINE__);
-        $HTMLOUT .="<meta http-equiv=\"refresh\" content=\"0; url=wiki.php?action=article&name=" . $_POST["article-name"] . "\">";
+VALUES (".sqlesc($name).", ".sqlesc($body).", ".sqlesc($CURUSER["id"]).", '".TIME_NOW."')") or sqlerr(__FILE__, __LINE__);
+        $HTMLOUT .="<meta http-equiv=\"refresh\" content=\"0; url=wiki.php?action=article&name=".htmlsafechars($_POST["article-name"])."\">";
     }
     if (isset($_POST["article-edit"])) {
         $id = $_POST["article-id"];
-        $name = sqlesc($_POST["article-name"]);
-        $body = sqlesc($_POST["article-body"]);
-        sql_query("UPDATE wiki SET name = $name, body = $body, lastedit = '" . TIME_NOW . "', lastedituser = '" . $CURUSER["id"] . "' WHERE id = $id");
-        $HTMLOUT .="<meta http-equiv=\"refresh\" content=\"0; url=wiki.php?action=article&name=" . $_POST["article-name"] . "\">";
+        $name = htmlsafechars($_POST["article-name"]);
+        $body = htmlsafechars($_POST["article-body"]);
+        sql_query("UPDATE wiki SET name = ".sqlesc($name).", body =".sqlesc($body).", lastedit = '".TIME_NOW."', lastedituser =".sqlesc($CURUSER["id"])." WHERE id = ".sqlesc($id));
+        $HTMLOUT .="<meta http-equiv=\"refresh\" content=\"0; url=wiki.php?action=article&name=".htmlsafechars($_POST["article-name"])."\">";
     }
     if (isset($_POST["wiki"])) {
-        $wikisearch = articlereplace($_POST["article"]);
+        $wikisearch = articlereplace(htmlsafechars($_POST["article"]));
         $HTMLOUT .="<meta http-equiv=\"refresh\" content=\"0; url=wiki.php?action=article&name=$wikisearch\">";
     }
 }
@@ -148,10 +148,10 @@ $HTMLOUT .= begin_main_frame();
         <div class='global_head_wiki'>Wiki</div><br />
         <div class='global_text'><br />";
 if (isset($_GET["action"])) {
-    $action = htmlspecialchars($_GET["action"]);
+    $action = htmlsafechars($_GET["action"]);
     if (isset($_GET["name"])) {
         $mode = "name";
-        $name = htmlspecialchars($_GET["name"]);
+        $name = htmlsafechars($_GET["name"]);
     }
     if (isset($_GET["id"])) {
         $mode = "id";
@@ -161,7 +161,7 @@ if (isset($_GET["action"])) {
         }
     
 if (isset($_GET["letter"]))
-        $letter = htmlspecialchars($_GET["letter"]);
+        $letter = htmlsafechars($_GET["letter"]);
 } else {
     $action = "article";
     $mode = "name";
@@ -178,17 +178,17 @@ if ($action == "article") {
   <div id=\"wiki-row\">";
         while ($wiki = mysqli_fetch_array($res)) {
             if ($wiki['lastedit']) {
-                $check = sql_query("SELECT username FROM users WHERE id = $wiki[lastedituser]");
+                $check = sql_query("SELECT username FROM users WHERE id = ".sqlesc($wiki['lastedituser']));
                 $checkit = mysqli_fetch_assoc($check);
-                $edit = "<i>Last Updated by: <a href=\"userdetails.php?id=$wiki[userid]\">$checkit[username]</a> - " . datetimetransform($wiki['lastedit']) . "</i>";
+                $edit = "<i>Last Updated by: <a href=\"userdetails.php?id=".(int)$wiki['userid']."\">".htmlsafechars($checkit['username'])."</a> - " . datetimetransform($wiki['lastedit']) . "</i>";
             }
-            $check = sql_query("SELECT username FROM users WHERE id = $wiki[userid]");
+            $check = sql_query("SELECT username FROM users WHERE id =".sqlesc($wiki['userid']));
             $author = mysqli_fetch_assoc($check);
             $HTMLOUT .="
 				<div id=\"wiki-content-left\" align=\"right\">
-					<div id=\"name\"><b><a href=\"wiki.php?action=article&amp;name=$wiki[name]\">$wiki[name]</a></b></div>
-					<div id=\"content\">" . ($wiki['userid'] > 0 ? "<font-size: 9px;\"><i>Article added by <a href=\"userdetails.php?id=$wiki[userid]\"><b>$author[username]</b></a></i></font><br /><br />" : "") . wikireplace(format_comment($wiki["body"])) . "";
-            $HTMLOUT .="<div align=\"right\">" . ($edit ? "<font-size: 9px;\">$edit</font>" : "") . ($CURUSER['class'] >= UC_STAFF || $CURUSER["id"] == $wiki["userid"] ? " - <a href=\"wiki.php?action=edit&amp;id=$wiki[id]\">Edit</a>" : "") . "</div>";
+					<div id=\"name\"><b><a href=\"wiki.php?action=article&amp;name=".htmlsafechars($wiki['name'])."\">".htmlsafechars($wiki['name'])."</a></b></div>
+					<div id=\"content\">" . ($wiki['userid'] > 0 ? "<i>Article added by <a href=\"userdetails.php?id=".(int)$wiki['userid']."\"><b>".htmlsafechars($author['username'])."</b></a></i><br /><br />" : "") . wikireplace(format_comment($wiki["body"])) . "";
+            $HTMLOUT .="<div align=\"right\">" . ($edit ? "$edit" : "") . ($CURUSER['class'] >= UC_STAFF || $CURUSER["id"] == $wiki["userid"] ? " - <a href=\"wiki.php?action=edit&amp;id=".(int)$wiki['id']."\">Edit</a>" : "") . "</div>";
             $HTMLOUT .="</div></div>";
         }
 
@@ -199,13 +199,13 @@ if ($action == "article") {
     } else {
         $search = sql_query("SELECT * FROM wiki WHERE name LIKE '%" . wikisearch($name) . "%'");
         if (mysqli_num_rows($search) > 0) {
-            $HTMLOUT .="Search results for: <b>".htmlspecialchars($name)."</b>";
+            $HTMLOUT .="Search results for: <b>".htmlsafechars($name)."</b>";
             while ($wiki = mysqli_fetch_array($search)) {
                 if ($wiki["userid"] !== 0)
-                    $wikiname = mysqli_fetch_assoc(sql_query("SELECT username FROM users WHERE id = $wiki[userid]"));
+                    $wikiname = mysqli_fetch_assoc(sql_query("SELECT username FROM users WHERE id =".sqlesc($wiki['userid'])));
                 $HTMLOUT .="
 				<div class=\"wiki-search\">
-					<b><a href=\"wiki.php?action=article&amp;name=" . articlereplace($wiki["name"]) . "\">$wiki[name]</a></b> Added by: <a href=\"userdetails.php?id=$wiki[userid]\">$wikiname[username]</a></div>";
+					<b><a href=\"wiki.php?action=article&amp;name=".articlereplace(htmlsafechars($wiki["name"]))."\">".htmlsafechars($wiki['name'])."</a></b> Added by: <a href=\"userdetails.php?id=".(int)$wiki['userid']."\">".htmlsafechars($wikiname['username'])."</a></div>";
             }
         } else {
             $HTMLOUT .=newerr("Error", "No article found.");
@@ -215,40 +215,34 @@ if ($action == "article") {
 $wiki=0;
 if ($action == "add") {
     $HTMLOUT .=navmenu();
-     
-    $HTMLOUT .="<div id=\"wiki-container\">
-  <div id=\"wiki-row\">";
-     $HTMLOUT .="
+    $HTMLOUT .="<div id=\"wiki-container\"><div id=\"wiki-row\">";
+    $HTMLOUT .="
 				<div id=\"wiki-content-left\" align=\"right\">
 					<form method=\"post\" action=\"wiki.php\">
 					<div><input type=\"text\" name=\"article-name\" id=\"name\" /></div>
-					<div id=\"content-add\"><textarea name=\"article-body\" rows=\"70\" cols=\"10\" id=\"body\">$wiki[body]</textarea>
+					<div id=\"content-add\"><textarea name=\"article-body\" rows=\"70\" cols=\"10\" id=\"body\">".htmlsafechars($wiki['body'])."</textarea>
 					<div align=\"center\"><input type=\"submit\" name=\"article-add\" value=\"OK\" /></div>
 				</div></form></div>";
-
     $HTMLOUT .=wikimenu();
-
     $HTMLOUT .="</div>";
     $HTMLOUT .="</div>";
 }
 
 if ($action == "edit") {
-    $res = sql_query("SELECT * FROM wiki WHERE id = $id");
-    $rescheck = sql_query("SELECT userid FROM wiki WHERE id = $id");
-
+    $res = sql_query("SELECT * FROM wiki WHERE id = ".sqlesc($id));
+    $rescheck = sql_query("SELECT userid FROM wiki WHERE id =".sqlesc($id));
     $wikicheck = mysqli_fetch_assoc($rescheck);
     if (($CURUSER['class'] >= UC_STAFF) OR ($CURUSER["id"] == $wikicheck["userid"])) {
         $HTMLOUT .=navmenu();
-
         $HTMLOUT .="<div id=\"wiki-container\">
   <div id=\"wiki-row\">";
         while ($wiki = mysqli_fetch_array($res)) {
            $HTMLOUT .="
 				<div id=\"wiki-content-left\" align=\"right\">
 					<form method=\"post\" action=\"wiki.php\">
-					<div><input type=\"hidden\" name=\"article-id\" value=\"$wiki[id]\" />
-					<input type=\"text\" name=\"article-name\" id=\"name\" value=\"$wiki[name]\" /></div>
-					<div id=\"content-add\"><table width=\"100%\" style=\"height: 100%;\" id=\"wikiedit\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td><textarea name=\"article-body\" rows=\"70\" cols=\"10\" id=\"body\">$wiki[body]</textarea>
+					<div><input type=\"hidden\" name=\"article-id\" value=\"".(int)$wiki['id']."\" />
+					<input type=\"text\" name=\"article-name\" id=\"name\" value=\"".htmlsafechars($wiki['name'])."\" /></div>
+					<div id=\"content-add\"><table width=\"100%\" style=\"height: 100%;\" id=\"wikiedit\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td><textarea name=\"article-body\" rows=\"70\" cols=\"10\" id=\"body\">".htmlsafechars($wiki['body'])."</textarea>
 					<div align=\"center\"><input type=\"submit\" name=\"article-edit\" value=\"Edit\" /></div></td></tr></table>";
            $HTMLOUT .="</div></form></div>";
         }
@@ -265,13 +259,13 @@ if ($action == "sort") {
     $sortres = sql_query("SELECT * FROM wiki WHERE name LIKE '$letter%' ORDER BY name");
     if (mysqli_num_rows($sortres) > 0) {
         $HTMLOUT .=navmenu();
-        $HTMLOUT .="Articles starting with the letter <b>".htmlspecialchars($letter)."</b>";
+        $HTMLOUT .="Articles starting with the letter <b>".htmlsafechars($letter)."</b>";
         while ($wiki = mysqli_fetch_array($sortres)) {
             if ($wiki["userid"] !== 0)
-                $wikiname = mysqli_fetch_assoc(sql_query("SELECT username FROM users WHERE id = $wiki[userid]"));
+                $wikiname = mysqli_fetch_assoc(sql_query("SELECT username FROM users WHERE id = ".sqlesc($wiki['userid'])));
            $HTMLOUT .="
 				<div class=\"wiki-search\">
-					<b><a href=\"wiki.php?action=article&amp;name=" . articlereplace($wiki["name"]) . "\">$wiki[name]</a></b> Added by: <a href=\"userdetails.php?id=$wiki[userid]\">$wikiname[username]</a></div>";
+					<b><a href=\"wiki.php?action=article&amp;name=".articlereplace(htmlsafechars($wiki["name"]))."\">".htmlsafechars($wiki['name'])."</a></b> Added by: <a href=\"userdetails.php?id=".(int)$wiki['userid']."\">".htmlsafechars($wikiname['username'])."</a></div>";
         }
     } else {
         $HTMLOUT .= navmenu();

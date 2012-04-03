@@ -43,7 +43,7 @@ loggedinorreturn();
     {
 		while($arr_request = mysqli_fetch_assoc($res_request))
 		{
-		$request .= '<option class="body" value="'.$arr_request['id'].'">'.htmlspecialchars($arr_request['request_name']).'</option>';
+		$request .= '<option class="body" value="'.(int)$arr_request['id'].'">'.htmlsafechars($arr_request['request_name']).'</option>';
 		}
     }
     else
@@ -53,7 +53,7 @@ loggedinorreturn();
     $request .= '</select> If you are filling a request please select it here so interested members can be notified.</td>
     </tr>';
     //=== offers list if member has made any offers  
-    $res_offer = sql_query('SELECT id, offer_name FROM offers WHERE offered_by_user_id = '.$CURUSER['id'].' AND status = \'approved\' ORDER BY offer_name ASC');       
+    $res_offer = sql_query('SELECT id, offer_name FROM offers WHERE offered_by_user_id = '.sqlesc($CURUSER['id']).' AND status = \'approved\' ORDER BY offer_name ASC');       
     if (mysqli_num_rows($res_offer) > 0)
     {  
     $offers = '  
@@ -65,7 +65,7 @@ loggedinorreturn();
     $message = '<option class="body" value="0">Your have no approved offers yet</option>';  
     while($arr_offer = mysqli_fetch_assoc($res_offer))   
     {  
-    $offers .= '<option class="body" value="'.$arr_offer['id'].'">'.htmlspecialchars($arr_offer['offer_name']).'</option>';  
+    $offers .= '<option class="body" value="'.(int)$arr_offer['id'].'">'.htmlsafechars($arr_offer['offer_name']).'</option>';  
     }  
     $offers .= '</select> If you are uploading one of your offers, please select it here so interested members will be notified.</td>  
     </tr>';     
@@ -136,13 +136,13 @@ loggedinorreturn();
     $cats = genrelist2();
     foreach ($cats as $cat)
     {
-    $s .= "<optgroup label=\"" . htmlspecialchars($cat["name"]) . "\">";
+    $s .= "<optgroup label=\"" . htmlsafechars($cat["name"]) . "\">";
     $subcats = $cat['subcategory'];
     if (count($subcats) > 0)
     {
     foreach ($subcats as $subcat)
     {
-    $s .= "<option value=\"" . $subcat["id"] . "\">" . htmlspecialchars($subcat["name"]) . "</option>\n";
+    $s .= "<option value=\"".(int)$subcat["id"]."\">".htmlsafechars($subcat["name"])."</option>\n";
     }
     }
     $s .= "</optgroup>\n";
@@ -159,7 +159,7 @@ loggedinorreturn();
 	  foreach($subs as $s)
 	  { 
 	  $subs_list .=  ($i && $i % 4 == 0) ? "</tr><tr>" : "";
-	  $subs_list .= "<td style='padding-right: 5px'><input name=\"subs[]\" type=\"checkbox\" value=\"".$s["id"]."\" /> ".$s["name"]."</td>\n";
+	  $subs_list .= "<td style='padding-right: 5px'><input name=\"subs[]\" type=\"checkbox\" value=\"".(int)$s["id"]."\" />".htmlsafechars($s["name"])."</td>\n";
 	  ++$i;
 	  }
 	  $subs_list .= "</tr></table>\n";

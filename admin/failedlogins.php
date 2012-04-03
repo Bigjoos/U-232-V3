@@ -112,7 +112,7 @@ else
   while ($arr = mysqli_fetch_assoc($res))
   {
   $HTMLOUT .="<tr><td align='left'><b>".(int)$arr['id']."</b></td>
-  <td align='left'><b>".htmlentities($arr['ip'])." ".((int)$arr['uid'] ? "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['uid']."'>" : "" )." ".( htmlspecialchars($arr['username']) ? "(".htmlspecialchars($arr['username']).")" : "" ) . "</a></b></td>
+  <td align='left'><b>".htmlsafechars($arr['ip'])." ".((int)$arr['uid'] ? "<a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['uid']."'>" : "" )." ".( htmlsafechars($arr['username']) ? "(".htmlsafechars($arr['username']).")" : "" ) . "</a></b></td>
   <td align='left'><b>".get_date($arr['added'], '', 1,0)."</b></td>
   <td align='left'><b>".(int)$arr['attempts']."</b></td>
   <td align='left'>

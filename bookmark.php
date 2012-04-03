@@ -34,7 +34,7 @@ if (!isset($torrentid))
 stderr("Error", "Failed. No torrent selected");
 
 $possible_actions = array('add','delete','public','private');      
-$action = (isset($_GET['action']) ? htmlspecialchars($_GET['action']) : '');
+$action = (isset($_GET['action']) ? htmlsafechars($_GET['action']) : '');
 
         if (!in_array($action, $possible_actions)) 
             stderr('Error', 'A ruffian that will swear, drink, dance, revel the night, rob, murder and commit the oldest of ins the newest kind of ways.');
@@ -56,7 +56,7 @@ stderr('Error','what are you doing?');
 
 function addbookmark($torrentid) {
 global $CURUSER, $mc1, $INSTALLER09;
-if ((get_row_count("bookmarks", "WHERE userid={$CURUSER['id']} AND torrentid = ".sqlesc($torrentid)."")) > 0)
+if ((get_row_count("bookmarks", "WHERE userid=".sqlesc($CURUSER['id'])." AND torrentid = ".sqlesc($torrentid))) > 0)
 stderr("Error", "Torrent already bookmarked");
 sql_query("INSERT INTO bookmarks (userid, torrentid) VALUES (".sqlesc($CURUSER['id']).", ".sqlesc($torrentid).")") or sqlerr(__FILE__,__LINE__);
 $mc1->delete_value('bookmm_'.$CURUSER['id']);
@@ -84,7 +84,7 @@ stderr('Error','what are you doing?');
 
 function deletebookmark($torrentid) {
 global $CURUSER, $mc1, $INSTALLER09;
-sql_query("DELETE FROM bookmarks WHERE torrentid = ".sqlesc($torrentid)." AND userid = ".sqlesc($CURUSER['id'])."");
+sql_query("DELETE FROM bookmarks WHERE torrentid = ".sqlesc($torrentid)." AND userid = ".sqlesc($CURUSER['id']));
 $mc1->delete_value('bookmm_'.$CURUSER['id']);
 make_bookmarks($CURUSER['id'], 'bookmm_');
 }
@@ -110,7 +110,7 @@ stderr('Error','what are you doing?');
 
 function publickbookmark($torrentid) {
 global $CURUSER, $mc1, $INSTALLER09;
-sql_query("UPDATE bookmarks SET private = 'no' WHERE private = 'yes' AND torrentid = ".sqlesc($torrentid)." AND userid = ".sqlesc($CURUSER['id'])."");
+sql_query("UPDATE bookmarks SET private = 'no' WHERE private = 'yes' AND torrentid = ".sqlesc($torrentid)." AND userid = ".sqlesc($CURUSER['id']));
 $mc1->delete_value('bookmm_'.$CURUSER['id']);
 make_bookmarks($CURUSER['id'], 'bookmm_');
 }
@@ -139,7 +139,7 @@ stderr("Error", "Invalid ID.");
 
 function privatebookmark($torrentid) {
 global $CURUSER, $mc1, $INSTALLER09;
-sql_query("UPDATE bookmarks SET private = 'yes' WHERE private = 'no' AND torrentid = ".sqlesc($torrentid)." AND userid = ".sqlesc($CURUSER['id'])."");
+sql_query("UPDATE bookmarks SET private = 'yes' WHERE private = 'no' AND torrentid = ".sqlesc($torrentid)." AND userid = ".sqlesc($CURUSER['id']));
 $mc1->delete_value('bookmm_'.$CURUSER['id']);
 make_bookmarks($CURUSER['id'], 'bookmm_');
 }
@@ -149,7 +149,7 @@ $HTMLOUT .="<h2>Bookmark made private!</h2>";
 }
 
 if (isset($_POST["returnto"]))
-$ret = "<a href=\"" . htmlspecialchars($_POST["returnto"]) . "\">Go back to whence you came</a>";
+$ret = "<a href=\"" . htmlsafechars($_POST["returnto"]) . "\">Go back to whence you came</a>";
 else
 $ret = "<a href=\"bookmarks.php\">Go to My Bookmarks</a><br /><br />
 <a href=\"browse.php\">Go to Browse</a>";

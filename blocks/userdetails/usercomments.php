@@ -14,21 +14,21 @@ function usercommenttable($rows)
             if ($title == "")
             $title = get_user_class_name($row["class"]);
             else
-            $title = htmlspecialchars($title);
-            $htmlout .="<a name='comm".(int)$row['id']."' href='userdetails.php?id=".(int)$row['user']."'><b>" .htmlspecialchars($row['username'])."</b></a>" . ($row["donor"] == "yes" ? "<img src=\"{$INSTALLER09['pic_base_url']}star.gif\" alt='Donor' />" : "") . ($row["warned"] == "yes" ? "<img src=" . "\"{$INSTALLER09['pic_base_url']}warned.gif\" alt=\"Warned\" />" : "") . " ($title)\n";
+            $title = htmlsafechars($title);
+            $htmlout .="<a name='comm".(int)$row['id']."' href='userdetails.php?id=".(int)$row['user']."'><b>" .htmlsafechars($row['username'])."</b></a>" . ($row["donor"] == "yes" ? "<img src=\"{$INSTALLER09['pic_base_url']}star.gif\" alt='Donor' />" : "") . ($row["warned"] >= "1" ? "<img src=" . "\"{$INSTALLER09['pic_base_url']}warned.gif\" alt=\"Warned\" />" : "") . " ($title)\n";
         } else
-            $htmlout .="<a name=\"comm" . $row["id"] . "\"><i>(orphaned)</i></a>\n";
+            $htmlout .="<a name=\"comm".(int)$row["id"]."\"><i>(orphaned)</i></a>\n";
 
         $htmlout .=" ".get_date($row["added"], 'DATE',0,1)."" .
-            ($userid == $CURUSER["id"] || $row["user"] == $CURUSER["id"] || $CURUSER['class'] >= UC_STAFF ? " - [<a href='usercomment.php?action=edit&amp;cid={$row['id']}'>Edit</a>]" : "") .
+            ($userid == $CURUSER["id"] || $row["user"] == $CURUSER["id"] || $CURUSER['class'] >= UC_STAFF ? " - [<a href='usercomment.php?action=edit&amp;cid=".(int)$row['id']."'>Edit</a>]" : "") .
             ($userid == $CURUSER["id"] || $CURUSER['class'] >= UC_STAFF ? " - [<a href='usercomment.php?action=delete&amp;cid=".(int)$row['id']."'>Delete</a>]" : "") .
             ($row["editedby"] && $CURUSER['class'] >= UC_STAFF ? " - [<a href='usercomment.php?action=vieworiginal&amp;cid=".(int)$row['id']."'>View original</a>]" : "") . "</p>\n";
-        $avatar = ($CURUSER["avatars"] == "yes" ? htmlspecialchars($row["avatar"]) : "");
+        $avatar = ($CURUSER["avatars"] == "yes" ? htmlsafechars($row["avatar"]) : "");
         if (!$avatar)
         $avatar = "{$INSTALLER09['pic_base_url']}default_avatar.gif";
         $text = format_comment($row["text"]);
         if ($row["editedby"])
-        $text .= "<font size='1' class='small'><br /><br />Last edited by <a href='userdetails.php?id=".(int)$row['editedby']."'><b>".htmlspecialchars($row['username'])."</b></a> ".get_date($row['editedat'], 'DATE',0,1)."</font>\n";
+        $text .= "<font size='1' class='small'><br /><br />Last edited by <a href='userdetails.php?id=".(int)$row['editedby']."'><b>".htmlsafechars($row['username'])."</b></a> ".get_date($row['editedat'], 'DATE',0,1)."</font>\n";
         $htmlout .= "<table width='100%' border='1' cellspacing='0' cellpadding='5'>";
         $htmlout .="<tr valign='top'>\n";
         $htmlout .="<td align='center' width='150' style='padding:0px'><img width='150' src=\"{$avatar}\" alt=\"Avatar\" /></td>\n";
@@ -41,10 +41,10 @@ function usercommenttable($rows)
     return $htmlout;
 }
 //==Usercomments - pdq
-    $HTMLOUT .="<h1>Comments left for <a href='userdetails.php?id=$id'>".htmlspecialchars($user['username'])."</a></h1>
+    $HTMLOUT .="<h1>Comments left for <a href='userdetails.php?id=$id'>".htmlsafechars($user['username'])."</a></h1>
     <a name='startcomments'></a>";
     $commentbar = "<a href='usercomment.php?action=add&amp;userid={$id}'>Add a comment</a>\n";
-    $subres = sql_query("SELECT COUNT(id) FROM usercomments WHERE userid = $id");
+    $subres = sql_query("SELECT COUNT(id) FROM usercomments WHERE userid = ".sqlesc($id));
     $subrow = mysqli_fetch_array($subres,  MYSQLI_NUM);
     $count = $subrow[0];
     if (!$count) {

@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 			if(!$q)
 			stderr("Error", "Something wrong happned, please retry");
 			else
-			stderr("Success","The promo link <b>".htmlspecialchars($promoname)."</b> was added! here is the link <br /><input type=\"text\" name=\"promo-link\" value=\"".$INSTALLER09['baseurl'].$_SERVER["PHP_SELF"]."?do=signup&amp;link=".$link."\" size=\"80\" onclick=\"select();\"  /><br/><a href=\"".$_SERVER["PHP_SELF"]."\"><input type=\"button\" value=\"Back to Promos\" /></a>");
+			stderr("Success","The promo link <b>".htmlsafechars($promoname)."</b> was added! here is the link <br /><input type=\"text\" name=\"promo-link\" value=\"".$INSTALLER09['baseurl'].$_SERVER["PHP_SELF"]."?do=signup&amp;link=".$link."\" size=\"80\" onclick=\"select();\"  /><br/><a href=\"".$_SERVER["PHP_SELF"]."\"><input type=\"button\" value=\"Back to Promos\" /></a>");
 	}
 	elseif($_SERVER["REQUEST_METHOD"] == "POST" && $do == "signup")
 	{
@@ -111,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 						$subject = $INSTALLER09['site_name']." user registration confirmation";
 						
 						$message = "Hi!
-						You used the link from promo ".htmlspecialchars($ar_check["name"])." and registred a new account at {$INSTALLER09['site_name']}
+						You used the link from promo ".htmlsafechars($ar_check["name"])." and registred a new account at {$INSTALLER09['site_name']}
 							
 						To confirm your account click the link below
 						{$INSTALLER09['baseurl']}/confirm.php?id=".(int)$userid."&secret=$sec
@@ -123,7 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 						$headers = 'From: ' . $INSTALLER09['site_email'] . "\r\n" .'Reply-To:' . $INSTALLER09['site_email'] . "\r\n" .'X-Mailer: PHP/' . phpversion();
 						$mail= @mail($email, $subject, $message, $headers);
 					
-					stderr ("Success!","Account was created! and an email was sent to <b>".htmlspecialchars($email)."</b>, you can use your account once you confirm the email!");	
+					stderr ("Success!","Account was created! and an email was sent to <b>".htmlsafechars($email)."</b>, you can use your account once you confirm the email!");	
 					}else 
 					stderr("Error", "Something odd happned please retry");
 			}
@@ -133,7 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 		$r = sql_query("SELECT name FROM promo WHERE id=".$id) or sqlerr(__FILE__, __LINE__);
 		if($sure == "no" ){
 			$a = mysqli_fetch_assoc($r);
-			stderr("Sanity check...", "You are about to delete promo <b>".htmlspecialchars($a["name"])."</b>, if you are sure click <a href=\"".$_SERVER["PHP_SELF"]."?do=delete&amp;id=".$id."&amp;sure=yes\">here</a>");
+			stderr("Sanity check...", "You are about to delete promo <b>".htmlsafechars($a["name"])."</b>, if you are sure click <a href=\"".$_SERVER["PHP_SELF"]."?do=delete&amp;id=".$id."&amp;sure=yes\">here</a>");
 		}
 		elseif( $sure == "yes")
 		{
@@ -207,7 +207,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 						
 						$HTMLOUT .="<form action='".($_SERVER["PHP_SELF"])."' method='post'>
 						  <table cellpadding='10' width='50%' align='center' cellspacing='0'  border='1' style='border-collapse:collapse'>
-						  <tr><td class='colhead' align='center' colspan='2'>Promo : ".htmlspecialchars($ar["name"])." </td></tr>
+						  <tr><td class='colhead' align='center' colspan='2'>Promo : ".htmlsafechars($ar["name"])." </td></tr>
 						  <tr><td nowrap='nowrap' align='right'>Bonuses</td>
 							  <td align='left' width='100%'>
 								".($ar["bonus_upload"] > 0 ? "<b>upload</b>:&nbsp;".mksize($ar["bonus_upload"]*1073741824)."<br />" : "")."
@@ -226,7 +226,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 						</form>";
 						
 						$HTMLOUT .= end_frame();
-					echo stdhead("Signup for promo :".htmlspecialchars($ar["name"])."") . $HTMLOUT . stdfoot();
+					echo stdhead("Signup for promo :".htmlsafechars($ar["name"])."") . $HTMLOUT . stdfoot();
 					}
 			}
 	}
@@ -250,7 +250,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
           <html xmlns='http://www.w3.org/1999/xhtml'>
           <head>
 					<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
-					<title>Users list for promo : ".htmlspecialchars($a1["name"])."</title>
+					<title>Users list for promo : ".htmlsafechars($a1["name"])."</title>
 					<style type=\"text/css\">
 					body { background-color:#999999;
 					color:#333333;
@@ -270,7 +270,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 						
 						 while ($ap = mysqli_fetch_assoc($q2))
 						 {
-						 $HTMLOUT .="<tr><td align='left' width='100'><a href='userdetails.php?id=".(int)$ap["id"]."'>".htmlspecialchars($ap["username"])."</a></td><td  align='left' nowrap='nowrap' >".get_date($ap["added"], 'LONG',0,1)."</td></tr>";
+						 $HTMLOUT .="<tr><td align='left' width='100'><a href='userdetails.php?id=".(int)$ap["id"]."'>".htmlsafechars($ap["username"])."</a></td><td  align='left' nowrap='nowrap' >".get_date($ap["added"], 'LONG',0,1)."</td></tr>";
 						 }
 						
 						
@@ -328,7 +328,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 			while($ar = mysqli_fetch_assoc($r)) {
 		   $active = (($ar["max_users"] == $ar["accounts_made"]) || (($ar["added"] + (86400*$ar["days_valid"])) < TIME_NOW)) ? false : true;
 			$HTMLOUT .="<tr ".(!$active ? "title=\"This promo has ended\"" : "" ).">
-				<td nowrap='nowrap' align='center'>".(htmlspecialchars($ar["name"]))."<br /><input type='text' ".(!$active ? "disabled=\"disabled\"" : "")." value='".($INSTALLER09['baseurl'].$_SERVER["PHP_SELF"]."?do=signup&amp;link=".$ar["link"])."' size='60' name='".(htmlspecialchars($ar["name"]))."' onclick='select();' /></td>
+				<td nowrap='nowrap' align='center'>".(htmlsafechars($ar["name"]))."<br /><input type='text' ".(!$active ? "disabled=\"disabled\"" : "")." value='".($INSTALLER09['baseurl'].$_SERVER["PHP_SELF"]."?do=signup&amp;link=".$ar["link"])."' size='60' name='".(htmlsafechars($ar["name"]))."' onclick='select();' /></td>
 				<td nowrap='nowrap' align='center'>".(date("d/M-Y",$ar["added"]))."</td>
 				<td nowrap='nowrap' align='center'>".(date("d/M-Y",($ar["added"] + (86400*$ar["days_valid"]))))."</td>
 				<td nowrap='nowrap' align='center'>".(0+$ar["max_users"])."</td>
@@ -336,7 +336,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $do == "addpromo")
 				<td nowrap='nowrap' align='center'>".(mksize($ar["bonus_upload"]*1073741824))."</td>
 				<td nowrap='nowrap' align='center'>".(0+$ar["bonus_invites"])."</td>
 				<td nowrap='nowrap' align='center'>".(0+$ar["bonus_karma"])."</td>
-				<td nowrap='nowrap' align='center'><a href='userdetails.php?id=".(int)$ar["creator"]."'>".htmlspecialchars($ar["username"])."</a></td>
+				<td nowrap='nowrap' align='center'><a href='userdetails.php?id=".(int)$ar["creator"]."'>".htmlsafechars($ar["username"])."</a></td>
 				<td nowrap='nowrap' align='center'><a href='".$_SERVER["PHP_SELF"]."?do=delete&amp;id=".(int)$ar["id"]."'><img src='pic/del.png' border='0' alt='Drop' /></a></td>
 			</tr>";
 		}

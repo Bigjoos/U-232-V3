@@ -35,14 +35,14 @@ loggedinorreturn();
     $templates = sql_query("SELECT id, name FROM stylesheets ORDER BY id");
 	  while($templ=mysqli_fetch_assoc($templates)){
 		if(file_exists("templates/$templ[id]/template.php"))
-		$stylesheets .="<option value='$templ[id]'".($templ['id']==$CURUSER['stylesheet']?" selected='selected'":"").">$templ[name]</option>";
+		$stylesheets .="<option value='".(int)$templ['id']."'".($templ['id']==$CURUSER['stylesheet']?" selected='selected'":"").">".htmlsafechars($templ['name'])."</option>";
 	  }
 
     $countries = "<option value='0'>---- {$lang['usercp_none']} ----</option>\n";
     $ct_r = sql_query("SELECT id,name FROM countries ORDER BY name") or sqlerr(__FILE__,__LINE__);
     while ($ct_a = mysqli_fetch_assoc($ct_r))
     {
-    $countries .= "<option value='{$ct_a['id']}'" . ($CURUSER["country"] == $ct_a['id'] ? " selected='selected'" : "") . ">{$ct_a['name']}</option>\n";
+    $countries .= "<option value='".(int)$ct_a['id']."'" . ($CURUSER["country"] == $ct_a['id'] ? " selected='selected'" : "") . ">".htmlsafechars($ct_a['name'])."</option>\n";
     }
 
     $offset = ($CURUSER['time_offset'] != "") ? (string)$CURUSER['time_offset'] : (string)$INSTALLER09['time_offset'];
@@ -106,7 +106,7 @@ loggedinorreturn();
 
     $possible_actions = array('avatar', 'signature', 'security', 'torrents','personal','default');
 
-    $action = isset($_GET["action"]) ? htmlspecialchars(trim($_GET["action"])) : '';
+    $action = isset($_GET["action"]) ? htmlsafechars(trim($_GET["action"])) : '';
 
     if (!in_array($action, $possible_actions)) 
             stderr('Error', 'A ruffian that will swear, drink, dance, revel the night, rob, murder and commit the oldest of ins the newest kind of ways.');
@@ -124,7 +124,7 @@ loggedinorreturn();
     $HTMLOUT .= "<h1>{$lang['usercp_emailch']}!</h1>\n";
     }
 
-    $HTMLOUT .="<h1>Welcome <a href='userdetails.php?id=".(int)$CURUSER['id']."'>".htmlspecialchars($CURUSER['username'])."</a> !</h1>\n
+    $HTMLOUT .="<h1>Welcome <a href='userdetails.php?id=".(int)$CURUSER['id']."'>".htmlsafechars($CURUSER['username'])."</a> !</h1>\n
     <!--<div><img src='images/global.design/settings.png' alt='' title='Settings' class='global_image' width='25'/></div>
     <div>{$lang['usercp_psettings']}</div><br />-->
     <div><br />
@@ -137,14 +137,14 @@ loggedinorreturn();
     $HTMLOUT .="<tr><td align='left' class='colhead' style='height:25px;' colspan='2'><input type='hidden' name='action' value='avatar' />Avatar Options</td></tr>";
     //==Disable avatar selection
     if(!($CURUSER["avatarpos"] == 0 OR $CURUSER["avatarpos"] != 1)){
-    $HTMLOUT .="<tr><td class='rowhead'>{$lang['usercp_avatar']}</td><td><input name='avatar' size='50' value='" . htmlspecialchars($CURUSER["avatar"]) . "' /><br />
+    $HTMLOUT .="<tr><td class='rowhead'>{$lang['usercp_avatar']}</td><td><input name='avatar' size='50' value='" . htmlsafechars($CURUSER["avatar"]) . "' /><br />
     <font class='small'>Width should be 150px. (Will be resized if necessary)\n<br />
     If you need a avatar, try our  <a href='{$INSTALLER09['baseurl']}/avatar/index.php'>Avatar creator</a>.<br />
     If you need a host for your image, try our  <a href='{$INSTALLER09['baseurl']}/bitbucket.php'>Bitbucket</a>.</font>
     </td></tr>";
     }
     else {
-    $HTMLOUT .="<tr><td class='rowhead'>{$lang['usercp_avatar']}</td><td><input name='avatar' size='50' value='" . htmlspecialchars($CURUSER["avatar"]) . "' readonly='readonly'/>
+    $HTMLOUT .="<tr><td class='rowhead'>{$lang['usercp_avatar']}</td><td><input name='avatar' size='50' value='" . htmlsafechars($CURUSER["avatar"]) . "' readonly='readonly'/>
     <br />{$lang['usercp_no_avatar_allow']}</td></tr>";
     }
     //==End
@@ -169,8 +169,8 @@ loggedinorreturn();
     $HTMLOUT .= tr('View Signatures',
     '<input type="radio" name="signatures" '.($CURUSER['signatures'] == 'yes' ? 'checked="checked"' : '').' value="yes" /> Yes
     <input type="radio" name="signatures" '.($CURUSER['signatures'] == 'no' ? 'checked="checked"' : '').' value="no" /> No',1);
-    $HTMLOUT .= tr('Signature', '<textarea name="signature" cols="50" rows="4">'.htmlentities($CURUSER['signature'], ENT_QUOTES).'</textarea><br />BBcode can be used', 1);
-    $HTMLOUT .= tr($lang['usercp_info'], "<textarea name='info' cols='50' rows='4'>".htmlentities($CURUSER["info"], ENT_QUOTES)."</textarea><br />{$lang['usercp_tags']}", 1);
+    $HTMLOUT .= tr('Signature', '<textarea name="signature" cols="50" rows="4">'.htmlsafechars($CURUSER['signature'], ENT_QUOTES).'</textarea><br />BBcode can be used', 1);
+    $HTMLOUT .= tr($lang['usercp_info'], "<textarea name='info' cols='50' rows='4'>".htmlsafechars($CURUSER["info"], ENT_QUOTES)."</textarea><br />{$lang['usercp_tags']}", 1);
     $HTMLOUT .="<tr ><td align='center' colspan='2'><input type='submit' value='Submit changes!' style='height: 25px' /></td></tr>";
     $HTMLOUT .= end_table();
     }
@@ -219,7 +219,7 @@ loggedinorreturn();
 	  All of the above will not apply to staff... staff see all and know all... <br />Even at the highest level of paranoia, you can still be reported (though they won't know who they are reporting) 
 	  and you are not immune to our auto scripts...<br /></div>", 1);
     }
-    $HTMLOUT .= tr($lang['usercp_email'], "<input type='text' name='email' size='50' value='" . htmlspecialchars($CURUSER["email"]) . "' /><br />{$lang['usercp_email_pass']}<br /><input type='password' name='chmailpass' size='50' class='keyboardInput' onkeypress='showkwmessage();return false;' />", 1);
+    $HTMLOUT .= tr($lang['usercp_email'], "<input type='text' name='email' size='50' value='" . htmlsafechars($CURUSER["email"]) . "' /><br />{$lang['usercp_email_pass']}<br /><input type='password' name='chmailpass' size='50' class='keyboardInput' onkeypress='showkwmessage();return false;' />", 1);
     $HTMLOUT .= "<tr><td colspan='2' align='left'>{$lang['usercp_note']}</td></tr>\n";
     //=== email forum stuff
     $HTMLOUT .= tr('Show Email',
@@ -309,7 +309,7 @@ loggedinorreturn();
     $HTMLOUT .= begin_table(true);
     $HTMLOUT .="<tr><td class='colhead' colspan='2'  style='height:25px;' ><input type='hidden' name='action' value='personal' />Personal Options</td></tr>"; 
     if ($CURUSER['class'] >= UC_VIP)
-    $HTMLOUT .=  tr($lang['usercp_title'], "<input size='50' value='" .htmlspecialchars($CURUSER["title"]) . "' name='title' /><br />", 1);
+    $HTMLOUT .=  tr($lang['usercp_title'], "<input size='50' value='".htmlsafechars($CURUSER["title"])."' name='title' /><br />", 1);
     
     //==Language
     $HTMLOUT .= tr($lang['usercp_language'],
@@ -340,7 +340,7 @@ loggedinorreturn();
     if (is_array($CURUSER['archive']))
     foreach(array_reverse($CURUSER['archive'],true) as $a_id=>$sa)
     $HTMLOUT .= '<div id="status_'.$a_id.'">
-    <div style="float:left">'.htmlspecialchars($sa['status']).'
+    <div style="float:left">'.htmlsafechars($sa['status']).'
     <small>added '.get_date($sa['date'],'',0,1).'</small></div>
     <div style="float:right;cursor:pointer;"><span onclick="status_delete('.$a_id.')"></span></div>
     <div style="clear:both;border:1px solid #222;border-width:1px 0 0 0;margin-bottom:3px;"></div></div>';
@@ -354,7 +354,6 @@ loggedinorreturn();
     $HTMLOUT .= tr($lang['usercp_tz'], $time_select ,1);
     $HTMLOUT .= tr($lang['usercp_checkdst'], "<input type='checkbox' name='checkdst' id='tz-checkdst' onclick='daylight_show()' value='1' $dst_correction />&nbsp;{$lang['usercp_auto_dst']}<br />
     <div id='tz-checkmanual' style='display: none;'><input type='checkbox' name='manualdst' value='1' $dst_check />&nbsp;{$lang['usercp_is_dst']}</div>",1);
-    //$HTMLOUT .= tr($lang['usercp_language'], "English",1);
     $HTMLOUT .= tr($lang['usercp_country'], "<select name='country'>\n$countries\n</select>",1);
     $HTMLOUT .= tr($lang['usercp_stylesheet'], "<select name='stylesheet'>\n$stylesheets\n</select>",1);
     $HTMLOUT .= tr($lang['usercp_gender'],
@@ -365,12 +364,12 @@ loggedinorreturn();
     $HTMLOUT .= tr($lang['usercp_shoutback'], "<input type='radio' name='shoutboxbg'" . ($CURUSER["shoutboxbg"] == "1" ? " checked='checked'" : "") . " value='1' />{$lang['usercp_shoutback_white']}
     <input type='radio' name='shoutboxbg'" . ($CURUSER["shoutboxbg"] == "2" ? " checked='checked'" : "") . " value='2' />{$lang['usercp_shoutback_grey']}<input type='radio' name='shoutboxbg'" . ($CURUSER["shoutboxbg"] == "3" ? " checked='checked'" : "") . " value='3' />{$lang['usercp_shoutback_black']}", 1);
     //=== messenger stuff
-    $HTMLOUT .= tr('Google Talk' , '<img src="pic/forums/google_talk.gif" alt="Google Talk" title="Google Talk" /><input type="text" size="30" name="google_talk"  value="'.htmlspecialchars($CURUSER['google_talk']).'" />',1);
-    $HTMLOUT .= tr('MSN ' , '<img src="pic/forums/msn.gif" alt="Msn" title="Msn" /><input type="text" size="30" name="msn"  value="'.htmlspecialchars($CURUSER['msn']).'" />',1);
-    $HTMLOUT .= tr('AIM' , ' <img src="pic/forums/aim.gif" alt="Aim" title="Aim" /><input type="text" size="30" name="aim"  value="'.htmlspecialchars($CURUSER['aim']).'" />',1);
-	  $HTMLOUT .= tr('Yahoo ' , '<img src="pic/forums/yahoo.gif" alt="Yahoo" title="Yahoo" /><input type="text" size="30" name="yahoo"  value="'.htmlspecialchars($CURUSER['yahoo']).'" />',1);
-    $HTMLOUT .= tr('icq ' , '<img src="pic/forums/icq.gif" alt="Icq" title="Icq" /><input type="text" size="30" name="icq"  value="'.htmlspecialchars($CURUSER['icq']).'" />',1);
-	  $HTMLOUT .= tr('Website ' , '<img src="pic/forums/www.gif" alt="www" title="www" width="16px" height="16px" /><input type="text" size="30" name="website"  value="'.htmlspecialchars($CURUSER['website']).'" />',1);
+    $HTMLOUT .= tr('Google Talk' , '<img src="pic/forums/google_talk.gif" alt="Google Talk" title="Google Talk" /><input type="text" size="30" name="google_talk"  value="'.htmlsafechars($CURUSER['google_talk']).'" />',1);
+    $HTMLOUT .= tr('MSN ' , '<img src="pic/forums/msn.gif" alt="Msn" title="Msn" /><input type="text" size="30" name="msn"  value="'.htmlsafechars($CURUSER['msn']).'" />',1);
+    $HTMLOUT .= tr('AIM' , ' <img src="pic/forums/aim.gif" alt="Aim" title="Aim" /><input type="text" size="30" name="aim"  value="'.htmlsafechars($CURUSER['aim']).'" />',1);
+	  $HTMLOUT .= tr('Yahoo ' , '<img src="pic/forums/yahoo.gif" alt="Yahoo" title="Yahoo" /><input type="text" size="30" name="yahoo"  value="'.htmlsafechars($CURUSER['yahoo']).'" />',1);
+    $HTMLOUT .= tr('icq ' , '<img src="pic/forums/icq.gif" alt="Icq" title="Icq" /><input type="text" size="30" name="icq"  value="'.htmlsafechars($CURUSER['icq']).'" />',1);
+	  $HTMLOUT .= tr('Website ' , '<img src="pic/forums/www.gif" alt="www" title="www" width="16px" height="16px" /><input type="text" size="30" name="website"  value="'.htmlsafechars($CURUSER['website']).'" />',1);
     //==09 Birthday
     $day = $month = $year = '';
     $birthday = $CURUSER["birthday"];
@@ -436,7 +435,7 @@ loggedinorreturn();
     $HTMLOUT .= end_table();
     }
     $HTMLOUT .="</td><td width='95' valign='top' ><table border='1'>";
-    $HTMLOUT .="<tr><td class='colhead' width='95'  style='height:25px;' >".htmlentities($CURUSER["username"], ENT_QUOTES) . "'s Avatar</td></tr>";
+    $HTMLOUT .="<tr><td class='colhead' width='95'  style='height:25px;' >".htmlsafechars($CURUSER["username"], ENT_QUOTES) . "'s Avatar</td></tr>";
     if(!empty($CURUSER['avatar']) && $CURUSER['av_w'] > 5 && $CURUSER['av_h'] > 5)
     $HTMLOUT .="<tr><td><img src='{$CURUSER['avatar']}' width='{$CURUSER['av_w']}' height='{$CURUSER['av_h']}' alt='' />
     <a href='mytorrents.php'>{$lang['usercp_edit_torrents']}</a><br />
@@ -447,7 +446,7 @@ loggedinorreturn();
     $HTMLOUT .="<tr><td><img src='{$INSTALLER09['pic_base_url']}forumicons/default_avatar.gif' alt='' /><a href='mytorrents.php'>{$lang['usercp_edit_torrents']}</a><br />
     <a href='friends.php'>{$lang['usercp_edit_friends']}</a><br />
     <a href='users.php'>{$lang['usercp_search']}</a></td></tr>";
-    $HTMLOUT .="<tr><td class='colhead' width='95' style='height:18px;'>".htmlentities($CURUSER["username"], ENT_QUOTES) . "'s Menu</td></tr>";
+    $HTMLOUT .="<tr><td class='colhead' width='95' style='height:18px;'>".htmlsafechars($CURUSER["username"], ENT_QUOTES) . "'s Menu</td></tr>";
     $HTMLOUT .="<tr><td align='left'><a href='usercp.php?action=avatar'>Avatar</a><br /></td></tr>
     <tr><td align='left'><a href='usercp.php?action=signature'>Signature</a></td></tr>
     <tr><td align='left'><a href='usercp.php?action=default'>Pm's</a></td></tr>
@@ -456,7 +455,7 @@ loggedinorreturn();
     <tr><td align='left'><a href='usercp.php?action=personal'>Personal</a></td></tr>
     <tr><td align='left'><a href='invite.php'>Invites</a></td></tr>
     <tr><td align='left'><a href='tenpercent.php'>Lifesaver</a></td></tr>
-    <tr><td class='colhead' width='95'>".htmlentities($CURUSER["username"], ENT_QUOTES) . "'s Entertainment</td></tr>
+    <tr><td class='colhead' width='95'>".htmlsafechars($CURUSER["username"], ENT_QUOTES) . "'s Entertainment</td></tr>
     <tr><td align='left'><a href='topmoods.php'>Top Member Mood's</a></td></tr>
     <tr><td align='left'><a href='lottery.php'>Lottery</a></td></tr>"; 
     if ($CURUSER['class'] >= UC_POWER_USER) {
@@ -466,5 +465,5 @@ loggedinorreturn();
     $HTMLOUT .="</table></td></tr></table></form></div>";
     
     
-echo stdhead(htmlentities($CURUSER["username"], ENT_QUOTES)."{$lang['usercp_stdhead']} ", true, $stdhead) . $HTMLOUT . stdfoot($stdfoot);
+echo stdhead(htmlsafechars($CURUSER["username"], ENT_QUOTES)."{$lang['usercp_stdhead']} ", true, $stdhead) . $HTMLOUT . stdfoot($stdfoot);
 ?>

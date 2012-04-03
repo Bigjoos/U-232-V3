@@ -1,7 +1,7 @@
 <?php
 //=== testing concept of "share ratio"
     if(($cache_share_ratio = $mc1->get_value('share_ratio_'.$id)) === false) {
-    $cache_share_ratio = mysqli_fetch_assoc(sql_query("SELECT SUM(seedtime) AS seed_time_total, COUNT(id) AS total_number FROM snatched WHERE seedtime > '0' AND userid =".$user['id'].""));
+    $cache_share_ratio = mysqli_fetch_assoc(sql_query("SELECT SUM(seedtime) AS seed_time_total, COUNT(id) AS total_number FROM snatched WHERE seedtime > '0' AND userid =".sqlesc($user['id'])));
     $cache_share_ratio['total_number'] = (int) $cache_share_ratio['total_number'];
     $cache_share_ratio['seed_time_total'] = (int) $cache_share_ratio['seed_time_total'];
     $mc1->cache_value('share_ratio_'.$id, $cache_share_ratio, $INSTALLER09['expires']['share_ratio']);
@@ -18,7 +18,7 @@
     $days = 1.5;
     break;
     //=== Member ++
-    case ($user['class'] == UC_VIP || $user['class'] == UC_UPLOADER || $user['class'] == UC_MODERATOR || $user['class'] == UC_ADMINISTRATOR || $user['class'] == UC_SYSOP):
+    case ($user['class'] == UC_VIP || $user['class'] == UC_UPLOADER || $user['class'] == UC_STAFF || $user['class'] == UC_ADMINISTRATOR || $user['class'] == UC_SYSOP):
     $days = 0.5;
     break;
     }

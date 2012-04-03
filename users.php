@@ -26,7 +26,7 @@ loggedinorreturn();
     {
       $query1 = "username LIKE " . sqlesc("%$search%") . " AND status='confirmed'";
       if ($search)
-          $q1 = "search=" . htmlspecialchars($search);
+          $q1 = "search=" . htmlsafechars($search);
     }
     else
     {
@@ -95,7 +95,7 @@ loggedinorreturn();
     $browsemenu = '';
     $pagemenu = '';
 
-    $res = sql_query("SELECT COUNT(*) FROM users WHERE $query1") or sqlerr(__FILE__,__LINE__);
+    $res = sql_query("SELECT COUNT(*) FROM users WHERE ".$query1) or sqlerr(__FILE__,__LINE__);
     $arr = mysqli_fetch_row($res);
 
     if($arr[0] > $perpage) {
@@ -146,9 +146,9 @@ loggedinorreturn();
     while($row = mysqli_fetch_assoc($res))
     {
       
-      $country = ($row['name'] != NULL) ? "<td style='padding: 0px' align='center'><img src='{$INSTALLER09['pic_base_url']}flag/{$row['flagpic']}' alt='". htmlspecialchars($row['name']) ."' /></td>" : "<td align='center'>---</td>";
+      $country = ($row['name'] != NULL) ? "<td style='padding: 0px' align='center'><img src='{$INSTALLER09['pic_base_url']}flag/".htmlsafechars($row['flagpic'])."' alt='".htmlsafechars($row['name'])."' /></td>" : "<td align='center'>---</td>";
    
-      $HTMLOUT .= "<tr><td align='left'><a href='userdetails.php?id={$row['id']}'><b>{$row['username']}</b></a>" .
+      $HTMLOUT .= "<tr><td align='left'><a href='userdetails.php?id=".(int)$row['id']."'><b>".htmlsafechars($row['username'])."</b></a>" .
       ($row["donor"] > 0 ? "<img src='{$INSTALLER09['pic_base_url']}star.gif' border='0' alt='Donor' />" : "")."</td>" .
       "<td>".get_date( $row['added'],'' )."</td><td>".get_date( $row['last_access'], '')."</td>".
         "<td align='left'>" . get_user_class_name($row["class"]) . "</td>$country</tr>\n";

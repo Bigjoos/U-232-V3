@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
  	array(56,'2 Months'));
 
   //== Usersearch POST data...
-	$n_pms = (isset($_POST['n_pms']) ? $_POST['n_pms'] : 0);
+	$n_pms = (isset($_POST['n_pms']) ? (int)$_POST['n_pms'] : 0);
 	$ann_query = (isset($_POST['ann_query']) ? trim($_POST['ann_query']) : '');
 	$ann_hash = (isset($_POST['ann_hash']) ? trim($_POST['ann_hash']) : '');
 
@@ -59,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
  		 if ($expiry == $x[0]) $flag = 1;
 
  	if (!isset($flag)) stderr('Error','Invalid expiry selection');
- 	$expires = time() + (86400 * $expiry); // 86400 seconds in one day.
- 	$created = time();
+ 	$expires = TIME_NOW + (86400 * $expiry); // 86400 seconds in one day.
+ 	$created = TIME_NOW;
 
 
 
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
  	<table border='1' cellspacing='0' cellpadding='5'>
  	<tr>
  	<td colspan='2'><b>Subject: </b>
- 	<input name='subject' type='text' size='76' value='".htmlspecialchars($subject)."' /></td>
+ 	<input name='subject' type='text' size='76' value='".htmlsafechars($subject)."' /></td>
  	</tr>
  	<tr><td colspan='2'><div align='center'>
   ".textbbcode("compose","msg",$body)."
@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
  	$newtime = TIME_NOW + (86400 * $expiry);
  	$HTMLOUT .="<table width='700' class='main' border='0' cellspacing='1' cellpadding='1'>
  	<tr><td bgcolor='#663366' align='center' valign='baseline'><h2><font color='white'>Announcement: 
- 	".htmlspecialchars($subject)."</font></h2></td></tr>
+ 	".htmlsafechars($subject)."</font></h2></td></tr>
  	<tr><td class='text'>
  	".format_comment($body)."<br /><hr />Expires: ".get_date($newtime, 'DATE')."";
  	$HTMLOUT .="</td></tr></table>";
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 } else { // Shouldn't be here
 header("HTTP/1.0 404 Not Found");
 $HTMLOUT ="";
-$HTMLOUT .="<html><h1>Not Found</h1><p>The requested URL ".htmlspecialchars($_SERVER['SCRIPT_NAME'],strrpos($_SERVER['SCRIPT_NAME'],'/')+1)." was not found on this server.</p>
+$HTMLOUT .="<html><h1>Not Found</h1><p>The requested URL ".htmlsafechars($_SERVER['SCRIPT_NAME'],strrpos($_SERVER['SCRIPT_NAME'],'/')+1)." was not found on this server.</p>
 <hr />
 <address>{$_SERVER['SERVER_SOFTWARE']} Server at {$INSTALLER09['baseurl']} Port 80</address></body></html>\n";
 echo $HTMLOUT;

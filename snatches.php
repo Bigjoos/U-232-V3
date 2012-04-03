@@ -36,13 +36,13 @@ $id = 0 + $_GET["id"];
 if (!is_valid_id($id))
   stderr("Error", "It appears that you have entered an invalid id.");
 
-$res = sql_query("SELECT id, name FROM torrents WHERE id = ".sqlesc($id)."") or sqlerr( __FILE__, __LINE__ );
+$res = sql_query("SELECT id, name FROM torrents WHERE id = ".sqlesc($id)) or sqlerr( __FILE__, __LINE__ );
 $arr = mysqli_fetch_assoc($res);
 
 if (!$arr)
   stderr("Error", "It appears that there is no torrent with that id.");
 
-$res = sql_query("SELECT COUNT(id) FROM snatched WHERE torrentid =".sqlesc( $id ) ."") or sqlerr( __FILE__, __LINE__ );
+$res = sql_query("SELECT COUNT(id) FROM snatched WHERE torrentid =".sqlesc($id)) or sqlerr( __FILE__, __LINE__ );
 $row = mysqli_fetch_row($res);
 $count = $row[0];
 
@@ -50,9 +50,9 @@ $perpage = 15;
 $pager = pager($perpage, $count, "snatches.php?id=$id&amp;");
 
 if (!$count)
-  stderr("No snatches", "It appears that there are currently no snatches for the torrent <a href='details.php?id=".(int)$arr['id']."'>".htmlspecialchars($arr['name'])."</a>.");
+  stderr("No snatches", "It appears that there are currently no snatches for the torrent <a href='details.php?id=".(int)$arr['id']."'>".htmlsafechars($arr['name'])."</a>.");
 
-$HTMLOUT .= "<h1>Snatches for torrent <a href='{$INSTALLER09['baseurl']}/details.php?id=".(int)$arr['id']."'>".htmlspecialchars($arr['name'])."</a></h1>\n";
+$HTMLOUT .= "<h1>Snatches for torrent <a href='{$INSTALLER09['baseurl']}/details.php?id=".(int)$arr['id']."'>".htmlsafechars($arr['name'])."</a></h1>\n";
 $HTMLOUT .= "<h2>Currently {$row['0']} snatch".($row[0] == 1 ? "" : "es")."</h2>\n";
 if ($count > $perpage)
 $HTMLOUT .= $pager['pagertop'];
@@ -76,30 +76,30 @@ $HTMLOUT .= "<table width='78%'border='0' cellspacing='0' cellpadding='5'>
 </tr>\n";
 
 
-$res = sql_query("SELECT s.*, s.userid AS su, torrents.username as username1, users.username as username2, users.paranoia, torrents.anonymous as anonymous1, users.anonymous as anonymous2, size, parked, warned, enabled, class, chatpost, leechwarn, donor, timesann, owner FROM snatched AS s INNER JOIN users ON s.userid = users.id INNER JOIN torrents ON s.torrentid = torrents.id WHERE torrentid = $id ORDER BY complete_date DESC ".$pager['limit']."") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT s.*, s.userid AS su, torrents.username as username1, users.username as username2, users.paranoia, torrents.anonymous as anonymous1, users.anonymous as anonymous2, size, parked, warned, enabled, class, chatpost, leechwarn, donor, timesann, owner FROM snatched AS s INNER JOIN users ON s.userid = users.id INNER JOIN torrents ON s.torrentid = torrents.id WHERE torrentid = ".sqlesc($id)." ORDER BY complete_date DESC ".$pager['limit']) or sqlerr(__FILE__, __LINE__);
 while ($arr = mysqli_fetch_assoc($res)) {
 
  $upspeed = ($arr["upspeed"] > 0 ? mksize($arr["upspeed"]) : ($arr["seedtime"] > 0 ? mksize($arr["uploaded"] / ($arr["seedtime"] + $arr["leechtime"])) : mksize(0)));
  $downspeed = ($arr["downspeed"] > 0 ? mksize($arr["downspeed"]) : ($arr["leechtime"] > 0 ? mksize($arr["downloaded"] / $arr["leechtime"]) : mksize(0)));
  $ratio = ($arr["downloaded"] > 0 ? number_format($arr["uploaded"] / $arr["downloaded"], 3) : ($arr["uploaded"] > 0 ? "Inf." : "---"));
  $completed = sprintf("%.2f%%", 100 * (1 - ($arr["to_go"] / $arr["size"])));
- $snatchuser = (isset($arr['username2']) ? ("<a href='userdetails.php?id=".(int)$arr['userid']."'><b>".htmlspecialchars($arr['username2'])."</b></a>") : "{$lang['snatches_unknown']}");
+ $snatchuser = (isset($arr['username2']) ? ("<a href='userdetails.php?id=".(int)$arr['userid']."'><b>".htmlsafechars($arr['username2'])."</b></a>") : "{$lang['snatches_unknown']}");
  $username = (($arr['anonymous2'] == 'yes' OR $arr['paranoia'] >= 2) ? ($CURUSER['class'] < UC_STAFF && $arr['userid'] != $CURUSER['id'] ? '' : $snatchuser.' - ')."<i>{$lang['snatches_anon']}</i>" : $snatchuser);
   //if($arr['owner'] != $arr['su']){
   $HTMLOUT .= "<tr>
   <td align='left'>{$username}</td>
   <td align='center'>".($arr["connectable"] == "yes" ? "<font color='green'>Yes</font>" : "<font color='red'>No</font>")."</td>
   <td align='right'>".mksize($arr["uploaded"])."</td>
-  <td align='right'>".htmlspecialchars($upspeed)."/s</td>
+  <td align='right'>".htmlsafechars($upspeed)."/s</td>
   <td align='right'>".mksize($arr["downloaded"])."</td>
-  <td align='right'>".htmlspecialchars($downspeed)."/s</td>
-  <td align='right'>".htmlspecialchars($ratio)."</td>
-  <td align='right'>".htmlspecialchars($completed)."</td>
+  <td align='right'>".htmlsafechars($downspeed)."/s</td>
+  <td align='right'>".htmlsafechars($ratio)."</td>
+  <td align='right'>".htmlsafechars($completed)."</td>
   <td align='right'>".mkprettytime($arr["seedtime"])."</td>
   <td align='right'>".mkprettytime($arr["leechtime"])."</td>
   <td align='center'>".get_date($arr["last_action"], '',0,1)."</td>
   <td align='center'>".get_date($arr["complete_date"], '',0,1)."</td>
-  <td align='center'>".htmlspecialchars($arr["agent"])."</td>
+  <td align='center'>".htmlsafechars($arr["agent"])."</td>
   <td align='center'>".(int)$arr["port"]."</td>
   <td align='center'>".(int)$arr["timesann"]."</td>
   </tr>\n";

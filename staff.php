@@ -49,10 +49,10 @@ function DoStaff($staff, $staffclass, $cols = 3) {
         $htmlout .= "<tr>";
         for($i = 0; $i < $cols; $i++){
 			if( isset($staff[$r]) )  {
-			$htmlout .= "<td class='staff_username'><a href='userdetails.php?id=".(int)$staff[$r]['id']."'><font color='#" . get_user_class_color($staff[$r]['class']) . "'><b>".htmlspecialchars($staff[$r]['username'])."</b></font></a></td>"."
+			$htmlout .= "<td class='staff_username'><a href='userdetails.php?id=".(int)$staff[$r]['id']."'><font color='#" . get_user_class_color($staff[$r]['class']) . "'><b>".htmlsafechars($staff[$r]['username'])."</b></font></a></td>"."
             <td class='staff_online'><img style='vertical-align: middle;' src='images/staff".($staff[$r]['last_access']>$dt?"/online.png":"/offline.png" )."' border='0' height='16' alt='' /></td>"."
             <td class='staff_online'><a href='pm_system.php?action=send_message&amp;receiver=".(int)$staff[$r]['id']."&amp;returnto=".urlencode($_SERVER['REQUEST_URI'])."'><img style='vertical-align: middle;' src='{$INSTALLER09['pic_base_url']}mailicon.png' border='0' title=\"Personal Message\" alt='' /></a></td>"."
-            <td class='staff_online'><img style='vertical-align: middle;' height='16' src='{$INSTALLER09['pic_base_url']}flag/{$staff[$r]['flagpic']}' border='0' alt='".htmlspecialchars($staff[$r]['name'])."' /></td>";
+            <td class='staff_online'><img style='vertical-align: middle;' height='16' src='{$INSTALLER09['pic_base_url']}flag/".htmlsafechars($staff[$r]['flagpic'])."' border='0' alt='".htmlsafechars($staff[$r]['name'])."' /></td>";
 			$r++;
         }else{
 			$htmlout .= "<td>&nbsp;</td>";
@@ -71,12 +71,12 @@ $htmlout .= isset($mods) ? DoStaff($mods, "Moderators") : DoStaff($mods=false, "
         $dt = TIME_NOW - 180;
         if (!empty($support)) {
         foreach ($support as $a) {
-        $firstline .= "<tr><td class='staff_username'><a href='userdetails.php?id=".(int)$a['id']."'><font color='#" . get_user_class_color($a['class']) . "'><b>".htmlspecialchars($a['username'])."</b></font></a></td>
+        $firstline .= "<tr><td class='staff_username'><a href='userdetails.php?id=".(int)$a['id']."'><font color='#" . get_user_class_color($a['class']) . "'><b>".htmlsafechars($a['username'])."</b></font></a></td>
         <td class='staff_online'><img style='vertical-align: middle;' src='{$INSTALLER09['pic_base_url']}".
         ($a['last_access']>$dt?"online.png":"offline.png" )."' border='0' alt='' /></td>".
         "<td class='staff_online'><a href='pm_system.php?action=send_message&amp;receiver=".(int)$a['id']."'>"."<img style='vertical-align: middle;' src='{$INSTALLER09['pic_base_url']}mailicon.png' border='0'title=\"{$lang['alt_pm']}\" alt='' /></a></td>".
-        "<td class='staff_online'><img style='vertical-align: middle;' src='{$INSTALLER09['pic_base_url']}flag/".htmlspecialchars($a['flagpic'])."' border='0' alt='".htmlspecialchars($a['name'])."' /></td>".
-        "<td class='staff_online'>".htmlspecialchars($a['supportfor'])."</td></tr>";
+        "<td class='staff_online'><img style='vertical-align: middle;' src='{$INSTALLER09['pic_base_url']}flag/".htmlsafechars($a['flagpic'])."' border='0' alt='".htmlsafechars($a['name'])."' /></td>".
+        "<td class='staff_online'>".htmlsafechars($a['supportfor'])."</td></tr>";
         }
         
         $htmlout .= "

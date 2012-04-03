@@ -1560,15 +1560,14 @@ CREATE TABLE IF NOT EXISTS `promo` (
 -- Table structure for table `ratings`
 --
 
-CREATE TABLE IF NOT EXISTS `ratings` (
-  `torrent` int(10) unsigned NOT NULL DEFAULT '0',
-  `user` int(10) unsigned NOT NULL DEFAULT '0',
-  `rating` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `added` int(11) NOT NULL DEFAULT '0',
-  `topic` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`torrent`,`user`),
-  KEY `user` (`user`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `rating` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `topic` int(10) NOT NULL DEFAULT '0',
+  `torrent` int(10) NOT NULL DEFAULT '0',
+  `rating` int(1) NOT NULL DEFAULT '0',
+  `user` int(10) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `ratings`
@@ -2239,8 +2238,8 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `visible` enum('yes','no') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'yes',
   `banned` enum('yes','no') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'no',
   `owner` int(10) unsigned NOT NULL DEFAULT '0',
-  `numratings` int(10) unsigned NOT NULL DEFAULT '0',
-  `ratingsum` int(10) unsigned NOT NULL DEFAULT '0',
+  `num_ratings` int(10) unsigned NOT NULL DEFAULT '0',
+  `rating_sum` int(10) unsigned NOT NULL DEFAULT '0',
   `nfo` text COLLATE utf8_unicode_ci NOT NULL,
   `client_created_by` char(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unknown',
   `free` int(11) unsigned NOT NULL DEFAULT '0',

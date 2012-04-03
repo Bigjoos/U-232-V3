@@ -24,21 +24,21 @@ loggedinorreturn();
 //==delete torrents by putyn      
 function deletetorrent($id) {
     global $INSTALLER09, $mc1, $CURUSER, $lang;
-    sql_query("DELETE peers.*, files.*,comments.*,snatched.*, thanks.*, bookmarks.*, coins.*, ratings.*, torrents.* FROM torrents 
+    sql_query("DELETE peers.*, files.*, comments.*, snatched.*, thanks.*, bookmarks.*, coins.*, rating.*, torrents.* FROM torrents 
 				 LEFT JOIN peers ON peers.torrent = torrents.id
 				 LEFT JOIN files ON files.torrent = torrents.id
 				 LEFT JOIN comments ON comments.torrent = torrents.id
 				 LEFT JOIN thanks ON thanks.torrentid = torrents.id
 				 LEFT JOIN bookmarks ON bookmarks.torrentid = torrents.id
 				 LEFT JOIN coins ON coins.torrentid = torrents.id
-				 LEFT JOIN ratings ON ratings.torrent = torrents.id
+				 LEFT JOIN rating ON rating.torrent = torrents.id
 				 LEFT JOIN snatched ON snatched.torrentid = torrents.id
-				 WHERE torrents.id = $id") or sqlerr(__FILE__, __LINE__);
+				 WHERE torrents.id =".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
     unlink("{$INSTALLER09['torrent_dir']}/$id.torrent");
     $mc1->delete_value('MyPeers_'.$CURUSER['id']);
     }
 
-$res = sql_query("SELECT name,owner,seeders FROM torrents WHERE id = $id");
+$res = sql_query("SELECT name,owner,seeders FROM torrents WHERE id =".sqlesc($id));
 $row = mysqli_fetch_assoc($res);
 if (!$row)
 	stderr("{$lang['delete_failed']}", "{$lang['delete_not_exist']}");
@@ -82,7 +82,7 @@ else
     write_log("{$lang['delete_torrent']} $id ({$row['name']}){$lang['delete_deleted_by']}{$CURUSER['username']} ($reasonstr)\n");
     if($INSTALLER09['seedbonus_on'] == 1){
     //===remove karma 
-    sql_query("UPDATE users SET seedbonus = seedbonus-15.0 WHERE id = ".sqlesc($row["owner"])."") or sqlerr(__FILE__, __LINE__);
+    sql_query("UPDATE users SET seedbonus = seedbonus-15.0 WHERE id = ".sqlesc($row["owner"])) or sqlerr(__FILE__, __LINE__);
     $update['seedbonus'] = ($CURUSER['seedbonus'] - 15);
     $mc1->begin_transaction('userstats_'.$row["owner"]);
     $mc1->update_row(false, array('seedbonus' => $update['seedbonus']));
@@ -96,14 +96,14 @@ else
     {  
     $added = TIME_NOW;     
     $pm_on = (int)$row["owner"];  
-    $message = "Torrent $id (".htmlspecialchars($row['name']).") has been deleted.\n  Reason: $reasonstr";    
+    $message = "Torrent $id (".htmlsafechars($row['name']).") has been deleted.\n  Reason: $reasonstr";    
     sql_query("INSERT INTO messages (sender, receiver, msg, added) VALUES(0, $pm_on,".sqlesc($message).", $added)") or sqlerr(__FILE__, __LINE__);  
     $mc1->delete_value('inbox_new_'.$pm_on);   
     $mc1->delete_value('inbox_new_sb_'.$pm_on);
     }
 
     if (isset($_POST["returnto"]))
-      $ret = "<a href='" . htmlspecialchars($_POST["returnto"]) . "'>{$lang['delete_go_back']}</a>";
+      $ret = "<a href='" . htmlsafechars($_POST["returnto"]) . "'>{$lang['delete_go_back']}</a>";
     else
       $ret = "<a href='{$INSTALLER09['baseurl']}/browse.php'>{$lang['delete_back_browse']}</a>";
 

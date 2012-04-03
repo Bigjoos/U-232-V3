@@ -31,8 +31,8 @@ class_check(UC_MODERATOR);
     
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
-      $username = trim(htmlspecialchars($_POST["username"]));
-      $password = trim(htmlspecialchars($_POST["password"]));
+      $username = trim(htmlsafechars($_POST["username"]));
+      $password = trim(htmlsafechars($_POST["password"]));
       if (!$username || !$password)
         stderr("{$lang['text_error']}", "{$lang['text_please']}");
         

@@ -82,9 +82,9 @@ $HTMLOUT .="
 <td class='colhead' width='1%'>Del</td></tr>\n";
 while ($arr = mysqli_fetch_assoc($res))
 {
-$receiver = "<a href='userdetails.php?id=" . $arr["receiver"] . "'><b>" . $arr["u1_username"] . "</b></a>";
+$receiver = "<a href='userdetails.php?id=".(int)$arr["receiver"]."'><b>".htmlsafechars($arr["u1_username"])."</b></a>";
 if($arr["sender"] != 0)
-$sender = "<a href='userdetails.php?id=" . $arr["sender"] . "'><b>" . $arr["u2_username"] . "</b></a>";
+$sender = "<a href='userdetails.php?id=".(int)$arr["sender"]."'><b>".htmlsafechars($arr["u2_username"])."</b></a>";
 else
 $sender = "<font color='red'><b>System</b></font>";
 $msg = format_comment($arr["msg"]);
@@ -93,7 +93,7 @@ $added = get_date($arr["added"], 'DATE',0,1);
 $HTMLOUT .="<tr>
 <td align='left'><b>Sender:</b>&nbsp;&nbsp;&nbsp;&nbsp;$sender<br /><b>Reciever:</b>&nbsp;$receiver<br /><b>Read</b>&nbsp;&nbsp;&nbsp;&nbsp;".($arr["unread"] != "yes" ? "<b><font color='lightgreen'>Yes</font></b>" : "<b><font color='red'>No</font></b>")."</td>
 <td align='left'>".format_comment($arr['subject'])."</td>
-<td align='left'>$msg</td><td align='left'>$added</td><td align='center'><input type='checkbox' name='delmp[]' title='Mark' value='" .(int)$arr['id'] . "' /></td></tr>\n";
+<td align='left'>$msg</td><td align='left'>$added</td><td align='center'><input type='checkbox' name='delmp[]' title='Mark' value='".(int)$arr['id']."' /></td></tr>\n";
 }
 $HTMLOUT .="<tr>
 <td colspan='4' align='right' class='colhead'>Mark&nbsp;all&nbsp;Messages </td>

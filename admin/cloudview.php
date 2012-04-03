@@ -83,9 +83,9 @@ $HTMLOUT .="
 
 while ($arr = mysqli_fetch_assoc($search_q))
 {
-$search_phrase = htmlspecialchars($arr['searchedfor']);
+$search_phrase = htmlsafechars($arr['searchedfor']);
 $hits = (int)$arr['howmuch'];
-$ip = htmlentities($arr['ip']);
+$ip = htmlsafechars($arr['ip']);
 $HTMLOUT .="<tr>
 <td class='one' align='left'>$search_phrase</td>
 <td class='two' align='left'>$hits</td>

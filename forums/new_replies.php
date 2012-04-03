@@ -45,10 +45,10 @@ $links = '<span style="text-align: center;"><a class="altlink" href="forums.php"
 	$count = 0;
 	while ($arr_count = mysqli_fetch_assoc($res_count))
     {
-      $res_post_read = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.$CURUSER['id'].' AND topic_id='.$arr_count['id']);
+      $res_post_read = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.sqlesc($CURUSER['id']).' AND topic_id='.sqlesc($arr_count['id']));
       $arr_post_read = mysqli_fetch_row($res_post_read);
 	
-		$did_i_post_here = sql_query('SELECT user_id FROM posts WHERE user_id='.$CURUSER['id'].' AND topic_id='.$arr_count['id']);
+		$did_i_post_here = sql_query('SELECT user_id FROM posts WHERE user_id='.sqlesc($CURUSER['id']).' AND topic_id='.sqlesc($arr_count['id']));
         $posted = (mysqli_num_rows($did_i_post_here) > 0 ? 1 : 0);
 		
 		if ($arr_post_read[0] < $arr_count['last_post'] && $posted)
@@ -110,10 +110,10 @@ $HTMLOUT .= $the_top_and_bottom.'<table border="0" cellspacing="5" cellpadding="
 	//=== ok let's show the posts...
 	while ($arr_unread = mysqli_fetch_assoc($res_unread))
     {
-      $res_post_read = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.$CURUSER['id'].' AND topic_id='.$arr_unread['topic_id']);
+      $res_post_read = sql_query('SELECT last_post_read FROM read_posts WHERE user_id='.sqlesc($CURUSER['id']).' AND topic_id='.sqlesc($arr_unread['topic_id']));
       $arr_post_read = mysqli_fetch_row($res_post_read);
 	
-		$did_i_post_here = sql_query('SELECT user_id FROM posts WHERE user_id='.$CURUSER['id'].' AND topic_id='.$arr_unread['topic_id']);
+		$did_i_post_here = sql_query('SELECT user_id FROM posts WHERE user_id='.sqlesc($CURUSER['id']).' AND topic_id='.sqlesc($arr_unread['topic_id']));
         $posted = (mysqli_num_rows($did_i_post_here) > 0 ? 1 : 0);
 	
 		if ($arr_post_read[0] < $arr_unread['last_post'] && $posted)
@@ -126,7 +126,7 @@ $HTMLOUT .= $the_top_and_bottom.'<table border="0" cellspacing="5" cellpadding="
         $sticky = $arr_unread['sticky'] == 'yes';
         $topic_poll = $arr_unread['poll_id'] > 0;		
 		
-		$first_unread_poster = sql_query('SELECT added FROM posts WHERE status = \'ok\'  AND topic_id='.$arr_unread['topic_id'].' ORDER BY id ASC LIMIT 1');
+		$first_unread_poster = sql_query('SELECT added FROM posts WHERE status = \'ok\'  AND topic_id='.sqlesc($arr_unread['topic_id']).' ORDER BY id ASC LIMIT 1');
         $first_unread_poster_arr = mysqli_fetch_row($first_unread_poster);
 		
 		$thread_starter = ($arr_unread['username'] !== '' ? print_user_stuff($arr_unread) : 'Lost ['.$arr_unread['id'].']').'<br />'.get_date($first_unread_poster_arr[0],'');
@@ -134,15 +134,15 @@ $HTMLOUT .= $the_top_and_bottom.'<table border="0" cellspacing="5" cellpadding="
         $topicpic = ($arr_unread['post_count']  < 30 ? ($locked ? 'lockednew'  : 'topicnew') : ($locked ? 'lockednew'  : 'hot_topic_new'));
 		$rpic = ($arr_unread['num_ratings'] != 0 ? ratingpic_forums(ROUND($arr_unread['rating_sum'] / $arr_unread['num_ratings'], 1)) :  '');
 		
-		$sub = sql_query('SELECT user_id FROM subscriptions WHERE user_id='.$CURUSER['id'].' AND topic_id='.$arr_unread['topic_id']);
+		$sub = sql_query('SELECT user_id FROM subscriptions WHERE user_id='.sqlesc($CURUSER['id']).' AND topic_id='.sqlesc($arr_unread['topic_id']));
         $subscriptions = (mysqli_num_rows($sub) > 0 ? 1 : 0);
 	
-        $icon = ($arr_unread['icon'] == '' ? '<img src="pic/forums/topic_normal.gif" alt="Topic" title="Topic" />' : '<img src="pic/smilies/'.htmlspecialchars($arr_unread['icon']).'.gif" alt="'.htmlspecialchars($arr_unread['icon']).'" title="'.htmlspecialchars($arr_unread['icon']).'" />');
+        $icon = ($arr_unread['icon'] == '' ? '<img src="pic/forums/topic_normal.gif" alt="Topic" title="Topic" />' : '<img src="pic/smilies/'.htmlsafechars($arr_unread['icon']).'.gif" alt="'.htmlsafechars($arr_unread['icon']).'" title="'.htmlsafechars($arr_unread['icon']).'" />');
         $first_post_text = tool_tip(' <img src="pic/forums/mg.gif" height="14" alt="Preview" title="Preview" />', format_comment($arr_unread['body'], true, false, false), 'Last Post Preview');
         
         $topic_name = ($sticky ? '<img src="pic/forums/pinned.gif" alt="Pinned" title="Pinned" /> ' : ' ').($topicpoll ? '<img src="pic/forums/poll.gif" alt="Poll" title="Poll" /> ' : ' '). '
-        		<a class="altlink" href="?action=view_topic&amp;topic_id='.$arr_unread['topic_id'].'" title="First post in thread">'.htmlentities($arr_unread['topic_name'], ENT_QUOTES).'</a> 
-				<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$arr_unread['topic_id'].'&amp;page=0#'.$arr_post_read[0].'" title="First unread post in this thread"><img src="pic/forums/last_post.gif" alt="First unread post" title="First unread post" /></a> 
+        		<a class="altlink" href="?action=view_topic&amp;topic_id='.(int)$arr_unread['topic_id'].'" title="First post in thread">'.htmlsafechars($arr_unread['topic_name'], ENT_QUOTES).'</a> 
+				<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.(int)$arr_unread['topic_id'].'&amp;page=0#'.(int)$arr_post_read[0].'" title="First unread post in this thread"><img src="pic/forums/last_post.gif" alt="First unread post" title="First unread post" /></a> 
         		'.($posted ? '<img src="pic/forums/posted.gif" alt="Posted" title="Posted" /> ' : ' ').($subscriptions ? '<img src="pic/forums/subscriptions.gif" alt="subscribed" title="subscribed" /> ' : ' ').
 				' <img src="pic/forums/new.gif" alt="New post in topic!" title="New post in topic!" />';
 		
@@ -157,9 +157,9 @@ $HTMLOUT .= $the_top_and_bottom.'<table border="0" cellspacing="5" cellpadding="
 		<td class="'.$class.'" align="right">'.$rpic.'</td>
 		</tr>
 		</table>
-		'.($arr_unread['topic_desc'] !== '' ? '&#9658; <span style="font-size: x-small;">'.htmlentities($arr_unread['topic_desc'], ENT_QUOTES).'</span>' : '').'  
-		<hr />in: <a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$arr_unread['forum_id'].'">'.htmlentities($arr_unread['forum_name'], ENT_QUOTES).'</a>
-		'.($arr_unread['topic_desc'] !== '' ? ' [ <span style="font-size: x-small;">'.htmlentities($arr_unread['forum_desc'], ENT_QUOTES).'</span> ]' : '').'
+		'.($arr_unread['topic_desc'] !== '' ? '&#9658; <span style="font-size: x-small;">'.htmlsafechars($arr_unread['topic_desc'], ENT_QUOTES).'</span>' : '').'  
+		<hr />in: <a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.(int)$arr_unread['forum_id'].'">'.htmlsafechars($arr_unread['forum_name'], ENT_QUOTES).'</a>
+		'.($arr_unread['topic_desc'] !== '' ? ' [ <span style="font-size: x-small;">'.htmlsafechars($arr_unread['forum_desc'], ENT_QUOTES).'</span> ]' : '').'
 
 </td>
 		

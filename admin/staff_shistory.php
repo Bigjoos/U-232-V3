@@ -39,7 +39,7 @@ $perpage = 15;
 $pager = pager($perpage, $count1, 'staffpanel.php?tool=staff_shistory&amp;');
 
 
-$res = sql_query( "SELECT s.id, s.userid, s.date , s.text, s.to_user, u.username, u.pirate, u.king, u.enabled, u.class, u.donor, u.warned, u.leechwarn, u.chatpost FROM shoutbox as s LEFT JOIN users as u ON s.userid=u.id WHERE staff_shout='yes' ORDER BY s.date DESC ".$pager['limit']."" ) or sqlerr( __FILE__, __LINE__ );
+$res = sql_query("SELECT s.id, s.userid, s.date , s.text, s.to_user, u.username, u.pirate, u.king, u.enabled, u.class, u.donor, u.warned, u.leechwarn, u.chatpost FROM shoutbox as s LEFT JOIN users as u ON s.userid=u.id WHERE staff_shout='yes' ORDER BY s.date DESC ".$pager['limit']) or sqlerr( __FILE__, __LINE__ );
 
 if ($count1 > $perpage)
 $HTMLOUT .= $pager['pagertop'];

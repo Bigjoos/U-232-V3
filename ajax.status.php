@@ -38,7 +38,7 @@ $ss = isset($_POST['ss']) && !empty($_POST['ss']) ? $_POST['ss'] : '';
 switch($do) {
  case 'edit':
   if(!empty($ss)) {
-     if(sql_query('UPDATE ustatus SET last_status = '.sqlesc(url2short($ss)).', last_update = '.TIME_NOW.' WHERE userid ='.$CURUSER['id']))
+     if(sql_query('UPDATE ustatus SET last_status = '.sqlesc(url2short($ss)).', last_update = '.TIME_NOW.' WHERE userid ='.sqlesc($CURUSER['id'])))
       $return = jsonmsg(array($ss,true));
      else 
       $return = jsonmsg(array('There was an error, mysql error'.((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)),false));
@@ -49,7 +49,7 @@ switch($do) {
    $status_history = unserialize($CURUSER['archive']);
    if(isset($status_history[$id])) {
      unset($status_history[$id]);
-     if(sql_query('UPDATE ustatus SET archive = '.sqlesc(serialize($status_history)).' WHERE userid = '.$CURUSER['id']))
+     if(sql_query('UPDATE ustatus SET archive = '.sqlesc(serialize($status_history)).' WHERE userid = '.sqlesc($CURUSER['id'])))
       $return = jsonmsg(array('ok',true));
      else
       $return = jsonmsg(array('there was an error',false));
@@ -60,7 +60,7 @@ switch($do) {
    $status_archive = ((isset($CURUSER['archive']) && is_array(unserialize($CURUSER['archive']))) ? unserialize($CURUSER['archive']) : array());
    if(!empty($CURUSER['last_status']))
      $status_archive[] = array('status'=>$CURUSER['last_status'],'date'=>$CURUSER['last_update']);
-   if(sql_query('INSERT INTO ustatus(userid,last_status,last_update,archive) VALUES('.$CURUSER['id'].','.sqlesc(url2short($ss)).','.TIME_NOW.','.sqlesc(serialize($status_archive)).') ON DUPLICATE KEY UPDATE last_status=values(last_status),last_update=values(last_update),archive=values(archive)'))
+   if(sql_query('INSERT INTO ustatus(userid,last_status,last_update,archive) VALUES('.sqlesc($CURUSER['id']).','.sqlesc(url2short($ss)).','.TIME_NOW.','.sqlesc(serialize($status_archive)).') ON DUPLICATE KEY UPDATE last_status=values(last_status),last_update=values(last_update),archive=values(archive)'))
      $return = jsonmsg(array('<h2>Status update successful</h2>',true));
   else 
      $return = jsonmsg(array('There was an error, mysql error'.((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)),false));

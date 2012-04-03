@@ -19,21 +19,20 @@ if (!defined('BUNNY_PM_SYSTEM'))
 
     //=== Get the message
     $res = sql_query('SELECT m.*, f.id AS friend, b.id AS blocked
-                            FROM messages AS m LEFT JOIN friends AS f ON f.userid = '.$CURUSER['id'].' AND f.friendid = m.sender
-                            LEFT JOIN blocks AS b ON b.userid = '.$CURUSER['id'].' AND b.blockid = m.sender WHERE m.id = '.$pm_id.' AND (receiver='.$CURUSER['id'].' OR (sender='.$CURUSER['id'].' AND (saved = \'yes\' || unread= \'yes\'))) LIMIT 1') or sqlerr(__FILE__,__LINE__);
+                            FROM messages AS m LEFT JOIN friends AS f ON f.userid = '.sqlesc($CURUSER['id']).' AND f.friendid = m.sender
+                            LEFT JOIN blocks AS b ON b.userid = '.sqlesc($CURUSER['id']).' AND b.blockid = m.sender WHERE m.id = '.sqlesc($pm_id).' AND (receiver='.sqlesc($CURUSER['id']).' OR (sender='.sqlesc($CURUSER['id']).' AND (saved = \'yes\' || unread= \'yes\'))) LIMIT 1') or sqlerr(__FILE__,__LINE__);
     $message = mysqli_fetch_assoc($res);
 
         if (!$res) 
             stderr('Error','You do not have permission to view this message.');
 
     //=== get user stuff
-    $res_user_stuff = sql_query('SELECT id, username, uploaded, warned, suspended, enabled, donor, class, avatar, leechwarn, chatpost, pirate, king, offensive_avatar, view_offensive_avatar  
-                                                    FROM users WHERE id='.($message['sender'] === $CURUSER['id'] ? sqlesc($message['receiver']) : sqlesc($message['sender']))) or sqlerr(__FILE__,__LINE__);
+    $res_user_stuff = sql_query('SELECT id, username, uploaded, warned, suspended, enabled, donor, class, avatar, leechwarn, chatpost, pirate, king, offensive_avatar, view_offensive_avatar FROM users WHERE id='.($message['sender'] === $CURUSER['id'] ? sqlesc($message['receiver']) : sqlesc($message['sender']))) or sqlerr(__FILE__,__LINE__);
     $arr_user_stuff = mysqli_fetch_assoc($res_user_stuff);
     $id = (int)$arr_user_stuff['id'];
 
     //=== Mark message read
-    sql_query('UPDATE messages SET unread=\'no\' WHERE id='.$pm_id.' AND receiver='.$CURUSER['id'].' LIMIT 1') or sqlerr(__FILE__,__LINE__);
+    sql_query('UPDATE messages SET unread=\'no\' WHERE id='.sqlesc($pm_id).' AND receiver='.sqlesc($CURUSER['id']).' LIMIT 1') or sqlerr(__FILE__,__LINE__);
     $mc1->delete_value('inbox_new_'.$CURUSER['id']);
     $mc1->delete_value('inbox_new_sb_'.$CURUSER['id']);
 
@@ -48,14 +47,14 @@ if (!defined('BUNNY_PM_SYSTEM'))
 
     $avatar = ($CURUSER['avatars'] === 'no' ? '' : (empty($arr_user_stuff['avatar']) ? '
     <img width="80" src="pic/default_avatar.gif" alt="no avatar" />' : (($arr_user_stuff['offensive_avatar'] === 'yes' && $CURUSER['view_offensive_avatar'] === 'no') ? 
-    '<img width="80" src="pic/fuzzybunny.gif" alt="fuzzy!" />' : '<a href="'.htmlspecialchars($arr_user_stuff['avatar']).'"><img width="80" src="'.htmlspecialchars($arr_user_stuff['avatar']).'" alt="avatar" /></a>')));
+    '<img width="80" src="pic/fuzzybunny.gif" alt="fuzzy!" />' : '<a href="'.htmlsafechars($arr_user_stuff['avatar']).'"><img width="80" src="'.htmlsafechars($arr_user_stuff['avatar']).'" alt="avatar" /></a>')));
 
 $the_buttons = '<input type="submit" class="button_tiny" value="move" onmouseover="this.className=\'button_tiny_hover\'" onmouseout="this.className=\'button_tiny\'" /></form>
             <a class="buttlink"  href="pm_system.php?action=delete&amp;id='.$pm_id.'"><input type="submit" class="button_tiny" value="delete" onmouseover="this.className=\'button_tiny_hover\'" onmouseout="this.className=\'button_tiny\'" /></a>'.
             ($message['draft'] === 'no' ? '
             <a class="buttlink"  href="pm_system.php?action=save_or_edit_draft&amp;id='.$pm_id.'"><input type="submit" class="button" value="save as draft" onmouseover="this.className=\'button_hover\'" onmouseout="this.className=\'button\'" /></a>'.
             (($id < 1 || $message['sender'] === $CURUSER['id']) ? '' : ' 
-            <a class="buttlink"  href="pm_system.php?action=send_message&amp;receiver='.$message['sender'].'&amp;replyto='.$pm_id.'"><input type="submit" class="button_tiny" value="reply" onmouseover="this.className=\'button_tiny_hover\'" onmouseout="this.className=\'button_tiny\'" /></a>  
+            <a class="buttlink"  href="pm_system.php?action=send_message&amp;receiver='.(int)$message['sender'].'&amp;replyto='.$pm_id.'"><input type="submit" class="button_tiny" value="reply" onmouseover="this.className=\'button_tiny_hover\'" onmouseout="this.className=\'button_tiny\'" /></a>  
             <a class="buttlink"  href="pm_system.php?action=forward&amp;id='.$pm_id.'"><input type="submit" class="button_tiny" value="fwd" onmouseover="this.className=\'button_tiny_hover\'" onmouseout="this.className=\'button_tiny\'" /></a>  ') : '
             <a class="buttlink"  href="pm_system.php?action=save_or_edit_draft&amp;edit=1&amp;id='.$pm_id.'"><input type="submit" class="button" value="edit draft" onmouseover="this.className=\'button_hover\'" onmouseout="this.className=\'button\'" /></a>
             <a class="buttlink"  href="pm_system.php?action=use_draft&amp;send=1&amp;id='.$pm_id.'"><input type="submit" class="button" value="use draft" onmouseover="this.className=\'button_hover\'" onmouseout="this.className=\'button\'" /></a>');
@@ -64,13 +63,13 @@ $the_buttons = '<input type="submit" class="button_tiny" value="move" onmouseove
     if ($message['location'] > 1)
         {
         //== get name of PM box if not in or out
-        $res_box_name = sql_query('SELECT name FROM pmboxes WHERE userid = '.$CURUSER['id'].' AND boxnumber='.$mailbox.' LIMIT 1') or sqlerr(__FILE__,__LINE__);
+        $res_box_name = sql_query('SELECT name FROM pmboxes WHERE userid = '.sqlesc($CURUSER['id']).' AND boxnumber='.sqlesc($mailbox).' LIMIT 1') or sqlerr(__FILE__,__LINE__);
         $arr_box_name = mysqli_fetch_row($res_box_name);
         
         if (mysqli_num_rows($res) === 0) 
                 stderr('Error','Invalid Mailbox');
                 
-        $mailbox_name = htmlspecialchars($arr_box_name[0]);
+        $mailbox_name = htmlsafechars($arr_box_name[0]);
 
             $other_box_info = '<p align="center"><span style="color: red;">***</span><span style="font-weight: bold;">please note:</span>
                                             you have a max of <span style="font-weight: bold;">'.$maxbox.'</span> PMs for all mail boxes that are not either 
@@ -78,13 +77,11 @@ $the_buttons = '<input type="submit" class="button_tiny" value="move" onmouseove
         }
 
 //=== Display the message already!
-//echo stdhead('PM '.htmlspecialchars($subject)); 
-
 $HTMLOUT .= $h1_thingie.($message['draft'] === 'yes' ? '<h1>This is a draft</h1>' : '<h1>Mailbox: '.$mailbox_name.'</h1>').$top_links.'
     <table border="0" cellspacing="0" cellpadding="5" align="center" style="max-width:800px">
     <tr>
         <td align="center" colspan="2" class="colhead"><h1>subject: 
-        <span style="font-weight: bold;">'.($message['subject'] !== '' ? htmlspecialchars($message['subject']) : 'No Subject').'</span></h1></td>
+        <span style="font-weight: bold;">'.($message['subject'] !== '' ? htmlsafechars($message['subject']) : 'No Subject').'</span></h1></td>
         </tr>
     <tr>
         <td align="left" colspan="2" class="one"><span style="font-weight: bold;">'.($message['sender'] === $CURUSER['id'] ? 'To' : 'From').':</span>   

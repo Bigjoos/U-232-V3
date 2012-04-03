@@ -99,9 +99,9 @@ return "<font color='red'><b>{$lang['ad_snatched_torrents_none']}<br />{$lang['a
 $count = number_format(get_row_count("snatched", "WHERE complete_date != '0'"));
 
 $HTMLOUT .="<h2 align='center'>{$lang['ad_snatched_torrents_allsnatched']}</h2>
-<font class='small'>{$lang['ad_snatched_torrents_currently']}&nbsp;".htmlspecialchars($count)."&nbsp;{$lang['ad_snatched_torrents_snatchedtor']}</font>";
+<font class='small'>{$lang['ad_snatched_torrents_currently']}&nbsp;".htmlsafechars($count)."&nbsp;{$lang['ad_snatched_torrents_snatchedtor']}</font>";
 $HTMLOUT .= begin_main_frame();
-$res = sql_query("SELECT COUNT(id) FROM snatched") or sqlerr();
+$res = sql_query("SELECT COUNT(id) FROM snatched") or sqlerr( __FILE__, __LINE__ );
 $row = mysqli_fetch_row($res);
 $count = $row[0];
 $snatchedperpage = 15;
@@ -136,15 +136,15 @@ $HTMLOUT .="<table width='100%' border='1' cellspacing='0' cellpadding='5' align
 </tr>";
 
 while($row = mysqli_fetch_assoc($result)) {
-$smallname =substr(htmlspecialchars($row["name"]) , 0, 25);
-if ($smallname != htmlspecialchars($row["name"])) {
+$smallname =substr(htmlsafechars($row["name"]) , 0, 25);
+if ($smallname != htmlsafechars($row["name"])) {
 $smallname .= '...';
 }
-$HTMLOUT .="<tr><td><a href='/userdetails.php?id=".(int)$row['userid']."'><b>".htmlspecialchars($row['username'])."</b></a></td>
+$HTMLOUT .="<tr><td><a href='/userdetails.php?id=".(int)$row['userid']."'><b>".htmlsafechars($row['username'])."</b></a></td>
 <td align='center'><a href='/details.php?id=".(int)$row['torrentid']."'><b>".$smallname."</b></a></td>
 <td align='center'><b>".get_date($row['hit_and_run'], 'LONG',0,1)."</b></td>
-<td align='center'><b>".htmlspecialchars($row['mark_of_cain'])."</b></td>
-<td align='center'><b>".htmlspecialchars($row['timesann'])."</b></td>
+<td align='center'><b>".htmlsafechars($row['mark_of_cain'])."</b></td>
+<td align='center'><b>".htmlsafechars($row['timesann'])."</b></td>
 <td align='center'><b>".mksize($row['uploaded'])."</b></td>
 <td align='center'><b>".mksize($row['downloaded'])."</b></td>
 <td align='center'><b>".get_snatched_color($row["seedtime"])."</b></td>

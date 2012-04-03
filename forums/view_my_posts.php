@@ -80,7 +80,7 @@ ORDER BY p.id '.$ASC_DESC.$LIMIT);
 		$class_alt = ($colour == 0 ? 'two' : 'one');
 		
 		//=== topic status
-		$topic_status = $arr['topic_status'];
+		$topic_status = htmlsafechars($arr['topic_status']);
 	
 		switch ($topic_status)
 		{
@@ -96,7 +96,7 @@ ORDER BY p.id '.$ASC_DESC.$LIMIT);
 		}
 		
 		//=== post status
-		$post_status = $arr['post_status'];
+		$post_status = htmlsafechars($arr['post_status']);
 	
 		switch ($post_status)
 		{
@@ -118,19 +118,19 @@ ORDER BY p.id '.$ASC_DESC.$LIMIT);
 		break;
 		}
 
-		$post_icon = ($arr['icon'] !== '' ? '<img src="pic/smilies/'.htmlspecialchars($arr['icon']).'.gif" alt="icon" title="icon" /> ' : '<img src="pic/forums/topic_normal.gif" alt="Normal Topic" title="Normal Topic" /> ');
-		$post_title = ($arr['post_title'] !== '' ? ' <span style="font-weight: bold; font-size: x-small;">'.htmlentities($arr['post_title'], ENT_QUOTES).'</span>' : 'Link to Post');
+		$post_icon = ($arr['icon'] !== '' ? '<img src="pic/smilies/'.htmlsafechars($arr['icon']).'.gif" alt="icon" title="icon" /> ' : '<img src="pic/forums/topic_normal.gif" alt="Normal Topic" title="Normal Topic" /> ');
+		$post_title = ($arr['post_title'] !== '' ? ' <span style="font-weight: bold; font-size: x-small;">'.htmlsafechars($arr['post_title'], ENT_QUOTES).'</span>' : 'Link to Post');
 		
 		$edited_by = '';
 		if ($arr['edit_date'] > 0)
 		{
-		$res_edited = sql_query('SELECT username FROM users WHERE id='.$arr['edited_by']);
+		$res_edited = sql_query('SELECT username FROM users WHERE id='.sqlesc($arr['edited_by']));
 		$arr_edited = mysqli_fetch_assoc($res_edited);
 		
-		$edited_by = '<br /><br /><br /><span style="font-weight: bold; font-size: x-small;">Last edited by <a class="altlink" href="member_details.php?id='.$arr['edited_by'].'">'.$arr_edited['username'].'</a>
-				 at '.get_date($arr['edit_date'],'').' GMT '.($arr['edit_reason'] !== '' ? ' </span>[ Reason: '.htmlspecialchars($arr['edit_reason']).' ] <span style="font-weight: bold; font-size: x-small;">' : '').'
+		$edited_by = '<br /><br /><br /><span style="font-weight: bold; font-size: x-small;">Last edited by <a class="altlink" href="member_details.php?id='.(int)$arr['edited_by'].'">'.htmlsafechars($arr_edited['username']).'</a>
+				 at '.get_date($arr['edit_date'],'').' GMT '.($arr['edit_reason'] !== '' ? ' </span>[ Reason: '.htmlsafechars($arr['edit_reason']).' ] <span style="font-weight: bold; font-size: x-small;">' : '').'
 				 '.(($CURUSER['class'] >= UC_STAFF && $arr['post_history'] !== '') ? 
-				 ' <a class="altlink" href="forums.php?action=view_post_history&amp;post_id='.$arr['post_id'].'&amp;forum_id='.$arr['forum_id'].'&amp;topic_id='.$arr['topic_id'].'">read post history</a></span><br />' : '');
+				 ' <a class="altlink" href="forums.php?action=view_post_history&amp;post_id='.(int)$arr['post_id'].'&amp;forum_id='.(int)$arr['forum_id'].'&amp;topic_id='.(int)$arr['topic_id'].'">read post history</a></span><br />' : '');
 		}
 		
 		$body = ($arr['bbcode'] == 'yes' ? format_comment($arr['body']) : format_comment_no_bbcode($arr['body']));
@@ -138,14 +138,14 @@ ORDER BY p.id '.$ASC_DESC.$LIMIT);
 			$post_id = (int)$arr['post_id'];
 			
 			$HTMLOUT .= '<tr><td class="forum_head_dark" colspan="3" align="left">Forum:  
-			<a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$arr['forum_id'].'" title="Link to Forum">
-			<span style="color: white;font-weight: bold;">'.htmlentities($arr['forum_name'], ENT_QUOTES).'</span></a>&nbsp;&nbsp;&nbsp;&nbsp;
-			Topic: <a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$arr['topic_id'].'" title="Link to Forum">
-			<span style="color: white;font-weight: bold;">'.htmlentities($arr['topic_name'], ENT_QUOTES).'</span></a>'.$topic_status_image.'</td></tr>
+			<a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.(int)$arr['forum_id'].'" title="Link to Forum">
+			<span style="color: white;font-weight: bold;">'.htmlsafechars($arr['forum_name'], ENT_QUOTES).'</span></a>&nbsp;&nbsp;&nbsp;&nbsp;
+			Topic: <a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.(int)$arr['topic_id'].'" title="Link to Forum">
+			<span style="color: white;font-weight: bold;">'.htmlsafechars($arr['topic_name'], ENT_QUOTES).'</span></a>'.$topic_status_image.'</td></tr>
 			<tr><td class="forum_head" align="left" width="100" valign="middle"><a name="'.$post_id.'"></a></td>
 			<td class="forum_head" align="left" valign="middle">
 			<span style="white-space:nowrap;">'.$post_icon.'
-			<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.$arr['topic_id'].'&amp;page='.$page.'#'.$arr['post_id'].'" title="Link to Post">
+			<a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.(int)$arr['topic_id'].'&amp;page='.$page.'#'.$arr['post_id'].'" title="Link to Post">
 			'.$post_title.'</a>&nbsp;&nbsp;'.$post_status_image.'
 			&nbsp;&nbsp; posted on: '.get_date($arr['added'],'').' ['.get_date($arr['added'],'',0,1).']</span></td>
 			<td class="forum_head" align="right" valign="middle"><span style="white-space:nowrap;"> 
@@ -154,7 +154,7 @@ ORDER BY p.id '.$ASC_DESC.$LIMIT);
 			</span></td>
 			</tr>	
 			<tr><td class="'.$class_alt.'" align="center" width="100px" valign="top">'.avatar_stuff($CURUSER).'<br />
-			'.print_user_stuff($CURUSER).($CURUSER['title'] == '' ? '' : '<br /><span style=" font-size: xx-small;">['.htmlspecialchars($CURUSER['title']).']</span>').'<br />
+			'.print_user_stuff($CURUSER).($CURUSER['title'] == '' ? '' : '<br /><span style=" font-size: xx-small;">['.htmlsafechars($CURUSER['title']).']</span>').'<br />
 			<span style="font-weight: bold;">'.get_user_class_name($CURUSER['class']).'</span><br />
 			</td>
 			<td class="'.$post_status.'" align="left" valign="top" colspan="2">'.$body.$edited_by.'</td></tr>

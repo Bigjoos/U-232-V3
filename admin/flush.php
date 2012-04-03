@@ -36,10 +36,10 @@ if (!is_valid_id($id))
 if ($CURUSER['class'] >= UC_STAFF) {
     
     $dt = TIME_NOW;
-    $res = sql_query("SELECT username FROM users WHERE id= $id") or sqlerr(__FILE__, __LINE__);
+    $res = sql_query("SELECT username FROM users WHERE id=".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
     $arr = mysqli_fetch_assoc($res);
-    $username = $arr['username'];
-    sql_query("DELETE FROM peers WHERE userid=".$id);
+    $username = htmlsafechars($arr['username']);
+    sql_query("DELETE FROM peers WHERE userid=".sqlesc($id));
     $effected = mysqli_affected_rows($GLOBALS["___mysqli_ston"]);
     //=== write to log
     write_log("Staff flushed " . $username . "'s ghost torrents at " . get_date($dt, 'LONG',0,1) . ". $effected torrents where sucessfully cleaned.");

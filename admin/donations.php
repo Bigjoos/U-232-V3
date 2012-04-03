@@ -46,7 +46,7 @@ if (isset($_GET["total_donors"])) {
         stderr("Sorry", "no donors found!");
 
     $users = number_format(get_row_count("users", "WHERE total_donated != '0.00'"));
-    $HTMLOUT .= begin_frame("Donor List: All Donations [".htmlspecialchars($users)."]", true);
+    $HTMLOUT .= begin_frame("Donor List: All Donations [".htmlsafechars($users)."]", true);
     $res = sql_query("SELECT id, username, email, added, donated, donoruntil, total_donated FROM users WHERE total_donated != '0.00' ORDER BY id DESC ".$pager['limit']."") or sqlerr(__FILE__, __LINE__);
     }
     // ===end total donors
@@ -61,7 +61,7 @@ if (isset($_GET["total_donors"])) {
         stderr("Sorry", "no donors found!");
 
     $users = number_format(get_row_count("users", "WHERE donor='yes'"));
-    $HTMLOUT .= begin_frame("Donor List: Current Donors [".htmlspecialchars($users)." ]", true);
+    $HTMLOUT .= begin_frame("Donor List: Current Donors [".htmlsafechars($users)." ]", true);
     $res = sql_query("SELECT id, username, email, added, donated, total_donated, donoruntil FROM users WHERE donor='yes' ORDER BY id DESC ".$pager['limit']."") or sqlerr(__FILE__, __LINE__);
     }
 
@@ -86,7 +86,7 @@ while ($arr = mysqli_fetch_assoc($res)) {
         $class = "two";
     }
     // =======end
-    $HTMLOUT .="<tr><td valign='bottom' class='$class'><a class='altlink' href='{$INSTALLER09['baseurl']}/userdetails.php?id=" . htmlspecialchars($arr['id']) . "'>" . htmlspecialchars($arr['id']) . "</a></td>" . "<td align='left' valign='bottom' class='$class'><a class='altlink' href='{$INSTALLER09['baseurl']}/userdetails.php?id=" . htmlspecialchars($arr['id']) . "'><b>" . htmlspecialchars($arr['username']) . "</b></a>" . "</td><td align='left' valign='bottom' class='$class'><a class='altlink' href='mailto:" . htmlspecialchars($arr['email']) . "'>" . htmlspecialchars($arr['email']) . "</a>" . "</td><td align='left' valign='bottom' class='$class'><font size=\"-3\"> ".get_date($arr['added'], 'DATE'). "</font>" . "</td><td align='left' valign='bottom' class='$class'>";
+    $HTMLOUT .="<tr><td valign='bottom' class='$class'><a class='altlink' href='{$INSTALLER09['baseurl']}/userdetails.php?id=" . htmlsafechars($arr['id']) . "'>" . htmlsafechars($arr['id']) . "</a></td>" . "<td align='left' valign='bottom' class='$class'><a class='altlink' href='{$INSTALLER09['baseurl']}/userdetails.php?id=" . htmlsafechars($arr['id']) . "'><b>" . htmlsafechars($arr['username']) . "</b></a>" . "</td><td align='left' valign='bottom' class='$class'><a class='altlink' href='mailto:" . htmlsafechars($arr['email']) . "'>" . htmlsafechars($arr['email']) . "</a>" . "</td><td align='left' valign='bottom' class='$class'><font size=\"-3\"> ".get_date($arr['added'], 'DATE'). "</font>" . "</td><td align='left' valign='bottom' class='$class'>";
     
     $donoruntil = (int)$arr['donoruntil'];
     if ($donoruntil == '0')
@@ -94,7 +94,7 @@ while ($arr = mysqli_fetch_assoc($res)) {
     else
     $HTMLOUT .="<font size=\"-3\"> ".get_date($arr['donoruntil'], 'DATE'). " [ " . mkprettytime($donoruntil - TIME_NOW) . " ] To go...</font>";
 
-    $HTMLOUT .="</td><td align='left' valign='bottom' class='$class'><b>&#163;" . htmlspecialchars($arr['donated']) . "</b></td>" . "<td align='left' valign='bottom' class='$class'><b>&#163;" . htmlspecialchars($arr['total_donated']) . "</b></td>" . "<td align='left' valign='bottom' class='$class'><b><a class='altlink' href='{$INSTALLER09['baseurl']}/pm_system.php?action=send_message&amp;receiver=".(int)$arr['id']."'>PM</a></b></td></tr>";
+    $HTMLOUT .="</td><td align='left' valign='bottom' class='$class'><b>&#163;" . htmlsafechars($arr['donated']) . "</b></td>" . "<td align='left' valign='bottom' class='$class'><b>&#163;" . htmlsafechars($arr['total_donated']) . "</b></td>" . "<td align='left' valign='bottom' class='$class'><b><a class='altlink' href='{$INSTALLER09['baseurl']}/pm_system.php?action=send_message&amp;receiver=".(int)$arr['id']."'>PM</a></b></td></tr>";
 }
 
 
