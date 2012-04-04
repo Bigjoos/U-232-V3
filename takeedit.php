@@ -153,11 +153,6 @@ if ((isset($_POST['nfoaction'])) && ($_POST['nfoaction'] == 'update')) {
    $updateset[] = "banned = 'no'";
    $torrent_cache['banned'] = 'no';
    }
-   if (isset($_POST['recommended']) && ($recommended = $_POST['recommended']) != $fetch_assoc['recommended']){
-        $updateset[] = 'recommended = ' . sqlesc($recommended);
-        $torrent_cache['recommended'] = $recommended;
-        $mc1-> delete_value('rec_tor_');
-        }
     /**
     *
     * @Custom Mods
