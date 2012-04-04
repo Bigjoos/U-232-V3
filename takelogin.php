@@ -64,7 +64,7 @@ function bark($text = 'Username or password incorrect') {
     
 failedloginscheck ();
 
-$res = sql_query("SELECT id, ip, passhash, perms, ssluse, secret, enabled, logout FROM users WHERE username = " . sqlesc($username) . " AND status = 'confirmed'");
+$res = sql_query("SELECT id, ip, passhash, perms, ssluse, secret, enabled FROM users WHERE username = " . sqlesc($username) . " AND status = 'confirmed'");
 $row = mysqli_fetch_assoc($res);
 
 $ip_escaped = sqlesc(getip());
@@ -132,13 +132,8 @@ if (isset($_POST['use_ssl']) && $_POST['use_ssl'] == 1 && !isset($_SERVER['HTTPS
    $INSTALLER09['baseurl'] = str_replace('http','https',$INSTALLER09['baseurl']);
 
 $ssl_value = (isset($_POST['perm_ssl']) && $_POST['perm_ssl'] == 1 ? 'ssluse = 2' : 'ssluse = 1');
-
 $ssluse = ($row['ssluse'] == 2 ? 2 : 1);
 
-//if(isset($_POST['logout']) && $_POST['logout'] == "yes")
-//set_mycookie('logout', 'yes');
-//$duration = isset($_POST['logout']) ? 'yes' : 'no';
-//, logout='.sqlesc($duration).'//, 'logout' => $duration
 // output browser
 $ua=getBrowser();
 $browser= "Browser: ".$ua['name']." ".$ua['version'].". Os: ".$ua['platform'].". Agent : ".$ua['userAgent'];

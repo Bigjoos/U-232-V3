@@ -170,7 +170,7 @@ function check_bans($ip, &$reason = '') {
                      'avatar_rights, offensive_avatar, view_offensive_avatar, paranoia, google_talk, msn, aim, yahoo, website, '.
                      'icq, show_email, parked_until, gotgift, hash1, suspended, bjwins, bjlosses, warn_reason, onirc, irctotal, '.
                      'birthday, got_blocks, last_access_numb, onlinetime, pm_on_delete, commentpm, split, browser, hits, '.
-                     'comments, categorie_icon, reputation, perms, mood, got_moods, pms_per_page, show_pm_avatar, watched_user, game_access, logout';
+                     'comments, categorie_icon, reputation, perms, mood, got_moods, pms_per_page, show_pm_avatar, watched_user, game_access';
       
       $res = sql_query("SELECT ".$user_fields." ".
                        "FROM users ".
@@ -366,15 +366,6 @@ function check_bans($ip, &$reason = '') {
       $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
    }
    //==
-/*
-   //== logout for inactivity
-   if ($row['logout'] === 'yes' && $row['last_access'] >= $row['last_login']  && $row['last_access'] <= TIME_NOW - 900)
-   {
-   logoutcookie();	
-   return;
-   }
-   //
-*/
    if ($row['override_class'] < $row['class']) $row['class'] = $row['override_class']; // Override class and save in GLOBAL array below.
       $GLOBALS["CURUSER"] = $row;
       get_template();

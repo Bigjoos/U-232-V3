@@ -52,9 +52,6 @@ $newpage->create('takelogin');
       }
     }
 
-    
-
-
     $got_ssl = isset($_SERVER['HTTPS']) && (bool)$_SERVER['HTTPS'] == true ? true : false;
     //== click X by Retro
     $value = array('...','...','...','...','...','...');
@@ -77,7 +74,6 @@ $newpage->create('takelogin');
     <label for='ssl2'>{$lang['login_ssl2']}<input type='checkbox' name='perm_ssl' ".($got_ssl ? "" : "disabled='disabled' title='SSL connection not available'")." value='1' id='ssl2'/></label>
     </td>
     </tr>
-    <!--<tr><td>{$lang['login_duration']}</td><td align='left'><input type='checkbox' name='logout' value='yes' />{$lang['login_15mins']}</td></tr>-->
     <tr><td align='left' class='rowhead' colspan='2' id='captchalogin'></td></tr>
     <tr><td align='center' colspan='2'>{$lang['login_click']}<strong>{$lang['login_x']}</strong></td></tr>
     <tr><td colspan='2' align='center'>";
