@@ -20,6 +20,7 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
     {
     $INSTALLER09['stylesheet'] = isset($CURUSER['stylesheet']) ? "{$CURUSER['stylesheet']}.css" : $INSTALLER09['stylesheet'];
     $INSTALLER09['categorie_icon'] = isset($CURUSER['categorie_icon']) ? "{$CURUSER['categorie_icon']}" : $INSTALLER09['categorie_icon'];
+    $INSTALLER09['language'] = isset($CURUSER['language']) ? "{$CURUSER['language']}" : $INSTALLER09['language'];
     }
     /** ZZZZZZZZZZZZZZZZZZZZZZZZZZip it!
     if (!isset($_NO_COMPRESS))
@@ -43,13 +44,13 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
     if (isset($INSTALLER09['xhtml_strict'])) { //== Use strict mime type/doctype
     //== Only if browser/user agent supports xhtml
     if (stristr($_SERVER['HTTP_ACCEPT'],'application/xhtml+xml') && ($INSTALLER09['xhtml_strict'] === 1 || $INSTALLER09['xhtml_strict'] == $CURUSER['username'])) {
-    header('Content-type:application/xhtml+xml; charset='.$INSTALLER09['char_set']);
-    $doctype ='<?xml version="1.0" encoding="'.$INSTALLER09['char_set'].'"?>'.'<!DOCTYPE html PUBLIC  "-//W3C//DTD XHTML 1.1//EN"
+    header('Content-type:application/xhtml+xml; charset='.charset());
+    $doctype ='<?xml version="1.0" encoding="'.charset().'"?>'.'<!DOCTYPE html PUBLIC  "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'.'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">';
     }
     }
     if (!isset($doctype)) {
-    header('Content-type:text/html; charset='.$INSTALLER09['char_set']);
+    header('Content-type:text/html; charset='.charset());
     $doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'.'"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'.'<html xmlns="http://www.w3.org/1999/xhtml">';
     }
     $htmlout = $doctype."<head>
@@ -335,7 +336,7 @@ if ($MyPeersCache == false) {
     $seed['yes'] = $seed['no'] = 0;
     $seed['conn'] = 3;
     
-      $r = sql_query("select count(id) as count, seeder, connectable FROM peers WHERE userid=".sqlesc($CURUSER['id'])." group by seeder") ; 
+      $r = sql_query("SELECT COUNT(id) AS count, seeder, connectable FROM peers WHERE userid=".sqlesc($CURUSER['id'])." GROUP BY seeder") ; 
        while($a = mysqli_fetch_assoc($r)) {
         $key = $a['seeder'] == 'yes' ? 'yes' : 'no'; 
         $seed[$key] = number_format(0+$a['count']);    

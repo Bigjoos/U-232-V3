@@ -42,7 +42,6 @@ class_check(UC_MAX);
 		$now_date = array( 'year' => $a[0], 'mon' => $a[1], 'mday' => $a[2],
 								 'hours' => $a[3], 'minutes' => $a[4], 'seconds' => $a[5] );
 
-
 		switch( $input['mode'] )
 		{
 			case 'modify':
@@ -511,10 +510,9 @@ function view_list()
 			$links = "<span style=\"background: #F0F5FA; border: 1px solid #072A66;padding: 1px 3px 1px 3px;\">{$total['cnt']}&nbsp;Records</span>";
 			if( $total['cnt'] > $deflimit ) 
 			{
-			
-				require_once INCL_DIR.'pager_new.php';
+				require_once INCL_DIR.'pager_functions.php';
 				
-				$links = pager( 
+				$links = pager_rep( 
                   array( 
                   'count'  => $total['cnt'],
                   'perpage'    => $deflimit,
@@ -574,18 +572,20 @@ function do_delete_rep()
 			stderr( 'DELETE', 'No valid ID.' );
 		}
 
+      $sql = sql_query('SELECT reputation '.
+                       'FROM users '.
+                       'WHERE id = '.sqlesc($input['reputationid'])) or sqlerr(__FILE__, __LINE__);
+      $User = mysqli_fetch_assoc($sql);
 		// do the delete
 		sql_query( "DELETE FROM reputation WHERE reputationid=".intval($r['reputationid'] ) );
 		sql_query( "UPDATE users SET reputation = (reputation-{$r['reputation']} ) WHERE id=".intval($r['userid']) );
-      //$update['rep'] = ($['reputation'] - $diff)
-      //$mc1->begin_transaction('MyUser_'.$r['userid']);
-      //$mc1->update_row(false, array('reputation' => $update['reputation']));   
-      //$mc1->commit_transaction($INSTALLER09['expires']['curuser']);
-      //$mc1->begin_transaction('user'.$r['userid']);
-      //$mc1->update_row(false, array('reputation' => $update['reputation']));   
-      //$mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
-      $mc1->delete_value('MyUser_'.$r['userid']);
-      $mc1->delete_value('user'.$r['userid']);
+      $update['rep'] = ($User['reputation'] - $r['reputation']);
+      $mc1->begin_transaction('MyUser_'.$r['userid']);
+      $mc1->update_row(false, array('reputation' => $update['rep']));   
+      $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
+      $mc1->begin_transaction('user'.$r['userid']);
+      $mc1->update_row(false, array('reputation' => $update['rep']));   
+      $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
 		redirect( "staffpanel.php?tool=reputation_ad&amp;mode=list", "Deleted Reputation Successfully", 5 );
 	}
 
@@ -632,15 +632,20 @@ function do_edit_rep()
 				@sql_query( "UPDATE reputation SET reputation = ".intval($newrep).", reason = ".sqlesc($reason)." WHERE reputationid = ".intval($r['reputationid']) );
 			}
 
+        $sql = sql_query('SELECT reputation '.
+                       'FROM users '.
+                       'WHERE id = '.sqlesc($input['reputationid'])) or sqlerr(__FILE__, __LINE__);
+        $User = mysqli_fetch_assoc($sql);
+
 			$diff = $oldrep - $newrep;
 			@sql_query( "UPDATE users SET reputation = (reputation-{$diff}) WHERE id=".intval($r['userid']) );
-         //$update['rep'] = ($CURUSER['reputation'] - $diff)
-		   //$mc1->begin_transaction('MyUser_'.$r['userid']);
-         //$mc1->update_row(false, array('reputation' => $update['reputation']));   
-         //$mc1->commit_transaction($INSTALLER09['expires']['curuser']);
-         //$mc1->begin_transaction('user'.$r['userid']);
-         //$mc1->update_row(false, array('reputation' => $update['reputation']));   
-         //$mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
+         $update['rep'] = ($User['reputation'] - $diff);
+		   $mc1->begin_transaction('MyUser_'.$r['userid']);
+         $mc1->update_row(false, array('reputation' => $update['rep']));   
+         $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
+         $mc1->begin_transaction('user'.$r['userid']);
+         $mc1->update_row(false, array('reputation' => $update['rep']));   
+         $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
          $mc1->delete_value('MyUser_'.$r['userid']);
          $mc1->delete_value('user'.$r['userid']);
 		}
