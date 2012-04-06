@@ -13,11 +13,11 @@ function getRate($id,$what) {
 		if($id == 0 || !in_array($what,array('topic','torrent')))
 			return;
   //== lets memcache $what fucker
-  $keys['rating'] = 'rating_'.$what.'_'.$id;
+  $keys['rating'] = 'rating_'.$what.'_'.$id.'_'.$CURUSER['id'];
   if(($rating_cache = $mc1->get_value($keys['rating'])) === false) {
   $qy = sql_query("SELECT sum(r.rating) as sum, count(r.rating) as count, r2.id as rated, r2.rating  FROM rating as r LEFT JOIN rating as r2 ON (r2.".$what." = ".sqlesc($id)." AND r2.user = ".sqlesc($CURUSER["id"]).") WHERE r.".$what." = ".sqlesc($id)." GROUP BY r.".$what) or sqlerr(__FILE__, __LINE__);
   $rating_cache = mysqli_fetch_assoc($qy);
-  $mc1->cache_value($keys['rating'], $rating_cache, 0);
+  $mc1->cache_value($keys['rating'], $rating_cache, 30);
   }
   // outputs
 		$p = ($rating_cache["count"] > 0 ? round((($rating_cache["sum"] / $rating_cache["count"]) * 20), 2) : 0);

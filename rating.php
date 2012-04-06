@@ -23,7 +23,7 @@ dbconn();
 		if(sql_query("INSERT INTO rating(".$what.",rating,user) VALUES (".sqlesc($id).",".sqlesc($rate).",".sqlesc($uid).")")) {
       $table = ($what == "torrent" ? "torrents" : "topics");
 			sql_query("UPDATE ".$table." SET num_ratings = num_ratings + 1, rating_sum = rating_sum+".sqlesc($rate)." WHERE id = ".sqlesc($id));
-         $mc1 -> delete_value('rating_'.$what.'_'.$id);
+         $mc1 -> delete_value('rating_'.$what.'_'.$id.'_'.$CURUSER['id']);
          if( $what == "torrent") {
          $f_r = sql_query("SELECT num_ratings, rating_sum FROM torrents WHERE id = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
          $r_f = mysqli_fetch_assoc($f_r);
