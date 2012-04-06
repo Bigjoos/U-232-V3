@@ -9,15 +9,20 @@
 
 //putyn's rate mod
 function getRate($id,$what) { 
-		global $CURUSER;
-		if($id == 0 || !in_array($what,array("topic","torrent")))
+		global $CURUSER, $mc1;
+		if($id == 0 || !in_array($what,array('topic','torrent')))
 			return;
-	$qy = sql_query("SELECT sum(r.rating) as sum, count(r.rating) as count, r2.id as rated, r2.rating  FROM rating as r LEFT JOIN rating as r2 ON (r2.".$what." = ".$id." AND r2.user = ".sqlesc($CURUSER["id"]).") WHERE r.".$what." = ".sqlesc($id)." GROUP BY r.".$what );
-	$a = mysqli_fetch_assoc($qy);
-	
-		$p = ($a["count"] > 0 ? round((($a["sum"] / $a["count"]) * 20), 2) : 0);
-		if($a["rated"])
-			$rate = "<ul class=\"star-rating\" title=\"You rated this ".$what." ".htmlsafechars($a["rating"])." star".(htmlsafechars($a["rating"]) >1 ? "s" : "")."\"><li style=\"width: ".$p."%;\" class=\"current-rating\">.</li></ul>";
+  //== lets memcache $what fucker
+  $keys['rating'] = 'rating_'.$what.'_'.$id;
+  if(($rating_cache = $mc1->get_value($keys['rating'])) === false) {
+  $qy = sql_query("SELECT sum(r.rating) as sum, count(r.rating) as count, r2.id as rated, r2.rating  FROM rating as r LEFT JOIN rating as r2 ON (r2.".$what." = ".sqlesc($id)." AND r2.user = ".sqlesc($CURUSER["id"]).") WHERE r.".$what." = ".sqlesc($id)." GROUP BY r.".$what) or sqlerr(__FILE__, __LINE__);
+  $rating_cache = mysqli_fetch_assoc($qy);
+  $mc1->cache_value($keys['rating'], $rating_cache, 0);
+  }
+  // outputs
+		$p = ($rating_cache["count"] > 0 ? round((($rating_cache["sum"] / $rating_cache["count"]) * 20), 2) : 0);
+		if($rating_cache["rated"])
+			$rate = "<ul class=\"star-rating\" title=\"You rated this ".$what." ".htmlsafechars($rating_cache["rating"])." star".(htmlsafechars($rating_cache["rating"]) >1 ? "s" : "")."\"><li style=\"width: ".$p."%;\" class=\"current-rating\">.</li></ul>";
 		else {
 			$i=1;
 			$rate = "<ul class=\"star-rating\"><li style=\"width: ".$p."%;\" class=\"current-rating\">.</li>";

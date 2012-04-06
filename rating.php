@@ -1,4 +1,11 @@
 <?php
+/**
+ *   https://github.com/Bigjoos/
+ *   Licence Info: GPL
+ *   Copyright (C) 2010 U-232 v.3
+ *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
+ *   Project Leaders: Mindless, putyn.
+ **/
 //made by putyn @ tbade.net Monday morning :]
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
@@ -16,6 +23,7 @@ dbconn();
 		if(sql_query("INSERT INTO rating(".$what.",rating,user) VALUES (".sqlesc($id).",".sqlesc($rate).",".sqlesc($uid).")")) {
       $table = ($what == "torrent" ? "torrents" : "topics");
 			sql_query("UPDATE ".$table." SET num_ratings = num_ratings + 1, rating_sum = rating_sum+".sqlesc($rate)." WHERE id = ".sqlesc($id));
+         $mc1 -> delete_value('rating_'.$what.'_'.$id);
          if( $what == "torrent") {
          $f_r = sql_query("SELECT num_ratings, rating_sum FROM torrents WHERE id = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
          $r_f = mysqli_fetch_assoc($f_r);
@@ -28,8 +36,7 @@ dbconn();
          if($INSTALLER09['seedbonus_on'] == 1){
          //===add karma 
          $amount = ($what == 'torrent' ? '5' : '3');
-         sql_query("UPDATE users SET seedbonus = seedbonus+$amount WHERE id = ".sqlesc($CURUSER['id'])."") or sqlerr(__FILE__, __LINE__);
-         
+         sql_query("UPDATE users SET seedbonus = seedbonus+$amount WHERE id = ".sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
          $update['seedbonus'] = ($CURUSER['seedbonus'] + $amount);
          $mc1->begin_transaction('userstats_'.$CURUSER["id"]);
          $mc1->update_row(false, array('seedbonus' => $update['seedbonus']));
@@ -41,7 +48,7 @@ dbconn();
          }
          
 			if($ajax) {
-				$qy = sql_query("SELECT sum(r.rating) as sum, count(r.rating) as count, r2.rating as rate FROM rating as r LEFT JOIN rating AS r2 ON (r2.".$what." = ".sqlesc($id)." AND r2.user = ".sqlesc($uid).") WHERE r.".$what." = ".sqlesc($id)." GROUP BY r.".$what." ") or sqlerr(__FILE__, __LINE__);
+				$qy = sql_query("SELECT sum(r.rating) as sum, count(r.rating) as count, r2.rating as rate FROM rating as r LEFT JOIN rating AS r2 ON (r2.".$what." = ".sqlesc($id)." AND r2.user = ".sqlesc($uid).") WHERE r.".$what." = ".sqlesc($id)." GROUP BY r.".sqlesc($what)) or sqlerr(__FILE__, __LINE__);
 				$a = mysqli_fetch_assoc($qy);
 				echo "<ul class=\"star-rating\" title=\"Your rated this ".$what." ".htmlsafechars($a["rate"])." star".(htmlsafechars($a["rate"]) >1 ? "s" : "")."\"  ><li style=\"width: " .(round((($a["sum"] / $a["count"]) * 20), 2)). "%;\" class=\"current-rating\" />.</ul>";
 			} 

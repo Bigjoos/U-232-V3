@@ -174,7 +174,7 @@ function check_bans($ip, &$reason = '') {
       
       $res = sql_query("SELECT ".$user_fields." ".
                        "FROM users ".
-                       "WHERE id = $id ".
+                       "WHERE id = ".sqlesc($id)." ".
                        "AND enabled='yes' ".
                        "AND status = 'confirmed'") or sqlerr(__FILE__, __LINE__);
       
@@ -286,7 +286,7 @@ function check_bans($ip, &$reason = '') {
       if (!in_array(((int)$row["id"]), $allowed_ID, true)) {
          $msg = "Fake Account Detected: Username: ".htmlsafechars($row["username"])." - UserID: ".(int)$row["id"]." - UserIP : ".getip();
          // Demote and disable
-         sql_query("UPDATE users SET enabled = 'no', class = 0 WHERE id =".sqlesc($row["id"])."") or sqlerr(__file__, __line__);
+         sql_query("UPDATE users SET enabled = 'no', class = 0 WHERE id =".sqlesc($row["id"])) or sqlerr(__file__, __line__);
          $mc1->begin_transaction('MyUser_'.$row['id']);
          $mc1->update_row(false, array('enabled' => 'no', 'class' => 0));
          $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -299,7 +299,7 @@ function check_bans($ip, &$reason = '') {
    }
    // user stats
    if(($stats = $mc1->get_value('userstats_'.$id)) === false) {
-      $sql = sql_query('SELECT uploaded, downloaded, seedbonus FROM users WHERE id = '.$id) or sqlerr(__FILE__, __LINE__);
+      $sql = sql_query('SELECT uploaded, downloaded, seedbonus FROM users WHERE id = '.sqlesc($id)) or sqlerr(__FILE__, __LINE__);
       $stats = mysqli_fetch_assoc($sql);
       $stats['seedbonus'] = (float)$stats['seedbonus'];
       $stats['uploaded'] = (float)$stats['uploaded'];
@@ -314,7 +314,7 @@ function check_bans($ip, &$reason = '') {
    $row['ratio'] = $stats['ratio'];
    //==
    if(($ustatus = $mc1->get_value('userstatus_'.$id)) === false) {
-       $sql2 = sql_query('SELECT * FROM ustatus WHERE userid = '.$id);
+       $sql2 = sql_query('SELECT * FROM ustatus WHERE userid = '.sqlesc($id));
        if (mysqli_num_rows($sql2))
            $ustatus = mysqli_fetch_assoc($sql2);
        else
@@ -333,9 +333,9 @@ function check_bans($ip, &$reason = '') {
    // bitwise curuser bloks by pdq
    $blocks_key = 'blocks::'.$row['id'];
    if(($CURBLOCK = $mc1->get_value($blocks_key)) === false) {
-      $c_sql = sql_query('SELECT * FROM user_blocks WHERE userid = '.$row['id']) or sqlerr(__FILE__, __LINE__);
+      $c_sql = sql_query('SELECT * FROM user_blocks WHERE userid = '.sqlesc($row['id'])) or sqlerr(__FILE__, __LINE__);
       if (mysqli_num_rows($c_sql) == 0) {
-         sql_query('INSERT INTO user_blocks(userid) VALUES('.$row['id'].')');
+         sql_query('INSERT INTO user_blocks(userid) VALUES('.sqlesc($row['id']).')');
          header('Location: index.php');
          die();
       }
@@ -357,7 +357,7 @@ function check_bans($ip, &$reason = '') {
    //end online-time
    $update_time = ($row['onlinetime'] + $update_time);
    if (($row['last_access'] != '0') AND (($row['last_access']) < (TIME_NOW - 180))/** 3 mins **/) {
-      sql_query("UPDATE users SET last_access=".TIME_NOW.", $userupdate0, $userupdate1 WHERE id=".$row['id']);
+      sql_query("UPDATE users SET last_access=".TIME_NOW.", $userupdate0, $userupdate1 WHERE id=".sqlesc($row['id']));
       $mc1->begin_transaction('MyUser_'.$row['id']);
       $mc1->update_row(false, array('last_access' => TIME_NOW, 'onlinetime' => $update_time, 'last_access_numb' => TIME_NOW));
       $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
@@ -462,7 +462,7 @@ function check_bans($ip, &$reason = '') {
 function make_freeslots($userid, $key) {
    global $mc1, $INSTALLER09;
    if(($slot = $mc1->get_value($key.$userid)) === false) {
-       $res_slots = sql_query('SELECT * FROM freeslots WHERE userid = '.$userid) or sqlerr(__file__, __line__);
+       $res_slots = sql_query('SELECT * FROM freeslots WHERE userid = '.sqlesc($userid)) or sqlerr(__file__, __line__);
         $slot = array();
          if (mysqli_num_rows($res_slots)) {
               while ($rowslot = mysqli_fetch_assoc($res_slots))
@@ -476,7 +476,7 @@ function make_freeslots($userid, $key) {
 function make_bookmarks($userid, $key) {
    global $mc1, $INSTALLER09;
    if(($book = $mc1->get_value($key.$userid)) === false) {
-       $res_books = sql_query('SELECT * FROM bookmarks WHERE userid = '.$userid) or sqlerr(__file__, __line__);
+       $res_books = sql_query('SELECT * FROM bookmarks WHERE userid = '.sqlesc($userid)) or sqlerr(__file__, __line__);
         $book = array();
          if (mysqli_num_rows($res_books)) {
               while ($rowbook = mysqli_fetch_assoc($res_books))
@@ -594,8 +594,7 @@ function validemail($email) {
 //putyn  08/08/2011
 function sqlesc($x) {
     if(is_integer($x))
-      return (int)$x;
-      
+    return (int)$x;
     return sprintf('\'%s\'',((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $x) : ((trigger_error("Err", E_USER_ERROR)) ? "" : "")));
 }
 
@@ -616,7 +615,7 @@ function logincookie($id, $passhash, $updatedb = 1, $expires = 0x7fffffff)
     set_mycookie("pass", $passhash, $expires);
     set_mycookie("hashv", hashit($id,$passhash), $expires);
     if ($updatedb)
-    sql_query("UPDATE users SET last_login = ".TIME_NOW." WHERE id = $id") or sqlerr(__file__, __line__);
+    sql_query("UPDATE users SET last_login = ".TIME_NOW." WHERE id = ".sqlesc($id)) or sqlerr(__file__, __line__);
 }
 
 function set_mycookie( $name, $value="", $expires_in=0, $sticky=1 )
