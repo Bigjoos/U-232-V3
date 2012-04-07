@@ -7,13 +7,12 @@
  *   Project Leaders: Mindless, putyn.
  **/
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
-require_once(INCL_DIR.'benc.php');
 require_once(INCL_DIR.'user_functions.php');
 require_once(CLASS_DIR.'page_verify.php');
+require_once(CLASS_DIR.'class.bencdec.php');
 dbconn(); 
 loggedinorreturn();
 ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']); 
-
 
     $lang = array_merge( load_language('global'), load_language('takeupload') );
     $newpage = new page_verify(); 
@@ -25,68 +24,32 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     exit();
     }
 
-    function ircbot($messages)
-    {
-    $bot = array('ip' => '127.0.0.1',
-			     'port' => 35789,
-				 'pass' => 'bWFtYWFyZW1lcmU',
-				 'pidfile'=> 'usr/share/eggdrop/pid.IoN', //path to the pid. file
-				 'sleep'=>5,
-				);
-    if(empty($messages))
-		return; #die ('Empty message');
-
-    if(!file_exists($bot['pidfile']))
-		return; #die ('Bot not online');
-		
-    if($bot['hand'] = fsockopen($bot['ip'], $bot['port'] , $errno, $errstr, 45))
-    {
-		sleep($bot['sleep']);
-		if(is_array($messages)) {
-			foreach($messages as $message) {
-				fputs($bot['hand'], $bot['pass'].' '. $message."\n");
-				sleep($bot['sleep']);
-			}
-      } else {
-			fputs($bot['hand'], $bot['pass'].' '. $messages."\n");
-			sleep($bot['sleep']);
-		}
-		fclose($bot['hand']);
-    }
-    }
-    
     foreach(explode(":","descr:type:name") as $v) {
       if (!isset($_POST[$v]))
         stderr($lang['takeupload_failed'], $lang['takeupload_no_formdata']);
     }
-
     if (!isset($_FILES["file"]))
       stderr($lang['takeupload_failed'], $lang['takeupload_no_formdata']);
-
     $url = strip_tags(isset($_POST['url']) ? trim($_POST['url']) : '');
     $poster = strip_tags(isset($_POST['poster']) ? trim($_POST['poster']) : '');
-
-     $f = $_FILES["file"];
-     $fname = unesc($f["name"]);
-     if (empty($fname))
-     stderr($lang['takeupload_failed'], $lang['takeupload_no_filename']);
-     
-     if(isset($_POST['uplver']) && $_POST['uplver'] == 'yes') {
-     $anonymous = "yes";
-     $anon = "Anonymous";
-     } else {
-     $anonymous = "no";
-     $anon = $CURUSER["username"];
-     }
-      
-     if(isset($_POST['allow_comments']) && $_POST['allow_comments'] == 'yes') {
-     $allow_comments = "no";
-     $disallow = "Yes";
-     } else {
-     $allow_comments = "yes";
-     $disallow = "No";
-     }
-      
+    $f = $_FILES["file"];
+    $fname = unesc($f["name"]);
+    if (empty($fname))
+    stderr($lang['takeupload_failed'], $lang['takeupload_no_filename']);
+    if(isset($_POST['uplver']) && $_POST['uplver'] == 'yes') {
+    $anonymous = "yes";
+    $anon = "Anonymous";
+    } else {
+    $anonymous = "no";
+    $anon = $CURUSER["username"];
+    }
+    if(isset($_POST['allow_comments']) && $_POST['allow_comments'] == 'yes') {
+    $allow_comments = "no";
+    $disallow = "Yes";
+    } else {
+    $allow_comments = "yes";
+    $disallow = "No";
+    }
     if (isset($_POST["music"])){
     $genre = implode(",", $_POST['music']);
     }
@@ -103,85 +66,58 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     {
     $genre = '';
     }
-      
     $nfo = sqlesc('');
     /////////////////////// NFO FILE ////////////////////////	
     if(isset($_FILES['nfo']) && !empty($_FILES['nfo']['name'])) {
     $nfofile = $_FILES['nfo'];
-    
     if ($nfofile['name'] == '')
       stderr($lang['takeupload_failed'], $lang['takeupload_no_nfo']);
-
     if ($nfofile['size'] == 0)
       stderr($lang['takeupload_failed'], $lang['takeupload_0_byte']);
-
     if ($nfofile['size'] > 65535)
       stderr($lang['takeupload_failed'], $lang['takeupload_nfo_big']);
-
     $nfofilename = $nfofile['tmp_name'];
-
     if (@!is_uploaded_file($nfofilename))
       stderr($lang['takeupload_failed'], $lang['takeupload_nfo_failed']);
-
     $nfo = sqlesc(str_replace("\x0d\x0d\x0a", "\x0d\x0a", @file_get_contents($nfofilename)));
     }
     /////////////////////// NFO FILE END /////////////////////
-   
-   /// Set Freeleech on Torrent Time Based
-   $free = 0;
-   if (isset($_POST['free_length']) && ($free_length = 0 + $_POST['free_length']))
-   {
-    if ($free_length == 255)
+    /// Set Freeleech on Torrent Time Based
+    $free = 0;
+    if (isset($_POST['free_length']) && ($free_length = 0 + $_POST['free_length']))
+    {
+     if ($free_length == 255)
         $free = 1;
 
-    elseif ($free_length == 42)
+     elseif ($free_length == 42)
         $free = (86400 + TIME_NOW);
 
-    else
+     else
         $free = (TIME_NOW + $free_length * 604800);
-   }
-   /// end
-
-   $descr = strip_tags(isset($_POST['descr']) ? trim($_POST['descr']) : '');
-   if (!$descr)
-   stderr($lang['takeupload_failed'], $lang['takeupload_no_descr']);
-   
-   $description = strip_tags(isset($_POST['description']) ? trim($_POST['description']) : '');
-   
-   if(isset($_POST['strip']) && $_POST['strip'])
-   { 
-   require_once(INCL_DIR.'strip.php');
-   $descr = preg_replace("/[^\\x20-\\x7e\\x0a\\x0d]/", " ", $descr);
-   strip($descr);
-   }
-   
+    }
+    /// end
+    $descr = strip_tags(isset($_POST['descr']) ? trim($_POST['descr']) : '');
+    if (!$descr)
+    stderr($lang['takeupload_failed'], $lang['takeupload_no_descr']);
+    $description = strip_tags(isset($_POST['description']) ? trim($_POST['description']) : '');
+    if(isset($_POST['strip']) && $_POST['strip'])
+    { 
+    require_once(INCL_DIR.'strip.php');
+    $descr = preg_replace("/[^\\x20-\\x7e\\x0a\\x0d]/", " ", $descr);
+    strip($descr);
+    }
     $catid = (0 + $_POST["type"]);
     if (!is_valid_id($catid))
       stderr($lang['takeupload_failed'], $lang['takeupload_no_cat']);
-
     $request = (((isset($_POST['request']) && is_valid_id($_POST['request'])) ? intval($_POST['request']) : 0));
     $offer = (((isset($_POST['offer']) && is_valid_id($_POST['offer'])) ? intval($_POST['offer']) : 0));
-
     $subs = isset($_POST["subs"]) ? implode(",", $_POST['subs']) : "";	
-    //if (empty($subs) && in_array($catid, $INSTALLER09['movie_cats'])) {
-    //stderr ("Error", "Select a subtitle!");
-    //die();
-    //}
-
     $release_group_array =  array('scene' =>1, 'p2p' =>1, 'none' =>1);
     $release_group = isset($_POST['release_group']) && isset($release_group_array[$_POST['release_group']]) ? $_POST['release_group'] : 'none'; 
-
     $youtube = '';
-    //if(in_array(0+$_POST['type'],$INSTALLER09['movie_cats'])) {
-        if(isset($_POST['youtube']) && preg_match($youtube_pattern,$_POST['youtube'],$temp_youtube))
-          $youtube = $temp_youtube[0];
-        //else
-        //stderr($lang['takeupload_failed'],$lang['takeupload_no_youtube']);
-        //die();
-    //}
-
+    if(isset($_POST['youtube']) && preg_match($youtube_pattern,$_POST['youtube'],$temp_youtube))
+      $youtube = $temp_youtube[0];
     $tags = strip_tags(isset($_POST['tags']) ? trim($_POST['tags']) : '');
-
     if (!validfilename($fname))
       stderr($lang['takeupload_failed'], $lang['takeupload_invalid']);
     if (!preg_match('/^(.+)\.torrent$/si', $fname, $matches))
@@ -189,108 +125,93 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     $shortfname = $torrent = $matches[1];
     if (!empty($_POST["name"]))
       $torrent = unesc($_POST["name"]);
-
     $tmpname = $f["tmp_name"];
     if (!is_uploaded_file($tmpname))
       stderr($lang['takeupload_failed'], $lang['takeupload_eek']);
     if (!filesize($tmpname))
       stderr($lang['takeupload_failed'], $lang['takeupload_no_file']);
 
-    $dict = bdec_file($tmpname, $INSTALLER09['max_torrent_size']);
-    if (!isset($dict))
-      stderr($lang['takeupload_failed'], $lang['takeupload_not_benc']);
+   // bencdec by djGrrr <3
+   $dict = bencdec::decode_file($tmpname, $INSTALLER09['max_torrent_size'], bencdec::OPTION_EXTENDED_VALIDATION);
+   if ($dict === false)
+   stderr('Error','What the hell did you upload? This is not a bencoded file!');
 
+   if (isset($dict['announce-list']))
+       unset($dict['announce-list']);
 
-    function dict_check($d, $s) {
-      global $lang;
-      if ($d["type"] != "dictionary")
-        stderr($lang['takeupload_failed'], $lang['takeupload_not_dict']);
-      $a = explode(":", $s);
-      $dd = $d["value"];
-      $ret = array();
-      $t='';
-      foreach ($a as $k) {
-        unset($t);
-        if (preg_match('/^(.*)\((.*)\)$/', $k, $m)) {
-          $k = $m[1];
-          $t = $m[2];
-        }
-        if (!isset($dd[$k]))
-          stderr($lang['takeupload_failed'], $lang['takeupload_no_keys']);
-        if (isset($t)) {
-          if ($dd[$k]["type"] != $t)
-            stderr($lang['takeupload_failed'], $lang['takeupload_invalid_entry']);
-          $ret[] = $dd[$k]["value"];
-        }
-        else
-          $ret[] = $dd[$k];
-      }
-      return $ret;
+   $dict['info']['private'] = 1;
+
+   if (!isset($dict['info']))
+	stderr('Error','invalid torrent, info dictionary does not exist');
+   $info = &$dict['info'];
+   $infohash = sha1(bencdec::encode($info));
+   if (bencdec::get_type($info) != 'dictionary')
+   stderr('Error','invalid torrent, info is not a dictionary');
+   if (!isset($info['name']) || !isset($info['piece length']) || !isset($info['pieces']))
+   stderr('Error','invalid torrent, missing parts of the info dictionary');
+   if (bencdec::get_type($info['name']) != 'string' || bencdec::get_type($info['piece length']) != 'integer' || bencdec::get_type($info['pieces']) != 'string')
+   stderr('Error','invalid torrent, invlaid types in info dictionary');
+   $dname = $info['name'];
+   $plen = $info['piece length'];
+   $pieces_len = strlen($info['pieces']);
+   if ($pieces_len % 20 != 0)
+   stderr('Error','invalid pieces');
+
+   if ($plen % 4096)
+	stderr('Error','piece size is not mod(4096), wtf kind of torrent is that?');
+
+   $filelist = array();
+   if (isset($info['length'])) {
+	if (bencdec::get_type($info['length']) != 'integer')
+		stderr('Error','length must be an integer');
+
+	$totallen = $info['length'];
+	$filelist[] = array($dname, $totallen);
+	$type = 'single';
+   }
+   else {
+	if (!isset($info['files']))
+		stderr('Error','missing both length and files');
+
+	if (bencdec::get_type($info['files']) != 'list')
+		stderr('Error','invalid files, not a list');
+
+	$flist = &$info['files'];
+
+	if (!count($flist))
+		stderr('Error','no files');
+	$totallen = 0;
+	foreach ($flist as $fn) {
+		if (!isset($fn['length']) || !isset($fn['path']))
+			stderr('Error','file info not found');
+
+		if (bencdec::get_type($fn['length']) != 'integer' || bencdec::get_type($fn['path']) != 'list')
+			stderr('Error','invalid file info');
+
+		$ll = $fn['length'];
+		$ff = $fn['path'];
+
+		$totallen += $ll;
+		$ffa = array();
+		foreach ($ff as $ffe) {
+			if (bencdec::get_type($ffe) != 'string')
+				stderr('Error','filename type error');
+			$ffa[] = $ffe;
+		}
+		if (!count($ffa))
+			stderr('Error','filename error');
+
+		$ffe = implode('/', $ffa);
+		$filelist[] = array($ffe, $ll);
+	 }
+	 $type = 'multi';
     }
-
-    function dict_get($d, $k, $t) {
-      global $lang;
-      if ($d["type"] != "dictionary")
-        stderr($lang['takeupload_failed'], $lang['takeupload_not_dict']);
-      $dd = $d["value"];
-      if (!isset($dd[$k]))
-        return;
-      $v = $dd[$k];
-      if ($v["type"] != $t)
-        stderr($lang['takeupload_failed'], $lang['takeupload_dict_type']);
-      return $v["value"];
-    }
-
-    list($ann, $info) = dict_check($dict, "announce(string):info");
-
-    $tmaker = (isset($dict['value']['created by']) && !empty($dict['value']['created by']['value'])) ? sqlesc($dict['value']['created by']['value']) : sqlesc($lang['takeupload_unkown']);
-
-    list($dname, $plen, $pieces) = dict_check($info, "name(string):piece length(integer):pieces(string)");
-     
-    if (strlen($pieces) % 20 != 0)
-      stderr($lang['takeupload_failed'], $lang['takeupload_pieces']);
-
-    $filelist = array();
-    $totallen = dict_get($info, "length", "integer");
-    if (isset($totallen)) {
-      $filelist[] = array($dname, $totallen);
-      $type = "single";
-    }
-    else {
-      $flist = dict_get($info, "files", "list");
-      if (!isset($flist))
-        stderr($lang['takeupload_failed'], $lang['takeupload_both']);
-      if (!count($flist))
-        stderr($lang['takeupload_failed'], $lang['takeupload_no_files']);
-      $totallen = 0;
-      foreach ($flist as $fn) {
-        list($ll, $ff) = dict_check($fn, "length(integer):path(list)");
-        $totallen += $ll;
-        $ffa = array();
-        foreach ($ff as $ffe) {
-          if ($ffe["type"] != "string")
-            stderr($lang['takeupload_failed'], $lang['takeupload_error']);
-          $ffa[] = $ffe["value"];
-        }
-        if (!count($ffa))
-          stderr($lang['takeupload_failed'], $lang['takeupload_error']);
-        $ffe = implode("/", $ffa);
-        $filelist[] = array($ffe, $ll);
-      }
-      $type = "multi";
-    }
-    
-    $dict['value']['announce']=bdec(benc_str($INSTALLER09['announce_urls'][0]));  // change announce url to local
-    $dict['value']['info']['value']['private']=bdec('i1e');  // add private tracker flag
-    $dict['value']['info']['value']['source']=bdec(benc_str( "{$INSTALLER09['baseurl']} {$INSTALLER09['site_name']}")); // add link for bitcomet users
-    $dict['value']['comment'] = bdec(benc_str("In using this torrent you are bound by the {$INSTALLER09['site_name']} Confidentiality Agreement By Law")); // change torrent comment
-    unset($dict['value']['announce-list']); // remove multi-tracker capability
-    unset($dict['value']['nodes']); // remove cached peers (Bitcomet & Azareus)
-    $dict=bdec(benc($dict)); // double up on the becoding solves the occassional misgenerated infohash 
-    list($ann, $info) = dict_check($dict, "announce(string):info");
-    $infohash = sha1($info["string"]);
-    unset($info);
-    
+    $num_pieces = $pieces_len / 20;
+    $expected_pieces = (int)ceil($totallen / $plen);
+    if ($num_pieces != $expected_pieces)
+	 stderr('error','total file size and number of peices do not match');
+    //==
+    $tmaker = (isset($dict['created by']) && !empty($dict['created by'])) ? sqlesc($dict['created by']) : sqlesc($lang['takeupload_unkown']);
     // Replace punctuation characters with spaces
     $torrent = str_replace("_", " ", $torrent);
     $vip = (isset($_POST["vip"]) ? "1" : "0");
@@ -312,8 +233,7 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     $message = "New Torrent : [url={$INSTALLER09['baseurl']}/details.php?id=$id] " . htmlsafechars($torrent) . "[/url] Uploaded - Anonymous User";
     else
     $message = "New Torrent : [url={$INSTALLER09['baseurl']}/details.php?id=$id] " . htmlsafechars($torrent) . "[/url] Uploaded by " . htmlsafechars($CURUSER["username"]) . "";
-
-    $messages = "\0035 [ \0034{$INSTALLER09['site_name']} \0035]  \0035[ \0033New Torrent: \0035] [\003 $torrent \0035] \0035[ \003Uploaded By:\00310 $anon \0035] [\003 Size:\0037 ".mksize($totallen)." \0035] [\003 Link:\00314 {$INSTALLER09['baseurl']}/details.php?id=$id \0035]";
+    $messages = "{$INSTALLER09['site_name']} New Torrent: $torrent Uploaded By: $anon ".mksize($totallen)." {$INSTALLER09['baseurl']}/details.php?id=$id";
     
     sql_query("DELETE FROM files WHERE torrent = ".sqlesc($id));
 
@@ -325,13 +245,13 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     }
 
     sql_query("INSERT INTO files (torrent, filename, size) VALUES ".file_list($filelist,$id));
-  
-	  $fp = fopen("{$INSTALLER09['torrent_dir']}/$id.torrent", "w");
-    if ($fp)
-    {
-    @fwrite($fp, benc($dict), strlen(benc($dict)));
-    fclose($fp);
-    }
+    //==
+    $dir = $INSTALLER09['torrent_dir'].'/'.$id.'.torrent';
+    if (!bencdec::encode_file($dir, $dict))
+    stderr('Error','Could not properly encode file');
+    @unlink($tmpname);
+    chmod($dir, 0664);
+    //==
     if($INSTALLER09['seedbonus_on'] == 1){
     //===add karma 
     sql_query("UPDATE users SET seedbonus = seedbonus+15.0 WHERE id = ".sqlesc($CURUSER["id"])) or sqlerr(__FILE__, __LINE__);
@@ -419,10 +339,10 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     /* Email notifs */
     /*******************
 
-    $res = mysql_query("SELECT name FROM categories WHERE id=$catid") or sqlerr();
-    $arr = mysql_fetch_assoc($res);
-    $cat = $arr["name"];
-    $res = mysql_query("SELECT email FROM users WHERE enabled='yes' AND notifs LIKE '%[cat$catid]%'") or sqlerr();
+    $res = sql_query("SELECT name FROM categories WHERE id=".sqlesc($catid)) or sqlerr(__FILE__, __LINE__);
+    $arr = mysqli_fetch_assoc($res);
+    $cat = htmlsafechars($arr["name"]);
+    $res = sql_query("SELECT email FROM users WHERE enabled='yes' AND notifs LIKE '%[cat$catid]%'") or sqlerr(__FILE__, __LINE__);
     $uploader = $CURUSER['username'];
 
     $size = mksize($totallen);
@@ -453,8 +373,8 @@ EOD;
     $nmax = 100; // Max recipients per message
     $nthis = 0;
     $ntotal = 0;
-    $total = mysql_num_rows($res);
-    while ($arr = mysql_fetch_row($res))
+    $total = mysqli_num_rows($res);
+    while ($arr = mysqli_fetch_row($res))
     {
       if ($nthis == 0)
         $to = $arr[0];

@@ -168,7 +168,7 @@ function write_logs($text,$type) {
                 <td class='heading2' align='center'><a href='staffpanel.php?tool=iphistory&amp;action=bans&amp;banthisuser=$username&amp;banthisip=$userip'><b>{$lang['iphistory_ban']}</b></a></td>
                 </tr>";
                 } else {
-                $seedbox = "<a class='altlink' href='staffpanel.php?tool=iphistory&amp;action=iphistory&amp;id=$id&amp;setseedbox2=".(int)$iphistory['id'].""'><font color='Green'><b>{$lang['iphistory_yes']}</b></font></a>";
+                $seedbox = "<a class='altlink' href='staffpanel.php?tool=iphistory&amp;action=iphistory&amp;id=$id&amp;setseedbox2=".(int)$iphistory['id']."'><font color='Green'><b>{$lang['iphistory_yes']}</b></font></a>";
                 $color = '#CCFFFF';
     $HTMLOUT .= "<tr>
                 <td class='heading2' align='center' style='background-color:$color'>Browse: ".get_date($lastbrowse,'')."<br />Login: ".get_date($lastlogin,'')."<br />Announce: ".get_date($lastannounce,'')."</td>

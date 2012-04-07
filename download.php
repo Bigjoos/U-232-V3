@@ -9,6 +9,7 @@
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
 require_once(INCL_DIR.'function_happyhour.php');
+require_once(CLASS_DIR.'class.bencdec.php');
 dbconn();
 
   $pkey = isset($_GET['passkey']) && strlen($_GET['passkey']) == 32 ? $_GET['passkey'] : '';
@@ -58,25 +59,19 @@ dbconn();
   /** free mod by pdq **/
   /** freeslots/doubleseed by pdq **/
   if (isset($_GET['slot'])) {
-
     $added = (TIME_NOW + 14*86400);
-        
     $slots_sql = sql_query('SELECT * FROM freeslots WHERE torrentid = '.sqlesc($id).' AND userid = '.sqlesc($CURUSER['id']));
     $slot = mysqli_fetch_assoc($slots_sql);
-        
-    $used_slot = $slot['torrentid'] == $id && $slot['userid'] == $CURUSER['id'];
-         
-        /** freeslot **/
-    if ($_GET['slot'] == 'free') {
-            
-      if ($used_slot && $slot['free'] == 'yes')
+    $used_slot = $slot['torrentid'] == $id && $slot['userid'] == $CURUSER['id']; 
+    /** freeslot **/
+    if ($_GET['slot'] == 'free') {    
+    if ($used_slot && $slot['free'] == 'yes')
         stderr('Doh!', 'Freeleech slot already in use.');
 
       if ($CURUSER['freeslots'] < 1)
         stderr('Doh!', 'No Slots.');
                 
-      $CURUSER['freeslots'] = ($CURUSER['freeslots'] - 1);
-            
+      $CURUSER['freeslots'] = ($CURUSER['freeslots'] - 1);  
       sql_query('UPDATE users SET freeslots = freeslots - 1 WHERE id = '.sqlesc($CURUSER['id']).' LIMIT 1') or sqlerr(__FILE__, __LINE__);
             
             if ($used_slot && $slot['doubleup'] == 'yes')
@@ -96,7 +91,6 @@ dbconn();
                 stderr('Doh!', 'No Slots.');
             
             $CURUSER['freeslots'] = ($CURUSER['freeslots'] - 1);
-            
             sql_query('UPDATE users SET freeslots = freeslots - 1 WHERE id = '.sqlesc($CURUSER['id']).' LIMIT 1') or sqlerr(__FILE__, __LINE__);
             
             if ($used_slot && $slot['free'] == 'yes')
@@ -120,7 +114,6 @@ dbconn();
     $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
     }
   /** end **/
-  require_once(INCL_DIR.'benc.php');
   $mc1->delete_value('MyPeers_'.$CURUSER['id']);
   $mc1->delete_value('top5_tor_');
   $mc1->delete_value('last5_tor_');
@@ -136,18 +129,17 @@ dbconn();
     $mc1->update_row(false, array('passkey' => $CURUSER['passkey']));
     $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
   }
-  $dict = bdec_file($fn, filesize($fn));
-  $dict['value']['announce']['value'] = $INSTALLER09['announce_urls'][$ssluse].'?passkey='.$CURUSER['passkey'];
-  $dict['value']['announce']['string'] = strlen($dict['value']['announce']['value']).":".$dict['value']['announce']['value'];
-  $dict['value']['announce']['strlen'] = strlen($dict['value']['announce']['string']);
-  $dict['value']['created by']=bdec(benc_str(md5($CURUSER['username'])));
-  $dict = benc($dict);
+
+  $dict = bencdec::decode_file($fn, $INSTALLER09['max_torrent_size']);
+  $dict['announce'] = $INSTALLER09['announce_urls'][$ssluse].'?passkey='.$CURUSER['passkey'];
+  $dict['uid'] = 0 + $CURUSER['id'];
+  $tor = bencdec::encode($dict);
 
   if($zipuse) {
     require_once(INCL_DIR.'phpzip.php');
     $row['name'] = str_replace(array(' ','.','-'),'_',$row['name']);
     $file_name = $INSTALLER09['torrent_dir'].'/'.$row['name'].'.torrent';
-    if(file_put_contents($file_name,$dict)) {
+    if(file_put_contents($file_name,$tor)) {
       $zip = new PHPZip();
       $files = array($file_name);
       $file_name = $INSTALLER09['torrent_dir'].'/'.$row['name'].'.zip';
@@ -159,7 +151,7 @@ dbconn();
       stderr('Error','Can\'t create the new file, please contatct staff');
   } else {
     header('Content-Disposition: attachment; filename="['.$INSTALLER09['site_name'].']'.$row['filename'].'"');
-    header("Content-Type: application/x-bittorrent"); 
-    echo($dict);
+    header("Content-Type: application/x-bittorrent");
+    echo($tor);
   }
 ?>
