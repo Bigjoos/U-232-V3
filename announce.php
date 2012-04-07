@@ -278,7 +278,7 @@ if (!isset($self))
   else
   $updq[1] = "uploaded = uploaded + ".(($torrent['doubleslot'] != 0 || $isdouble) ? ($upthis*2) : $upthis);
   $udq=implode(',',$updq);
-  mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE LOW_PRIORITY users SET ".ann_sqlesc($udq)." WHERE id=".ann_sqlesc($userid)) or ann_sqlerr(__FILE__, __LINE__);
+  mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE LOW_PRIORITY users SET $udq WHERE id=".$userid) or ann_sqlerr(__FILE__, __LINE__);
   $mc1->delete_value('userstats_'.$userid);
   $mc1->delete_value('user_stats_'.$userid);
   }
@@ -339,24 +339,24 @@ if (!isset($self))
  $HnR_time_seeded = ($a['seedtime'] + $self['announcetime']);
  //=== get times per class
  switch (true)
-			{ 
-			case ($user['class'] <= UC_POWER_USER):
-				$days_3 = 1*86400; //== 1 days
-				$days_14 = 1*86400; //== 1 days
-				$days_over_14 = 86400; //== 1 day
-				break;
-			case ($user['class'] < UC_STAFF):
-				$days_3 = 43200; //== 12 hours
-				$days_14 = 43200; //== 12 hours
-				$days_over_14 = 43200; //== 12 hours
-				break;
-			case ($user['class'] >= UC_STAFF):
-				$days_3 = 43200; //== 12 hours
-				$days_14 = 43200; //== 12 hours
-				$days_over_14 = 43200; //== 12 hours
-				break;
-			}
- switch(true) 
+{
+case ($user['class'] <= UC_POWER_USER):
+$days_3 = 1*86400; //== 1 days
+$days_14 = 1*86400; //== 1 days
+$days_over_14 = 86400; //== 1 day
+break;
+case ($user['class'] < UC_STAFF):
+$days_3 = 43200; //== 12 hours
+$days_14 = 43200; //== 12 hours
+$days_over_14 = 43200; //== 12 hours
+break;
+case ($user['class'] >= UC_STAFF):
+$days_3 = 43200; //== 12 hours
+$days_14 = 43200; //== 12 hours
+$days_over_14 = 43200; //== 12 hours
+break;
+}
+ switch(true)
  {
  case (($a['start_snatch'] - $torrent['ts']) < 7*86400):
  $minus_ratio = ($days_3 - $HnR_time_seeded);
@@ -384,7 +384,7 @@ if (!isset($self))
  $snatch_updateset[] = "ip = ".ann_sqlesc($realip).", port = ".ann_sqlesc($port).", connectable = ".ann_sqlesc($connectable).", uploaded = uploaded + $upthis, downloaded = downloaded + $downthis, to_go = ".ann_sqlesc($left).", upspeed = ".($upthis > 0 ? $upthis / $self["announcetime"] : 0).", downspeed = ".($downthis > 0 ? $downthis / $self["announcetime"] : 0).", ".($self["seeder"] == "yes" ? "seedtime = seedtime + {$self['announcetime']}" : "leechtime = leechtime + {$self['announcetime']}").", last_action = ".TIME_NOW.", seeder = ".ann_sqlesc($seeder).", agent = ".ann_sqlesc($agent).", $hit_and_run";
  }
  }
- } 
+ }
  elseif (isset($self)) {
  if ($event == "completed") {
  if ($a)
@@ -394,14 +394,14 @@ if (!isset($self))
  adjust_torrent_peers($torrentid, 0, 0, 1);
  }
  
- $prev_action = ann_sqlesc($self['ts']); 
+ $prev_action = ann_sqlesc($self['ts']);
  mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE LOW_PRIORITY peers SET connectable = ".ann_sqlesc($connectable).", uploaded = ".ann_sqlesc($uploaded).", downloaded = ".ann_sqlesc($downloaded).", to_go = ".ann_sqlesc($left).", last_action = ".TIME_NOW.", prev_action = $prev_action, seeder = ".ann_sqlesc($seeder).", agent = ".ann_sqlesc($agent)." $finished WHERE $selfwhere") or ann_sqlerr(__FILE__, __LINE__);
 
  if (mysqli_affected_rows($GLOBALS["___mysqli_ston"])) {
  if ($seeder <> $self["seeder"]) {
  if ($seeder == "yes")
  adjust_torrent_peers($torrentid, 1, -1, 0);
- else 
+ else
  adjust_torrent_peers($torrentid, -1, 1, 0);
  $updateset[] = ($seeder == "yes" ? "seeders = seeders + 1, leechers = leechers - 1" : "seeders = seeders - 1, leechers = leechers + 1");
  }
