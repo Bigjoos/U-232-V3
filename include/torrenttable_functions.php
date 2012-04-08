@@ -200,7 +200,7 @@ if ($oldlink > 0)
        $htmlout .= "<td align='center'><a href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."\"><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download This Torrent!' title='Download This Torrent!' /></a></td>\n";
        
        if ($variant == "mytorrents")  
-       $htmlout .= "<td align='center'><a href='edit.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;id=".(int)$row['id']."'>{$lang["torrenttable_edit"]}</a></td>\n";
+       $htmlout .= "<td align='center'><a href='edit.php?id=".(int)$row['id']."amp;returnto=".urlencode($_SERVER["REQUEST_URI"])."'>{$lang["torrenttable_edit"]}</a></td>\n";
        $htmlout.= ($variant == "index" ? "<td align='center'><a href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."\"><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download This Torrent!' title='Download This Torrent!' /></a></td>" : "");
         
        if ($variant == "mytorrents") 
