@@ -10,6 +10,7 @@ require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR
 require_once(INCL_DIR.'user_functions.php');
 require_once(CLASS_DIR.'page_verify.php');
 require_once(CLASS_DIR.'class.bencdec.php');
+require_once INCL_DIR.'function_memcache.php';
 dbconn(); 
 loggedinorreturn();
 ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']); 
@@ -223,7 +224,7 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
         stderr($lang['takeupload_failed'], $lang['takeupload_already']);
       stderr($lang['takeupload_failed'], "mysql puked: ".((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
     }
-    
+    remove_torrent($infohash);
     $id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
     $mc1->delete_value('MyPeers_'.$CURUSER['id']);
     //$mc1->delete_value('lastest_tor_');  // 

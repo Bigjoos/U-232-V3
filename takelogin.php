@@ -11,11 +11,13 @@ require_once(INCL_DIR.'user_functions.php');
 require_once(INCL_DIR.'password_functions.php');
 require_once(CLASS_DIR.'page_verify.php');
 require_once(CLASS_DIR.'class_browser.php');
-global $CURUSER;
+dbconn();
+get_template();
+session_start();
+$lang = array_merge( load_language('global'), load_language('takelogin') );
 
-if (!$CURUSER) {
-   get_template();
-}
+$newpage = new page_verify();
+$newpage->check('takelogin');
 
 // 09 failed logins thanks to pdq - Retro
 function failedloginscheck() {
@@ -36,18 +38,10 @@ if (!mkglobal('username:password:captchaSelection:submitme'))
 if ($submitme != 'X')
    stderr('Ha Ha', 'You Missed, You plonker !');
 
-session_start();
 if (empty($captchaSelection) || $_SESSION['simpleCaptchaAnswer'] != $captchaSelection){
    header('Location: login.php');
    exit();
 }
-
-dbconn();
-
-$lang = array_merge( load_language('global'), load_language('takelogin') );
-
-$newpage = new page_verify();
-$newpage->check('takelogin');
 
 function bark($text = 'Username or password incorrect') {
    global $lang, $INSTALLER09, $mc1;

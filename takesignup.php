@@ -11,11 +11,8 @@ require_once(INCL_DIR.'user_functions.php');
 require_once(CLASS_DIR.'page_verify.php');
 require_once(INCL_DIR.'password_functions.php');
 require_once(INCL_DIR.'bbcode_functions.php');
-global $CURUSER;
-if(!$CURUSER){
-get_template();
-}
 dbconn();
+get_template();
 
     if(!$INSTALLER09['openreg'])
     stderr('Sorry', 'Invite only - Signups are closed presently if you have an invite code click <a href="'.$INSTALLER09['baseurl'].'/invite_signup.php"><b> Here</b></a>');
