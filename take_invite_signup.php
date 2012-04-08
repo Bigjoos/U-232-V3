@@ -12,8 +12,7 @@ require_once(INCL_DIR.'password_functions.php');
 require_once(CLASS_DIR.'page_verify.php');
 dbconn();
 get_template();
-
-$lang = load_language('global');
+$lang = array_merge( load_language('global'), load_language('takesignup') );
 $newpage = new page_verify(); 
 $newpage->check('tkIs');
 $res = sql_query("SELECT COUNT(id) FROM users") or sqlerr(__FILE__, __LINE__);

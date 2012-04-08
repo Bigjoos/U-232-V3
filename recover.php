@@ -9,21 +9,22 @@
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
 require_once(INCL_DIR.'password_functions.php');
-get_template();
+dbconn();
 // Begin the session
 ini_set('session.use_trans_sid', '0');
 session_start();
-dbconn();
+get_template();
 
    $lang = array_merge( load_language('global'), load_language('recover') );
    $stdhead = array(/** include js **/'js' => array('jquery','jquery.simpleCaptcha-0.2'));
    if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
     
+   if (!mkglobal("email:captchaSelection")) 
+   die();
+
     if(empty($captchaSelection) || $_SESSION['simpleCaptchaAnswer'] != $captchaSelection){
         header('Location: recover.php');
-        //print_r($_POST);
-        //print_r($_GET); exit;
         exit();
     }
  
@@ -88,8 +89,6 @@ $body = sprintf($lang['email_request'], $email, $_SERVER["REMOTE_ADDR"], $INSTAL
       stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_noupdate']}");
 
     $body = sprintf($lang['email_newpass'], $arr["username"], $newpassword, $INSTALLER09['baseurl']).$INSTALLER09['site_name'];
-
-  
     @mail($email, "{$INSTALLER09['site_name']} {$lang['email_subject']}", $body, "From: {$INSTALLER09['site_email']}")
       or stderr($lang['stderr_errorhead'], $lang['stderr_nomail']);
     stderr($lang['stderr_successhead'], sprintf($lang['stderr_mailed'], $email));
@@ -106,7 +105,6 @@ $body = sprintf($lang['email_request'], $email, $_SERVER["REMOTE_ADDR"], $INSTAL
     });
     /*]]>*/
     </script>
-      
       <h1>{$lang['recover_unamepass']}</h1>
       <p>{$lang['recover_form']}</p>
       <form method='post' action='{$_SERVER['PHP_SELF']}'>

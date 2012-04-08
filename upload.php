@@ -178,9 +178,6 @@ loggedinorreturn();
     <select name='free_length'>
     <option value='0'>Not Free</option>
     <option value='42'>Free for 1 day</option>
-    <option value='84'>Free for 2 day</option>
-    <option value='126'>Free for 3 day</option>
-
     <option value='1'>Free for 1 week</option>
     <option value='2'>Free for 2 weeks</option>
     <option value='4'>Free for 4 weeks</option>

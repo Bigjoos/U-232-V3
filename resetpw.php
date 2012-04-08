@@ -9,10 +9,10 @@
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
 require_once(INCL_DIR.'password_functions.php');
-ini_set('session.use_trans_sid', '0');
-get_template();
 dbconn();
+ini_set('session.use_trans_sid', '0');
 session_start();
+get_template();
 $lang = array_merge( load_language('global'), load_language('passhint') );
 $stdhead = array(/** include js **/'js' => array('jquery','jquery.simpleCaptcha-0.2'));
 $HTMLOUT = '';
@@ -145,7 +145,6 @@ stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_error13']}");
 else 
 stderr("{$lang['stderr_successhead']}","{$lang['stderr_error14']} <a href='{$INSTALLER09['baseurl']}/login.php' class='altlink'><b>{$lang['stderr_error15']}</b></a> {$lang['stderr_error16']}", FALSE); 
 }else {
-
     $HTMLOUT .= "
     <script type='text/javascript'>
 	  /*<![CDATA[*/
