@@ -127,7 +127,7 @@ function write_logs($text,$type) {
                 $arrip2 = mysqli_fetch_row($resip2);
                 $ipcount = $arrip2[0];
                 $nip = ip2long($iphistory['ip']);
-                $banres = sql_query("SELECT COUNT(*) FROM bans WHERE $nip >= first AND $nip <= last") or sqlerr(__FILE__, __LINE__);
+                $banres = sql_query("SELECT COUNT(*) FROM bans WHERE '$nip' >= first AND '$nip' <= last") or sqlerr(__FILE__, __LINE__);
                 $banarr = mysqli_fetch_row($banres);
                 if ($banarr[0] == 0)
                 if ($ipcount > 1){
