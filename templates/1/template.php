@@ -267,7 +267,7 @@ global $CURUSER, $INSTALLER09, $start, $query_stat, $mc1, $querytime;
        <div id='footer_right'>
        Powered by <a href='https://u-232.com'>U-232 V3</a><br />
        Using Valid <b>CSS3, HTML &amp; PHP</b><br />
-       Support Forum <b>Click <a href='https://u-232.com/smf/index.php'>here</a></b><br />
+       Support Forum <b>Click <a href='https://forum.u-232.com/index.php'>here</a></b><br />
        ".($debug ? "| <a title='System View' rel='external' href='/staffpanel.php?tool=system_view'>System View</a> | ".
       "<a rel='external' title='APC' href='/staffpanel.php?tool=apc'>APC Stats</a> | ".
       "<a rel='external' title='Memcache' href='/staffpanel.php?tool=memcache'>Memcache</a>" : "")."";
