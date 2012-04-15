@@ -443,7 +443,7 @@ $number = 0;
                 <tr>
                 <td align="left">'.print_user_stuff($user_invited).'</td>
                 
-                <td align="center">'htmlsafechars(.$user_invited['email']).'</td>
+                <td align="center">'.htmlsafechars($user_invited['email']).'</td>
                 <td align="center">'.htmlsafechars($user_invited['ip']).'</td>
                 <td align="center">'.get_date($user_invited['last_access'],'').'</td>
                 <td align="center">'.get_date($user_invited['added'],'').'</td>
