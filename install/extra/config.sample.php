@@ -88,7 +88,7 @@ $INSTALLER09['expires']['iphistory'] = 900;  // 900 = 15 min
 $INSTALLER09['expires']['newpoll'] = 0;  // 900 = 15 min
 $INSTALLER09['expires']['genrelist'] = 30*86400; // 30x86400 = 30 days
 $INSTALLER09['expires']['genrelist2'] = 30*86400; // 30x86400 = 30 days
-$INSTALLER09['expires']['poll_data'] = 0; // 300 = 5 min
+$INSTALLER09['expires']['poll_data'] = 900; // 300 = 5 min
 $INSTALLER09['expires']['torrent_data'] = 900; // 900 = 15 min
 $INSTALLER09['expires']['user_flag'] = 86400*28; // 900 = 15 min
 $INSTALLER09['expires']['shit_list'] = 900; // 900 = 15 min
