@@ -1,8 +1,8 @@
 <?php
 //==09 Hnr mod - sir_snugglebunny
-    if  ($user['paranoia'] < 2 || $CURUSER['id'] == $id || $CURUSER['class'] >= UC_STAFF) 
+    if  ($user['paranoia'] < 2 || $CURUSER['id'] == $id || $CURUSER['class'] >= UC_POWER_USER) 
     {
-    $completed = $count2= '';
+    $completed = $count2 = $dlc = '';
     $r = sql_query("SELECT torrents.name,torrents.added AS torrent_added, snatched.start_date AS s, snatched.complete_date AS c, snatched.downspeed, snatched.seedtime, snatched.seeder, snatched.torrentid as tid, snatched.id, categories.id as category, categories.image, categories.name as catname, snatched.uploaded, snatched.downloaded, snatched.hit_and_run, snatched.mark_of_cain, snatched.complete_date, snatched.last_action, torrents.seeders, torrents.leechers, torrents.owner, snatched.start_date AS st, snatched.start_date FROM snatched JOIN torrents ON torrents.id = snatched.torrentid JOIN categories ON categories.id = torrents.category WHERE snatched.finished='yes' AND userid=".sqlesc($id)." AND torrents.owner != ".sqlesc($id)." ORDER BY snatched.id DESC") or sqlerr(__FILE__, __LINE__);
     //=== completed
     if (mysqli_num_rows($r) > 0){ 
@@ -13,7 +13,7 @@
     <td class='colhead' align='center'>{$lang['userdetails_s']}</td>
     <td class='colhead' align='center'>{$lang['userdetails_l']}</td>
     <td class='colhead' align='center'>{$lang['userdetails_ul']}</td>
-    <td class='colhead' align='center'>{$lang['userdetails_dl']}</td>
+    ".($INSTALLER09['ratio_free'] ? "" : "<td class='colhead' align='center'>{$lang['userdetails_dl']}</td>")."
     <td class='colhead' align='center'>{$lang['userdetails_ratio']}</td>
     <td class='colhead' align='center'>{$lang['userdetails_wcompleted']}</td>
     <td class='colhead' align='center'>{$lang['userdetails_laction']}</td>
@@ -64,7 +64,7 @@
     $dl_speed = ($a["downspeed"] > 0 ? mksize($a["downspeed"]) : ($a["leechtime"] > 0 ? mksize($a["downloaded"] / $a["leechtime"]) : mksize(0)));
     else
     $dl_speed = mksize(($a["downloaded"] / ( $a['c'] - $a['s'] + 1 )));
-    $dlc="";
+    
     switch (true){
     case ($dl_speed > 600):
     $dlc = 'red';
@@ -91,7 +91,7 @@
     <td align='center' class='$class'>".(int)$a['seeders']."</td>
     <td align='center' class='$class'>".(int)$a['leechers']."</td>
     <td align='center' class='$class'>".mksize($a['uploaded'])."</td>
-    <td align='center' class='$class'>".mksize($a['downloaded'])."</td>
+    ".($INSTALLER09['ratio_free'] ? "" : "<td align='center' class='$class'>".mksize($a['downloaded'])."</td>")."
     <td align='center' class='$class'>".($a['downloaded'] > 0 ? "<font color='" . get_ratio_color(number_format($a['uploaded'] / $a['downloaded'], 3)) . "'>".number_format($a['uploaded'] / $a['downloaded'], 3)."</font>" : ($a['uploaded'] > 0 ? 'Inf.' : '---'))."<br /></td>
     <td align='center' class='$class'>".get_date($a['complete_date'], 'DATE')."</td>
     <td align='center' class='$class'>".get_date($a['last_action'], 'DATE')."</td>

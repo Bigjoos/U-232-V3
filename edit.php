@@ -162,6 +162,25 @@ loggedinorreturn();
 		 ($row['free'] != 1 ? "Until ".get_date($row['free'],'DATE')." 
 		 (".mkprettytime($row['free'] - TIME_NOW)." to go)" : 'Unlimited'), 1);
     }
+    if ($CURUSER['class'] >= UC_STAFF)
+    {
+      $HTMLOUT  .= tr("Silver torrent ", ($row['silver'] != 0 ? 
+	  "<input type='checkbox' name='slvr' value='1' /> Remove Silver torrent" : "
+    <select name='half_length'>
+    <option value='0'>------</option>
+    <option value='42'>Silver for 1 day</option>
+    <option value='1'>Silver for 1 week</option>
+    <option value='2'>Silver for 2 weeks</option>
+    <option value='4'>Silver for 4 weeks</option>
+    <option value='8'>Silver for 8 weeks</option>
+    <option value='255'>Unlimited</option>
+    </select>"), 1);
+    }
+    if ($row['silver'] != 0) {
+    	 $HTMLOUT  .= tr("Silver Torrent Duration", 
+		 ($row['silver'] != 1 ? "Until ".get_date($row['silver'],'DATE')." 
+		 (".mkprettytime($row['silver'] - TIME_NOW)." to go)" : 'Unlimited'), 1);
+    }
     // ===09 Allow Comments
     if ($CURUSER['class'] >= UC_STAFF && $CURUSER['class'] == UC_MAX) {
     if ($row["allow_comments"] == "yes")

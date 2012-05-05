@@ -51,8 +51,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
 	}
 	
     if (isset($_GET['sort']) && isset($_GET['type'])) {
-    $column = '';
-    $ascdesc = '';
+    $column = $ascdesc = '';
     $_valid_sort = array('id','name','numfiles','comments','added','size','times_completed','seeders','leechers','owner');
     $column = isset($_GET['sort']) && isset($_valid_sort[(int)$_GET['sort']]) ? $_valid_sort[(int)$_GET['sort']] : $_valid_sort[0];
 
@@ -233,7 +232,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
     elseif (count($wherecatina) == 1)
       $wherea[] = 'category ='.$wherecatina[0];
 
-    if (isset($cleansearchstr))  {
+    if (isset($cleansearchstr ) ) {
 		  $orderby = 'ORDER BY id DESC';
 		  $searcha = explode(' ', $cleansearchstr);
 		//==Memcache search cloud by putyn
@@ -246,7 +245,6 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
         $wherea[] = join(' OR ',$searchincrt);
     }
 
-    
     $where = count($wherea) ? 'WHERE '.join(' AND ',$wherea) : '';
 		  
     $res = sql_query("SELECT COUNT(id) FROM torrents $where") or sqlerr(__FILE__, __LINE__);
@@ -273,7 +271,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
         }
       $pager = pager($torrentsperpage, $count, "browse.php?" . $addparam);
 
-    $query = "SELECT id, category, leechers, seeders, bump, release_group, subs, name, times_completed, size, added, poster, descr, type, free, comments, numfiles, filename, anonymous, sticky, nuked, vip, nukereason, newgenre, description, owner, username, youtube, checked_by, IF(nfo <> '', 1, 0) as nfoav," .
+    $query = "SELECT id, search_text, category, leechers, seeders, bump, release_group, subs, name, times_completed, size, added, poster, descr, type, free, silver, comments, numfiles, filename, anonymous, sticky, nuked, vip, nukereason, newgenre, description, owner, username, youtube, checked_by, IF(nfo <> '', 1, 0) as nfoav," .
     "IF(num_ratings < {$INSTALLER09['minvotes']}, NULL, ROUND(rating_sum / num_ratings, 1)) AS rating ".
     "FROM torrents $where $orderby {$pager['limit']}";
     $res = sql_query($query) or sqlerr(__FILE__, __LINE__);
@@ -289,7 +287,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
       $title = '';
 
     if ($CURUSER['viewscloud'] === "yes") {
-    $HTMLOUT .= "<div id='wrapper1' style='width:80%;border:1px solid black;background-color:pink;'>";
+    $HTMLOUT .= "<div class='article' align='center'><div id='wrapper1' style='width:80%;border:1px solid black;background-color:pink;' align='center'>";
     //== print out the tag cloud
     $HTMLOUT .= cloud() . "
     </div>";
@@ -314,7 +312,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
     $cattable = categories_table($cats, $wherecatina, "browse.php");
     $HTMLOUT .= ($cattable);
     $HTMLOUT .= "<br /><table width='75%' class='main' border='0' cellspacing='0' cellpadding='0'>
-    <tr><td class='embedded'>";
+<tr><td class='embedded'>";
     $HTMLOUT .= "<p align='center'>
     {$lang['search_search']}
     <input type='text' name='search' size='40' value='".(isset($cleansearchstr) ? $cleansearchstr : '')."' />";
@@ -336,7 +334,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
     $HTMLOUT .= $searchin.'&nbsp;'.$deadcheck.'&nbsp;'.$only_free_box;
     $HTMLOUT .= "<input type='submit' value='{$lang['search_search_btn']}' class='btn' />";
     $HTMLOUT .="</p>
-    </td></tr></table></form><br />";
+     </td></tr></table></form><br />";
     
     $HTMLOUT .="{$new_button}";
    
@@ -386,5 +384,6 @@ if ($no_log_ip) {
            }
           }
         //== End Ip logger
+
 echo stdhead($title, true, $stdhead) . $HTMLOUT . stdfoot($stdfoot);
 ?>

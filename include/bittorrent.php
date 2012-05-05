@@ -170,7 +170,7 @@ function check_bans($ip, &$reason = '') {
                      'avatar_rights, offensive_avatar, view_offensive_avatar, paranoia, google_talk, msn, aim, yahoo, website, '.
                      'icq, show_email, parked_until, gotgift, hash1, suspended, bjwins, bjlosses, warn_reason, onirc, irctotal, '.
                      'birthday, got_blocks, last_access_numb, onlinetime, pm_on_delete, commentpm, split, browser, hits, '.
-                     'comments, categorie_icon, reputation, perms, mood, got_moods, pms_per_page, show_pm_avatar, watched_user, game_access';
+                     'comments, categorie_icon, reputation, perms, mood, got_moods, pms_per_page, show_pm_avatar, watched_user, game_access, browse_icons';
       
       $res = sql_query("SELECT ".$user_fields." ".
                        "FROM users ".
@@ -594,7 +594,8 @@ function validemail($email) {
 //putyn  08/08/2011
 function sqlesc($x) {
     if(is_integer($x))
-    return (int)$x;
+      return (int)$x;
+      
     return sprintf('\'%s\'',((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $x) : ((trigger_error("Err", E_USER_ERROR)) ? "" : "")));
 }
 

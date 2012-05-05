@@ -22,7 +22,7 @@
 		<tr><td class="colhead"><b>Username / IP</b></td>
 		<td class="colhead"><b>Email</b></td>
 		<td class="colhead"><b>Uploaded</b></td>
-		<td class="colhead"><b>Downloaded</b></td>
+		'.($INSTALLER09['ratio_free'] ? '' : '<td class="colhead"><b>Downloaded</b></td>').'
 		<td class="colhead"><b>Ratio</b></td>
 		<td class="colhead"><b>Status</b></td></tr>';
 	  while($arr_invited = mysqli_fetch_assoc($rez_invited))
@@ -30,8 +30,8 @@
 	  $inviteted_by_this_member .= '<tr><td>'.($arr_invited['status'] == 'pending' ? htmlsafechars($arr_invited['username']) : format_username($arr_invited).'<br />'.$arr_invited['ip']).'</td>
 		<td>'.htmlsafechars($arr_invited['email']).'</td>
 		<td>'.mksize($arr_invited['uploaded']).'</td>
-		<td>'.mksize($arr_invited['downloaded']).'</td>
-		<td>'.member_ratio($arr_invited['uploaded'], $arr_invited['downloaded']).'</td>
+		'.($INSTALLER09['ratio_free'] ? '' : '<td>'.mksize($arr_invited['downloaded']).'</td>').'
+		<td>'.member_ratio($arr_invited['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $arr_invited['downloaded']).'</td>
 		<td>'.($arr_invited['status'] == 'confirmed' ? '<span style="color: green;">Confirmed</span></td></tr>' : '<td><span style="color: red;">Pending</span></td></tr>') ;
 		}
 	  $inviteted_by_this_member .= '</table>';

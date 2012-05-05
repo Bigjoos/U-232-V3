@@ -134,6 +134,80 @@ CREATE TABLE IF NOT EXISTS `bans` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `bannedemails`
+--
+
+CREATE TABLE IF NOT EXISTS `bannedemails` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `added` int(11) NOT NULL,
+  `addedby` int(10) unsigned NOT NULL DEFAULT '0',
+  `comment` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=55 ;
+
+--
+-- Dumping data for table `bannedemails`
+--
+
+INSERT INTO `bannedemails` (`id`, `added`, `addedby`, `comment`, `email`) VALUES
+(1, 1282299331, 1, 'Fake provider', '*@emailias.com'),
+(2, 1282299331, 1, 'Fake provider', '*@e4ward.com'),
+(3, 1282299331, 1, 'Fake provider', '*@dumpmail.de'),
+(4, 1282299331, 1, 'Fake provider', '*@dontreg.com'),
+(5, 1282299331, 1, 'Fake provider', '*@disposeamail.com'),
+(6, 1282299331, 1, 'Fake provider', '*@antispam24.de'),
+(7, 1282299331, 1, 'Fake provider', '*@trash-mail.de'),
+(8, 1282299331, 1, 'Fake provider', '*@spambog.de'),
+(9, 1282299331, 1, 'Fake provider', '*@spambog.com'),
+(10, 1282299331, 1, 'Fake provider', '*@discardmail.com'),
+(11, 1282299331, 1, 'Fake provider', '*@discardmail.de'),
+(12, 1282299331, 1, 'Fake provider', '*@mailinator.com'),
+(13, 1282299331, 1, 'Fake provider', '*@wuzup.net'),
+(14, 1282299331, 1, 'Fake provider', '*@junkmail.com'),
+(15, 1282299331, 1, 'Fake provider', '*@clarkgriswald.net'),
+(16, 1282299331, 1, 'Fake provider', '*@2prong.com'),
+(17, 1282299331, 1, 'Fake provider', '*@jrwilcox.com'),
+(18, 1282299331, 1, 'Fake provider', '*@10minutemail.com'),
+(19, 1282299331, 1, 'Fake provider', '*@pookmail.com'),
+(20, 1282299331, 1, 'Fake provider', '*@golfilla.info'),
+(21, 1282299331, 1, 'Fake provider', '*@afrobacon.com'),
+(22, 1282299331, 1, 'Fake provider', '*@senseless-entertainment.com'),
+(23, 1282299331, 1, 'Fake provider', '*@put2.net'),
+(24, 1282299331, 1, 'Fake provider', '*@temporaryinbox.com'),
+(25, 1282299331, 1, 'Fake provider', '*@slaskpost.se'),
+(26, 1282299331, 1, 'Fake provider', '*@haltospam.com'),
+(27, 1282299331, 1, 'Fake provider', '*@h8s.org'),
+(28, 1282299331, 1, 'Fake provider', '*@ipoo.org'),
+(29, 1282299331, 1, 'Fake provider', '*@oopi.org'),
+(30, 1282299331, 1, 'Fake provider', '*@poofy.org'),
+(31, 1282299331, 1, 'Fake provider', '*@jetable.org'),
+(32, 1282299331, 1, 'Fake provider', '*@kasmail.com'),
+(33, 1282299331, 1, 'Fake provider', '*@mail-filter.com'),
+(34, 1282299331, 1, 'Fake provider', '*@maileater.com'),
+(35, 1282299331, 1, 'Fake provider', '*@mailexpire.com'),
+(36, 1282299331, 1, 'Fake provider', '*@mailnull.com'),
+(37, 1282299331, 1, 'Fake provider', '*@mailshell.com'),
+(38, 1282299331, 1, 'Fake provider', '*@mymailoasis.com'),
+(39, 1282299331, 1, 'Fake provider', '*@mytrashmail.com'),
+(40, 1282299331, 1, 'Fake provider', '*@mytrashmail.net'),
+(41, 1282299331, 1, 'Fake provider', '*@shortmail.net'),
+(42, 1282299331, 1, 'Fake provider', '*@sneakemail.com'),
+(43, 1282299331, 1, 'Fake provider', '*@sofort-mail.de'),
+(44, 1282299331, 1, 'Fake provider', '*@spamcon.org'),
+(45, 1282299331, 1, 'Fake provider', '*@spamday.com'),
+(46, 1282299331, 1, 'fake provider', '*@spamex.com'),
+(47, 1282299307, 1, 'fake provider', '*@spamgourmet.com'),
+(48, 1282299289, 1, 'fake provider', '*@spamhole.com'),
+(49, 1282299331, 1, 'Fake provider', '*@spammotel.com'),
+(50, 1282299331, 1, 'Fake provider', '*@tempemail.net'),
+(51, 1282299331, 1, 'Fake provider', '*@tempinbox.com'),
+(52, 1282299331, 1, 'Fake provider', '*@throwaway.de'),
+(53, 1282299331, 1, 'Fake provider', '*@woodyland.org');
+
+-- --------------------------------------------------------
+--
 -- Table structure for table `blackjack`
 --
 
@@ -533,7 +607,10 @@ INSERT INTO `cleanup` (`clean_id`, `clean_title`, `clean_file`, `clean_time`, `c
 (44, 'Warned Cleanup', 'warned_update.php', 1322248383, 86400, '6e558b89ac60454eaa3a45243347c977', 1, 'Warned Stuffs Update', 1),
 (45, 'Games Update', 'gameaccess_update.php', 1322306043, 86400, '33704fd97f8840ff08ef4e6ff236b3e4', 1, 'Games Stuffs Updates', 1),
 (46, 'Pm Update', 'sendpmpos_update.php', 1322306068, 86400, '32784b9c2891f022a91d5007f068f7d9', 1, 'Pm Stuffs Updates', 1),
-(47, 'Avatar Update', 'avatarpos_update.php', 1322306522, 86400, 'f257794129ee772f5cfe00b33b363100', 1, 'Avatar Stuffs Updates', 1);
+(47, 'Avatar Update', 'avatarpos_update.php', 1322306522, 86400, 'f257794129ee772f5cfe00b33b363100', 1, 'Avatar Stuffs Updates', 1),
+(48, 'Birthday Pms', 'birthday_update.php', 1336226521, 86400, '1fd167bf236ea5e74e835224d1cc36e9', 1, 'Pm all members with birthdays.', 1),
+(49, 'Movie of the week', 'mow_update.php', 1336316808, 604800, '716274782f2f7229d960a6661fb06b60', 1, 'Updates movie of the week', 1),
+(50, 'Silver torrents', 'silvertorrents_update.php', 1336179577, 3600, '3e1aab005271870d69934ebe37e28819', 1, 'Clean expired silver', 1);
 
 -- --------------------------------------------------------
 
@@ -1847,6 +1924,7 @@ CREATE TABLE IF NOT EXISTS `site_config` (
 -- Dumping data for table `site_config`
 --
 
+
 INSERT INTO `site_config` (`name`, `value`) VALUES
 ('site_online', '1'),
 ('autoshout_on', '1'),
@@ -1856,7 +1934,9 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('maxusers', '10000'),
 ('invites', '5000'),
 ('openreg_invites', 'true'),
-('failedlogins', '5');
+('failedlogins', '5'),
+('ratio_free', 'false'),
+('captcha_on', 'true');
 
 -- --------------------------------------------------------
 
@@ -2266,6 +2346,7 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `description` varchar(120) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `youtube` varchar(42) NOT NULL DEFAULT '',
   `tags` text COLLATE utf8_unicode_ci NOT NULL,
+  `silver` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `info_hash` (`info_hash`),
   KEY `owner` (`owner`),
@@ -2500,6 +2581,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `staff_notes` text COLLATE utf8_unicode_ci NOT NULL,
   `game_access` int(11) NOT NULL DEFAULT '1',
   `show_staffshout` enum('yes','no') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT 'yes',
+  `browse_icons` enum('yes','no') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'no',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `ip` (`ip`),

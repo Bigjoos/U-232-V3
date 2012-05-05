@@ -89,10 +89,12 @@ $HTMLOUT .="<tr><td width='50%' class='table' align='left'>Autoshout:</td><td cl
 <tr><td width='50%' class='table' align='left'>SeedBonus:</td><td class='table' align='left'>Yes <input class='table' type='radio' name='seedbonus_on' value='1' ".($site_settings['seedbonus_on'] ? 'checked=\'checked\'' : '')." /> No <input class='table' type='radio' name='seedbonus_on' value='0' ".(!$site_settings['seedbonus_on'] ? 'checked=\'checked\'' : '')." /></td></tr>
 <tr><td width='50%' class='table' align='left'>Forums Online:</td><td class='table' align='left'>Yes <input class='table' type='radio' name='forums_online' value='1' ".($site_settings['forums_online'] ? 'checked=\'checked\'' : '')." /> No <input class='table' type='radio' name='forums_online' value='0' ".(!$site_settings['forums_online'] ? 'checked=\'checked\'' : '')." /></td></tr>
 <tr><td width='50%' class='table' align='left'>Open Reg:</td><td class='table' align='left'><input type='text' name='openreg' size='2' value='".htmlsafechars($site_settings['openreg'])."' /></td></tr>
-<tr><td width='50%' class='table' align='left'>Open Reg Invites:</td><td class='table' align='left'><input type='text' name='openreg_invites' size='2' value='".$site_settings['openreg_invites']."' /></td></tr>
+<tr><td width='50%' class='table' align='left'>Open Reg Invites:</td><td class='table' align='left'><input type='text' name='openreg_invites' size='2' value='".htmlsafechars($site_settings['openreg_invites'])."' /></td></tr>
 <tr><td width='50%' class='table' align='left'>Max Users</td><td class='table' align='left'><input type='text' name='maxusers' size='2' value='".htmlsafechars($site_settings['maxusers'])."' /></td></tr>
 <tr><td width='50%' class='table' align='left'>Max Invited</td><td class='table' align='left'><input type='text' name='invites' size='2' value='".htmlsafechars($site_settings['invites'])."' /></td></tr>
 <tr><td width='50%' class='table' align='left'>Max Logins</td><td class='table' align='left'><input type='text' name='failedlogins' size='2' value='".htmlsafechars($site_settings['failedlogins'])."' /></td></tr>
+<tr><td width='50%' class='table' align='left'>Ratio Free:</td><td class='table' align='left'><input type='text' name='ratio_free' size='2' value='".htmlsafechars($site_settings['ratio_free'])."' /></td></tr>
+<tr><td width='50%' class='table' align='left'>Captcha on:</td><td class='table' align='left'><input type='text' name='captcha_on' size='2' value='".htmlsafechars($site_settings['captcha_on'])."' /></td></tr>
 <tr><td colspan='2' class='table' align='center'><input type='submit' value='Apply changes' /></td></tr>
 </table></form>";
 

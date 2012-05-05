@@ -62,8 +62,8 @@ $HTMLOUT .= "<table width='78%'border='0' cellspacing='0' cellpadding='5'>
 <td class='colhead' align='center'>{$lang['snatches_connectable']}</td>
 <td class='colhead' align='right'>{$lang['snatches_uploaded']}</td>
 <td class='colhead' align='right'>{$lang['snatches_upspeed']}</td>
-<td class='colhead' align='right'>{$lang['snatches_downloaded']}</td>
-<td class='colhead' align='right'>{$lang['snatches_downspeed']}</td>
+".($INSTALLER09['ratio_free'] ? "" : "<td class='colhead' align='right'>{$lang['snatches_downloaded']}</td>")."
+".($INSTALLER09['ratio_free'] ? "" : "<td class='colhead' align='right'>{$lang['snatches_downspeed']}</td>")."
 <td class='colhead' align='right'>{$lang['snatches_ratio']}</td>
 <td class='colhead' align='right'>{$lang['snatches_completed']}</td>
 <td class='colhead' align='right'>{$lang['snatches_seedtime']}</td>
@@ -91,8 +91,8 @@ while ($arr = mysqli_fetch_assoc($res)) {
   <td align='center'>".($arr["connectable"] == "yes" ? "<font color='green'>Yes</font>" : "<font color='red'>No</font>")."</td>
   <td align='right'>".mksize($arr["uploaded"])."</td>
   <td align='right'>".htmlsafechars($upspeed)."/s</td>
-  <td align='right'>".mksize($arr["downloaded"])."</td>
-  <td align='right'>".htmlsafechars($downspeed)."/s</td>
+  ".($INSTALLER09['ratio_free'] ? "" : "<td align='right'>".mksize($arr["downloaded"])."</td>")."
+  ".($INSTALLER09['ratio_free'] ? "" : "<td align='right'>".htmlsafechars($downspeed)."/s</td>")."
   <td align='right'>".htmlsafechars($ratio)."</td>
   <td align='right'>".htmlsafechars($completed)."</td>
   <td align='right'>".mkprettytime($arr["seedtime"])."</td>

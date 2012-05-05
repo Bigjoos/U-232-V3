@@ -148,6 +148,7 @@ $class_color = (function_exists('get_user_class_color') ? true : false);
                         'uploadapps'   => 'uploadapps',
                         'modtask'   => 'modtask',
                         'staff_shistory'   => 'staff_shistory',
+                        'bannedemails'   => 'bannedemails',
                         'cloudview'   => 'cloudview'
                         );
     

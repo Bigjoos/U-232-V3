@@ -92,7 +92,7 @@ if (isset($free) && (count($free) < 1))
 		<td class='colhead' align='left'>Message</td>
 		<td class='colhead' align='left'>Remove</td></tr>";
 
-    $checked1 = $checked2 = $checked3 = '';
+    $checked1 = $checked2 = $checked3 = $checked4 = '';
     foreach ($free as $fl)
     {
 
@@ -112,6 +112,12 @@ if (isset($free) && (count($free) < 1))
                 $mode = 'All Torrents Free and Double Upload';
                 $checked3 = 'checked=\'checked\'';
                 break;
+
+            case 4:
+                $mode = 'All Torrents Silver';
+                $checked4 = 'checked=\'checked\'';
+                break;
+
             default:
                 $mode = 'Not Enabled';
         }
@@ -146,6 +152,9 @@ $HTMLOUT .= "<h2>Set Freeleech</h2>
  <tr>
  <td >All Torrents Free and Double Upload</td>
  <td><input name=\"modifier\" type=\"radio\" $checked3 value=\"3\" /></td></tr>
+ <tr>
+ <td >All Torrents Silver</td>
+ <td><input name=\"modifier\" type=\"radio\" $checked4 value=\"4\" /></td></tr>
  </table>
     </td></tr>
 	<tr><td class='rowhead'>Expires in

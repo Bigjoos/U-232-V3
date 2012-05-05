@@ -1,6 +1,6 @@
 <?php
 /**
-This file created on Feb 25 2012 19:01:53.
+This file created on Apr 17 2012 23:08:10.
 Site Config mod by stoner with a little help from pdq for U-232.
 **/
 $INSTALLER09['site_online'] = 1;
@@ -12,4 +12,6 @@ $INSTALLER09['maxusers'] = 10000;
 $INSTALLER09['invites'] = 5000;
 $INSTALLER09['openreg_invites'] = true;
 $INSTALLER09['failedlogins'] = 5;
+$INSTALLER09['ratio_free'] = false;
+$INSTALLER09['captcha_on'] = true;
 ?>

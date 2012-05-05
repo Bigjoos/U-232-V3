@@ -10,7 +10,6 @@ require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR
 require_once(CLASS_DIR.'page_verify.php');
 require_once(CACHE_DIR.'timezones.php');
 dbconn();
-
 global $CURUSER;
 if(!$CURUSER){
 get_template();
@@ -70,15 +69,13 @@ get_template();
     });
     /*]]>*/
     </script>
-    <p>{$lang['signup_cookies']}</p>
     <form method='post' action='takesignup.php'>
-    <noscript>{$lang['signup_noscript']}</noscript>
     <table border='1' cellspacing='0' cellpadding='10'>
     <tr><td align='right' class='heading'>{$lang['signup_uname']}</td><td align='left'><input type='text' size='40' name='wantusername' id='wantusername' onblur='checkit();' /><div id='namecheck'></div></td></tr>
     <tr><td align='right' class='heading'>{$lang['signup_pass']}</td><td align='left'><input class='password' type='password' size='40' name='wantpassword' /></td></tr>
     <tr><td align='right' class='heading'>{$lang['signup_passa']}</td><td align='left'><input type='password' size='40' name='passagain' /></td></tr>
     <tr valign='top'><td align='right' class='heading'>{$lang['signup_email']}</td><td align='left'><input type='text' size='40' name='email' />
-    <table width='250' border='0' cellspacing='0' cellpadding='0'><tr><td class='embedded'><font class='small'>{$lang['signup_valemail']}</font></td></tr>
+    <table width='250' border='0' cellspacing='0' cellpadding='0'><tr><td class='embedded'><span style='font-size: 1em;'>{$lang['signup_valemail']}</span></td></tr>
     </table>
     </td></tr>
     <tr><td align='right' class='heading'>{$lang['signup_timez']}</td><td align='left'>{$time_select}</td></tr>";
@@ -118,7 +115,7 @@ get_template();
     $i++;
     }
     $day .= "</select>";
-    $HTMLOUT .= "<tr><td align='right' class='heading'>{$lang['signup_birth']}<font color=\"red\">*</font></td><td align='left'>". $year . $month . $day ."</td></tr>";
+    $HTMLOUT .= "<tr><td align='right' class='heading'>{$lang['signup_birth']}<span style='color:red'>*</span></td><td align='left'>". $year . $month . $day ."</td></tr>";
     //==End
     //==Passhint
     $passhint="";
@@ -133,12 +130,12 @@ get_template();
 		$passhint .= "<option value='".$sph['id']."'>".$sph['question']."</option>\n"; 
 		}
 		$HTMLOUT .= "<tr><td align='right' class='heading'>{$lang['signup_select']}</td><td align='left'><select name='passhint'>\n$passhint\n</select></td></tr>
-		<tr><td align='right' class='heading'>{$lang['signup_enter']}</td><td align='left'><input type='text' size='40'  name='hintanswer' /><br /><font class='small'>{$lang['signup_this_answer']}<br />{$lang['signup_this_answer1']}</font></td></tr>	
+		<tr><td align='right' class='heading'>{$lang['signup_enter']}</td><td align='left'><input type='text' size='40'  name='hintanswer' /><br /><span style='font-size: 1em;'>{$lang['signup_this_answer']}<br />{$lang['signup_this_answer1']}</span></td></tr>	
     <tr><td align='right' class='heading'></td><td align='left'>
     <input type='checkbox' name='rulesverify' value='yes' /> {$lang['signup_rules']}<br />
     <input type='checkbox' name='faqverify' value='yes' /> {$lang['signup_faq']}<br />
     <input type='checkbox' name='ageverify' value='yes' /> {$lang['signup_age']}</td></tr>
-    <tr><td class='rowhead' colspan='2' id='captchasignup'></td></tr>
+    ".($INSTALLER09['captcha_on'] ? "<tr><td class='rowhead' colspan='2' id='captchasignup'></td></tr>" : "")."
     <tr><td align='center' colspan='2'>{$lang['signup_click']} <strong>{$lang['signup_x']}</strong> {$lang['signup_click1']}</td></tr><tr>
     <td colspan='2' align='center'>";
     for ($i=0; $i < count($value); $i++) {

@@ -48,6 +48,8 @@ $lang = array(
 'edit_youtube_info' => 'Link should look like <b>http://www.youtube.com/watch?v=camI8yuoy8U</b>',
 'edit_torrent_tags' => "Torrent tags",
 'edit_tags_info' => "Multiple tags must be seperated by a comma like tag1,tag2",
+'edit_recommend' => "If you want to recommend this torrent check this box!",
+'edit_recommend_torrent' => "Recommend Torrent",
 #edit stdhead
 'edit_stdhead' => "Edit torrent"
 

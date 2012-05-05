@@ -12,12 +12,14 @@ require_once(INCL_DIR.'password_functions.php');
 require_once(CLASS_DIR.'page_verify.php');
 require_once(CLASS_DIR.'class_browser.php');
 dbconn();
+global $CURUSER;
+if (!$CURUSER) {
 get_template();
+}
 session_start();
-$lang = array_merge( load_language('global'), load_language('takelogin') );
-
 $newpage = new page_verify();
 $newpage->check('takelogin');
+$lang = array_merge( load_language('global'), load_language('takelogin') );
 
 // 09 failed logins thanks to pdq - Retro
 function failedloginscheck() {
@@ -32,15 +34,17 @@ function failedloginscheck() {
    }
 } // End
 
-if (!mkglobal('username:password:captchaSelection:submitme'))
+if (!mkglobal('username:password'.($INSTALLER09['captcha_on'] ? ":captchaSelection:" : ":").'submitme'))
       die('Something went wrong');
 
 if ($submitme != 'X')
    stderr('Ha Ha', 'You Missed, You plonker !');
 
+if ($INSTALLER09['captcha_on']) { 
 if (empty($captchaSelection) || $_SESSION['simpleCaptchaAnswer'] != $captchaSelection){
    header('Location: login.php');
    exit();
+}
 }
 
 function bark($text = 'Username or password incorrect') {
@@ -126,7 +130,9 @@ if (isset($_POST['use_ssl']) && $_POST['use_ssl'] == 1 && !isset($_SERVER['HTTPS
    $INSTALLER09['baseurl'] = str_replace('http','https',$INSTALLER09['baseurl']);
 
 $ssl_value = (isset($_POST['perm_ssl']) && $_POST['perm_ssl'] == 1 ? 'ssluse = 2' : 'ssluse = 1');
+
 $ssluse = ($row['ssluse'] == 2 ? 2 : 1);
+
 
 // output browser
 $ua=getBrowser();

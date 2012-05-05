@@ -129,10 +129,7 @@ loggedinorreturn();
     </tr>";
 
     $s = "<select name='type'>\n<option value='0'>({$lang['upload_choose_one']})</option>\n";
-    //".BBcode($descr, false)."
-    //{$lang['upload_description']}
-    //". textbbcode("upload","descr")."
-    //
+
     $cats = genrelist2();
     foreach ($cats as $cat)
     {
@@ -182,6 +179,21 @@ loggedinorreturn();
     <option value='2'>Free for 2 weeks</option>
     <option value='4'>Free for 4 weeks</option>
     <option value='8'>Free for 8 weeks</option>
+    <option value='255'>Unlimited</option>
+    </select></td>
+    </tr>";
+    }
+    if ($CURUSER['class'] >= UC_UPLOADER){
+    $HTMLOUT .= "<tr>
+    <td class='heading' valign='top' align='right'>Silver Torrent</td>
+    <td valign='top' align='left'>
+    <select name='half_length'>
+    <option value='0'>Not Silver</option>
+    <option value='42'>Silver for 1 day</option>
+    <option value='1'>Silver for 1 week</option>
+    <option value='2'>Silver for 2 weeks</option>
+    <option value='4'>Silver for 4 weeks</option>
+    <option value='8'>Silver for 8 weeks</option>
     <option value='255'>Unlimited</option>
     </select></td>
     </tr>";

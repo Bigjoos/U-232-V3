@@ -294,6 +294,7 @@ loggedinorreturn();
     $HTMLOUT .= tr($lang['usercp_clearnewtagmanually'], "<input type='checkbox' name='clear_new_tag_manually'" . ($CURUSER["clear_new_tag_manually"] == "yes" ? " checked='checked'" : "") . " /> {$lang['usercp_default_clearnewtagmanually']}",1);
     $HTMLOUT .= tr($lang['usercp_scloud'], "<input type='checkbox' name='viewscloud'" . ($CURUSER["viewscloud"] == "yes" ? " checked='checked'" : "") . " /> {$lang['usercp_scloud1']}",1);
     $HTMLOUT .= tr($lang['usercp_split'],"<input type='radio' name='split'" . ($CURUSER["split"] == "yes" ? " checked='checked'" : "") . " value='yes' />Yes<input type='radio' name='split'" . ($CURUSER["split"] == "no" ? " checked='checked'" : "") . " value='no' />No",1);
+    $HTMLOUT .= tr($lang['usercp_icons'],"<input type='radio' name='browse_icons'" . ($CURUSER["browse_icons"] == "yes" ? " checked='checked'" : "") . " value='yes' />Yes<input type='radio' name='browse_icons'" . ($CURUSER["browse_icons"] == "no" ? " checked='checked'" : "") . " value='no' />No",1);
     $HTMLOUT .= tr($lang['usercp_cats_sets'],
      "<select name='categorie_icon'>
      <option value='1'".($CURUSER['categorie_icon'] == 1 ? " selected='selected'" : "").">Default</option>
@@ -315,7 +316,7 @@ loggedinorreturn();
     $HTMLOUT .= tr($lang['usercp_language'],
     "<select name='language'>
     <option value='1'".($CURUSER['language'] == '1' ? " selected='selected'" : "").">En</option>
-    <option value='2'".($CURUSER['language'] == '2'  ? " selected='selected'" : "").">Swe</option>
+    <option value='2'".($CURUSER['language'] == '2'  ? " selected='selected'" : "").">Dk</option>
     </select>", $CURUSER['language']);
     
     //==status mod

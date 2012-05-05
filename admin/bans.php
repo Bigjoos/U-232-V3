@@ -31,7 +31,7 @@ class_check(UC_SYSOP);
    $lang = array_merge( $lang, load_language('ad_bans') );
    $remove = isset($_GET['remove']) ? (int)$_GET['remove'] : 0;
    if ($remove > 0) {
-   $banned = sql_query('SELECT first, last FROM bans WHERE id = '.$remove) or sqlerr(__FILE__,__LINE__);
+   $banned = sql_query('SELECT first, last FROM bans WHERE id = '.sqlesc($remove)) or sqlerr(__FILE__,__LINE__);
    if (!mysqli_num_rows($banned))
    stderr('Error', 'A Ban with that ID could not be found');
 	$ban = mysqli_fetch_assoc($banned);
@@ -43,7 +43,7 @@ class_check(UC_SYSOP);
 	}
     if (is_valid_id($remove))
     {
-      sql_query("DELETE FROM bans WHERE id=$remove") or sqlerr(__FILE__,__LINE__);
+      sql_query("DELETE FROM bans WHERE id=".sqlesc($remove)) or sqlerr(__FILE__,__LINE__);
       $removed = sprintf($lang['text_banremoved'], $remove);
       write_log("{$removed}".$CURUSER['id']." (".$CURUSER['username'].")");
     }
@@ -54,20 +54,20 @@ class_check(UC_SYSOP);
      
         $first = trim($_POST["first"]);
         $last = trim($_POST["last"]);
-        $comment = trim($_POST["comment"]);
+        $comment = htmlsafechars(trim($_POST["comment"]));
         if (!$first || !$last || !$comment)
           stderr("{$lang['stderr_error']}", "{$lang['text_missing']}");
         $first = ip2long($first);
         $last = ip2long($last);
         if ($first == -1 || $first === FALSE || $last == -1 || $last === FALSE)
           stderr("{$lang['stderr_error']}", "{$lang['text_badip.']}");
-        $comment = sqlesc($comment);
+
         $added = TIME_NOW;
         for ($i = $first; $i <= $last; $i++) {
 		  $key = 'bans:::'.long2ip($i);
 		  $mc1 -> delete_value($key);
 	     }
-        sql_query("INSERT INTO bans (added, addedby, first, last, comment) VALUES($added, {$CURUSER['id']}, $first, $last, $comment)") or sqlerr(__FILE__, __LINE__);
+        sql_query("INSERT INTO bans (added, addedby, first, last, comment) VALUES($added, ".sqlesc($CURUSER['id']).", $first, $last, ".sqlesc($comment).")") or sqlerr(__FILE__, __LINE__);
         header("Location: {$INSTALLER09['baseurl']}/staffpanel.php?tool=bans");
         die;
       }
@@ -104,11 +104,11 @@ class_check(UC_SYSOP);
         $arr["last"] = long2ip($arr["last"]);
         $HTMLOUT .= "<tr>
           <td>".get_date($arr['added'],'')."</td>
-          <td align='left'>{$arr['first']}</td>
-          <td align='left'>{$arr['last']}</td>
-          <td align='left'><a href='userdetails.php?id={$arr['addedby']}'>{$arr['username']}</a></td>
+          <td align='left'>".htmlsafechars($arr['first'])."</td>
+          <td align='left'>".htmlsafechars($arr['last'])."</td>
+          <td align='left'><a href='userdetails.php?id=".(int)$arr['addedby']."'>".htmlsafechars($arr['username'])."</a></td>
           <td align='left'>".htmlsafechars($arr['comment'], ENT_QUOTES)."</td>
-          <td><a href='staffpanel.php?tool=bans&amp;remove={$arr['id']}'>{$lang['text_remove']}</a></td>
+          <td><a href='staffpanel.php?tool=bans&amp;remove=".(int)$arr['id']."'>{$lang['text_remove']}</a></td>
          </tr>\n";
       }
       $HTMLOUT .= "</table>\n";

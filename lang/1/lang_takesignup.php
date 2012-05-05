@@ -24,6 +24,7 @@ $lang = array(
 'takesignup_mail' => "",
 'takesignup_confirm' => "user registration confirmation",
 'takesignup_badusername' => "The username your trying to use <b>(%s)</b> is on our black list chose another one",
+'takesignup_bannedmail' =>"This email address is banned!<br /><br /><strong>Reason</strong>:",
 'takesignup_from' => "From:"
 );
 

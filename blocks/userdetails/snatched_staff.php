@@ -1,6 +1,6 @@
 <?php
 //=== start snatched
-    $count_snatched = $count2 ='';
+    $count_snatched = $count2 = $dlc = '';
     if ($CURUSER['class'] >= UC_STAFF){
     if (isset($_GET["snatched_table"])){
     $HTMLOUT .="<tr><td class='one' align='right' valign='top'><b>Snatched:</b><br />[ <a href=\"userdetails.php?id=$id\" class=\"sublink\">Hide list</a> ]</td><td class='one'>";
@@ -11,7 +11,7 @@
     "LEFT JOIN categories AS cat ON cat.id = t.category ".
     "WHERE sn.userid=".sqlesc($id)." ORDER BY sn.start_date DESC") or sqlerr(__FILE__,__LINE__);
     $HTMLOUT .= "<table border='1' cellspacing='0' cellpadding='5' align='center'><tr><td class='colhead' align='center'>Category</td><td class='colhead' align='left'>Torrent</td>".
-    "<td class='colhead' align='center'>S / L</td><td class='colhead' align='center'>Up / Down</td><td class='colhead' align='center'>Torrent Size</td>".
+    "<td class='colhead' align='center'>S / L</td><td class='colhead' align='center'>Up".($INSTALLER09['ratio_free'] ? "" : "/ Down")."</td><td class='colhead' align='center'>Torrent Size</td>".
     "<td class='colhead' align='center'>Ratio</td><td class='colhead' align='center'>Client</td></tr>";
     while ($arr = mysqli_fetch_assoc($res)){
     //=======change colors
@@ -27,7 +27,7 @@
     else
     $dl_speed = mksize(($arr["downloaded"] / ( $arr['c'] - $arr['s'] + 1 )));
     
-    $dlc="";
+    
     switch (true){
     case ($dl_speed > 600):
     $dlc = 'red';
@@ -52,10 +52,9 @@
     $ratio = "Inf.";
     else
     $ratio = "N/A"; 
- 
     $HTMLOUT .= "<tr><td class='$class' align='center'>".($arr['owner'] == $id ? "<b><font color='orange'>Torrent owner</font></b><br />" : "".($arr['complete_date'] != '0'  ? "<b><font color='lightgreen'>Finished</font></b><br />" : "<b><font color='red'>Not Finished</font></b><br />")."")."<img src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/".htmlsafechars($arr['image'])."' alt='".htmlsafechars($arr['name'])."' title='".htmlsafechars($arr['name'])."' /></td>"."
     <td class='$class'><a class='altlink' href='{$INSTALLER09['baseurl']}/details.php?id=".(int)$arr['torrentid']."'><b>".htmlsafechars($arr['torrent_name'])."</b></a>".($arr['complete_date'] != '0'  ? "<br /><font color='yellow'>started: ".get_date($arr['start_date'], 0,1) ."</font><br />" : "<font color='yellow'>started:".get_date($arr['start_date'], 0,1)."</font><br /><font color='orange'>Last Action:".get_date($arr['last_action'], 0,1) ."</font>".get_date($arr['complete_date'], 0,1) ." ".($arr['complete_date'] == '0'  ? "".($arr['owner'] == $id ? "" : "[ ".mksize($arr["size"] - $arr["downloaded"])." still to go ]")."" : "")."")." Finished: ".get_date($arr['complete_date'], 0,1) ."".($arr['complete_date'] != '0'  ? "<br /><font color='silver'>Time to download: ".($arr['leechtime'] != '0' ? mkprettytime($arr['leechtime']) : mkprettytime($arr['c'] - $arr['s'])."")."</font> <font color='$dlc'>[ DLed at: $dl_speed ]</font><br />" : "<br />")."<font color='lightblue'>".($arr['seedtime'] != '0' ? "Total seeding time: ".mkprettytime($arr['seedtime'])." </font><font color='$dlc'> " : "Total seeding time: N/A")."</font><font color='lightgreen'> [ up speed: ".$ul_speed." ] </font>".($arr['complete_date'] == '0'  ? "<br /><font color='$dlc'>Download speed: $dl_speed</font>" : "")."</td>"."
-    <td align='center' class='$class'>Seeds: ".(int)$arr['seeders']."<br />Leechers: ".(int)$arr['leechers']."</td><td align='center' class='$class'><font color='lightgreen'>Uploaded:<br /><b>".mksize($arr["uploaded"])."</b></font><br /><font color='orange'>Downloaded:<br /><b>".mksize($arr["downloaded"])."</b></font></td><td align='center' class='$class'>".mksize($arr["size"])."<br />Difference of:<br /><font color='orange'><b>".mksize($arr['size'] - $arr["downloaded"])."</b></font></td><td align='center' class='$class'>".$ratio."<br />".($arr['seeder'] == 'yes' ? "<font color='lightgreen'><b>seeding</b></font>" : "<font color='red'><b>Not seeding</b></font>")."</td><td align='center' class='$class'>".htmlsafechars($arr["agent"])."<br />port: ".(int)$arr["port"]."<br />".($arr["connectable"] == 'yes' ? "<b>Connectable:</b> <font color='lightgreen'>Yes</font>" : "<b>Connectable:</b> <font color='red'><b>no</b></font>")."</td></tr>\n";
+    <td align='center' class='$class'>Seeds: ".(int)$arr['seeders']."<br />Leechers: ".(int)$arr['leechers']."</td><td align='center' class='$class'><font color='lightgreen'>Uploaded:<br /><b>".mksize($arr["uploaded"])."</b></font>".($INSTALLER09['ratio_free'] ? "" : "<br /><font color='orange'>Downloaded:<br /><b>".mksize($arr["downloaded"])."</b></font>")."</td><td align='center' class='$class'>".mksize($arr["size"])."".($INSTALLER09['ratio_free'] ? "" : "<br />Difference of:<br /><font color='orange'><b>".mksize($arr['size'] - $arr["downloaded"])."</b></font>")."</td><td align='center' class='$class'>".$ratio."<br />".($arr['seeder'] == 'yes' ? "<font color='lightgreen'><b>seeding</b></font>" : "<font color='red'><b>Not seeding</b></font>")."</td><td align='center' class='$class'>".htmlsafechars($arr["agent"])."<br />port: ".(int)$arr["port"]."<br />".($arr["connectable"] == 'yes' ? "<b>Connectable:</b> <font color='lightgreen'>Yes</font>" : "<b>Connectable:</b> <font color='red'><b>no</b></font>")."</td></tr>\n";
     }
     $HTMLOUT .= "</table></td></tr>\n";
     }

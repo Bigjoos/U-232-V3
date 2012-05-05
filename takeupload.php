@@ -10,6 +10,7 @@ require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR
 require_once(INCL_DIR.'user_functions.php');
 require_once(CLASS_DIR.'page_verify.php');
 require_once(CLASS_DIR.'class.bencdec.php');
+//require_once INCL_DIR.'function_ircbot.php';
 require_once INCL_DIR.'function_memcache.php';
 dbconn(); 
 loggedinorreturn();
@@ -95,6 +96,20 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
 
      else
         $free = (TIME_NOW + $free_length * 604800);
+    }
+    /// end
+    /// Set Silver Torrent Time Based
+    $silver = 0;
+    if (isset($_POST['half_length']) && ($half_length = 0 + $_POST['half_length']))
+    {
+     if ($half_length == 255)
+        $silver = 1;
+
+     elseif ($half_length == 42)
+        $silver = (86400 + TIME_NOW);
+
+     else
+        $silver = (TIME_NOW + $half_length * 604800);
     }
     /// end
     $descr = strip_tags(isset($_POST['descr']) ? trim($_POST['descr']) : '');
@@ -216,8 +231,8 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     // Replace punctuation characters with spaces
     $torrent = str_replace("_", " ", $torrent);
     $vip = (isset($_POST["vip"]) ? "1" : "0");
-    $ret = sql_query("INSERT INTO torrents (search_text, filename, owner, username, visible, vip, release_group, newgenre, poster, anonymous, allow_comments, info_hash, name, size, numfiles, type, offer, request, url, subs, descr, ori_descr, description, category, free, save_as, youtube, tags, added, last_action, nfo, client_created_by) VALUES (" .
-        implode(",", array_map("sqlesc", array(searchfield("$shortfname $dname $torrent"), $fname, $CURUSER["id"], $CURUSER["username"], "no", $vip, $release_group, $genre, $poster, $anonymous, $allow_comments, $infohash, $torrent, $totallen, count($filelist), $type, $offer, $request, $url, $subs, $descr, $descr, $description, 0 + $_POST["type"], $free, $dname, $youtube, $tags))) .
+    $ret = sql_query("INSERT INTO torrents (search_text, filename, owner, username, visible, vip, release_group, newgenre, poster, anonymous, allow_comments, info_hash, name, size, numfiles, type, offer, request, url, subs, descr, ori_descr, description, category, free, silver, save_as, youtube, tags, added, last_action, nfo, client_created_by) VALUES (" .
+        implode(",", array_map("sqlesc", array(searchfield("$shortfname $dname $torrent"), $fname, $CURUSER["id"], $CURUSER["username"], "no", $vip, $release_group, $genre, $poster, $anonymous, $allow_comments, $infohash, $torrent, $totallen, count($filelist), $type, $offer, $request, $url, $subs, $descr, $descr, $description, 0 + $_POST["type"], $free, $silver, $dname, $youtube, $tags))) .
         ", ".TIME_NOW.", ".TIME_NOW.", $nfo, $tmaker)");
     if (!$ret) {
       if (((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) == 1062)
@@ -234,7 +249,7 @@ ini_set('upload_max_filesize', $INSTALLER09['max_torrent_size']);
     $message = "New Torrent : [url={$INSTALLER09['baseurl']}/details.php?id=$id] " . htmlsafechars($torrent) . "[/url] Uploaded - Anonymous User";
     else
     $message = "New Torrent : [url={$INSTALLER09['baseurl']}/details.php?id=$id] " . htmlsafechars($torrent) . "[/url] Uploaded by " . htmlsafechars($CURUSER["username"]) . "";
-    $messages = "{$INSTALLER09['site_name']} New Torrent: $torrent Uploaded By: $anon ".mksize($totallen)." {$INSTALLER09['baseurl']}/details.php?id=$id";
+    //$messages = "{$INSTALLER09['site_name']} New Torrent: $torrent Uploaded By: $anon ".mksize($totallen)." {$INSTALLER09['baseurl']}/details.php?id=$id";
     
     sql_query("DELETE FROM files WHERE torrent = ".sqlesc($id));
 

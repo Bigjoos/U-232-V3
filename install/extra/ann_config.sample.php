@@ -30,6 +30,7 @@ $INSTALLER09['announce_interval'] = 60 * 30;
 $INSTALLER09['min_interval'] = 60 * 15;
 $INSTALLER09['connectable_check'] = 1;
 $INSTALLER09['ann_sql_error_log'] = 'logs/ann_sql_err_'.date('M_D_Y').'.log';
+$INSTALLER09['ratio_free'] = false;
 // DB setup
 //$INSTALLER09['baseurl'] = 'http://'.$_SERVER['HTTP_HOST'];
 $INSTALLER09['baseurl'] = '#baseurl';

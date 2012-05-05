@@ -104,19 +104,22 @@ function get_torrent_from_hash($info_hash) {
    $ttll = 21600; // 21600;
    $torrent = $mc1->get_value($key);
    if ($torrent === false) {
-      $res = mysqli_query($GLOBALS["___mysqli_ston"], 'SELECT id, category, banned, free, vip, seeders, leechers, times_completed, seeders + leechers AS numpeers, added AS ts, visible FROM torrents WHERE info_hash = '.ann_sqlesc($info_hash)) or ann_sqlerr(__FILE__, __LINE__);
+      $res = mysqli_query($GLOBALS["___mysqli_ston"], 'SELECT id, category, banned, free, silver, vip, seeders, leechers, times_completed, seeders + leechers AS numpeers, added AS ts, visible FROM torrents WHERE info_hash = '.ann_sqlesc($info_hash)) or ann_sqlerr(__FILE__, __LINE__);
       if (mysqli_num_rows($res)) {
          $torrent = mysqli_fetch_assoc($res);
          $torrent['id']       = (int)$torrent['id'];
          $torrent['free'] = (int)$torrent['free'];
+         $torrent['silver'] = (int)$torrent['silver'];
          $torrent['category'] = (int)$torrent['category'];
          $torrent['numpeers'] = (int)$torrent['numpeers'];
-         $mc1->cache_value($key, $torrent, $ttll);
-
+         
          $torrent['seeders']         = (int)$torrent['seeders'];
          $torrent['leechers']         = (int)$torrent['leechers'];
          $torrent['times_completed'] = (int)$torrent['times_completed'];
          $torrent['ts']             = (int)$torrent['ts'];
+        
+         $mc1->cache_value($key, $torrent, $ttll);
+
          $seed_key  = 'torrents::seeds:::'.$torrent['id']; 
          $leech_key = 'torrents::leechs:::'.$torrent['id'];
          $comp_key  = 'torrents::comps:::'.$torrent['id'];
@@ -255,15 +258,15 @@ function benc_resp($d)
 }
 
 function gzip() {
-	if (@extension_loaded('zlib') && @ini_get('zlib.output_compression') != '1' && @ini_get('output_handler') != 'ob_gzhandler') {
-		@ob_start('ob_gzhandler');
-	}
+if (@extension_loaded('zlib') && @ini_get('zlib.output_compression') != '1' && @ini_get('output_handler') != 'ob_gzhandler') {
+@ob_start('ob_gzhandler');
+}
 }
 
 function benc_resp_raw($x) {
-	header("Content-Type: text/plain");
-	header("Pragma: no-cache");
-	echo($x);
+header("Content-Type: text/plain");
+header("Pragma: no-cache");
+echo($x);
 }
 
 function benc($obj) {

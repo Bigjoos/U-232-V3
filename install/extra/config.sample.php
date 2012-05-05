@@ -38,7 +38,6 @@ $INSTALLER09['cookie_path']    = '#cookie_path';   // ATTENTION: You should neve
 $INSTALLER09['cookie_domain']  = '#cookie_domain'; // set to eg: .somedomain.com or is subdomain set to: .sub.somedomain.com
 $INSTALLER09['domain'] = '#domain';
 //==
-$INSTALLER09['site_online'] = 1;
 $INSTALLER09['tracker_post_key'] = 'lsdflksfda4545frwe35@kk';
 $INSTALLER09['max_torrent_size'] = 3*1024*1024; 
 $INSTALLER09['announce_interval'] = 60 * 30;
@@ -47,12 +46,9 @@ $INSTALLER09['autoclean_interval'] = 1800;
 $INSTALLER09['minvotes'] = 1;
 $INSTALLER09['max_dead_torrent_time'] = 6 * 3600;
 $INSTALLER09['language'] = 1;
-$INSTALLER09['user_ratios'] = 1;
 $INSTALLER09['bot_id'] = 2;
-$INSTALLER09['forums_online'] = 1;
 $INSTALLER09['staffpanel_online'] = 1;
-$INSTALLER09['autoshout_on'] = 1;
-$INSTALLER09['seedbonus_on'] = 1;
+$INSTALLER09['irc_autoshout_on'] = 0;
 $INSTALLER09['crazyhour_on'] = 1;
 $INSTALLER09['happyhour_on'] = 1;
 $INSTALLER09['mods']['slots'] = 1;
@@ -137,13 +133,7 @@ $INSTALLER09['latest_torrents_limit_scroll'] = 20;
 $INSTALLER09['reports']      = 1;// 1/0 on/off
 $INSTALLER09['karma']        = 1;// 1/0 on/off
 $INSTALLER09['BBcode']   = 1;// 1/0 on/off
-//== Max users on site
-$INSTALLER09['maxusers'] = 5000;
 $INSTALLER09['inviteusers'] = 10000;
-$INSTALLER09['invites'] = 3500;
-$INSTALLER09['openreg'] = true; //==true=open, false = closed
-$INSTALLER09['openreg_invites'] = true; //==true=open, false = closed
-$INSTALLER09['failedlogins'] = 5; // Maximum failed logins before ip ban
 $INSTALLER09['flood_time'] = 900; //comment/forum/pm flood limit
 $INSTALLER09['readpost_expiry'] = 14*86400; // 14 days
 /** define dirs **/
@@ -160,7 +150,6 @@ define('BLOCK_DIR', ROOT_DIR.'blocks'.DIRECTORY_SEPARATOR);
 define('IMDB_DIR', ROOT_DIR.'imdb'.DIRECTORY_SEPARATOR);
 define('CLASS_DIR', INCL_DIR.'class'.DIRECTORY_SEPARATOR);
 define('CLEAN_DIR', INCL_DIR.'cleanup'.DIRECTORY_SEPARATOR);
-define('FLOGIN_DIR', ROOT_DIR.'fancy_login'.DIRECTORY_SEPARATOR);
 $INSTALLER09['cache'] = ROOT_DIR.'cache';
 $INSTALLER09['backup_dir'] = INCL_DIR.'backup';
 $INSTALLER09['dictbreaker'] = ROOT_DIR.'dictbreaker';
@@ -195,6 +184,7 @@ $INSTALLER09['stylesheet'] = "1";
 $INSTALLER09['categorie_icon'] = "1";
 //for subs & youtube mode
 $INSTALLER09['movie_cats'] = array(3,5,6,10,11);
+$INSTALLER09['moviecats'] = "3,5,6,10,11";
 $youtube_pattern = "/^http\:\/\/www\.youtube\.com\/watch\?v\=[\w]{11}/i";
 //== set this to size of user avatars
 $INSTALLER09['av_img_height'] = 100;
@@ -202,9 +192,10 @@ $INSTALLER09['av_img_width'] = 100;
 //== set this to size of user signatures
 $INSTALLER09['sig_img_height'] = 100;
 $INSTALLER09['sig_img_width'] = 500;
+$INSTALLER09['bucket_allowed'] = 0;
 $INSTALLER09['bucket_dir'] = ROOT_DIR . '/bitbucket'; # must be writable for httpd user  
 $INSTALLER09['allowed_ext'] = array('image/gif', 'image/png', 'image/jpeg');
-$INSTALLER09['bucket_maxsize'] = 2048*2048; #max size set to 500kb
+$INSTALLER09['bucket_maxsize'] = 500*1024; #max size set to 500kb
 $INSTALLER09['happyhour'] = CACHE_DIR.'happyhour'.DIRECTORY_SEPARATOR.'happyhour.txt';
 //==User class defines
 define ('UC_USER', 0);
@@ -224,11 +215,11 @@ $INSTALLER09['site']['owner'] = 1;
 //== Salt - change this
 $INSTALLER09['site']['salt2'] = 'jgutyxcjsaka';
 //= Change staff pin daily or weekly
-$INSTALLER09['staff']['staff_pin'] = 'uFie0y3Iuklij8'; // should be mix of u/l case and min 12 chars length
+$INSTALLER09['staff']['staff_pin'] = 'uFll0y3Ihgtij8'; // should be mix of u/l case and min 12 chars length
 //= Change owner pin daily or weekly
-$INSTALLER09['staff']['owner_pin'] = 'jjko4kIufqhjj0'; // should be mix of u/l case and min 12 chars length
+$INSTALLER09['staff']['owner_pin'] = 'jjknnkuuyqhjj0'; // should be mix of u/l case and min 12 chars length
 //== Staff forum ID for autopost
 $INSTALLER09['staff']['forumid'] = 2; // this forum ID should exist and be a staff forum
-
-define ('TBVERSION','U-232_V3');
+$INSTALLER09['variant'] = 'U-232 V3';
+define ('TBVERSION', $INSTALLER09['variant']);
 ?>

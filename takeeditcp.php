@@ -312,6 +312,11 @@ $curuser_cache = $user_cache = $urladd = $changedemail = $birthday = '';
     $curuser_cache['split'] = $split;
     $user_cache['split'] = $split;
     }
+    $browse_icons = ($_POST["browse_icons"] == "yes" ? "yes" : "no");{
+    $updateset[] = "browse_icons = " . sqlesc($browse_icons);
+    $curuser_cache['browse_icons'] = $browse_icons;
+    $user_cache['browse_icons'] = $browse_icons;
+    }
     if (isset($_POST['categorie_icon']) && (($categorie_icon = (int)$_POST['categorie_icon']) != $CURUSER['categorie_icon']) && is_valid_id($categorie_icon)){
     $updateset[] = 'categorie_icon = ' . sqlesc($categorie_icon);
     $curuser_cache['categorie_icon'] = $categorie_icon;

@@ -101,7 +101,8 @@
  $html .= ($i && $i % $INSTALLER09['subcatperrow'] == 0) ? "</tr><tr>" : "";
  $html .= "<td class=\"one\" style=\"padding-bottom: 2px;padding-left: 7px;white-space: nowrap;\">
  <input onclick=\"checkAllFields(2,".(int)$cats['tabletype'].");\" name=\"cats".(int)$cats['tabletype']."[]\" value=\"".(int)$cat['id']."\" type=\"checkbox\" ". (in_array($cat['id'],$wherecatina) ? "checked='checked'" : "") . " />
- ".(($linkpage != '') ? "<a href=\"{$linkpage}?cats".(int)$cats['tabletype']."[]=".(int)$cat['id']."\"><img src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/" . htmlsafechars($cat['image']) . "' alt='" . htmlsafechars($cat['name']) . "' title='" . htmlsafechars($cat['name']) . "' /></a>" : htmlsafechars($cat['name']))."</td>\n";
+ ".(($linkpage != '') ? "<a href=\"{$linkpage}?cats".(int)$cats['tabletype']."[]=".(int)$cat['id']."\">
+ ".($CURUSER['browse_icons'] == 'yes' ? "<img src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/".htmlsafechars($cat['image'])."' alt='".htmlsafechars($cat['name'])."' title='".htmlsafechars($cat['name'])."' />" : "".htmlsafechars($cat['name'])."")."</a>" : htmlsafechars($cat['name']))."</td>\n";
  $i++;
  }
  $nsubcats = count($subcats);

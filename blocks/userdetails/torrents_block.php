@@ -4,16 +4,16 @@ global $INSTALLER09, $lang, $CURUSER;
 $htmlout = '';
  $htmlout = "<table class='main' border='1' cellspacing='0' cellpadding='5'>
  <tr>
- <td class='colhead'>Category</td>
- <td class='colhead'>Torrent</td>
- <td class='colhead'>Up.</td>
- <td class='colhead'>Rate</td>
- <td class='colhead'>Downl.</td>
- <td class='colhead'>Rate</td>
- <td class='colhead'>Ratio</td>
- <td class='colhead'>Activity</td>
- <td class='colhead'>Finished</td>
- </tr>";
+<td class='colhead'>Category</td>
+<td class='colhead'>Torrent</td>
+<td class='colhead'>Up.</td>
+<td class='colhead'>Rate</td>
+".($INSTALLER09['ratio_free'] ? "" : "<td class='colhead'>Downl.</td>")."
+".($INSTALLER09['ratio_free'] ? "" : "<td class='colhead'>Rate</td>")."
+<td class='colhead'>Ratio</td>
+<td class='colhead'>Activity</td>
+<td class='colhead'>Finished</td>
+</tr>";
 
  while ($arr = mysqli_fetch_assoc($res)) {
 
@@ -26,8 +26,8 @@ $htmlout = '';
  <td><a href='details.php?id=".(int)$arr['torrentid']."'><b>".(strlen($arr["name"]) > 50 ? substr($arr["name"], 0, 50 - 3)."..." : htmlsafechars($arr["name"]))."</b></a></td>
  <td>".mksize($arr["uploaded"])."</td>
  <td>$upspeed/s</td>
- <td>".mksize($arr["downloaded"])."</td>
- <td>$downspeed/s</td>
+ ".($INSTALLER09['ratio_free'] ? "" : "<td>".mksize($arr["downloaded"])."</td>")."
+ ".($INSTALLER09['ratio_free'] ? "" : "<td>$downspeed/s</td>")."
  <td>$ratio</td>
  <td>".mkprettytime($arr["seedtime"] + $arr["leechtime"])."</td>
  <td>".($arr["complete_date"] <> "0" ? "<font color='green'><b>Yes</b></font>" : "<font color='red'><b>No</b></font>")."</td>
@@ -45,8 +45,14 @@ function maketable($res)
       $htmlout = '';
       
       $htmlout .= "<table class='main' border='1' cellspacing='0' cellpadding='5'>" .
-        "<tr><td class='colhead' align='center'>{$lang['userdetails_type']}</td><td class='colhead'>{$lang['userdetails_name']}</td><td class='colhead' align='center'>{$lang['userdetails_size']}</td><td class='colhead' align='right'>{$lang['userdetails_se']}</td><td class='colhead' align='right'>{$lang['userdetails_le']}</td><td class='colhead' align='center'>{$lang['userdetails_upl']}</td>\n" .
-        "<td class='colhead' align='center'>{$lang['userdetails_downl']}</td><td class='colhead' align='center'>{$lang['userdetails_ratio']}</td></tr>\n";
+        "<tr><td class='colhead' align='center'>{$lang['userdetails_type']}</td>
+         <td class='colhead'>{$lang['userdetails_name']}</td>
+         <td class='colhead' align='center'>{$lang['userdetails_size']}</td>
+         <td class='colhead' align='right'>{$lang['userdetails_se']}</td>
+         <td class='colhead' align='right'>{$lang['userdetails_le']}</td>
+         <td class='colhead' align='center'>{$lang['userdetails_upl']}</td>\n" .
+         "".($INSTALLER09['ratio_free'] ? "" : "<td class='colhead' align='center'>{$lang['userdetails_downl']}</td>")."
+         <td class='colhead' align='center'>{$lang['userdetails_ratio']}</td></tr>\n";
       foreach ($res as $arr)
       {
         if ($arr["downloaded"] > 0)
@@ -67,10 +73,10 @@ function maketable($res)
       $downloaded = str_replace(" ", "<br />", mksize($arr["downloaded"]));
       $seeders = number_format($arr["seeders"]);
       $leechers = number_format($arr["leechers"]);
-        $htmlout .= "<tr><td style='padding: 0px'>$catimage</td>\n" .
+      $htmlout .= "<tr><td style='padding: 0px'>$catimage</td>\n" .
         "<td><a href='details.php?id=".(int)$arr['torrent']."&amp;hit=1'><b>" . htmlsafechars($arr['torrentname']) .
         "</b></a></td><td align='center'>$size</td><td align='right'>$seeders</td><td align='right'>$leechers</td><td align='center'>$uploaded</td>\n" .
-        "<td align='center'>$downloaded</td><td align='center'>$ratio</td></tr>\n";
+        "".($INSTALLER09['ratio_free'] ? "" : "<td align='center'>$downloaded</td>")."<td align='center'>$ratio</td></tr>\n";
       }
       $htmlout .= "</table>\n";
       return $htmlout;

@@ -379,7 +379,7 @@ function member_ratio($up, $down) {
         $ratio = '<span style="color:'.get_ratio_color(1/$down).';">'.number_format(1/$down, 3).'</span>';
         break;
         case ($down == 0 && $up > 0): 
-        $ratio=  '<span style="color: '.get_ratio_color($up/1).';">inf</span>';
+        $ratio=  '<span style="color: '.get_ratio_color($up/1).';">Inf</span>';
         break;
        default:
        $ratio = '---';

@@ -158,6 +158,14 @@ $lang = array(
 'userdetails_GB' => "GB",
 'userdetails_MB' => "MB",
 'userdetails_park' => "Park Account",
+'karma_kupped' => 'Karma upload',
+'karma_pupped' => 'Pure upload',
+'karma_rratio' => 'Real ratio',
+
+'karma_lsent' => 'Love sent',
+'karma_lsent1' => 'points given as karma gift\'s',
+'karma_lrec' => 'Love received',
+'karma_lrec1' => ' points recieved as karma gift\'s',
 'userdetails_parked' => "This Account is Currently Parked!",
 'userdetails_games' => 'Games possible'
 );

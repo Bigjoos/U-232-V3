@@ -12,7 +12,10 @@ require_once(INCL_DIR.'password_functions.php');
 dbconn();
 ini_set('session.use_trans_sid', '0');
 session_start();
+global $CURUSER;
+if(!$CURUSER){
 get_template();
+}
 $lang = array_merge( load_language('global'), load_language('passhint') );
 $stdhead = array(/** include js **/'js' => array('jquery','jquery.simpleCaptcha-0.2'));
 $HTMLOUT = '';
@@ -28,12 +31,14 @@ if ($step == '1') {
 	
 if ($_SERVER["REQUEST_METHOD"] == "POST") {		
 	
-if (!mkglobal("email:captchaSelection")) 
-die();
+if (!mkglobal('email'.($INSTALLER09['captcha_on'] ? ":captchaSelection" : "").''))
+stderr("Oops","Missing form data - You must fill all fields");
 
+if ($INSTALLER09['captcha_on']) { 
 if(empty($captchaSelection) || $_SESSION['simpleCaptchaAnswer'] != $captchaSelection){
 stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_error2']}");
 exit();
+}
 }
 
 if (empty($email)) 
@@ -145,6 +150,7 @@ stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_error13']}");
 else 
 stderr("{$lang['stderr_successhead']}","{$lang['stderr_error14']} <a href='{$INSTALLER09['baseurl']}/login.php' class='altlink'><b>{$lang['stderr_error15']}</b></a> {$lang['stderr_error16']}", FALSE); 
 }else {
+
     $HTMLOUT .= "
     <script type='text/javascript'>
 	  /*<![CDATA[*/
@@ -160,7 +166,7 @@ stderr("{$lang['stderr_successhead']}","{$lang['stderr_error14']} <a href='{$INS
 <tr>
 <td class='rowhead'>{$lang['main_email_add']}</td><td><input type='text' size='40' name='email' /></td></tr>
 <tr>
-<td class='rowhead' colspan='2' id='captchareset'></td>
+".($INSTALLER09['captcha_on'] ? "<td class='rowhead' colspan='2' id='captchareset'></td>" : "")."
 </tr>
 <tr><td colspan='2' align='center'><input type='submit' value='{$lang['main_recover']}' style='height: 25px' /></td></tr></table>
 </form>";

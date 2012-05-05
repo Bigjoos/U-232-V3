@@ -265,7 +265,7 @@ global $CURUSER, $INSTALLER09, $start, $query_stat, $mc1, $querytime;
        ($queries > 4 ? "<br />".round($queries/2)." died while climbing the tree! =[" : "=]")."
        ".($debug ? "<br /><b>".$header."</b><br /><b>Uptime:</b> ".$uptime."</div>" : "</div>")."
        <div id='footer_right'>
-       Powered by <a href='https://u-232.com'>U-232 V3</a><br />
+       Powered by ".TBVERSION."<br />
        Using Valid <b>CSS3, HTML &amp; PHP</b><br />
        Support Forum <b>Click <a href='https://forum.u-232.com/index.php'>here</a></b><br />
        ".($debug ? "| <a title='System View' rel='external' href='/staffpanel.php?tool=system_view'>System View</a> | ".
@@ -389,9 +389,15 @@ if ($MyPeersCache == false) {
          <div class='slide_a'>Invites</div><div class='slide_b'><a href='./invite.php'>{$CURUSER['invites']}</a></div>
          <div class='slide_c'>Bonus Points</div><div class='slide_d'><a href='./mybonus.php'>{$CURUSER['seedbonus']}</a></div>
          <div class='slide_head'>:: Torrent Stats</div>
-         <div class='slide_a'>Share Ratio</div><div class='slide_b'>".member_ratio($CURUSER['uploaded'], $CURUSER['downloaded'])."</div>
+         <div class='slide_a'>Share Ratio</div><div class='slide_b'>".member_ratio($CURUSER['uploaded'], $INSTALLER09['ratio_free'] ? "0" :$CURUSER['downloaded'])."</div>";
+         if($INSTALLER09['ratio_free']) {
+         $StatusBar .= "<div class='slide_c'>Uploaded</div><div class='slide_d'>$upped</div>";
+         } else { 
+         $StatusBar .= "
          <div class='slide_c'>Uploaded</div><div class='slide_d'>$upped</div>
-         <div class='slide_a'>Downloaded</div><div class='slide_b'>$downed</div>
+         <div class='slide_a'>Downloaded</div><div class='slide_b'>$downed</div>";
+         }
+         $StatusBar .= "
          <div class='slide_c'>Uploading Files</div><div class='slide_d'>{$seed['yes']}</div>
          <div class='slide_a'>Downloading Files</div><div class='slide_b'>{$seed['no']}</div>
          <div class='slide_c'>Connectable</div><div class='slide_d'>{$connectable}</div>

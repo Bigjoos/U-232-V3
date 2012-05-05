@@ -1,4 +1,4 @@
-<?php
+<?php 
     if ($CURUSER) { 
     if (isset($free))
     {
@@ -16,6 +16,10 @@
 
             case 3:
                 $mode = 'All Torrents Free and Double Upload';
+                break;
+
+            case 4:
+                $mode = 'All Torrents Silver';
                 break;
 
             default:

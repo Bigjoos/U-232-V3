@@ -36,8 +36,8 @@ function dltable($name, $arr, $torrent)
             "<td class='colhead' align='center'>{$lang['peerslist_connectable']}</td>".
             "<td class='colhead' align='right'>{$lang['peerslist_uploaded']}</td>".
             "<td class='colhead' align='right'>{$lang['peerslist_rate']}</td>".
-            "<td class='colhead' align='right'>{$lang['peerslist_downloaded']}</td>" .
-            "<td class='colhead' align='right'>{$lang['peerslist_rate']}</td>" .
+            "".($INSTALLER09['ratio_free'] ? "" : "<td class='colhead' align='right'>{$lang['peerslist_downloaded']}</td>")."" .
+            "".($INSTALLER09['ratio_free'] ? "" : "<td class='colhead' align='right'>{$lang['peerslist_rate']}</td>")."" .
             "<td class='colhead' align='right'>{$lang['peerslist_ratio']}</td>" .
             "<td class='colhead' align='right'>{$lang['peerslist_complete']}</td>" .
             "<td class='colhead' align='right'>{$lang['peerslist_connected']}</td>" .
@@ -60,21 +60,12 @@ function dltable($name, $arr, $torrent)
       $htmlout .= "<td align='center'>" . ($e['connectable'] == "yes" ? "{$lang['peerslist_yes']}" : "<font color='red'>{$lang['peerslist_no']}</font>") . "</td>\n";
       $htmlout .= "<td align='right'>" . mksize($e["uploaded"]) . "</td>\n";
       $htmlout .= "<td align='right'><span style=\"white-space: nowrap;\">" . mksize(($e["uploaded"] - $e["uploadoffset"]) / $secs) . "/s</span></td>\n";
-      $htmlout .= "<td align='right'>" . mksize($e["downloaded"]) . "</td>\n";
+      $htmlout .= "".($INSTALLER09['ratio_free'] ? "" : "<td align='right'>" . mksize($e["downloaded"]) . "</td>")."\n";
       if ($e["seeder"] == "no")
-        $htmlout .= "<td align='right'><span style=\"white-space: nowrap;\">" . mksize(($e["downloaded"] - $e["downloadoffset"]) / $secs) . "/s</span></td>\n";
+        $htmlout .= "".($INSTALLER09['ratio_free'] ? "" : "<td align='right'><span style=\"white-space: nowrap;\">" . mksize(($e["downloaded"] - $e["downloadoffset"]) / $secs) . "/s</span></td>")."\n";
       else
-        $htmlout .= "<td align='right'><span style=\"white-space: nowrap;\">" . mksize(($e["downloaded"] - $e["downloadoffset"]) / max(1, $e["finishedat"] - $e['st'])) .	"/s</span></td>\n";
-                  if ($e["downloaded"])
-          {
-                    $ratio = floor(($e["uploaded"] / $e["downloaded"]) * 1000) / 1000;
-                      $htmlout .= "<td align=\"right\"><font color='" . get_ratio_color($ratio) . "'>" . number_format($ratio, 3) . "</font></td>\n";
-          }
-                   else
-                    if ($e["uploaded"])
-                      $htmlout .= "<td align='right'>{$lang['peerslist_inf']}</td>\n";
-                    else
-                      $htmlout .= "<td align='right'>---</td>\n";
+        $htmlout .= "".($INSTALLER09['ratio_free'] ? "" : "<td align='right'><span style=\"white-space: nowrap;\">" . mksize(($e["downloaded"] - $e["downloadoffset"]) / max(1, $e["finishedat"] - $e['st'])) .	"/s</span></td>")."\n";
+      $htmlout .= "<td align=\"right\">".member_ratio($e['uploaded'], $INSTALLER09['ratio_free'] ? "0" : $e['downloaded'])."</td>\n";
       $htmlout .= "<td align='right'>" . sprintf("%.2f%%", 100 * (1 - ($e["to_go"] / $torrent["size"]))) . "</td>\n";
       $htmlout .= "<td align='right'>" . mkprettytime($now - $e["st"]) . "</td>\n";
       $htmlout .= "<td align='right'>" . mkprettytime($now - $e["la"]) . "</td>\n";

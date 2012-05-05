@@ -10,7 +10,7 @@
 function linkcolor($num) {
     if (!$num)
     return "red";
-    return "green";
+    return "pink";
 }
 
 function readMore($text, $char, $link)
@@ -22,7 +22,7 @@ function readMore($text, $char, $link)
 function torrenttable($res, $variant = "index") {
     global $INSTALLER09, $CURUSER, $lang, $free, $mc1;
     require_once(INCL_DIR.'bbcode_functions.php');
-    $htmlout = $prevdate = $free_slot = $free_color = $slots_check = $double_slot = $private = $newgenre =  $oldlink = $char = $description = $type = $sort = $row = $youtube = '';
+    $htmlout = $prevdate = $free_slot = $free_color = $slots_check = $double_slot = $private = $newgenre = $oldlink = $char = $description = $type = $sort = $row = $youtube = '';
     $count_get = 0;
     /** ALL FREE/DOUBLE **/
     foreach($free as $fl) {
@@ -31,15 +31,19 @@ function torrenttable($res, $variant = "index") {
     $free_display = '[Free]';
     break;
     case 2:
-   $free_display = '[Double]';
+    $free_display = '[Double]';
     break;
     case 3:
     $free_display = '[Free and Double]';
+    break;
+    case 4:
+    $free_display = '[Silver]';
     break;
 }
 
 $slot = make_freeslots($CURUSER['id'], 'fllslot_');
 $book = make_bookmarks($CURUSER['id'], 'bookmm_');
+
 $all_free_tag = ($fl['modifier'] != 0 && ($fl['expires'] > TIME_NOW || $fl['expires'] == 1) ? ' <a class="info" href="#">
             <b>'.$free_display.'</b> 
             <span>'. ($fl['expires'] != 1 ? '
@@ -128,7 +132,7 @@ if ($oldlink > 0)
        {
        $htmlout .= "<a href='browse.php?cat=".(int)$row['category']."'>";
        if (isset($row["cat_pic"]) && $row["cat_pic"] != "")
-       $htmlout .= "<img border='0' src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/".htmlsafechars($row['cat_pic'])."' alt='".htmlsafechars($row['cat_name'])."' />";
+       $htmlout .= "<img border='0' src='{$INSTALLER09['pic_base_url']}caticons/{$CURUSER['categorie_icon']}/{$row['cat_pic']}' alt='{$row['cat_name']}' />";
        else
        {
        $htmlout .= htmlsafechars($row["cat_name"]);
@@ -170,6 +174,8 @@ if ($oldlink > 0)
        $bump = ($row['bump'] == "yes" ? "<img src='{$INSTALLER09['pic_base_url']}up.gif' width='12px' alt='Re-Animated torrent' title='This torrent was ReAnimated!' />" : "");
        /** FREE Torrent **/
        $free_tag = ($row['free'] != 0 ? ' <a class="info" href="#"><b>[FREE]</b> <span>'. ($row['free'] > 1 ? 'Expires: '.get_date($row['free'], 'DATE').'<br />('.mkprettytime($row['free'] - TIME_NOW).' to go)<br />' : 'Unlimited<br />').'</span></a>' : $all_free_tag);
+       /** Silver Torrent **/
+       $silver_tag = ($row['silver'] != 0 ? ' <a class="info" href="#"><b>[SILVER]</b> <span>'. ($row['silver'] > 1 ? 'Expires: '.get_date($row['silver'], 'DATE').'<br />('.mkprettytime($row['silver'] - TIME_NOW).' to go)<br />' : 'Unlimited<br />').'</span></a>' : '');
        if (!empty($slot))
                 foreach ($slot as $sl) {
                     if ($sl['torrentid'] == $id && $sl['free'] == 'yes')
@@ -194,7 +200,7 @@ if ($oldlink > 0)
        }
        }else
        $Subs ="---";
-       $htmlout .= "' onmouseover=\"Tip('<b>" . CutName($dispname, 80) . "</b><br /><b>Added:&nbsp;".get_date($row['added'],'DATE',0,1)."</b><br /><b>Size:&nbsp;".mksize(htmlsafechars($row["size"])) ."</b><br /><b>Subtitle:&nbsp;{$Subs}</b><br /><b>Seeders:&nbsp;".htmlsafechars($row["seeders"]) ."</b><br /><b>Leechers:&nbsp;".htmlsafechars($row["leechers"]) ."</b><br />$poster');\" onmouseout=\"UnTip();\"><b>" . CutName($dispname, 45) . "</b></a>&nbsp;&nbsp;<a href=\"javascript:klappe_descr('descr" . (int)$row["id"] . "');\" ><img src=\"{$INSTALLER09['pic_base_url']}plus.png\" border=\"0\" alt=\"Show torrent info in this page\" title=\"Show torrent info in this page\" /></a>&nbsp;&nbsp;$youtube&nbsp;$viponly&nbsp;$release_group&nbsp;$sticky&nbsp;".($row['added'] >= $CURUSER['last_browse'] ? " <img src='{$INSTALLER09['pic_base_url']}newb.png' border='0' alt='New !' title='New !' />" : "")."&nbsp;$checked&nbsp;$free_tag&nbsp;$nuked<br />\n".$freeslot."&nbsp;$newgenre&nbsp;$bump&nbsp;$smalldescr</td>\n";
+       $htmlout .= "' onmouseover=\"Tip('<b>" . CutName($dispname, 80) . "</b><br /><b>Added:&nbsp;".get_date($row['added'],'DATE',0,1)."</b><br /><b>Size:&nbsp;".mksize(htmlsafechars($row["size"])) ."</b><br /><b>Subtitle:&nbsp;{$Subs}</b><br /><b>Seeders:&nbsp;".htmlsafechars($row["seeders"]) ."</b><br /><b>Leechers:&nbsp;".htmlsafechars($row["leechers"]) ."</b><br />$poster');\" onmouseout=\"UnTip();\"><b>" . CutName($dispname, 45) . "</b></a>&nbsp;&nbsp;<a href=\"javascript:klappe_descr('descr" . (int)$row["id"] . "');\" ><img src=\"{$INSTALLER09['pic_base_url']}plus.png\" border=\"0\" alt=\"Show torrent info in this page\" title=\"Show torrent info in this page\" /></a>&nbsp;&nbsp;$youtube&nbsp;$viponly&nbsp;$release_group&nbsp;$sticky&nbsp;".($row['added'] >= $CURUSER['last_browse'] ? " <img src='{$INSTALLER09['pic_base_url']}newb.png' border='0' alt='New !' title='New !' />" : "")."&nbsp;$checked&nbsp;$free_tag&nbsp;$silver_tag&nbsp;$nuked<br />$freeslot&nbsp;$newgenre&nbsp;$bump&nbsp;$smalldescr</td>\n";
 	    
        if ($variant == "mytorrents")
        $htmlout .= "<td align='center'><a href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."\"><img src='{$INSTALLER09['pic_base_url']}zip.gif' border='0' alt='Download This Torrent!' title='Download This Torrent!' /></a></td>\n";

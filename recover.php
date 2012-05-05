@@ -13,19 +13,24 @@ dbconn();
 // Begin the session
 ini_set('session.use_trans_sid', '0');
 session_start();
+global $CURUSER;
+if(!$CURUSER){
 get_template();
+}
 
    $lang = array_merge( load_language('global'), load_language('recover') );
    $stdhead = array(/** include js **/'js' => array('jquery','jquery.simpleCaptcha-0.2'));
    if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
-    
-   if (!mkglobal("email:captchaSelection")) 
-   die();
-
+   
+   if (!mkglobal('email'.($INSTALLER09['captcha_on'] ? ":captchaSelection" : "").''))
+   stderr("Oops","Missing form data - You must fill all fields");
+ 
+    if ($INSTALLER09['captcha_on']) { 
     if(empty($captchaSelection) || $_SESSION['simpleCaptchaAnswer'] != $captchaSelection){
         header('Location: recover.php');
         exit();
+    }
     }
  
     $email = trim($_POST["email"]);
@@ -104,13 +109,13 @@ $body = sprintf($lang['email_request'], $email, $_SERVER["REMOTE_ADDR"], $INSTAL
 	  $('#captcharec').simpleCaptcha();
     });
     /*]]>*/
-    </script>
+      </script>
       <h1>{$lang['recover_unamepass']}</h1>
       <p>{$lang['recover_form']}</p>
       <form method='post' action='{$_SERVER['PHP_SELF']}'>
       <table border='1' cellspacing='0' cellpadding='10'>
       <tr>
-      <td class='rowhead' colspan='2' id='captcharec'></td>
+      ".($INSTALLER09['captcha_on'] ? "<td class='rowhead' colspan='2' id='captcharec'></td>" : "")."
       </tr>
       <tr>
       <td class='rowhead'>{$lang['recover_regdemail']}</td>

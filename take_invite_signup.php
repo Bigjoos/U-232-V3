@@ -9,9 +9,14 @@
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
 require_once(INCL_DIR.'password_functions.php');
+require_once(INCL_DIR.'function_bemail.php');
 require_once(CLASS_DIR.'page_verify.php');
 dbconn();
+global $CURUSER;
+if (!$CURUSER) {
 get_template();
+}
+
 $lang = array_merge( load_language('global'), load_language('takesignup') );
 $newpage = new page_verify(); 
 $newpage->check('tkIs');
@@ -23,15 +28,17 @@ stderr($lang['stderr_errorhead'], sprintf($lang['stderr_ulimit'], $INSTALLER09['
 if(!$INSTALLER09['openreg_invites'])
     stderr('Sorry', 'Invite Signups are closed presently');
 
-if (!mkglobal("wantusername:wantpassword:passagain:email:invite:captchaSelection:submitme:passhint:hintanswer"))
-die();
+if (!mkglobal('wantusername:wantpassword:passagain:email:invite'.($INSTALLER09['captcha_on'] ? ":captchaSelection:" : ":").'submitme:passhint:hintanswer'))
+stderr("Oops","Missing form data - You must fill all fields");
 
 if ($submitme != 'X')
   stderr('Ha Ha', 'You Missed, You plonker !');
   
+ if ($INSTALLER09['captcha_on']) {
  if(empty($captchaSelection) || $_SESSION['simpleCaptchaAnswer'] != $captchaSelection){
  header('Location: invite_signup.php');
  exit();
+ }
  }
 
 function validusername($username) {
@@ -123,10 +130,12 @@ stderr("Error","Invite already taken.\nPlease request a new one from your invite
     $wantpasshash = make_passhash( $secret, md5($wantpassword) );
     $editsecret = ( !$arr[0] ? "" : make_passhash_login_key() );
     $wanthintanswer = md5($hintanswer);
+    check_banned_emails($email);
+    $user_frees = (TIME_NOW + 14 * 86400);
 
-$new_user = sql_query("INSERT INTO users (username, passhash, secret, passhint, hintanswer, editsecret, birthday, invitedby, email, ". (!$arr[0]?"class, ":"") ."added, last_access, last_login, time_offset, dst_in_use) VALUES (" .
+$new_user = sql_query("INSERT INTO users (username, passhash, secret, passhint, hintanswer, editsecret, birthday, invitedby, email, ". (!$arr[0]?"class, ":"") ."added, last_access, last_login, time_offset, dst_in_use, free_switch) VALUES (" .
 implode(",", array_map("sqlesc", array($wantusername, $wantpasshash, $secret, $editsecret, $birthday, $passhint, $wanthintanswer, (int)$assoc['sender'], $email))).
-", ". (!$arr[0]?UC_SYSOP.", ":""). "'".  TIME_NOW ."','".  TIME_NOW ."','".  TIME_NOW ."', $time_offset, {$dst_in_use['tm_isdst']})");
+", ". (!$arr[0]?UC_SYSOP.", ":""). "'".  TIME_NOW ."','".  TIME_NOW ."','".  TIME_NOW ."', $time_offset, {$dst_in_use['tm_isdst']}, $user_frees)");
 
 $message = "Welcome New {$INSTALLER09['site_name']} Member : - " . htmlsafechars($wantusername) . "";
 

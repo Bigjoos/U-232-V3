@@ -49,12 +49,11 @@ loggedinorreturn();
             break;
     }
     
-    
     $categorie = genrelist();
     foreach($categorie as $key => $value)
     $change[$value['id']] = array('id' => $value['id'], 'name'  => $value['name'], 'image' => $value['image']);
     if(($torrents = $mc1->get_value('torrent_details_'.$id)) === false) {
-    $torrents = mysqli_fetch_assoc(sql_query("SELECT seeders, leechers, banned, thanks, leechers, info_hash, checked_by, filename, search_text, LENGTH(nfo) AS nfosz, name, comments, owner, save_as, visible, size, added, views, hits, id, type, poster, url, numfiles, times_completed, anonymous, points, allow_comments, description, nuked, nukereason, last_reseed, vip, category, subs, username, newgenre, release_group, free, youtube, tags, rating_sum, num_ratings, IF(num_ratings < {$INSTALLER09['minvotes']}, NULL, ROUND(rating_sum / num_ratings, 1)) AS rating FROM torrents WHERE id = ".sqlesc($id))) or sqlerr(__FILE__, __LINE__);
+    $torrents = mysqli_fetch_assoc(sql_query("SELECT seeders, leechers, banned, thanks, leechers, info_hash, checked_by, filename, search_text, LENGTH(nfo) AS nfosz, name, comments, owner, save_as, visible, size, added, views, hits, id, type, poster, url, numfiles, times_completed, anonymous, points, allow_comments, description, nuked, nukereason, last_reseed, vip, category, subs, username, newgenre, release_group, free, silver, youtube, tags, rating_sum, num_ratings, IF(num_ratings < {$INSTALLER09['minvotes']}, NULL, ROUND(rating_sum / num_ratings, 1)) AS rating FROM torrents WHERE id = ".sqlesc($id))) or sqlerr(__FILE__, __LINE__);
     $torrents['seeders'] = (int)$torrents['seeders'];
     $torrents['leechers'] = (int)$torrents['leechers'];
     $torrents['points'] = (int)$torrents['points'];
@@ -73,6 +72,7 @@ loggedinorreturn();
     $torrents['type'] = (int)$torrents['type'];
     $torrents['numfiles'] = (int)$torrents['numfiles'];
     $torrents['free'] = (int)$torrents['free'];
+    $torrents['silver'] = (int)$torrents['silver'];
     $torrents['last_reseed'] = (int)$torrents['last_reseed'];
     $torrents['category'] = (int)$torrents['category'];
     $mc1->cache_value('torrent_details_'.$id, $torrents, $INSTALLER09['expires']['torrent_details']); 
@@ -118,6 +118,7 @@ loggedinorreturn();
     $torrent['freeimg'] = '<img src="'.$INSTALLER09['pic_base_url'].'freedownload.gif" alt="" />';
     $torrent['doubleimg'] = '<img src="'.$INSTALLER09['pic_base_url'].'doubleseed.gif" alt="" />';
     $torrent['free_color'] ='#FF0000';
+    $torrent['silver_color'] ='silver';
     //==rep user query by pdq
     if(($torrent_cache['rep'] = $mc1->get_value('user_rep_'.$torrents['owner'])) === false) {            
     $torrent_cache['rep'] = array();         
@@ -397,7 +398,7 @@ function do_rate(rate,id,what) {
     $seeders = (int)$a["seeders"];
     $leechers = (int)$a["leechers"];
     $added = get_date($a["added"], 'DATE',0,1);
-    $sim_torrent .= "<tr><td class='one' style='padding: 0px; border: none' width='40px'>{$cat}</td><td class='one'><a href='details.php?id=".(int)$a["id"]."&amp;hit=1'><b>{$name}</b></a></td><td class='one' style='padding: 1px' align='center'>". mksize((int)$a['size']) ."</td><td class='one' style='padding: 1px' align='center'>{$added}</td><td class='one' style='padding: 1px' align='center'>{$seeders}</td><td class='one' style='padding: 1px' align='center'>{$leechers}</td></tr>\n";
+    $sim_torrent .= "<tr><td class='one' style='padding: 0px; border: none' width='40px'>{$cat}</td><td class='one'><a href='details.php?id=".(int)$a["id"]."&amp;hit=1'><b>{$name}</b></a></td><td class='one' style='padding: 1px' align='center'>". mksize($a['size']) ."</td><td class='one' style='padding: 1px' align='center'>{$added}</td><td class='one' style='padding: 1px' align='center'>{$seeders}</td><td class='one' style='padding: 1px' align='center'>{$leechers}</td></tr>\n";
     }
     $sim_torrent .= "</table>";
     $HTMLOUT .= tr("{$lang['details_similiar']}", "<a href=\"javascript: klappe_news('a5')\"><img border=\"0\" src=\"pic/plus.png\" id=\"pica5".(int)$a['id']."\" alt=\"[Hide/Show]\" title=\"[Hide/Show]\" /></a><div id=\"ka5\" style=\"display: none;\"><br />$sim_torrent</div>", 1);

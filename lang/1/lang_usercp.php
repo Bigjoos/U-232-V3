@@ -94,6 +94,7 @@ $lang = array(
 'usercp_title' => 'Custom Title',
 'usercp_split' => 'Split Torrents by Days',
 'usercp_cats_sets' => 'Category icon set',
+'usercp_icons' => 'Categories as images',
 'usercp_language' => 'Language',
 #usercp stdhead
 'usercp_stdhead' => '\'s private page'

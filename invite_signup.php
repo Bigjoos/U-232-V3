@@ -11,7 +11,10 @@ require_once(INCL_DIR.'user_functions.php');
 require_once(CACHE_DIR.'timezones.php');
 require_once(CLASS_DIR.'page_verify.php');
 dbconn();
+global $CURUSER;
+if (!$CURUSER) {
 get_template();
+}
 
 $stdfoot = array(/** include js **/'js' => array('check','jquery.pstrength-min.1.2'));
 
@@ -129,7 +132,7 @@ if(!$INSTALLER09['openreg_invites'])
       <input type='checkbox' name='rulesverify' value='yes' /> {$lang['signup_rules']}<br />
       <input type='checkbox' name='faqverify' value='yes' /> {$lang['signup_faq']}<br />
       <input type='checkbox' name='ageverify' value='yes' /> {$lang['signup_age']}</td></tr>
-      <tr><td align='center' class='rowhead' colspan='2' id='captchainvite'></td></tr>
+      ".($INSTALLER09['captcha_on'] ? "<tr><td align='center' class='rowhead' colspan='2' id='captchainvite'></td></tr>" :"")."
       <tr><td align='center' colspan='2'>{$lang['signup_click']} <strong>{$lang['signup_x']}</strong> {$lang['signup_click1']}</td></tr><tr>
       <td colspan='2' align='center'>";
       for ($i=0; $i < count($value); $i++) {

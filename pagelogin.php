@@ -6,9 +6,11 @@
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
  **/
+//== loginlink mod - stonebreath/laffin
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
 dbconn();
+
 //== 09 failed logins thanks to pdq - Retro
 function failedloginscheck () {
 global $INSTALLER09;

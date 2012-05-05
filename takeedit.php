@@ -213,6 +213,30 @@ if ((isset($_POST['nfoaction'])) && ($_POST['nfoaction'] == 'update')) {
         write_log("Torrent $id ($name) No Longer Free. Removed by $CURUSER[username]");
         }
         /// end freeleech mod
+        //==09 Set Silver on Torrent Time Based
+        if (isset($_POST['half_length']) && ($half_length = 0 + $_POST['half_length']))
+        {
+        if ($half_length == 255)
+            $silver = 1;
+
+        elseif ($half_length == 42)
+            $silver = (86400 + TIME_NOW);
+
+        else
+            $silver = (TIME_NOW + $half_length * 604800);
+
+        $updateset[] = "silver = ".sqlesc($silver);
+        $torrent_cache['silver'] = $silver;
+        write_log("Torrent $id ($name) set Half leech for ".($silver != 1 ? "Until ".get_date($silver, 'DATE') : 'Unlimited')." by $CURUSER[username]");
+        }
+    
+        if (isset($_POST['slvr']) && ($_POST['slvr'] == 1))
+        {
+        $updateset[] = "silver = '0'";
+        $torrent_cache['silver'] = '0';
+        write_log("Torrent $id ($name) No Longer Half leech. Removed by $CURUSER[username]");
+        }
+        /// end silver torrent mod
         // ===09 Allowcomments
         if ((isset($_POST['allow_comments'])) && (($allow_comments = $_POST['allow_comments']) != $fetch_assoc['allow_comments'])) {
         if ($CURUSER['class'] >= UC_STAFF)

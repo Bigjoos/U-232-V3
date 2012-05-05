@@ -43,7 +43,7 @@ stderr("Error", "{$lang['userdetails_bad_id']}");
                          'avatar_rights, offensive_avatar, view_offensive_avatar, paranoia, google_talk, msn, aim, yahoo, website, '.
                          'icq, show_email, parked_until, gotgift, hash1, suspended, bjwins, bjlosses, warn_reason, onirc, irctotal, '.
                          'birthday, got_blocks, last_access_numb, onlinetime, pm_on_delete, commentpm, split, browser, hits, '.
-                         'comments, categorie_icon, reputation, perms, mood, got_moods, pms_per_page, show_pm_avatar, watched_user, watched_user_reason, staff_notes, game_access';
+                         'comments, categorie_icon, reputation, perms, mood, got_moods, pms_per_page, show_pm_avatar, watched_user, watched_user_reason, staff_notes, game_access, browse_icons';
      
         if(($user = $mc1->get_value('user'.$id)) === false) {
         $r1 = sql_query("SELECT ".$user_fields." FROM users WHERE id=".sqlesc($id)) or sqlerr(__FILE__,__LINE__);
