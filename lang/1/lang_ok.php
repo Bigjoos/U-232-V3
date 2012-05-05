@@ -5,8 +5,8 @@ $lang = array(
 #OK
 'ok_success' => "Signup successful!",
 'ok_invsuccess' => "Invite Signup successful!",
-#'ok_email' => "A confirmation email has been sent to the address you specified (%s). You need to read and respond to this email before you can use your account. If you don't do this, the new account will be deleted automatically after a few days.",
-'ok_email' => "<p>Your account has been activated! You may now login <a href='index.php'><b>here</b></a> and start using your account.</p>\n",
+'ok_email' => "A confirmation email has been sent to the address you specified (%s). You need to read and respond to this email before you can use your account. If you don't do this, the new account will be deleted automatically after a few days.",
+#'ok_email' => "<p>Your account has been activated! You may now login <a href='index.php'><b>here</b></a> and start using your account.</p>\n",
 'ok_invsuccess' => "Invite Signup successful!",
 'ok_email2' => "A confirmation email has been sent to the address you specified (%s). Your invitee needs to read and respond to this email before he/she can use their account. If they don't do this, the new account will be deleted automatically after a few days.",
 'ok_sysop_account' => "Sysop Account activation",
