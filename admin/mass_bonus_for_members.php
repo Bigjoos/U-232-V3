@@ -427,7 +427,7 @@ elseif ($free_for_classes === 0)
 //=== make the class based selection thingie bit here :D
 	$count = 1;
 	$all_classes_check_boxes = '<table border="0" cellspacing="5" cellpadding="5" align="left"><tr>';
-	for ($i = 1; $i <= UC_MAX; ++$i)
+	for ($i = UC_MIN; $i <= UC_MAX; ++$i)
 	{
 	$all_classes_check_boxes .= '<td class="one">
 		<input type="checkbox" name="free_for_classes[]" value="'.$i.'" checked="checked" /> <span style="font-weight: bold;color:#'.get_user_class_color($i).';">'.get_user_class_name($i).'</span></td>';
