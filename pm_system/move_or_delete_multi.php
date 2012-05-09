@@ -1,4 +1,7 @@
 <?php
+//print_r($_POST);
+//print_r($_GET);
+//exit();
 //=== don't allow direct access 
 if (!defined('BUNNY_PM_SYSTEM')) 
 {
@@ -55,7 +58,7 @@ snuggs
             //=== Delete multiple messages
                 foreach ($pm_messages as $id)
                     {
-                    $res = sql_query('SELECT * FROM messages WHERE id='.intval($id));
+                    $res = sql_query('SELECT * FROM messages WHERE id='.sqlesc($id));
                     $message = mysqli_fetch_assoc($res);
 
                     //=== make sure they aren't deleting a staff message...
@@ -63,13 +66,13 @@ snuggs
                         stderr('Error','You MUST read this message before you delete it!!!  <a class="altlink" href="pm_system.php?action=view_message&id='.$pm_id.'">BACK</a> to message.');
 
                     //=== make sure message isn't saved before deleting it, or just update location
-                    if ($message['receiver'] == $CURUSER['id'] && $message['saved'] == 'no' || $message['sender'] == $CURUSER['id'] && $message['location'] == PM_DELETED)
+                    if ($message['receiver'] == $CURUSER['id'] /*&& $message['saved'] == 'no' */ || $message['sender'] == $CURUSER['id'] && $message['location'] == PM_DELETED)
                         {
                         sql_query('DELETE FROM messages WHERE id='.sqlesc($id)) or sqlerr(__FILE__,__LINE__);
                         $mc1->delete_value('inbox_new_'.$id);
                         $mc1->delete_value('inbox_new_sb_'.$id);
                         }
-                    elseif ($message['receiver'] == $CURUSER['id'] && $message['saved'] == 'yes')
+                    elseif ($message['receiver'] == $CURUSER['id']/* && $message['saved'] == 'yes'*/)
                         {
                         sql_query('UPDATE messages SET location=0, unread=\'no\' WHERE id='.sqlesc($id)) or sqlerr(__FILE__,__LINE__);
                          $mc1->delete_value('inbox_new_'.$id);

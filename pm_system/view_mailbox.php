@@ -166,12 +166,12 @@ $show_pm_avatar_drop_down = '
 
 //=== the bottom      
 $HTMLOUT .= (mysqli_num_rows($res) > 0 ? '
-    <tr>
-        <td colspan="5" align="right" class="'.$class2.'">
-         [ <a class="altlink" href="javascript:SetChecked(1,\'pm[]\')"> select all</a> ] [ <a class="altlink" href="javascript:SetChecked(0,\'pm[]\')">un-select all</a> ]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$spacer.'
-        <input type="submit" class="button" name="move" value="Move to" onmouseover="this.className=\'button_hover\'" onmouseout="this.className=\'button\'" /> '.get_all_boxes().' or  
-        <input type="submit" class="button" name="delete" value="Delete" onmouseover="this.className=\'button_hover\'" onmouseout="this.className=\'button\'" /> selected messages.</td>
-    </tr>
+   <tr>
+   <td colspan="5" align="right" class="'.$class2.'">
+   [ <a class="altlink" href="javascript:SetChecked(1,\'pm[]\')"> select all</a> ] [ <a class="altlink" href="javascript:SetChecked(0,\'pm[]\')">un-select all</a>   ]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$spacer.'
+   <input type="submit" class="button" name="move" value="Move to" onmouseover="this.className=\'button_hover\'" onmouseout="this.className=\'button\'" /> '.get_all_boxes().' or
+   <input type="submit" class="button" name="delete" value="Delete" onmouseover="this.className=\'button_hover\'" onmouseout="this.className=\'button\'" /> selected messages.</td>
+   </tr>
     <tr>
         <td colspan="5" align="left">
         <img src="pic/pn_inboxnew.gif" title="Unread Message" alt="Unread" /> Unread Messages.<br />

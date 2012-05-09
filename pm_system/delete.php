@@ -25,11 +25,11 @@ if (!defined('BUNNY_PM_SYSTEM'))
                 stderr('Error','You MUST read this message before you delete it!!!  <a class="altlink" href="pm_system.php?action=view_message&id='.$pm_id.'">BACK</a> to message.');
 
         //=== make sure message isn't saved before deleting it, or just update location
-        if ($message['receiver'] == $CURUSER['id'] && $message['saved'] == 'no' || $message['sender'] == $CURUSER['id'] && $message['location'] == PM_DELETED)
+        if ($message['receiver'] == $CURUSER['id']/* && $message['saved'] == 'no'*/ || $message['sender'] == $CURUSER['id'] && $message['location'] == PM_DELETED)
             {
             sql_query('DELETE FROM messages WHERE id='.sqlesc($pm_id)) or sqlerr(__FILE__,__LINE__);
             }
-        elseif ($message['receiver'] == $CURUSER['id'] && $message['saved'] == 'yes')
+        elseif ($message['receiver'] == $CURUSER['id']/* && $message['saved'] == 'yes'*/)
             {
             sql_query('UPDATE messages SET location=0, unread=\'no\' WHERE id='.sqlesc($pm_id)) or sqlerr(__FILE__,__LINE__);
             }
