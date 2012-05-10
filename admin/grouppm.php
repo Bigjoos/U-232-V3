@@ -33,10 +33,10 @@ class_check(UC_MODERATOR);
 
   $HTMLOUT = '';
   $err = array();
-  $FSCLASS = 4; //== First staff class;
-	$LSCLASS = 6; //== Last staff class;
-	$FUCLASS = 0; //== First users class;
-	$LUCLASS = 3; //== Last users class;
+  $FSCLASS = UC_STAFF; //== First staff class;
+	$LSCLASS = UC_MAX; //== Last staff class;
+	$FUCLASS = UC_MIN; //== First users class;
+	$LUCLASS = UC_VIP; //== Last users class;
   
   $sent2classes = array();
 
@@ -52,8 +52,8 @@ function mkint($x) {
 
 	if ($_SERVER["REQUEST_METHOD"] == "POST")
 	{
-		//$groups = isset($_POST["groups"]) ? $_POST["groups"] : "";
-      $groups = isset($_POST["groups"]) ? array_map('mkint',$_POST["groups"]) : "";
+		$groups = isset($_POST["groups"]) ? $_POST["groups"] : "";
+    //$groups = isset($_POST["groups"]) ? array_map('mkint',$_POST["groups"]) : ""; //no need for this kind of check because every value its checked inside the switch also the array contains no integer values so that will be a problem 
 		$subject = isset($_POST["subject"]) ? htmlsafechars($_POST["subject"]) : "";
 		$msg = isset($_POST["message"]) ? htmlsafechars($_POST["message"]) : "";
 		$msg = str_replace("&amp","&", $_POST["message"]);
@@ -70,9 +70,7 @@ function mkint($x) {
 		
 		if(sizeof($err) == 0)
 		{
-			$where = array();
-			$classes = array();
-			$ids = array();
+			$where = $classes = $ids = array();
 			foreach($groups as $group)
 			{
 				if(is_string($group))
@@ -133,7 +131,6 @@ function mkint($x) {
 		}
 	 
 	}
-	
 
 	$groups = array(
 		array("opname"=>"Site Staff",

@@ -33,7 +33,7 @@ $comment_id = (isset($_GET['comment_id']) ? intval($_GET['comment_id']) :  (isse
 $category = (isset($_GET['category']) ? intval($_GET['category']) : (isset($_POST['category']) ? intval($_POST['category']) : 0));
 $requested_by_id = isset($_GET['requested_by_id']) ? intval($_GET['requested_by_id']) : 0;
 $vote = isset($_POST['vote']) ? intval($_POST['vote']) : 0;
-$posted_action = strip_tags((isset($_GET['action']) ? htmlsafechars($_GET['action']) : (isset($_POST['action']) ? htmlsafehcars($_POST['action']) : '')));
+$posted_action = strip_tags((isset($_GET['action']) ? htmlsafechars($_GET['action']) : (isset($_POST['action']) ? htmlsafechars($_POST['action']) : '')));
    //===========================================================================================//
    //==================================    let them vote on it!    ==========================================//
    //===========================================================================================//

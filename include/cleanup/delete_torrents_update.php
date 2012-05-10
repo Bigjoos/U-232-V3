@@ -26,14 +26,14 @@ function docleanup( $data ) {
 	     $res = sql_query("SELECT id, name FROM torrents WHERE added < $dt AND seeders='0' AND leechers='0'");
 	     while ($arr = mysqli_fetch_assoc($res))
 	     {
-		  sql_query("DELETE peers.*, files.*,comments.*,snatched.*, thanks.*, bookmarks.*, coins.*, ratings.*, torrents.* FROM torrents 
+		  sql_query("DELETE peers.*, files.*,comments.*,snatched.*, thanks.*, bookmarks.*, coins.*, rating.*, torrents.* FROM torrents 
 				 LEFT JOIN peers ON peers.torrent = torrents.id
 				 LEFT JOIN files ON files.torrent = torrents.id
 				 LEFT JOIN comments ON comments.torrent = torrents.id
 				 LEFT JOIN thanks ON thanks.torrentid = torrents.id
 				 LEFT JOIN bookmarks ON bookmarks.torrentid = torrents.id
 				 LEFT JOIN coins ON coins.torrentid = torrents.id
-				 LEFT JOIN ratings ON ratings.torrent = torrents.id
+				 LEFT JOIN rating ON rating.torrent = torrents.id
 				 LEFT JOIN snatched ON snatched.torrentid = torrents.id
 				 WHERE torrents.id = {$arr['id']}") or sqlerr(__FILE__, __LINE__);
 				 @unlink("{$INSTALLER09['torrent_dir']}/{$arr['id']}.torrent");

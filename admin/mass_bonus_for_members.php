@@ -30,10 +30,12 @@ require_once(CLASS_DIR.'class_check.php');
 class_check(UC_ADMINISTRATOR);
 //=== all the defaults
 $lang = array_merge( $lang );
+$stdhead = array(/** include css **/'css' => array('forums','style','style2','jquery.lightbox-0.5'));
+$stdfoot = array(/** include css **/'js' => array('browse','jquery.lightbox-0.5.min','lightbox','check_selected'));
 $h1_thingie = $HTMLOUT = '';
 //=== check if action_2 is sent ($_POST) if so make sure it's what you want it to be
 $action_2 = (isset($_POST['action_2']) ? $_POST['action_2'] : 'no_action');
-$good_stuff = array('upload_credit','karma','freeslots', 'invite');
+$good_stuff = array('upload_credit','karma','freeslots', 'invite', 'pm');
 $action = (($action_2  && in_array($action_2, $good_stuff, true)) ? $action_2 : '');
 
 //=== see if the credit is for all classes or selected classes all_or_selected_classes
@@ -81,15 +83,15 @@ if ($free_for_classes === 1)
             $mc1->begin_transaction('userstats_'.$arr_GB['id']);
             $mc1->update_row(false, array('uploaded' => $GB_new));
             $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
-            delete_id_keys('inbox_new_'.$arr_GB['id']);
-            delete_id_keys('inbox_new_sb_'.$arr_GB['id']);
+            $mc1 ->delete_value('inbox_new_'.$arr_GB['id']);
+            $mc1 ->delete_value('inbox_new_sb_'.$arr_GB['id']);
             }
             
             $count = count($users_buffer);
             if ($count > 0){
             sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
             sql_query("INSERT INTO users (id, uploaded, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE uploaded=uploaded+values(uploaded),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-            write_log("Staff mass bonus - added upload credit to ".$count." members in all classes by ".$CURUSER['username']."");
+            write_log("Staff mass bonus - added upload credit to ".$count." members in all classes by ".$CURUSER['username']);
             }
             
             unset ($users_buffer, $pm_buffer, $count);  
@@ -124,15 +126,15 @@ elseif ($free_for_classes === 0)
                         $mc1->begin_transaction('userstats_'.$arr_GB['id']);
                         $mc1->update_row(false, array('uploaded' => $GB_new));
                         $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
-                        delete_id_keys('inbox_new_'.$arr_GB['id']);
-                        delete_id_keys('inbox_new_sb_'.$arr_GB['id']);
+                        $mc1 ->delete_value('inbox_new_'.$arr_GB['id']);
+                        $mc1 ->delete_value('inbox_new_sb_'.$arr_GB['id']);
                         }
                         
                         $count = count($users_buffer);
                         if ($count > 0){
                         sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
                         sql_query("INSERT INTO users (id, uploaded, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE uploaded=uploaded+values(uploaded),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-                        write_log("Staff mass bonus - added upload credit to ".$count." members by ".$CURUSER['username']."");
+                        write_log("Staff mass bonus - added upload credit to ".$count." members by ".$CURUSER['username']);
                         }
                         unset ($users_buffer, $pm_buffer, $count);
                         }
@@ -172,15 +174,15 @@ if ($free_for_classes === 1)
             $mc1->begin_transaction('userstats_'.$arr_karma['id']);
             $mc1->update_row(false, array('seedbonus' => $karma_new));
             $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
-            delete_id_keys('inbox_new_'.$arr_karma['id']);
-            delete_id_keys('inbox_new_sb_'.$arr_karma['id']);
+            $mc1 ->delete_value('inbox_new_'.$arr_karma['id']);
+            $mc1 ->delete_value('inbox_new_sb_'.$arr_karma['id']);
             }
             
             $count = count($users_buffer);
             if ($count > 0){
             sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
             sql_query("INSERT INTO users (id, seedbonus, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE seedbonus=seedbonus+values(seedbonus),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-            write_log("Staff mass bonus - added karma points to ".$count." members in all classes by ".$CURUSER['username']."");
+            write_log("Staff mass bonus - added karma points to ".$count." members in all classes by ".$CURUSER['username']);
             }
   
             unset ($users_buffer, $pm_buffer, $count);
@@ -213,15 +215,15 @@ elseif ($free_for_classes === 0)
                         $mc1->begin_transaction('userstats_'.$arr_karma['id']);
                         $mc1->update_row(false, array('seedbonus' => $karma_new));
                         $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
-                        delete_id_keys('inbox_new_'.$arr_karma['id']);
-                        delete_id_keys('inbox_new_sb_'.$arr_karma['id']);
+                        $mc1 ->delete_value('inbox_new_'.$arr_karma['id']);
+                        $mc1 ->delete_value('inbox_new_sb_'.$arr_karma['id']);
                         }
                         
                         $count = count($users_buffer);
                         if ($count > 0){
                         sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
                         sql_query("INSERT INTO users (id, seedbonus, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE seedbonus=seedbonus+values(seedbonus),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-                        write_log("Staff mass bonus - added karma points to ".$count." members by ".$CURUSER['username']."");
+                        write_log("Staff mass bonus - added karma points to ".$count." members by ".$CURUSER['username']);
                         }
                         
                         unset ($users_buffer, $pm_buffer, $count);
@@ -263,15 +265,15 @@ if ($free_for_classes === 1)
             $mc1->begin_transaction('user_stats_'.$arr_freeslots['id']);
             $mc1->update_row(false, array('modcomment' => $modcomment));
             $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
-            delete_id_keys('inbox_new_'.$arr_freeslots['id']);
-            delete_id_keys('inbox_new_sb_'.$arr_freeslots['id']);
+            $mc1 ->delete_value('inbox_new_'.$arr_freeslots['id']);
+            $mc1 ->delete_value('inbox_new_sb_'.$arr_freeslots['id']);
             }
             
             $count = count($users_buffer);
             if ($count > 0){
             sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
             sql_query("INSERT INTO users (id, freeslots, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE freeslots=freeslots+values(freeslots),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-            write_log("Staff mass bonus - added freeslots to ".$count." members in all classes by ".$CURUSER['username']."");
+            write_log("Staff mass bonus - added freeslots to ".$count." members in all classes by ".$CURUSER['username']);
             }
                         
             unset ($users_buffer, $pm_buffer, $count);
@@ -307,14 +309,14 @@ elseif ($free_for_classes === 0)
                         $mc1->begin_transaction('user_stats_'.$arr_freeslots['id']);
                         $mc1->update_row(false, array('modcomment' => $modcomment));
                         $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
-                        delete_id_keys('inbox_new_'.$arr_freeslots['id']);
-                        delete_id_keys('inbox_new_sb_'.$arr_freeslots['id']);
+                        $mc1 ->delete_value('inbox_new_'.$arr_freeslots['id']);
+                        $mc1 ->delete_value('inbox_new_sb_'.$arr_freeslots['id']);
                         }
                         $count = count($users_buffer);
                         if ($count > 0){
                         sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
                         sql_query("INSERT INTO users (id, freeslots, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE freeslots=freeslots+values(freeslots),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-                        write_log("Staff mass bonus - added freeslots to ".$count." members by ".$CURUSER['username']."");
+                        write_log("Staff mass bonus - added freeslots to ".$count." members by ".$CURUSER['username']);
                         }
                         
                         unset ($users_buffer, $pm_buffer, $count);
@@ -357,15 +359,15 @@ if ($free_for_classes === 1)
             $mc1->begin_transaction('user_stats_'.$arr_invites['id']);
             $mc1->update_row(false, array('modcomment' => $modcomment));
             $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
-            delete_id_keys('inbox_new_'.$arr_invites['id']);
-            delete_id_keys('inbox_new_sb_'.$arr_invites['id']);
+            $mc1 ->delete_value('inbox_new_'.$arr_invites['id']);
+            $mc1 ->delete_value('inbox_new_sb_'.$arr_invites['id']);
             }
             
             $count = count($users_buffer);
             if ($count > 0){
             sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
             sql_query("INSERT INTO users (id, invites, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE invites=invites+values(invites),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-            write_log("Staff mass bonus - added invites to ".$count." members in all classes by ".$CURUSER['username']."");
+            write_log("Staff mass bonus - added invites to ".$count." members in all classes by ".$CURUSER['username']);
             }
                         
             unset ($users_buffer, $pm_buffer, $count);
@@ -401,15 +403,15 @@ elseif ($free_for_classes === 0)
                         $mc1->begin_transaction('user_stats_'.$arr_invites['id']);
                         $mc1->update_row(false, array('modcomment' => $modcomment));
                         $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
-                        delete_id_keys('inbox_new_'.$arr_invites['id']);
-                        delete_id_keys('inbox_new_sb_'.$arr_invites['id']);
+                        $mc1 ->delete_value('inbox_new_'.$arr_invites['id']);
+                        $mc1 ->delete_value('inbox_new_sb_'.$arr_invites['id']);
                         }
                         
                         $count = count($users_buffer);
                         if ($count > 0){
                         sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
                         sql_query("INSERT INTO users (id, invites, modcomment) VALUES " . implode(', ', $users_buffer) . " ON DUPLICATE key UPDATE invites=invites+values(invites),modcomment=concat(values(modcomment),modcomment)") or sqlerr(__FILE__, __LINE__);
-                        write_log("Staff mass bonus - added invites to ".$count." members by ".$CURUSER['username']."");
+                        write_log("Staff mass bonus - added invites to ".$count." members by ".$CURUSER['username']);
                         }
                         
                        unset ($users_buffer, $pm_buffer, $count);
@@ -420,8 +422,73 @@ elseif ($free_for_classes === 0)
     die(); 
     } 
     
-        break;       
 
+case 'pm':
+if (!isset($_POST['subject']))   
+                    stderr('Error','No subject text... Please enter something to send!');
+
+if (!isset($_POST['body']))   
+                    stderr('Error','No body text... Please enter something to send!');
+//=== if for all classes
+if ($free_for_classes === 1)
+    {
+    $res_pms = sql_query('SELECT id FROM users WHERE enabled = \'yes\' AND suspended = \'no\'');
+     $pm_buffer = array();
+     if (mysqli_num_rows($res_pms) > 0) {
+     $subject = sqlesc(htmlsafechars($_POST['subject']));
+     $body = sqlesc(htmlsafechars($_POST['body']));
+    	while ($arr_pms = mysqli_fetch_assoc($res_pms))
+            {
+			   $pm_buffer[] = '(0, '.$arr_pms['id'].', '.TIME_NOW.', '.$body.', '.$subject.')';
+            $mc1 ->delete_value('inbox_new_'.$arr_pms['id']);
+            $mc1 ->delete_value('inbox_new_sb_'.$arr_pms['id']);
+            }
+            
+            $count = count($pm_buffer);
+            if ($count > 0){
+            sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
+            write_log("Mass pm sent to ".$count." members in all classes by ".$CURUSER['username']);
+            }
+                        
+            unset ($pm_buffer, $count);
+            }
+            
+    header('Location: staffpanel.php?tool=mass_bonus_for_members&action=mass_bonus_for_members&pm=1');
+    die(); 
+    }
+elseif ($free_for_classes === 0)
+    {
+    foreach ($free_for as $class)
+        {
+            if (ctype_digit($class))
+                {
+                $res_pms = sql_query('SELECT id FROM users WHERE enabled = \'yes\' AND suspended = \'no\' AND class = '.$class);
+                $pm_buffer = array();
+                if (mysqli_num_rows($res_pms) > 0) {
+                $subject = sqlesc(htmlsafechars($_POST['subject']));
+                $body = sqlesc(htmlsafechars($_POST['body']));
+                    while ($arr_pms = mysqli_fetch_assoc($res_pms))
+                        {               
+			               $pm_buffer[] = '(0, '.$arr_pms['id'].', '.TIME_NOW.', '.$body.', '.$subject.')';
+                        $mc1 ->delete_value('inbox_new_'.$arr_pms['id']);
+                        $mc1 ->delete_value('inbox_new_sb_'.$arr_pms['id']);
+                        }
+                        
+                        $count = count($pm_buffer);
+                        if ($count > 0){
+                        sql_query("INSERT INTO messages (sender,receiver,added,msg,subject) VALUES " . implode(', ', $pm_buffer)) or sqlerr(__FILE__, __LINE__);
+                        write_log("Mass pm sent to ".$count." members by ".$CURUSER['username']);
+                        }
+                        
+                       unset ($pm_buffer, $count);
+                       }
+                       }
+                      
+    header('Location: staffpanel.php?tool=mass_bonus_for_members&action=mass_bonus_for_members&pm=2');
+    die(); 
+    } 
+}
+break;       
 } //=== end switch        
         
 //=== make the class based selection thingie bit here :D
@@ -492,6 +559,25 @@ $i = 1;
         }
     $invites_drop_down .= '</select> select amount of invites to add.';
     
+      //== pms \0/ (*)(*)
+      $subject = isset($_POST['subject']) ? htmlsafechars($_POST['subject']) : 'Mass Pm';    
+      $body = isset($_POST['body']) ? htmlsafechars($_POST['body']) : 'Your text here';
+      $pm_drop_down = '<form name="compose" method="post" action="mass_bonus_for_members.php">
+                 <input type="hidden" name="pm" value="pm" />
+                 <table border="0" cellspacing="0" cellpadding="5" align="center" style="max-width:800px">
+                 <tr>
+                 <td align="left" colspan="2" class="colhead">Send message</td>
+                 </tr>
+                 <tr>
+                 <td align="right" class="one"><span style="font-weight: bold;">Subject:</span></td>
+                 <td align="left" class="one"><input name="subject" type="text" class="text_default" value="'.$subject.'" /></td>
+                 </tr>
+                 <tr>
+                 <td align="right" class="one"><span style="font-weight: bold;">Body:</span></td>
+                 <td align="left" class="one">'.BBcode($body, FALSE).'</td>
+                 </tr>
+                 </table></form>';
+
 $drop_down = '
         <select name="bonus_options_1" id="bonus_options_1">
         <option value="">Select Bonus Type</option>
@@ -499,6 +585,7 @@ $drop_down = '
         <option value="karma">Karma Points</option>
         <option value="freeslots">Free Leech Slots</option>
         <option value="invite">Invites</option>
+        <option value="pm">Pm</option>
         <option value="">Reset bonus type</option>
         </select>';
 
@@ -507,7 +594,7 @@ $h1_thingie .= (isset($_GET['GB']) ? ($_GET['GB'] === 1 ? '<h2>Bonus GB added to
 $h1_thingie .= (isset($_GET['karma']) ? ($_GET['karma'] === 1 ? '<h2>Bonus Karma added to all enabled members</h2>' : '<h2>Bonus Karma added to selected member classes</h2>') : '');
 $h1_thingie .= (isset($_GET['freeslots']) ? ($_GET['freeslots'] === 1 ? '<h2>Bonus Free Leech Slots added to all enabled members<h2>' : '<h2>Bonus Free Leech Slots added to selected member classes</h2>') : '');
 $h1_thingie .= (isset($_GET['invites']) ? ($_GET['invites'] === 1 ? '<h2>Bonus invites added to all enabled members</h2>' : '<h2>Bonus invites added to selected member classes</h2>') : '');
-
+$h1_thingie .= (isset($_GET['pm']) ? ($_GET['pm'] === 1 ? '<h2>Mass pm sent to all enabled members</h2>' : '<h2>Mass pm sent to selected member classes</h2>') : '');
 
         
         $HTMLOUT .='<h1>'.$INSTALLER09['site_name'].' Mass Bonus</h1>'.$h1_thingie;
@@ -525,6 +612,7 @@ $HTMLOUT .= '<form name="inputform" method="post" action="staffpanel.php?tool=ma
         <div id="div_karma" class="select_me"><br />'.$karma_drop_down.'<hr /></div>
         <div id="div_freeslots" class="select_me"><br />'.$free_leech_slot_drop_down.'<hr /></div>
         <div id="div_invite" class="select_me"><br />'.$invites_drop_down.'<hr /></div>
+        <div id="div_pm" class="select_me"><br />'.$pm_drop_down.'<hr /></div>
         </td>
     </tr>                
 	<tr>
@@ -550,7 +638,6 @@ $(document).ready(function(){
   $("#bonus_options_1").change(function() {
     $(".select_me").hide();
     $("#div_" + $(this).val()).show();
-
     //=== change the hidden input actin 2 thingie
       var text = $(this).val();
       $("#action_2").val(text);
@@ -564,5 +651,5 @@ $("#all_or_selected_classes").click(function() {
 });
 -->
 </script>';  
-echo stdhead('Mass Bonus For Members') . $HTMLOUT . stdfoot();
+echo stdhead('Mass Bonus For Members', true, $stdhead) . $HTMLOUT . stdfoot();
 ?>
