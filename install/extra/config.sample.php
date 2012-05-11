@@ -79,6 +79,8 @@ $INSTALLER09['expires']['last5_torrents'] = 0; // 0 = infinite
 $INSTALLER09['expires']['scroll_torrents'] = 0; // 0 = infinite
 $INSTALLER09['expires']['torrent_details'] = 30*86400; // = 30 days
 $INSTALLER09['expires']['torrent_details_text'] = 30*86400; // = 30 days
+$INSTALLER09['expires']['insertJumpTo'] = 30*86400; // = 30 days
+$INSTALLER09['expires']['get_all_boxes'] = 30*86400; // = 30 days
 $INSTALLER09['expires']['thumbsup'] = 0; // 0 = infinite
 $INSTALLER09['expires']['iphistory'] = 900;  // 900 = 15 min
 $INSTALLER09['expires']['newpoll'] = 0;  // 900 = 15 min

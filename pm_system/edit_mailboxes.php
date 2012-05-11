@@ -62,8 +62,10 @@ if (!defined('BUNNY_PM_SYSTEM'))
                 {
                 if (validusername($add_it) && $add_it !== '')
                     {
-                    $name = sqlesc(htmlsafechars($add_it));
+                    $name = htmlsafechars($add_it);
                     sql_query('INSERT INTO pmboxes (userid, name, boxnumber) VALUES ('.sqlesc($CURUSER['id']).', '.sqlesc($name).', '.sqlesc($box).')') or sqlerr(__FILE__,__LINE__);
+                    $mc1 -> delete_value('get_all_boxes'.$CURUSER['id']);
+                    $mc1 -> delete_value('insertJumpTo'.$CURUSER['id']);
                     }
                 ++$box;
                 $worked = '&boxes=1';
@@ -89,8 +91,10 @@ if (!defined('BUNNY_PM_SYSTEM'))
                     //=== if name different AND safe, update it
                     if (validusername($_POST['edit'.$row['id']]) && $_POST['edit'.$row['id']] !== '' && $_POST['edit'.$row['id']] !== $row['name'])
                         {
-                        $name = sqlesc(htmlsafechars($_POST['edit'.$row['id']]));
+                        $name = htmlsafechars($_POST['edit'.$row['id']]);
                         sql_query('UPDATE pmboxes SET name='.sqlesc($name).' WHERE id='.sqlesc($row['id']).' LIMIT 1') or sqlerr(__FILE__,__LINE__);
+                        $mc1 -> delete_value('get_all_boxes'.$CURUSER['id']);
+                        $mc1 -> delete_value('insertJumpTo'.$CURUSER['id']);
                         $worked = '&name=1';		
                         }
 	
@@ -108,6 +112,8 @@ if (!defined('BUNNY_PM_SYSTEM'))
 
                             //== delete the box
                             sql_query('DELETE FROM pmboxes WHERE id='.sqlesc($row['id']).'  LIMIT 1') or sqlerr(__FILE__,__LINE__);
+                            $mc1 -> delete_value('get_all_boxes'.$CURUSER['id']);
+                            $mc1 -> delete_value('insertJumpTo'.$CURUSER['id']);
                             $deleted = '&box_delete=1';
                         }
 	
@@ -185,8 +191,7 @@ if ($curuser_cache) {
         break;
         }//=== end of case / switch
     }//=== end of $_POST stuff
-    
-    
+   
 //=== main page here :D
             $res = sql_query('SELECT * FROM pmboxes WHERE userid='.sqlesc($CURUSER['id']).' ORDER BY name ASC') or sqlerr(__FILE__,__LINE__);
             
@@ -289,8 +294,8 @@ if ($curuser_cache) {
 	  }
     }
     $categories = categories_table($cats, $wherecatina);           
+
 //=== make up page
-//echo stdhead('Mailbox Manager / Message settings'); 
 $HTMLOUT .= '
 <script type="text/javascript">
 /*<![CDATA[*/

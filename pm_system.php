@@ -15,6 +15,7 @@ require_once INCL_DIR.'pager_new.php';
 dbconn(false);
 loggedinorreturn();
 define('BUNNY_PM_SYSTEM', TRUE);
+
 /*********************************************************
 - Pm system by snuggles
 - write up some credits... based on Tux mailbox mod, using code from Retro
@@ -58,7 +59,7 @@ function validusername($username)
 //===set MAX message amount for users... in out and other... and...
 switch ($CURUSER['class'])
   {
-	 case UC_USER:
+	 case UC_MIN:
         $maxbox = 50;
         $maxboxes = 5;
      break;
@@ -74,7 +75,7 @@ switch ($CURUSER['class'])
         $maxbox = 300;
         $maxboxes = 15;
      break;     
-    case UC_MODERATOR:
+    case UC_STAFF:
         $maxbox = 300;
         $maxboxes = 20;
      break;       
@@ -82,7 +83,7 @@ switch ($CURUSER['class'])
         $maxbox = 400;
         $maxboxes = 30;
      break;
-    case UC_SYSOP:
+    case UC_MAX:
         $maxbox = 500;
         $maxboxes = 40;
      break;
@@ -237,8 +238,7 @@ function get_all_boxes()
     $get_all_boxes .= '<option class="body" value="'.(int)$row['boxnumber'].'">'.htmlsafechars($row['name']).'</option>';
     }
     $get_all_boxes .= '</select>';
-    $mc1->cache_value('get_all_boxes'.$CURUSER['id'], $get_all_boxes, 86400);
-    //return $get_all_boxes;
+    $mc1->cache_value('get_all_boxes'.$CURUSER['id'], $get_all_boxes, $INSTALLER09['expires']['get_all_boxes']);
     }
     return $get_all_boxes;
     }
@@ -261,8 +261,7 @@ function insertJumpTo($mailbox)
      $insertJumpTo .= '<option class="body" value="pm_system.php?action=view_mailbox&amp;box='.(int)$row['boxnumber'].'" '.((int)$row['boxnumber'] == $mailbox ? 'selected="selected"' : '').'>'.htmlsafechars($row['name']).'</option>';
      }
      $insertJumpTo .= '</select></form>';
-     $mc1->cache_value('insertJumpTo'.$CURUSER['id'], $insertJumpTo, 86400);                 
-     //return $insertJumpTo;
+     $mc1->cache_value('insertJumpTo'.$CURUSER['id'], $insertJumpTo, $INSTALLER09['expires']['insertJumpTo']);                 
      }
      return $insertJumpTo;
      }
