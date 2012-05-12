@@ -97,7 +97,7 @@ $casino = 'casino.php'; //== Name of file
          $ratio = 999;
          else
          $ratio = 0;
-         if ($ratio < $required_ratio)
+         if ($INSTALLER09['ratio_free'] === false && $ratio < $required_ratio)
          stderr("Sorry", "".htmlsafechars($CURUSER["username"])." your ratio is under {$required_ratio}");
          $global_down2 = sql_query("SELECT (sum(win)-sum(lost)) AS globaldown,(sum(deposit)) AS globaldeposit, sum(win) AS win, sum(lost) AS lost FROM casino") or sqlerr(__FILE__, __LINE__);
          $row = mysqli_fetch_assoc($global_down2);

@@ -103,7 +103,7 @@ else {
             <td>{$membertime}</td>
             <td>" . get_user_class_name($arr["class"]) . "</td>
             <td>" . mksize($arr["uploaded"]) . "</td>
-            <td>".member_ratio($arr['uploaded'], $arr['downloaded'])."</td>
+            <td>".member_ratio($arr['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $arr['downloaded'])."</td>
             <td>{$status}</td>
             <td><input type=\"checkbox\" name=\"deleteapp[]\" value=\"".(int)$arr['id']."\" /></td>
             </tr>\n";
@@ -134,11 +134,11 @@ if ($action == "viewapp") {
     <tr>
     <td class='rowhead'>{$lang['uploadapps_upped1']} </td><td>" . htmlsafechars( mksize($arr["uploaded"])) . "</td>
     </tr>
-    <tr>
+    ".($INSTALLER09['ratio_free'] ? "" : "<tr>
     <td class='rowhead'>{$lang['uploadapps_downed']} </td><td>" .htmlsafechars( mksize($arr["downloaded"])) . "</td>
-    </tr>
+    </tr>")."
     <tr>
-    <td class='rowhead'>{$lang['uploadapps_ratio1']} </td><td>".member_ratio($arr['uploaded'], $arr['downloaded'])."</td>
+    <td class='rowhead'>{$lang['uploadapps_ratio1']} </td><td>".member_ratio($arr['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $arr['downloaded'])."</td>
     </tr>
     <tr>
     <td class='rowhead'>{$lang['uploadapps_connectable']} </td><td>" . htmlsafechars($arr["connectable"])."</td>
@@ -180,7 +180,7 @@ if ($action == "acceptapp") {
     stderr($lang['uploadapps_error'], $lang['uploadapps_noid']);
     $res = sql_query("SELECT uploadapp.id, users.username, users.modcomment, users.id AS uid FROM uploadapp INNER JOIN users on uploadapp.userid = users.id WHERE uploadapp.id = $id") or sqlerr(__FILE__, __LINE__);
     $arr = mysqli_fetch_assoc($res);
-    $note = htmlentities($_POST["note"]);
+    $note = htmlsafechars($_POST["note"]);
     $subject = sqlesc("Uploader Promotion");
     $msg = sqlesc("Congratulations, your uploader application has been accepted! You have been promoted to Uploader and you are now able to upload torrents. Please make sure you have read the [url={$INSTALLER09['baseurl']}/rules.php]guidelines on uploading[/url] before you do.\n\nNote: $note");
     $msg1 = sqlesc("User [url={$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['uid']."][b]{$arr['username']}[/b][/url] has been promoted to Uploader by {$CURUSER['username']}.");

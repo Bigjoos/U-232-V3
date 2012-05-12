@@ -28,7 +28,7 @@ require_once(CLASS_DIR.'class_check.php');
 class_check(UC_STAFF);
 
 $lang = array_merge( $lang );
-$HTMLOUT='';
+$HTMLOUT = $count = '';
 
   $count1 = get_row_count('torrents');
   $perpage = 15;
@@ -44,20 +44,19 @@ $HTMLOUT .= $pager['pagertop'];
 $HTMLOUT .='<table border="0" cellspacing="0" cellpadding="5">
    <tr><td class="colhead" align="center">Rank</td><td class="colhead" align="center">#Torrents</td><td class="colhead" align="left">Member</td><td class="colhead" align="left">Class</td><td class="colhead" align="left">Ratio</td><td class="colhead" align="left">Last Upload</td><td class="colhead" align="center">Send Pm</td></tr>';
 $i = 0; 
-$count='';
 while ($arr = mysqli_fetch_assoc($res))
 {
 $i++;
       //=== change colors
       $count= (++$count)%2;
       $class = ($count == 0 ? 'one' : 'two');
-      $ratio = ($arr["downloaded"] > 0 ? number_format($arr["uploaded"] / $arr["downloaded"], 3) : ($arr["uploaded"] > 0 ? "Inf." : "---"));
+      $ratio = member_ratio($arr['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $arr['downloaded']);
 $HTMLOUT .='<tr>
 <td class="'.$class.'" align="center">'.$i.'</td>
 <td class="'.$class.'" align="center">'.(int)$arr ['how_many_torrents'].'</td>
 <td class="'.$class.'" align="left">'.format_username($arr).'</td>
 <td class="'.$class.'" align="left">'.get_user_class_name($arr ['class']).'</td>
-<td class="'.$class.'" align="left">'.member_ratio($arr['uploaded'], $arr['downloaded']).'</td>
+<td class="'.$class.'" align="left">'.$ratio.'</td>
 <td class="'.$class.'" align="left">'.get_date($arr ['added'], 'DATE',0,1).'</td>
 <td class="'.$class.'" align="center"><a href="pm_system.php?action=send_message&amp;receiver='.(int)$arr['id'].'"><img src="'.$INSTALLER09['pic_base_url'].'/button_pm.gif" alt="Pm" title="Pm" border="0" /></a></td>
 </tr>';

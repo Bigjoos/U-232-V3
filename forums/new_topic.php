@@ -124,7 +124,7 @@ if (!defined('BUNNY_FORUMS'))
       if($INSTALLER09['autoshout_on'] == 1){
 	   $message = $CURUSER['username'] . " Created a new topic [url={$INSTALLER09['baseurl']}/forums.php?action=view_topic&topic_id=$topic_id&page=last]{$topic_name}[/url]";
 	   //////remember to edit the ids to your staffforum ids :)
-	   if (!in_array($forum_id, array("1"))) {
+	   if (!in_array($forum_id, $INSTALLER09['staff_forums'])) {
   	   autoshout($message);
       $mc1->delete_value('shoutbox_');
 	   }

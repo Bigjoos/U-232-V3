@@ -68,8 +68,8 @@ while ($hit_and_run_arr = mysqli_fetch_assoc($hit_and_run_rez))
 if ($hit_and_run_arr['seeder'] !== 'yes')
 {
 if ($hit_and_run_arr['userid'] !== $hit_and_run_arr['owner']){
-$ratio_site = member_ratio($hit_and_run_arr['up'], $hit_and_run_arr['down']);
-$ratio_torrent = member_ratio($hit_and_run_arr['uload'], $hit_and_run_arr['dload']);
+$ratio_site = member_ratio($hit_and_run_arr['up'], $INSTALLER09['ratio_free'] ? '0' : $hit_and_run_arr['down']);
+$ratio_torrent = member_ratio($hit_and_run_arr['uload'], $INSTALLER09['ratio_free'] ? '0' : $hit_and_run_arr['dload']);
 $avatar = ($CURUSER['avatars'] == 'yes' ? ($hit_and_run_arr['avatar'] == '' ? '<img src="pic/default_avatar.gif"  width="40" alt="default avatar" />' : '<img src="'.htmlsafechars($hit_and_run_arr['avatar']).'" alt="avatar"  width="40" />') : '');
 $torrent_needed_seed_time = $hit_and_run_arr['seedtime'];
 //=== get times per class
@@ -123,11 +123,11 @@ $HTMLOUT .= '<tr><td align="left">'.$avatar.'</td>
 			<td align="left">Finished DL at: '.get_date($hit_and_run_arr['complete_date'],'').'<br />
 			Stopped seeding at: '.get_date($hit_and_run_arr['hit_and_run'],'').'<br />
 			Seeded for: '.mkprettytime($hit_and_run_arr['seedtime']).'<br />
-			**should still seed for: '.mkprettytime($minus_ratio).'</td>
-			<td align="left">uploaded: '.mksize((int)$hit_and_run_arr['uload']).'<br />
-			downloaded  '.mksize((int)$hit_and_run_arr['dload']).'<br />
-			torrent ratio:  <font color="'.get_ratio_color($ratio_torrent).'">'.$ratio_torrent.'</font><br />
-			site ratio:  <font color="'.get_ratio_color($ratio_site).'" title="includes all bonus and karma stuff">'.$ratio_site.'</font></td>
+			**Should still seed for: '.mkprettytime($minus_ratio).'</td>
+			<td align="left">Uploaded: '.mksize($hit_and_run_arr['uload']).'<br />
+			'.($INSTALLER09['ratio_free'] ? '' : 'Downloaded  '.mksize($hit_and_run_arr['dload']).'<br />').'
+			Torrent ratio:  <font color="'.get_ratio_color($ratio_torrent).'">'.$ratio_torrent.'</font><br />
+			Site ratio:  <font color="'.get_ratio_color($ratio_site).'" title="includes all bonus and karma stuff">'.$ratio_site.'</font></td>
 			<td align="center"><a href="pm_system.php?action=send_message&amp;receiver='.(int)$hit_and_run_arr['userid'].'"><img src="pic/pm.gif" border="0" alt="PM" title="send this mofo a PM and give them a piece of your mind..." /></a><br />
 			<a class="altlink" href="staffpanel.php?tool=shit_list&amp;action2=new&amp;shit_list_id='.(int)$hit_and_run_arr['userid'].'&amp;return_to=staffpanel.php?tool=hit_and_run" ><img src="pic/smilies/shit.gif" border="0" alt="Shit" title="Add to shit list" /></a></td></tr>'; 			       
 

@@ -116,7 +116,7 @@ $sql = "SELECT sn.userid, sn.id, sn.torrentid, sn.timesann, sn.hit_and_run, sn.m
 "LEFT JOIN users AS u ON u.id=sn.userid ".
 "LEFT JOIN torrents AS t ON t.id=sn.torrentid WHERE complete_date != '0'".
 "ORDER BY sn.complete_date DESC ".$pager['limit']."";
-$result = sql_query($sql) or print(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+$result = sql_query($sql) or sqlerr( __FILE__, __LINE__ );
 if( mysqli_num_rows($result) != 0 ) {
 
 $HTMLOUT .="<table width='100%' border='1' cellspacing='0' cellpadding='5' align='center'>
@@ -127,7 +127,7 @@ $HTMLOUT .="<table width='100%' border='1' cellspacing='0' cellpadding='5' align
 <td class='colhead' align='center' width='1%'>{$lang['ad_snatched_torrents_marked']}</td>
 <td class='colhead' align='center' width='1%'>{$lang['ad_snatched_torrents_announced']}</td>
 <td class='colhead' align='center' width='1%'>{$lang['ad_snatched_torrents_upload']}</td>
-<td class='colhead' align='center' width='1%'>{$lang['ad_snatched_torrents_download']}</td>
+".($INSTALLER09['ratio_free'] ? "" : "<td class='colhead' align='center' width='1%'>{$lang['ad_snatched_torrents_download']}</td>")."
 <td class='colhead' align='center' width='1%'>{$lang['ad_snatched_torrents_seedtime']}</td>
 <td class='colhead' align='center' width='1%'>{$lang['ad_snatched_torrents_leechtime']}</td>
 <td class='colhead' align='center' width='1%'>{$lang['ad_snatched_torrents_startdate']}</td>
@@ -146,7 +146,7 @@ $HTMLOUT .="<tr><td><a href='/userdetails.php?id=".(int)$row['userid']."'><b>".h
 <td align='center'><b>".htmlsafechars($row['mark_of_cain'])."</b></td>
 <td align='center'><b>".htmlsafechars($row['timesann'])."</b></td>
 <td align='center'><b>".mksize($row['uploaded'])."</b></td>
-<td align='center'><b>".mksize($row['downloaded'])."</b></td>
+".($INSTALLER09['ratio_free'] ? "" : "<td align='center'><b>".mksize($row['downloaded'])."</b></td>")."
 <td align='center'><b>".get_snatched_color($row["seedtime"])."</b></td>
 <td align='center'><b>".mkprettytime($row["leechtime"])."</b></td>
 <td align='center'><b>".get_date($row['start_date'], 'LONG',0,1)."</b></td>";

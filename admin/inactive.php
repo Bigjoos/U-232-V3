@@ -130,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <td class='colhead' align='center'>{$lang['inactive_x']}</td></tr>";
 
     while ($arr = mysqli_fetch_assoc($res)) {
-        $ratio = ($arr["downloaded"] > 0 ? number_format($arr["uploaded"] / $arr["downloaded"], 3) : ($arr["uploaded"] > 0 ? "Inf." : "---"));
+        $ratio = (member_ratio($arr['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $arr['downloaded']));
         $last_seen = (($arr["last_access"] == "0") ? "never" : "" . get_date($arr["last_access"], 'DATE') . "&nbsp;");
         $class = get_user_class_name($arr["class"]);
         $HTMLOUT .="<tr>

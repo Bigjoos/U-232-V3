@@ -192,7 +192,7 @@ if ($count = 0)
   <tr>
   <td class="two" align="right">requested by:</td>
   <td class="two" align="left">'.print_user_stuff($arr).' [ '.get_user_class_name($arr['class']).' ]   
-  ratio: '.member_ratio($arr['uploaded'], $arr['downloaded']).get_user_ratio_image($arr['uploaded'], $arr['downloaded']).'</td>
+  ratio: '.member_ratio($arr['uploaded'], $INSTALLER09['ratio_free'] ? "0" : $arr['downloaded']).get_user_ratio_image($arr['uploaded'], ($INSTALLER09['ratio_free'] ? "1" : $arr['downloaded'])).'</td>
   </tr>'.($arr['filled_torrent_id'] > 0 ? '<tr>
   <td class="two" align="right">filled:</td>
   <td class="two" align="left"><a class="altlink" href="details.php?id='.$arr['filled_torrent_id'].'">yes, click to view torrent!</a></td>
@@ -292,7 +292,7 @@ if ($count = 0)
     <tr>
     <td class="two" align="right">requested by:</td>
     <td class="two" align="left">'.print_user_stuff($CURUSER).' [ '.get_user_class_name($CURUSER['class']).' ]   
-    ratio: '.member_ratio($CURUSER['uploaded'], $CURUSER['downloaded']).get_user_ratio_image($CURUSER['uploaded'], $CURUSER['downloaded']).'</td>
+    ratio: '.member_ratio($CURUSER['uploaded'], $INSTALLER09['ratio_free'] ? "0" : $CURUSER['downloaded']).get_user_ratio_image($CURUSER['uploaded'], ($INSTALLER09['ratio_free'] ? "1" : $CURUSER['downloaded'])).'</td>
     </tr>
     </table>
     <br />' : '').'

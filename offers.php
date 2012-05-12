@@ -35,9 +35,9 @@ $posted_action = strip_tags((isset($_GET['action']) ? $_GET['action'] : (isset($
 
 	//=== check posted action, and if no action was posted, show the default page
 	$action = (in_array($posted_action, $valid_actions) ? $posted_action : 'default');
-    
+
 //=== top menu :D
-$top_menu = '<p style="text-align: center;"><a class="altlink" href="offers.php">view offers</a> || <a class="altlink" href="offers.php?action=add_new_offer">make offer</a></p>';
+$top_menu = '<div class="article" style="text-align:center"><div class="article_header"><a class="altlink" href="offers.php">view offers</a> || <a class="altlink" href="offers.php?action=add_new_offer">make offer</a></div>';
 
     switch ($action)
     {
@@ -135,7 +135,7 @@ $HTMLOUT .= (isset($_GET['new']) ? '<h1>Offer Added!</h1>' : '' ).(isset($_GET['
     </tr>';
     }
  $HTMLOUT .= '</table>';
- $HTMLOUT .= ''.$menu.'<br />';
+ $HTMLOUT .= ''.$menu.'<br /></div>';
  echo stdhead('Offers', true, $stdhead).$HTMLOUT.stdfoot($stdfoot);  
  break;
  //===========================================================================================//
@@ -231,7 +231,7 @@ $status_drop_down = ($CURUSER['class'] < UC_STAFF ? '' : '<br /><form method="po
     <tr>
     <td class="two" align="right">offered by:</td>
     <td align="left" class="two">'.print_user_stuff($arr).' [ '.get_user_class_name($arr['class']).' ]   
-    ratio: '.member_ratio($arr['uploaded'], $arr['downloaded']).get_user_ratio_image($arr['uploaded'], $arr['downloaded']).'</td>
+    ratio: '.member_ratio($arr['uploaded'], $INSTALLER09['ratio_free'] ? "0" : $arr['downloaded']).get_user_ratio_image($arr['uploaded'], ($INSTALLER09['ratio_free'] ? "1" : $arr['downloaded'])).'</td>
     </tr>
     <tr>
     <td class="two" align="right">Report Offer</td>
@@ -331,11 +331,11 @@ if (isset($_POST['button']) && $_POST['button'] == 'Submit')
     <tr>
     <td class="two" align="right">offered by:</td>
     <td align="left" class="two">'.print_user_stuff($CURUSER).' [ '.get_user_class_name($CURUSER['class']).' ]   
-    ratio: '.member_ratio($CURUSER['uploaded'], $CURUSER['downloaded']).get_user_ratio_image($CURUSER['uploaded'], $CURUSER['downloaded']).'</td>
+    ratio: '.member_ratio($CURUSER['uploaded'], $INSTALLER09['ratio_free'] ? "0" : $CURUSER['downloaded']).get_user_ratio_image($CURUSER['uploaded'], ($INSTALLER09['ratio_free'] ? "1" : $CURUSER['downloaded'])).'</td>
     </tr>
     </table>
     <br />' : '').'
-    <table border="0" cellspacing="0" cellpadding="5" align="center" width="700px">
+    <table border="0" cellspacing="0" cellpadding="5" align="center" width="600px">
     <tr>
     <td class="colhead" align="center" colspan="2"><h1>Making a Offer</h1></td>
     </tr>
@@ -465,7 +465,7 @@ if (isset($_POST['button']) && $_POST['button'] == 'Submit')
     <form method="post" action="offers.php?action=edit_offer" name="offer_form" id="offer_form">
     <input type="hidden" name="id" value="'.$id.'" />
     '.(isset($_POST['button']) && $_POST['button'] == 'Preview' ? '<br />
-	 <table border="0" cellspacing="0" cellpadding="5" align="center" width="700px">
+	 <table border="0" cellspacing="0" cellpadding="5" align="center" width="600px">
     <tr>
     <td class="colhead" align="center" colspan="2"><h1>'.htmlsafechars($offer_name, ENT_QUOTES).'</h1></td>
     </tr>
@@ -487,7 +487,7 @@ if (isset($_POST['button']) && $_POST['button'] == 'Submit')
     </tr>
     </table>
     <br />' : '').'
-    <table border="0" cellspacing="0" cellpadding="5" align="center" width="700px">
+    <table border="0" cellspacing="0" cellpadding="5" align="center" width="600px">
     <tr>
     <td class="colhead" align="center" colspan="2"><h1>Edit Offer</h1></td>
     </tr>
@@ -594,7 +594,7 @@ if (isset($_POST['button']) && $_POST['button'] == 'Submit')
        $HTMLOUT .= comment_table($allrows);
     }
         
-    echo stdhead('Add a comment to "'.$arr['offer_name'].'"',true, $stdhead).$HTMLOUT.stdfoot($stdfoot);
+    echo stdhead('Add a comment to "'.htmlsafechars($arr['offer_name']).'"',true, $stdhead).$HTMLOUT.stdfoot($stdfoot);
     break;    
  
     //===========================================================================================//
@@ -721,7 +721,7 @@ if (isset($_POST['button']) && $_POST['button'] == 'Submit')
     //=== ok, looks good :D let's set that status!
     sql_query('UPDATE offers SET status = '.sqlesc($change_it).' WHERE id = '.sqlesc($id)) or sqlerr(__FILE__, __LINE__); 
     header('Location: /offers.php?action=offer_details&status_changed=1&id='.$id);
-    die();       
+    die();
     break;
     } //=== end all actions / switch
        
@@ -730,7 +730,7 @@ if (isset($_POST['button']) && $_POST['button'] == 'Submit')
     {
     $count2 = '';
 	 global $CURUSER, $INSTALLER09;
-	 $comment_table = '<table width="750px" class="main" border="0" cellspacing="0" cellpadding="0" align="center">
+	 $comment_table = '<table width="650px" class="main" border="0" cellspacing="0" cellpadding="0" align="center">
     <tr>
     <td class="three" align="center">';
 	 foreach ($rows as $row)

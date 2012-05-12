@@ -201,10 +201,10 @@ $HTMLOUT .= '
         <div align="left" id="d'.$div_link_number.'" style="display:none">'.format_comment($arr['watched_user_reason']).'</div>';
 $HTMLOUT .= '
     <tr>
-        <td align="center" class="'.$class.'">'.get_date( $arr['watched_user'],'').' <br /> '.get_date( $arr['watched_user'],'',0,1).' </td>
+        <td align="center" class="'.$class.'">'.get_date( $arr['watched_user'],'').'</td>
         <td align="left" class="'.$class.'">'.print_user_stuff($arr).'</td>
         <td align="left" class="'.$class.'">'.$the_flip_box.'</td>
-        <td align="center" class="'.$class.'">'.member_ratio($arr['uploaded'], $arr['downloaded']).'</td>
+        <td align="center" class="'.$class.'">'.member_ratio($arr['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $arr['downloaded']).'</td>
         <td align="center" class="'.$class.'">'.($invitor_arr['username'] == '' ? 'open sign-ups' : print_user_stuff($invitor_arr)).'</td>
         '.($CURUSER['class'] >= UC_STAFF ? '
         <td align="center" class="'.$class.'"><input type="checkbox" name="wu[]" value="'.(int)$arr['id'].'" /></td>' : '').'

@@ -62,14 +62,14 @@ $HTMLOUT .="<table width='100%' border='1' cellspacing='0' cellpadding='5' align
 <td class='colhead' align='center' width='1%'>Ip</td>
 <td class='colhead' align='center' width='1%'>Port</td>
 <td class='colhead' align='center' width='1%'>Up</td>
-<td class='colhead' align='center' width='1%'>Dn</td>
+".($INSTALLER09['ratio_free'] ? "" : "<td class='colhead' align='center' width='1%'>Dn</td>")."
 <td class='colhead' align='center' width='1%'>Pssky</td>
 <td class='colhead' align='center' width='1%'>Con</td>
 <td class='colhead' align='center' width='1%'>Seed</td>
 <td class='colhead' align='center' width='1%'>Start</td>
 <td class='colhead' align='center' width='1%'>Last</td>
 <td class='colhead' align='center' width='1%'>Up/Off</td>
-<td class='colhead' align='center' width='1%'>Dn/Off</td>
+".($INSTALLER09['ratio_free'] ? "" : "<td class='colhead' align='center' width='1%'>Dn/Off</td>")."
 <td class='colhead' align='center' width='1%'>To Go</td>
 </tr>";
 
@@ -85,14 +85,14 @@ $HTMLOUT .='<tr>
 <td align="center">'.htmlsafechars($row['ip']).'</td>
 <td align="center">'.htmlsafechars($row['port']).'</td>
 <td align="center">'.htmlsafechars(mksize($row['uploaded'])).'</td>
-<td align="center">'.htmlsafechars(mksize($row['downloaded'])).'</td>
+'.($INSTALLER09['ratio_free'] ? '' : '<td align="center">'.htmlsafechars(mksize($row['downloaded'])).'</td>').'
 <td align="center">'.htmlsafechars($row['passkey']).'</td>
 <td align="center">'.($row['connectable'] == 'yes' ? "<img src='".$INSTALLER09['pic_base_url']."aff_tick.gif' alt='Yes' title='Yes' />" : "<img src='".$INSTALLER09['pic_base_url']."aff_cross.gif' alt='No' title='No' />").'</td>
 <td align="center">'.($row['seeder'] == 'yes' ? "<img src='".$INSTALLER09['pic_base_url']."aff_tick.gif' alt='Yes' title='Yes' />" : "<img src='".$INSTALLER09['pic_base_url']."aff_cross.gif' alt='No' title='No' />").'</td>
 <td align="center">'.get_date($row['started'], 'DATE',0,1).'</td>
 <td align="center">'.get_date($row['last_action'], 'DATE',0,1).'</td>
 <td align="center">'.htmlsafechars(mksize($row['uploadoffset'])).'</td>
-<td align="center">'.htmlsafechars(mksize($row['downloadoffset'])).'</td>
+'.($INSTALLER09['ratio_free'] ? '' : '<td align="center">'.htmlsafechars(mksize($row['downloadoffset'])).'</td>').'
 <td align="center">'.htmlsafechars(mksize($row['to_go'])).'</td>
 </tr>';
 }

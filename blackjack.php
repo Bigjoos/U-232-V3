@@ -92,7 +92,7 @@ if ($game)
 			$ratio = 999;
 			else
 			$ratio = 0;
-			if ($ratio < $required_ratio)
+			if ($INSTALLER09['ratio_free'] === false && $ratio < $required_ratio)
 			stderr("Sorry", "".$CURUSER["username"]." Your ratio is lower than the requirement of ".$required_ratio."%.");
 			$res = sql_query("SELECT status, gameover FROM blackjack WHERE userid = ".sqlesc($CURUSER['id']));
 			$arr = mysqli_fetch_assoc($res);

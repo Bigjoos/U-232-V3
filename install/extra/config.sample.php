@@ -222,6 +222,7 @@ $INSTALLER09['staff']['staff_pin'] = 'uFll0y3Ihgtij8'; // should be mix of u/l c
 $INSTALLER09['staff']['owner_pin'] = 'jjknnkuuyqhjj0'; // should be mix of u/l case and min 12 chars length
 //== Staff forum ID for autopost
 $INSTALLER09['staff']['forumid'] = 2; // this forum ID should exist and be a staff forum
+$INSTALLER09['staff_forums'] = array(1,2); // these forum ID's' should exist and be a staff forum's to stop autoshouts
 $INSTALLER09['variant'] = 'U-232 V3';
 define ('TBVERSION', $INSTALLER09['variant']);
 ?>

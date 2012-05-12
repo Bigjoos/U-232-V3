@@ -39,36 +39,31 @@ $HTMLOUT.= begin_table();
  <td class='colhead' width='70'>{$lang['ipcheck_email']}</td>
  <td class='colhead' width='70'>{$lang['ipcheck_regged']}</td>
  <td class='colhead' width='75'>{$lang['ipcheck_lastacc']}</td>
- <td class='colhead' width='70'>{$lang['ipcheck_dload']}</td>
+ ".($INSTALLER09['ratio_free'] ? "" : "<td class='colhead' width='70'>{$lang['ipcheck_dload']}</td>")."
  <td class='colhead' width='70'>{$lang['ipcheck_upped']}</td>
  <td class='colhead' width='45'>{$lang['ipcheck_ratio']}</td>
- <td class='colhead' width='125'>{$lang['ipcheck_ip']}</td>
- <td class='colhead' width='40'>{$lang['ipcheck_peer']}</td></tr>\n";
+ <td class='colhead' width='125'>{$lang['ipcheck_ip']}</td></tr>\n";
  $ip='';
  $uc = 0;
   while($ras = mysqli_fetch_assoc($res)) {
         if ($ras["dupl"] <= 1)
           break;
         if ($ip <> $ras['ip']) {
-          $ros = sql_query("SELECT id, username, class, email, chatpost, pirate, king, leechwarn, added, last_access, downloaded, uploaded, ip, warned, donor, enabled, (SELECT COUNT(*) FROM peers WHERE peers.ip = users.ip AND users.id = peers.userid) AS peer_count FROM users WHERE ip='".$ras['ip']."' ORDER BY id") or sqlerr(__FILE__, __LINE__);
+          $ros = sql_query("SELECT id, username, class, email, chatpost, pirate, king, leechwarn, added, last_access, downloaded, uploaded, ip, warned, donor, enabled FROM users WHERE ip='".$ras['ip']."' ORDER BY id") or sqlerr(__FILE__, __LINE__);
           $num2 = mysqli_num_rows($ros);
           if ($num2 > 1) {
                 $uc++;
             while($arr = mysqli_fetch_assoc($ros)) {
-                  
-                  
-                  
                   if ($arr['added'] == '0')
                         $arr['added'] = '-';
                   if ($arr['last_access'] == '0')
                         $arr['last_access'] = '-';
-                  
                   $uploaded = mksize($arr["uploaded"]);
                   $downloaded = mksize($arr["downloaded"]);
                   $added = get_date($arr['added'], 'DATE', 1,0);
                   $last_access = get_date($arr['last_access'], '', 1,0);
                   
-                  if ($uc%2 == 0)
+                  if ($uc %2 == 0)
                         $utc = "";
                   else
                         $utc = " bgcolor=\"333333\"";
@@ -77,11 +72,10 @@ $HTMLOUT.= begin_table();
                                   <td align='center'>".htmlsafechars($arr['email'])."</td>
                                   <td align='center'>$added</td>
                                   <td align='center'>$last_access</td>
-                                  <td align='center'>$downloaded</td>
+                                  ".($INSTALLER09['ratio_free'] ? "" : "<td align='center'>$downloaded</td>")."
                                   <td align='center'>$uploaded</td>
-                                  <td align='center'>".member_ratio($arr['uploaded'], $arr['downloaded'])."</td>
-                                  <td align='center'><span style=\"font-weight: bold;\">".htmlsafechars($arr['ip'])."</span></td>\n<td align='center'>" .
-                                  ($arr['peer_count'] > 0 ? "<span style=\"color: red; font-weight: bold;\">{$lang['ipcheck_no']}</span>" : "<span style=\"color: green; font-weight: bold;\">{$lang['ipcheck_yes']}</span>") . "</td></tr>\n";
+                                  <td align='center'>".member_ratio($arr['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $arr['downloaded'])."</td>
+                                  <td align='center'><span style=\"font-weight: bold;\">".htmlsafechars($arr['ip'])."</span></td>\n</tr>\n";
                   $ip = htmlsafechars($arr["ip"]);
                 }
           }

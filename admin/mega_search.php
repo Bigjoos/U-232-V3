@@ -153,10 +153,11 @@ $number = 0;
     <span style="color: blue;" title="added">'.get_date($arr['added'],'').'</span><br />
     <span style="color: green;" title="last access">'.get_date($arr['last_access'],'').'</span></td>
     <td align="center" class="'.$class2.'"><img src="pic/up.png" alt="Up" title="Uploaded" /> 
-    <span style="color: green;">'.mksize($arr['uploaded']).'</span><br />
+    <span style="color: green;">'.mksize($arr['uploaded']).'</span>
+    '.($INSTALLER09['ratio_free'] ? '' : '<br />
     <img src="pic/dl.png" alt="Down" title="Downloaded" />  
-    <span style="color: red;">'.mksize($arr['downloaded']).'</span></td>
-    <td align="center" class="'.$class2.'">'.member_ratio($arr['uploaded'], $arr['downloaded']).'</td>
+    <span style="color: red;">'.mksize($arr['downloaded']).'</span></td>').'
+    <td align="center" class="'.$class2.'">'.member_ratio($arr['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $arr['downloaded']).'</td>
     <td align="center" class="'.$class2.'">'.make_nice_address($arr['ip']).'<br /></td>
     </tr>';
     }
@@ -230,10 +231,11 @@ $number = 0;
     <span style="color: green;" title="last access">'.get_date($arr['last_access'],'').'</span></td>
     <td align="center" class="'.$class2.'">
     <img src="pic/up.png" alt="Up" title="Uploaded" /> 
-    <span style="color: green;">'.mksize($arr['uploaded']).'</span><br />
+    <span style="color: green;">'.mksize($arr['uploaded']).'</span>
+    '.($INSTALLER09['ratio_free'] ? '' : '<br />
     <img src="pic/dl.png" alt="Down" title="Downloaded" />  
-    <span style="color: red;">'.mksize($arr['downloaded']).'</span></td>
-    <td align="center" class="'.$class2.'">'.member_ratio($arr['uploaded'], $arr['downloaded']).'</td>
+    <span style="color: red;">'.mksize($arr['downloaded']).'</span></td>').'
+    <td align="center" class="'.$class2.'">'.member_ratio($arr['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $arr['downloaded']).'</td>
     <td align="center" class="'.$class2.'">'.make_nice_address($arr['ip']).'<br /></td>
     <td align="left" class="'.$class2.'">'.$inviter.'</td>
     </tr>';
@@ -342,10 +344,11 @@ $number = 0;
                             </td>
                             <td align="center" class="'.$class2.'">
                             <img src="pic/up.png" alt="Up" title="Uploaded" /> 
-                            <span style="color: green;">'.mksize($arr['uploaded']).'</span><br />
+                            <span style="color: green;">'.mksize($arr['uploaded']).'</span>
+                            '.($INSTALLER09['ratio_free'] ? '' : '<br />
                             <img src="pic/dl.png" alt="Down" title="Downloaded" />  
-                            <span style="color: red;">'.mksize($arr['downloaded']).'</span></td>
-                            <td align="center" class="'.$class2.'">'.member_ratio($arr['uploaded'], $arr['downloaded']).'</td>
+                            <span style="color: red;">'.mksize($arr['downloaded']).'</span></td>').'
+                            <td align="center" class="'.$class2.'">'.member_ratio($arr['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $arr['downloaded']).'</td>
                             <td align="center" class="'.$class2.'">'.make_nice_address($arr['ip']).'<br />
                             </td>
                             <td align="left" class="'.$class2.'">'.$inviter.'</td>
@@ -407,9 +410,11 @@ $number = 0;
                 <td align="center">'.htmlsafechars($user['ip']).'</td>
                 <td align="center">'.get_date($user['last_access'],'').'</td>
                 <td align="center">'.get_date($user['added'],'').'</td>
-                <td align="center"><img src="pic/up.png" alt="Up" title="Uploaded" /> <span style="color: green;">'.mksize($user['uploaded']).'</span><br />
-                <img src="pic/dl.png" alt="Down" title="Downloaded" /> <span style="color: red;">'.mksize($user['downloaded']).'</span></td>
-                <td align="center">'.member_ratio($user['uploaded'], $user['downloaded']).'</td>
+                <td align="center"><img src="pic/up.png" alt="Up" title="Uploaded" /> <span style="color: green;">'.mksize($user['uploaded']).'</span>
+                '.($INSTALLER09['ratio_free'] ? '' : '<br />
+                <img src="pic/dl.png" alt="Down" title="Downloaded" />  
+                <span style="color: red;">'.mksize($user['downloaded']).'</span></td>').'
+                <td align="center" class="'.$class2.'">'.member_ratio($user['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $user['downloaded']).'</td>
                 <td align="center">'.($user['invitedby'] == 0 ? 'open sign ups' : print_user_stuff($user1)).'</td>
                 </tr>
                 </table>';    
@@ -447,9 +452,11 @@ $number = 0;
                 <td align="center">'.htmlsafechars($user_invited['ip']).'</td>
                 <td align="center">'.get_date($user_invited['last_access'],'').'</td>
                 <td align="center">'.get_date($user_invited['added'],'').'</td>
-                <td align="center"><img src="pic/up.png" alt="Up" title="Uploaded" /> <span style="color: green;">'.mksize($user_invited['uploaded']).'</span><br />
-                <img src="pic/dl.png" alt="Down" title="Downloaded" /> <span style="color: red;">'.mksize($user_invited['downloaded']).'</span></td>
-                <td align="center">'.member_ratio($user_invited['uploaded'], $user_invited['downloaded']).'</td>
+                <td align="center"><img src="pic/up.png" alt="Up" title="Uploaded" /> <span style="color: green;">'.mksize($user_invited['uploaded']).'</span>
+                '.($INSTALLER09['ratio_free'] ? '' : '<br />
+                <img src="pic/dl.png" alt="Down" title="Downloaded" />  
+                <span style="color: red;">'.mksize($user_invited['downloaded']).'</span></td>').'
+                <td align="center" class="'.$class2.'">'.member_ratio($user_invited['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $user_invited['downloaded']).'</td>
                 <td align="center">'.($user_invited['invitedby'] == 0 ? 'open sign ups' : print_user_stuff($user2)).'</td>
                 </tr>
                 </table>';    
