@@ -178,11 +178,11 @@ cheers,
 
 PS. Your donator status will last for an extra ".$dur." on top of your current donation status, and can be found on your user details page. It can only be seen by you.");
 $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - Donator status set for another $dur -- $upadded GB bonus added -- $invites_added new invites. added by system.\n".$modcomment;
-$donorlengthadd = $donoruntil_val;
-sql_query("UPDATE users SET donoruntil = donoruntil + ".sqlesc($donorlengthadd).", vipclass_before = ".sqlesc($vipbefore)." WHERE id = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
-$updateset[] = "donoruntil = ".sqlesc($donorlengthadd);
-$curuser_cache['donoruntil'] = $donorlengthadd;
-$user_cache['donoruntil'] = $donorlengthadd;
+$donorlengthadds = $donoruntil_val;
+sql_query("UPDATE users SET donoruntil = donoruntil + ".sqlesc($donorlengthadds).", vipclass_before = ".sqlesc($vipbefore)." WHERE id = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
+
+$curuser_cache['donoruntil'] = ($CURUSER['donoruntil'] + $donorlengthadds);
+$user_cache['donoruntil'] = ($CURUSER['donoruntil'] + $donorlengthadds);
 $curuser_cache['vipclass_before'] = $vipbefore;
 $user_cache['vipclass_before'] = $vipbefore;
 $mc1->delete_value('inbox_new_'.$id);
