@@ -13,7 +13,7 @@
     if($Progress_so_far >= 100)
     $Progress_so_far = 100;
     $HTMLOUT .="<div class='headline'>{$lang['index_donations']}</div>
-                <div class='headbody' align='center'><a href='{$INSTALLER09['baseurl']}/donate.php'>
+                <div align='center'><a href='{$INSTALLER09['baseurl']}/donate.php'>
                 <img border='0' src='{$INSTALLER09['pic_base_url']}makedonation.gif' alt='Donate' title='Donate'  /></a><br />
                 <table align='center' width='140' style='height: 20%;' border='2'>
                 <tr>
