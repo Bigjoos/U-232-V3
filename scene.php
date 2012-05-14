@@ -180,6 +180,7 @@ PS. Your donator status will last for an extra ".$dur." on top of your current d
 $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - Donator status set for another $dur -- $upadded GB bonus added -- $invites_added new invites. added by system.\n".$modcomment;
 $donorlengthadd = $donoruntil_val;
 sql_query("UPDATE users SET donoruntil = donoruntil + ".sqlesc($donorlengthadd).", vipclass_before = ".sqlesc($vipbefore)." WHERE id = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
+$updateset[] = "donoruntil = ".sqlesc($donorlengthadd);
 $curuser_cache['donoruntil'] = $donorlengthadd;
 $user_cache['donoruntil'] = $donorlengthadd;
 $curuser_cache['vipclass_before'] = $vipbefore;
