@@ -181,8 +181,8 @@ $modcomment = get_date( TIME_NOW, 'DATE', 1 ) . " - Donator status set for anoth
 $donorlengthadds = $donoruntil_val;
 sql_query("UPDATE users SET donoruntil = donoruntil + ".sqlesc($donorlengthadds).", vipclass_before = ".sqlesc($vipbefore)." WHERE id = ".sqlesc($id)) or sqlerr(__FILE__, __LINE__);
 
-$curuser_cache['donoruntil'] = ($CURUSER['donoruntil'] + $donorlengthadds);
-$user_cache['donoruntil'] = ($CURUSER['donoruntil'] + $donorlengthadds);
+$curuser_cache['donoruntil'] = ($user['donoruntil'] + $donorlengthadds);
+$user_cache['donoruntil'] = ($user['donoruntil'] + $donorlengthadds);
 $curuser_cache['vipclass_before'] = $vipbefore;
 $user_cache['vipclass_before'] = $vipbefore;
 $mc1->delete_value('inbox_new_'.$id);
