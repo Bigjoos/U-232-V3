@@ -41,13 +41,13 @@ function docleanup( $data ) {
             $users_buffer[] = '(' . $arr['id'] . ','.$arr['vipclass_before'].',\'no\',\'0\', ' . $modcom . ')';
             $update['class'] = ($arr['vipclass_before']);
             $mc1->begin_transaction('user'.$arr['id']);
-            $mc1->update_row(false, array('class' => $update['class'], 'donor' => 'no', 'donor_until' => 0));
+            $mc1->update_row(false, array('class' => $update['class'], 'donor' => 'no', 'donoruntil' => 0));
             $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
             $mc1->begin_transaction('user_stats_'.$arr['id']);
             $mc1->update_row(false, array('modcomment' => $modcomment));
             $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
             $mc1->begin_transaction('MyUser_'.$arr['id']);
-            $mc1->update_row(false, array('class' => $update['class'], 'donor' => 'no', 'donor_until' => 0));
+            $mc1->update_row(false, array('class' => $update['class'], 'donor' => 'no', 'donoruntil' => 0));
             $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
             $mc1->delete_value('inbox_new_'.$arr['id']);
             $mc1->delete_value('inbox_new_sb_'.$arr['id']);
