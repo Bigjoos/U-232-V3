@@ -231,7 +231,7 @@ loggedinorreturn();
   $title = htmlsafechars($friend["title"]);
   if (!$title)
   $title = get_user_class_name($friend["class"]);
-  $ratio = member_ratio($friend['uploaded'], $friend['downloaded'],2);
+  $ratio = member_ratio($friend['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $friend['downloaded']);
   $linktouser = "<a href='userdetails.php?id=".(int)$friend['id']."'><b>".format_username($friend)."</b></a>[$title]&nbsp;[$ratio]<br />{$lang['friends_last_seen']} ".get_date($friend['last_access'],'');
   $delete = "<span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=delete&amp;type=friend&amp;targetid=".(int)$friend['id']."'>{$lang['friends_remove']}</a></span>";
   $pm_link = "&nbsp;<span class='btn'><a href='{$INSTALLER09['baseurl']}/pm_system.php?action=send_message&amp;receiver=".(int)$friend['id']."'>{$lang['friends_pm']}</a></span>";
