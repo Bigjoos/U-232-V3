@@ -63,7 +63,7 @@ if (!($db = @($GLOBALS["___mysqli_ston"] = mysqli_connect($INSTALLER09['mysql_ho
 err('Please call back later');
 
 if(($user = $mc1->get_value('u_passkey_'.$passkey)) === false) {
-$user_query = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id, uploaded, downloaded, class, downloadpos, parked, perms, ip, free_switch, highspeed, enabled FROM users WHERE passkey=".ann_sqlesc($passkey)) or ann_sqlerr(__FILE__, __LINE__);
+$user_query = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id, uploaded, downloaded, class, downloadpos, parked, perms, ip, free_switch, hnrwarn, highspeed, enabled FROM users WHERE passkey=".ann_sqlesc($passkey)) or ann_sqlerr(__FILE__, __LINE__);
 if (mysqli_num_rows($user_query) != 1)
 err("Unknown passkey. Please redownload the torrent from {$INSTALLER09['baseurl']}.");
 $user = mysqli_fetch_assoc($user_query);
@@ -418,7 +418,7 @@ if (!isset($self))
  } else {
    if ($user["parked"] == "yes")
     err("Your account is parked! (Read the FAQ)");
-   elseif ($user["downloadpos"] == 0 OR $user["downloadpos"] > 1 )
+   elseif ($user["downloadpos"] == 0 OR $user["downloadpos"] > 1 AND $user['hnrwarn'] == 'no')
     err("Your downloading priviledges have been disabled! (Read the rules)");
    
    mysqli_query($GLOBALS["___mysqli_ston"], "INSERT LOW_PRIORITY INTO peers (torrent, userid, peer_id, ip, port, connectable, uploaded, downloaded, to_go, started, last_action, seeder, agent, downloadoffset, uploadoffset, passkey) VALUES (".ann_sqlesc($torrentid).", ".ann_sqlesc($userid).", ".ann_sqlesc($peer_id).", ".ann_sqlesc($realip).", ".ann_sqlesc($port).", ".ann_sqlesc($connectable).", ".ann_sqlesc($uploaded).", ".($INSTALLER09['ratio_free'] ? "0" :  "".ann_sqlesc($downloaded)."").", ".ann_sqlesc($left).", ".TIME_NOW.", ".TIME_NOW.", ".ann_sqlesc($seeder).", ".ann_sqlesc($agent).", ".($INSTALLER09['ratio_free'] ? "0" :  "".ann_sqlesc($downloaded)."").", ".ann_sqlesc($uploaded).", ".ann_sqlesc($passkey).")") or ann_sqlerr(__FILE__, __LINE__);
