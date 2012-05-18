@@ -60,7 +60,7 @@ function ann_sqlerr($file = '', $line = '') {
                      'WHERE type = "crazyhour"') or ann_sqlerr(__FILE__, __LINE__);
          $mc1->cache_value('crazyhour', $cz['crazyhour'], 0);
          // log, shoutbot
-         $text        = 'Next [color=orange][b]Crazyhour_A[/b][/color] is at '.date('F j, g:i a', $cz['crazyhour']['var']);
+         $text        = 'Next [color=orange][b]Crazyhour[/b][/color] is at '.date('F j, g:i a', $cz['crazyhour']['var']);
          $text_parsed = 'Next <span style="font-weight:bold;color:orange;">Crazyhour_A</span> is at '.date('F j, g:i a', $cz['crazyhour']['var']);
 
          mysqli_query($GLOBALS["___mysqli_ston"], 'INSERT LOW_PRIORITY INTO sitelog (added, txt) '.
@@ -81,7 +81,7 @@ function ann_sqlerr($file = '', $line = '') {
             WHERE type = "crazyhour"') or ann_sqlerr(__FILE__, __LINE__);
             $mc1->cache_value('crazyhour', $cz['crazyhour'], 0);
             // log, shoutbot
-            $text        = 'w00t! It\'s [color=orange][b]Crazyhour_A[/b][/color] :w00t:';
+            $text        = 'w00t! It\'s [color=orange][b]Crazyhour[/b][/color] :w00t:';
             $text_parsed = 'w00t! It\'s <span style="font-weight:bold;color:orange;">Crazyhour_A</span> <img src="pic/smilies/w00t.gif" alt=":w00t:" />';
             mysqli_query($GLOBALS["___mysqli_ston"], 'INSERT LOW_PRIORITY INTO sitelog (added, txt) 
             VALUES('.TIME_NOW.', '.ann_sqlesc($text_parsed).')') or ann_sqlerr(__FILE__, __LINE__);
