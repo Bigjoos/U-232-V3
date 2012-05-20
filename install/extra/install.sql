@@ -796,8 +796,8 @@ INSERT INTO `countries` (`id`, `name`, `flagpic`) VALUES
 (99, 'Egypt', 'egypt.gif'),
 (100, 'Bulgaria', 'bulgaria.gif'),
 (101, 'Scotland', 'scotland.gif'),
-(102, 'United Arab Emirates', 'uae.gif');
-
+(102, 'United Arab Emirates', 'uae.gif'),
+(103), 'Wales', 'wales.gif');
 -- --------------------------------------------------------
 
 --
