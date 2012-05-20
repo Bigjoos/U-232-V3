@@ -28,14 +28,20 @@ if (!defined('BUNNY_PM_SYSTEM'))
         if ($message['receiver'] == $CURUSER['id']/* && $message['saved'] == 'no'*/ || $message['sender'] == $CURUSER['id'] && $message['location'] == PM_DELETED)
             {
             sql_query('DELETE FROM messages WHERE id='.sqlesc($pm_id)) or sqlerr(__FILE__,__LINE__);
+            $mc1->delete_value('inbox_new_'.$receiver);
+            $mc1->delete_value('inbox_new_sb_'.$receiver);
             }
         elseif ($message['receiver'] == $CURUSER['id']/* && $message['saved'] == 'yes'*/)
             {
             sql_query('UPDATE messages SET location=0, unread=\'no\' WHERE id='.sqlesc($pm_id)) or sqlerr(__FILE__,__LINE__);
+            $mc1->delete_value('inbox_new_'.$receiver);
+            $mc1->delete_value('inbox_new_sb_'.$receiver);
             }
         elseif ($message['sender'] == $CURUSER['id'] && $message['location'] != PM_DELETED)
             {
             sql_query('UPDATE messages SET saved=\'no\' WHERE id='.sqlesc($id)) or sqlerr(__FILE__,__LINE__);
+            $mc1->delete_value('inbox_new_'.$receiver);
+            $mc1->delete_value('inbox_new_sb_'.$receiver);
             }
 
         //=== see if it worked :D
