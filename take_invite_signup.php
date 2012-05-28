@@ -157,6 +157,14 @@ $id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) 
 sql_query('UPDATE invite_codes SET receiver = ' . sqlesc($id) . ', status = "Confirmed" WHERE sender = ' . sqlesc((int)$assoc['sender']). ' AND code = ' . sqlesc($invite)) or sqlerr(__FILE__, __LINE__);
 $latestuser_cache['id'] =  (int)$id;
 $latestuser_cache['username'] = $wantusername;
+$latestuser_cache['class'] =  '0';
+$latestuser_cache['donor'] =  'no';
+$latestuser_cache['warned'] =  '0';
+$latestuser_cache['enabled'] =  'yes';
+$latestuser_cache['chatpost'] =  '1';
+$latestuser_cache['leechwarn'] =  '0';
+$latestuser_cache['pirate'] =  '0';
+$latestuser_cache['king'] =  '0';
 /** OOP **/
 $mc1->cache_value('latestuser', $latestuser_cache, 0, $INSTALLER09['expires']['latestuser']);
 $mc1->delete_value('birthdayusers');
