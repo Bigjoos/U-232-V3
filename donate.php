@@ -10,9 +10,11 @@ require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR
 require_once(INCL_DIR.'user_functions.php');
 require_once(INCL_DIR.'bbcode_functions.php');
 require_once(INCL_DIR.'html_functions.php');
+require_once(CLASS_DIR.'page_verify.php');
 dbconn(false);
 loggedinorreturn();
-
+$newpage = new page_verify(); 
+$newpage->create('paysys'); //== change this \0/
 $lang = array_merge( load_language('global'));
 
 $HTMLOUT = $amount ="";

@@ -9,9 +9,11 @@
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
 require_once(INCL_DIR.'bbcode_functions.php');
-dbconn(true);
+require_once(CLASS_DIR.'page_verify.php');
+dbconn(false);
 loggedinorreturn();
-
+$newpage = new page_verify(); 
+$newpage->check('paysys'); //== change this \0/
 $HTMLOUT = $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = '';
 
 //get the config from db
@@ -223,6 +225,8 @@ if ($curuser_cache) {
                 }
 fclose ($fp);
 header("Location: {$INSTALLER09['baseurl']}/paypal_success.php"); //=== location of your success page
+unset($_POST);
+exit;
 }
 else
 $HTMLOUT .= stdmsg("Thanks for your support", "Please pm the sysops with the transaction details.");
