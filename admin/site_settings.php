@@ -39,46 +39,28 @@ while($ac = mysqli_fetch_assoc($pconf))
  $site_settings[$ac['name']] = $ac['value'];
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
-   //can't be 0
-   foreach(array('site_online'>0,'autoshout_on'>0,'seedbonus_on'>0,'forums_online'>0,'maxusers'>0,'invites'>0,'failedlogins'>0) as $key=>$type) {
-     if(isset($_POST[$key]) && ($type == 0 && $_POST[$key] == 0 || $type == 0 && count($_POST[$key]) == 0))
-     stderr('Err','You forgot to fill some data');
-   }
+
    foreach($site_settings as $c_name=>$c_value)
    if(isset($_POST[$c_name]) && $_POST[$c_name] != $c_value)
      $update[] = '('.sqlesc($c_name).','.sqlesc(is_array($_POST[$c_name]) ? join('|',$_POST[$c_name]) : $_POST[$c_name]).')';
 
    if(sql_query('INSERT INTO site_config(name,value) VALUES '.join(',',$update).' ON DUPLICATE KEY update value=values(value)')){
-$t = '$INSTALLER09';
-
-$configfile = "<"."?php\n/**\nThis file created on ".date('M d Y H:i:s').".\nSite Config mod by stoner with a little help from pdq for U-232.\n**/\n";
-
-$res = sql_query("SELECT * from site_config ");
-while($arr = mysqli_fetch_assoc($res)) {
-  
-/*
-INSERT INTO `site_config` (`name`, `value`) VALUES
-('openreg_invites', 'true'),
-('failedlogins', '5');
-*/
-
-$configfile .= "".$t."['$arr[name]'] = $arr[value];\n";
-}
-$configfile .= "?".">";
+   $t = '$INSTALLER09';
+   $configfile = "<"."?php\n/**\nThis file created on ".date('M d Y H:i:s').".\nSite Config mod by stoner with a little help from pdq for U-232.\n**/\n";
+   $res = sql_query("SELECT * from site_config ");
+   while($arr = mysqli_fetch_assoc($res)) {
+   $configfile .= "".$t."['$arr[name]'] = $arr[value];\n";
+   }
+   $configfile .= "?".">";
     $filenum = fopen('./cache/site_settings.php', 'w');
     ftruncate($filenum, 0);
     fwrite($filenum, $configfile);
     fclose($filenum);
-     stderr('Success','Site configuration was saved! Click <a href=\'staffpanel.php?tool=site_settings\'>here to get back</a>');
-     
-}
-
-
-
-else
-     stderr('Error','There was an error while executing the update query or nothing was updated.');
- exit;
-}
+    stderr('Success','Site configuration was saved! Click <a href=\'staffpanel.php?tool=site_settings\'>here to get back</a>');
+    } else
+    stderr('Error','There was an error while executing the update query or nothing was updated.');
+    exit;
+    }
 
 $HTMLOUT .="<h3>Site Settings</h3>
 <form action='staffpanel.php?tool=site_settings' method='post'>
@@ -95,6 +77,8 @@ $HTMLOUT .="<tr><td width='50%' class='table' align='left'>Autoshout:</td><td cl
 <tr><td width='50%' class='table' align='left'>Max Logins</td><td class='table' align='left'><input type='text' name='failedlogins' size='2' value='".htmlsafechars($site_settings['failedlogins'])."' /></td></tr>
 <tr><td width='50%' class='table' align='left'>Ratio Free:</td><td class='table' align='left'><input type='text' name='ratio_free' size='2' value='".htmlsafechars($site_settings['ratio_free'])."' /></td></tr>
 <tr><td width='50%' class='table' align='left'>Captcha on:</td><td class='table' align='left'><input type='text' name='captcha_on' size='2' value='".htmlsafechars($site_settings['captcha_on'])."' /></td></tr>
+<tr><td width='50%' class='table' align='left'>Dupe ip check on:</td><td class='table' align='left'><input type='text' name='dupeip_check_on' size='2' value='".htmlsafechars($site_settings['dupeip_check_on'])."' /></td></tr>
+<tr><td width='50%' class='table' align='left'>Monthly donation total required:</td><td class='table' align='left'><input type='text' name='totalneeded' size='2' value='".htmlsafechars($site_settings['totalneeded'])."' /></td></tr>
 <tr><td colspan='2' class='table' align='center'><input type='submit' value='Apply changes' /></td></tr>
 </table></form>";
 

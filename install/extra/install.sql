@@ -1924,7 +1924,6 @@ CREATE TABLE IF NOT EXISTS `site_config` (
 -- Dumping data for table `site_config`
 --
 
-
 INSERT INTO `site_config` (`name`, `value`) VALUES
 ('site_online', '1'),
 ('autoshout_on', '1'),
@@ -1935,8 +1934,10 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('invites', '5000'),
 ('openreg_invites', 'true'),
 ('failedlogins', '5'),
-('ratio_free', 'false'),
-('captcha_on', 'true');
+('ratio_free', 'true'),
+('captcha_on', 'true'),
+('dupeip_check_on', 'true'),
+('totalneeded', '50');
 
 -- --------------------------------------------------------
 

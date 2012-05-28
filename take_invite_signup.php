@@ -98,11 +98,12 @@ stderr("Error","Sorry, you're not qualified to become a member of this site.");
 $a = (@mysqli_fetch_row(sql_query('SELECT COUNT(id) FROM users WHERE email = '.sqlesc($email)))) or sqlerr(__FILE__, __LINE__);
 if ($a[0] != 0)
 stderr('Error', 'The e-mail address <b>' . htmlsafechars($email) . '</b> is already in use.');
-
 //=== check if ip addy is already in use
-$c = (@mysqli_fetch_row(sql_query("SELECT COUNT(id) FROM users WHERE ip=".sqlesc($_SERVER['REMOTE_ADDR'])))) or sqlerr(__FILE__, __LINE__);
+if ($INSTALLER09['dupeip_check_on']) { 
+$c = (mysqli_fetch_row(sql_query("SELECT COUNT(id) FROM users WHERE ip=".sqlesc($_SERVER['REMOTE_ADDR'])))) or sqlerr(__FILE__, __LINE__);
 if ($c[0] != 0)
 stderr("Error", "The ip " .htmlsafechars($_SERVER['REMOTE_ADDR'])." is already in use. We only allow one account per ip address.");
+}
 
 // TIMEZONE STUFF
     if(isset($_POST["user_timezone"]) && preg_match('#^\-?\d{1,2}(?:\.\d{1,2})?$#', $_POST['user_timezone']))

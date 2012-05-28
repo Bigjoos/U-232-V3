@@ -35,12 +35,13 @@ while($ac = mysqli_fetch_assoc($pconf))
   $paypal_config[$ac['name']] = $ac['value'];
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
-   
+    /*
     //can't be 0
     foreach(array('gb'>0,'weeks'>0,'invites'=>0,'enable'=>0) as $key=>$type) {
       if(isset($_POST[$key]) && ($type == 0 && $_POST[$key] == 0 || $type == 0 && count($_POST[$key]) == 0))
       stderr('Err','You forgot to fill some data');
     }
+    */
     foreach($paypal_config as $c_name=>$c_value)
     if(isset($_POST[$c_name]) && $_POST[$c_name] != $c_value)
       $update[] = '('.sqlesc($c_name).','.sqlesc(is_array($_POST[$c_name]) ? join('|',$_POST[$c_name]) : $_POST[$c_name]).')';

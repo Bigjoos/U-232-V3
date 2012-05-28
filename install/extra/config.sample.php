@@ -182,8 +182,8 @@ $INSTALLER09['uploadapp_alert'] = 1; // saves a query when off
 $INSTALLER09['bug_alert'] = 1; // saves a query when off
 $INSTALLER09['sql_error_log'] = ROOT_DIR.'logs'.DIRECTORY_SEPARATOR.'sql_err_'.date('M_D_Y').'.log';
 $INSTALLER09['pic_base_url'] = "./pic/";
-$INSTALLER09['stylesheet'] = "1";
-$INSTALLER09['categorie_icon'] = "1";
+$INSTALLER09['stylesheet'] = 1;
+$INSTALLER09['categorie_icon'] = 1;
 //for subs & youtube mode
 $INSTALLER09['movie_cats'] = array(3,5,6,10,11);
 $INSTALLER09['moviecats'] = "3,5,6,10,11";

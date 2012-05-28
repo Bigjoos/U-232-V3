@@ -103,9 +103,11 @@ get_template();
     if ($a[0] != 0)
     stderr($lang['takesignup_user_error'], $lang['takesignup_email_used']);
     //=== check if ip addy is already in use
+    if ($INSTALLER09['dupeip_check_on']) { 
     $c = (mysqli_fetch_row(sql_query("SELECT COUNT(id) FROM users WHERE ip=".sqlesc($_SERVER['REMOTE_ADDR'])))) or sqlerr(__FILE__, __LINE__);
     if ($c[0] != 0)
     stderr("Error", "The ip ".htmlsafechars($_SERVER['REMOTE_ADDR'])." is already in use. We only allow one account per ip address.");
+    }
     // TIMEZONE STUFF
     if(isset($_POST["user_timezone"]) && preg_match('#^\-?\d{1,2}(?:\.\d{1,2})?$#', $_POST['user_timezone']))
     {

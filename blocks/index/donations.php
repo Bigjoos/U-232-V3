@@ -7,9 +7,8 @@
     $mc1->cache_value('totalfunds_', $totalfunds_cache, $INSTALLER09['expires']['total_funds']);
     }
     $funds_so_far = (int)$totalfunds_cache["total_funds"];
-    $totalneeded = 50;    //=== set this to your monthly wanted amount
-    $funds_difference = $totalneeded - $funds_so_far;
-    $Progress_so_far = number_format($funds_so_far / $totalneeded * 100, 1);
+    $funds_difference = $INSTALLER09['totalneeded'] - $funds_so_far;
+    $Progress_so_far = number_format($funds_so_far / $INSTALLER09['totalneeded'] * 100, 1);
     if($Progress_so_far >= 100)
     $Progress_so_far = 100;
     $HTMLOUT .="<div class='headline'>{$lang['index_donations']}</div>
