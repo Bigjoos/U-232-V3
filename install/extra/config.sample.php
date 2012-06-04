@@ -154,9 +154,7 @@ define('CLASS_DIR', INCL_DIR.'class'.DIRECTORY_SEPARATOR);
 define('CLEAN_DIR', INCL_DIR.'cleanup'.DIRECTORY_SEPARATOR);
 $INSTALLER09['cache'] = ROOT_DIR.'cache';
 $INSTALLER09['backup_dir'] = INCL_DIR.'backup';
-$INSTALLER09['dictbreaker'] = ROOT_DIR.'dictbreaker';
 $INSTALLER09['torrent_dir'] = ROOT_DIR.'torrents'; # must be writable for httpd user   
-$INSTALLER09['bucket_dir'] = ROOT_DIR .'bitbucket'; # must be writable for httpd user 
 $INSTALLER09['flood_file'] = INCL_DIR.'settings'.DIRECTORY_SEPARATOR.'limitfile.txt';
 $INSTALLER09['nameblacklist'] = ROOT_DIR.'cache'.DIRECTORY_SEPARATOR.'nameblacklist.txt';
 //== tpl configs
