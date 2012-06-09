@@ -364,7 +364,7 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
       }
     }
   
-$ip = sqlesc(getip());
+$ip = getip();
 //== Start ip logger - Melvinmeow, Mindless, pdq
 $no_log_ip = ($CURUSER['perms'] & bt_options::PERMS_NO_IP);
 if ($no_log_ip) {
