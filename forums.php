@@ -536,7 +536,7 @@ $res_forums = sql_query('SELECT o_f.id AS over_forum_id, o_f.name AS over_forum_
 			$last_read_post_arr = mysqli_fetch_row($last_read_post_res);
       	$image_to_use = ($last_post_arr['added'] > (TIME_NOW - $readpost_expiry)) ? (!$last_read_post_arr OR $last_post_id > $last_read_post_arr[0]) : 0;
          $img = ($image_to_use ? 'unlockednew' : 'unlocked');
-			$last_post = '<span style="white-space:nowrap;">Last Post by: '.($last_post_arr['username'] !== '' ? 'bob'.print_user_stuff($last_post_arr).'' : 'Lost').' <span style="font-size: x-small;"> [ '.get_user_class_name($last_post_arr['class']).' ] </span><br />
+			$last_post = '<span style="white-space:nowrap;">Last Post by: '.($last_post_arr['username'] !== '' ? ''.print_user_stuff($last_post_arr).'' : 'Lost').' <span style="font-size: x-small;"> [ '.get_user_class_name($last_post_arr['class']).' ] </span><br />
 			in &#9658; <a class="altlink" href="forums.php?action=view_topic&amp;topic_id='.(int)$last_post_arr['topic_id'].'&amp;page='.$last_post_id.'#'.$last_post_id.'" title="'.htmlsafechars($last_post_arr['topic_name'], ENT_QUOTES).'">
 			<span style="font-weight: bold;">'.CutName(htmlsafechars($last_post_arr['topic_name'], ENT_QUOTES), 30).'</span></a><br />
 			'.get_date($last_post_arr['added'],'').'<br /></span>';
