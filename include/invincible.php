@@ -33,24 +33,24 @@ function invincible($id, $invincible = true, $bypass_bans = true) {
    // update perms
    if ($setbits || $clrbits)
       sql_query('UPDATE users SET perms = ((perms | '.$setbits.') & ~'.$clrbits.') 
-                 WHERE id = '.$id) or sqlerr(__file__, __line__); 
+                 WHERE id = '.sqlesc($id)) or sqlerr(__file__, __line__); 
 
    // grab current data     
    $res = sql_query('SELECT username, passkey, ip, perms, modcomment FROM users 
-                     WHERE id = '.$id.' LIMIT 1') or sqlerr(__file__, __line__); 
+                     WHERE id = '.sqlesc($id).' LIMIT 1') or sqlerr(__file__, __line__); 
    $row = mysqli_fetch_assoc($res);
 
    $row['perms'] = (int)$row['perms'];
 
    // delete from iplog current ip 
-   sql_query('DELETE FROM `ips` WHERE userid = '.$id) or sqlerr(__file__, __line__); 
+   sql_query('DELETE FROM `ips` WHERE userid = '.sqlesc($id)) or sqlerr(__file__, __line__); 
 
    // delete any iplog caches
    $mc1->delete_value('ip_history_'.$id);
    $mc1->delete_value('u_passkey_'.$row['passkey']);
 
    // update ip in db
-   $modcomment = get_date(TIME_NOW, 'DATE',0,1) . ' - '.$display.' invincible thanks to '.$CURUSER['username']."\n".
+   $modcomment = get_date(TIME_NOW, '',1) . ' - '.$display.' invincible thanks to '.$CURUSER['username']."\n".
                  $row['modcomment'];
    
    //ipf = '.sqlesc($ip).',

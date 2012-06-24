@@ -610,8 +610,9 @@ INSERT INTO `cleanup` (`clean_id`, `clean_title`, `clean_file`, `clean_time`, `c
 (47, 'Avatar Update', 'avatarpos_update.php', 1322306522, 86400, 'f257794129ee772f5cfe00b33b363100', 1, 'Avatar Stuffs Updates', 1),
 (48, 'Birthday Pms', 'birthday_update.php', 1336226521, 86400, '1fd167bf236ea5e74e835224d1cc36e9', 1, 'Pm all members with birthdays.', 1),
 (49, 'Movie of the week', 'mow_update.php', 1336316808, 604800, '716274782f2f7229d960a6661fb06b60', 1, 'Updates movie of the week', 1),
-(50, 'Silver torrents', 'silvertorrents_update.php', 1336179577, 3600, '3e1aab005271870d69934ebe37e28819', 1, 'Clean expired silver', 1);
-
+(50, 'Silver torrents', 'silvertorrents_update.php', 1336179577, 3600, '3e1aab005271870d69934ebe37e28819', 1, 'Clean expired silver', 1),
+(51, 'Failed Logins', 'failedlogin_update.php', 1340568661, 86400, 'c90f0f030d7914db6ae1263de1730541', 1, 'Delete expired failed logins', 1),
+(52, 'Christmas Gift Rest', 'gift_update.php', 1372122786, 31556926, '4bdd6190a0ba3420d21b50b79945c06b', 1, 'Reset all users yearly xmas gift', 1);
 -- --------------------------------------------------------
 
 --
