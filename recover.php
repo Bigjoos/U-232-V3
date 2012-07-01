@@ -50,13 +50,8 @@ get_template();
     $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
     if (!mysqli_affected_rows($GLOBALS["___mysqli_ston"]))
       stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_dberror']}");
-
-    $hash = md5($sec . $email . $arr["passhash"] . $sec);
-
-
-$body = sprintf($lang['email_request'], $email, $_SERVER["REMOTE_ADDR"], $INSTALLER09['baseurl'], $arr["id"], $hash).$INSTALLER09['site_name'];
-
-
+    $hash = md5($sec . $arr["email"] . $arr["passhash"] . $sec);
+    $body = sprintf($lang['email_request'], $email, $_SERVER["REMOTE_ADDR"], $INSTALLER09['baseurl'], $arr["id"], $hash).$INSTALLER09['site_name'];
     @mail($arr["email"], "{$INSTALLER09['site_name']} {$lang['email_subjreset']}", $body, "From: {$INSTALLER09['site_email']}") or stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_nomail']}");
     
     stderr($lang['stderr_successhead'], $lang['stderr_confmailsent']);
