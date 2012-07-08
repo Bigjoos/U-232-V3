@@ -732,11 +732,12 @@ break;
 case 'itrade':
 //=== trade for points
 $invites = (int)$User['invites'];
+$karma = $User['seedbonus'] + 200;
 $inv = $invites - 1;
 if ($CURUSER['invites'] == 0)
 stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.");
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " invites for bonus points.\n" .$bonuscomment;
-sql_query("UPDATE users SET invites = ".sqlesc($inv).", seedbonus = seedbonus + 200 WHERE id = ".sqlesc($userid)." AND invites =".sqlesc($invites)."+1") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET invites = ".sqlesc($inv).", seedbonus = ".sqlesc($karma)." WHERE id = ".sqlesc($userid)." AND invites =".sqlesc($invites)."+1") or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('invites' => $inv));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
@@ -744,10 +745,10 @@ $mc1->begin_transaction('MyUser_'.$userid);
 $mc1->update_row(false, array('invites' => $inv));
 $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
 $mc1->begin_transaction('userstats_'.$userid);
-$mc1->update_row(false, array('seedbonus' => $seedbonus));
+$mc1->update_row(false, array('seedbonus' => $karma));
 $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
 $mc1->begin_transaction('user_stats_'.$userid);
-$mc1->update_row(false, array('seedbonus' => $seedbonus, 'bonuscomment' => $bonuscomment));
+$mc1->update_row(false, array('seedbonus' => $karma, 'bonuscomment' => $bonuscomment));
 $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
 header("Refresh: 0; url={$INSTALLER09['baseurl']}/mybonus.php?itrade_success=1");
 die;
