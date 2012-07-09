@@ -110,15 +110,15 @@ function stdhead($title = "", $msgalert = true, $stdhead=false) {
         <li><a href='index.php'><span class='nav'>HOME</span></a></li>
         <li><a href='browse.php'><span class='nav'>TORRENTS</span></a></li>
         <li><a href='requests.php'><span class='nav'>REQUEST</span></a></li>
-        <li><a href='upload.php'><span class='nav'>UPLOAD</span></a></li>
-        <li><a href='casino.php'><span class='nav'>CASINO</span></a></li>
-        <li><a href='blackjack.php'><span class='nav'>CARDS</span></a></li>
+        <li><a href='offers.php'><span class='nav'>OFFERS</span></a></li>
+        ".(isset($CURUSER) && $CURUSER['class'] <= UC_VIP ? "<li><a href='uploadapp.php'><span class='nav'>UPLOAD APP</span></a></li>" : "<li><a href='upload.php'><span class='nav'>UPLOAD</span></a></li>")."
+        ".(isset($CURUSER) && $CURUSER['class'] >= UC_POWER_USER ? "<li><a href='casino.php'><span class='nav'>CASINO</span></a></li>" : "")."
+        ".(isset($CURUSER) && $CURUSER['class'] >= UC_POWER_USER ? "<li><a href='blackjack.php'><span class='nav'>CARDS</span></a></li>" : "")."
         <li><a href='forums.php'><span class='nav'>FORUMS</span></a></li>
         <li><a href='chat.php'><span class='nav'>IRC</span></a></li>
         <li><a href='topten.php'><span class='nav'>STATISTIC</span></a></li>
         <li><a href='faq.php'><span class='nav'>FAQ</span></a></li>
         <li><a href='staff.php'><span class='nav'>STAFF</span></a></li>
-	     <li><a href='offers.php'><span class='nav'>OFFERS</span></a></li>
         </ul>
         </div></div>
         <!-- U-232 Source - Print Global Messages -->
@@ -370,8 +370,8 @@ if ($MyPeersCache == false) {
     else
     if ($CURUSER['class'] >= UC_STAFF)
     $usrclass = "&nbsp;<a href='./setclass.php'><b>(".get_user_class_name($CURUSER['class']).")</b></a>&nbsp;";
-	  $StatusBar = '';
-		$StatusBar .= "
+	 $StatusBar = '';
+	 $StatusBar .= "
        <!-- U-232 Source - Print Statusbar/User Menu -->
        <script type='text/javascript'>
        //<![CDATA[
@@ -405,14 +405,13 @@ if ($MyPeersCache == false) {
          <div class='slide_a'>Play Blackjack</div><div class='slide_b'><a href='./blackjack.php'>Play here</a></div>
          <div class='slide_c'>Play Casino</div><div class='slide_d'><a href='./casino.php'>Play here</a></div>
          <div class='slide_head'>:: Information</div>
-         <div class='slide_a'>Contact Staff</div><div class='slide_b'><a href='./contactstaff.php'>Send Message</a></div>
+         ".(isset($CURUSER) && $CURUSER['class'] < UC_STAFF ? "<div class='slide_a'>Contact Staff</div><div class='slide_b'><a href='./contactstaff.php'>Send Message</a></div>" : "<div class='slide_a'>Staff messages</div><div class='slide_b'><a href='./staffbox.php'>Check Message</a></div>")."
          <div class='slide_c'>Change Theme</div><div class='slide_d'><a href='#' onclick='themes();'>Click here</a></div>
          <div class='slide_a'>Radio</div><div class='slide_b'><a href='#' onclick='radio();'>Click here</a></div>
          <div class='slide_c'>Donate us</div><div class='slide_d'><a href='./donate.php'>Click here</a></div>
          <div class='slide_a'>Torrent Freak News</div><div class='slide_b'><a href='./rsstfreak.php'>Click here</a></div>
-         ".(isset($CURUSER) && $CURUSER['class'] < UC_STAFF ? "<div class='slide_c'>Bugs</div><div class='slide_d'><a href='./bugs.php?action=add'>Click here to report it</a></div>":"")."
-         ".(isset($CURUSER) && $CURUSER['class'] >= UC_STAFF ? "<div class='slide_c'>Bug Tracker</div><div class='slide_d'><a href='./bugs.php?action=bugs'>Respond</a></div>":"")."
-         ".(isset($CURUSER) && $CURUSER['class'] <= UC_VIP ? "<div class='slide_a'>Uploader App</div><div class='slide_b'><a href='./uploadapp.php'>Send Application</a></div>":"")."
+         ".(isset($CURUSER) && $CURUSER['class'] < UC_STAFF ? "<div class='slide_c'>Bugs</div><div class='slide_d'><a href='./bugs.php?action=add'>Click here to report it</a></div>" : "<div class='slide_c'>Bug Tracker</div><div class='slide_d'><a href='./bugs.php?action=bugs'>Respond</a></div>")."
+         ".(isset($CURUSER) && $CURUSER['class'] <= UC_VIP ? "<div class='slide_a'>Uploader App</div><div class='slide_b'><a href='./uploadapp.php'>Send Application</a></div>" : "<div class='slide_a'>Upload</div><div class='slide_b'><a href='./upload.php'>Upload</a></div>")."
          <div class='slide_a'>Wiki</div><div class='slide_b'><a href='./wiki.php'>Click here</a></div>
          ".(isset($CURUSER) && $CURUSER['got_blocks'] == 'yes' ? "<div class='slide_head'>:: Site Config</div><div class='slide_a'>My Blocks</div><div class='slide_b'><a href='./user_blocks.php'>Click here</a></div>":"")."
          ".(isset($CURUSER) && $CURUSER['got_moods'] == 'yes' ? "<div class='slide_c'>My Unlocks</div><div class='slide_d'><a href='./user_unlocks.php'>Click here</a></div>":"")."
@@ -420,10 +419,10 @@ if ($MyPeersCache == false) {
          </div>
          <div id='base_icons'>
          <ul class='um_menu'>
-         <li><a href='pm_system.php'><img src='templates/1/images/mail_box.png' alt='messages' title='Your Private Messages' /></a></li>
-         <li><a href='usercp.php?action=default'><img src='templates/1/images/Profile.png' alt='Settings' title='Personal Settings' /></a></li>
-         ".(isset($CURUSER) && $CURUSER['class'] >= UC_STAFF ? "<li><a href='staffpanel.php'><img src='templates/1/images/setting_tools.png' alt='Staff' title='Staffpanel' /></a></li>":"")."
-        <li><a href='logout.php?hash_please={$salty}'><img src='templates/1/images/logout.png' alt='Logout' title='SignOut' /></a></li>
+         <li><a href='pm_system.php'><img src='./templates/1/images/mail_box.png' alt='messages' title='Your Private Messages' /></a></li>
+         <li><a href='usercp.php?action=default'><img src='./templates/1/images/Profile.png' alt='Settings' title='Personal Settings' /></a></li>
+         ".(isset($CURUSER) && $CURUSER['class'] >= UC_STAFF ? "<li><a href='./staffpanel.php'><img src='templates/1/images/setting_tools.png' alt='Staff' title='Staffpanel' /></a></li>" : "")."
+        <li><a href='logout.php?hash_please={$salty}'><img src='./templates/1/images/logout.png' alt='Logout' title='SignOut' /></a></li>
         </ul>
        </div>
       </div>";
