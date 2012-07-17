@@ -319,7 +319,7 @@ function StatusBar() {
 	return "";
 	$upped = mksize($CURUSER['uploaded']);
 	$downed = mksize($CURUSER['downloaded']);
-   $salty = md5("Th15T3xtis5add3dto66uddy6he@water...".$CURUSER['ip']."");
+   $salty = md5("Th15T3xtis5add3dto66uddy6he@water...".$CURUSER['username']."");
    //==Memcache unread pms
 	$PMCount=0;
 	$unread1 = $mc1->get_value('inbox_new_sb_'.$CURUSER['id']);
