@@ -48,7 +48,7 @@ $HTMLOUT .= "<tr><td colspan='7' class='colhead'>{$lang['invites_nousers']}</td>
 $HTMLOUT .= "<tr class='one'>
 <td align='center'><b>{$lang['invites_username']}</b></td>
 <td align='center'><b>{$lang['invites_uploaded']}</b></td>
-<td align='center'><b>{$lang['invites_downloaded']}</b></td>
+".($INSTALLER09['ratio_free'] ? "" : "<td align='center'><b>{$lang['invites_downloaded']}</b></td>")."
 <td align='center'><b>{$lang['invites_ratio']}</b></td>
 <td align='center'><b>{$lang['invites_status']}</b></td>
 <td align='center'><b>{$lang['invites_confirm']}</b></td>
@@ -59,23 +59,15 @@ $arr = mysqli_fetch_assoc($query);
 if ($arr['status'] == 'pending')
 $user = "<td align='center'>".htmlsafechars($arr['username'])."</td>";
 else
-$user = "<td align='center'><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['id']."'>".htmlsafechars($arr['username'])."</a>" .($arr["warned"] >= 1 ? "&nbsp;<img src='{$INSTALLER09['pic_base_url']}warned.gif' border='0' alt='Warned' />" : "")."&nbsp;" .($arr["enabled"] == "no" ? "&nbsp;<img src='{$INSTALLER09['pic_base_url']}disabled.gif' border='0' alt='Disabled' />" : "")."&nbsp;" .($arr["donor"] == "yes" ? "<img src='{$INSTALLER09['pic_base_url']}star.gif' border='0' alt='Donor' />" : "")."</td>";
-if ($arr['downloaded'] > 0) {
-$ratio = number_format($arr['uploaded'] / $arr['downloaded'], 3);
-$ratio = "<font color='".get_ratio_color($ratio)."'>".$ratio."</font>";
-} else {
-if ($arr['uploaded'] > 0) {
-$ratio = 'Inf.';
-}
-else {
-$ratio = '---';
-}
-}
+$user = "<td align='center'><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['id']."'>".format_username($arr)."</a></td>";
+
+$ratio = member_ratio($arr['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $arr['downloaded']);
+
 if ($arr["status"] == 'confirmed')
 $status = "<font color='#1f7309'>{$lang['invites_confirm1']}</font>";
 else
 $status = "<font color='#ca0226'>{$lang['invites_pend']}</font>";
-$HTMLOUT .= "<tr class='one'>".$user."<td align='center'>".mksize($arr['uploaded'])."</td><td align='center'>".mksize($arr['downloaded'])."</td><td align='center'>".$ratio."</td><td align='center'>".$status."</td>";
+$HTMLOUT .= "<tr class='one'>".$user."<td align='center'>".mksize($arr['uploaded'])."</td>".($INSTALLER09['ratio_free'] ? "" : "<td align='center'>".mksize($arr['downloaded'])."</td>")."<td align='center'>".$ratio."</td><td align='center'>".$status."</td>";
 if ($arr['status'] == 'pending') {
 $HTMLOUT .= "<td align='center'><a href='?do=confirm_account&amp;userid=".(int)$arr['id']."&amp;sender=".(int)$CURUSER['id']."'><img src='{$INSTALLER09['pic_base_url']}confirm.png' alt='confirm' title='Confirm' border='0' /></a></td></tr>";
 } 
@@ -227,19 +219,16 @@ stderr($lang['invites_confirm1'], $lang['invites_sure1'].' '.htmlsafechars($asso
 sql_query('UPDATE users SET status = "confirmed" WHERE id = '.sqlesc($userid).' AND invitedby = '.sqlesc($CURUSER['id']).' AND status="pending"') or sqlerr(__FILE__, __LINE__);
 //==pm to new invitee/////
 $msg = sqlesc("Hey there :wave:
-Welcome to {$INSTALLER09['site_name']}!
-
-We have made many changes to the site, and we hope you enjoy them! 
-We have been working hard to make {$INSTALLER09['site_name']} somethin' special!
-
-{$INSTALLER09['site_name']} has a strong community (just check out forums), and is a feature rich site. We hope you'll join in on all the fun!
- 
-Be sure to read the [url={$INSTALLER09['baseurl']}/rules.php]Rules[/url] and [url={$INSTALLER09['baseurl']}/faq.php]FAQ[/url] before you start using the site.
-We are a strong friendly community here :D {$INSTALLER09['site_name']} is so much more then just torrents.
-Just for kicks, we've started you out with 200.0 Karma Bonus  Points, and a couple of bonus GB to get ya started! 
-so, enjoy  
-cheers, 
-{$INSTALLER09['site_name']} Staff");
+Welcome to {$INSTALLER09['site_name']}!\n
+We have made many changes to the site, and we hope you enjoy them!\n 
+We have been working hard to make {$INSTALLER09['site_name']} somethin' special!\n
+{$INSTALLER09['site_name']} has a strong community (just check out forums), and is a feature rich site. We hope you'll join in on all the fun!\n
+Be sure to read the [url={$INSTALLER09['baseurl']}/rules.php]Rules[/url] and [url={$INSTALLER09['baseurl']}/faq.php]FAQ[/url] before you start using the site.\n
+We are a strong friendly community here :D {$INSTALLER09['site_name']} is so much more then just torrents.\n
+Just for kicks, we've started you out with 200.0 Karma Bonus  Points, and a couple of bonus GB to get ya started!\n 
+so, enjoy\n  
+cheers,\n 
+{$INSTALLER09['site_name']} Staff.\n");
 $id = (int)$assoc["id"];
 $subject = sqlesc("Welcome to {$INSTALLER09['site_name']} !");
 $added = TIME_NOW;
