@@ -448,7 +448,7 @@ if($shout_pm_alert['pms'] > 0 && $gotpm == 0){
         //$delall 
         $pm = ($CURUSER['id'] != $arr['userid'] ? "<span class='date' style=\"color:$dtcolor\"><a target='_blank' href='./pm_system.php?action=send_message&amp;receiver=".(int)$arr['userid']."'><img src='{$INSTALLER09['pic_base_url']}button_pm2.gif' border='0' alt=\"Pm User\" title=\"Pm User\" /></a></span>\n" : "" );
         $date = get_date($arr["date"], 0,1);
-        $reply = ($CURUSER['id'] != $arr['userid'] ? "<a href=\"javascript:window.top.SmileIT('[b][i]=>&nbsp;[color=#".get_user_class_color($arr['class'])."]".htmlsafechars($arr['username'])."[/color]&nbsp;-[/i][/b]','shbox','shbox_text')\"><img height='10' src='{$INSTALLER09['pic_base_url']}reply.gif' title='Reply' alt='Reply' style='border:none;' /></a>" : "" );
+        $reply = ($CURUSER['id'] != $arr['userid'] ? "<a href=\"javascript:window.top.SmileIT('[b][i]=>&nbsp;[color=#".get_user_class_color($arr['class'])."]".htmlsafechars($arr['username'])."[/color]&nbsp;-[/i][/b]','staff_shbox','staff_shbox_text')\"><img height='10' src='{$INSTALLER09['pic_base_url']}reply.gif' title='Reply' alt='Reply' style='border:none;' /></a>" : "" );
         $user_stuff = $arr;
         $user_stuff['id'] = (int)$arr['userid'];
         $HTMLOUT .="<tr style='background-color:$bg;'><td><span class='size1' style='color:$fontcolor;'>[$date]</span>\n$del$edit$pm$reply$private ".format_username($user_stuff, true)."<span class='size2' style='color:$fontcolor;'>".format_comment($arr["text"])."\n</span></td></tr>\n";

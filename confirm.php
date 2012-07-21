@@ -8,7 +8,10 @@
  **/
 require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once(INCL_DIR.'user_functions.php');
-
+global $CURUSER;
+if(!$CURUSER){
+get_template();
+}
     $lang = array_merge( load_language('global'), load_language('confirm') );
     
     $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
