@@ -1092,7 +1092,7 @@ stderr("Error", "Your ratio on that torrent is fine, you must have selected the 
 sql_query("UPDATE snatched SET uploaded = ".sqlesc($arr_snatched['downloaded'])." WHERE userid = ".sqlesc($userid)." AND torrentid = ".sqlesc($torrent_number)) or sqlerr(__FILE__, __LINE__);
 $difference = $arr_snatched['downloaded'] - $arr_snatched['uploaded'];
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " Points for 1 to 1 ratio on torrent: ".htmlsafechars($arr_snatched['name'])." ".$torrent_number.", ".$difference." added .\n " .$bonuscomment;
-sql_query("UPDATE users SET uploaded = ".ssqlesc($upload + $difference).", bonuscomment = ".sqlesc($bonuscomment).", seedbonus = ".sqlesc($seedbonus)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET uploaded = ".sqlesc($upload + $difference).", bonuscomment = ".sqlesc($bonuscomment).", seedbonus = ".sqlesc($seedbonus)." WHERE id = ".sqlesc($userid)) or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('userstats_'.$userid);
 $mc1->update_row(false, array('uploaded' => $upload + $difference, 'seedbonus' => $seedbonus));
 $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);

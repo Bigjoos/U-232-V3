@@ -286,8 +286,9 @@ if (isset($_GET['clear_new']) && $_GET['clear_new'] == '1'){
     else
       $title = '';
 
+    $HTMLOUT .= "<div class='article' align='center'>";
     if ($CURUSER['viewscloud'] === "yes") {
-    $HTMLOUT .= "<div class='article' align='center'><div id='wrapper1' style='width:80%;border:1px solid black;background-color:pink;' align='center'>";
+    $HTMLOUT .= "<div id='wrapper1' style='width:80%;border:1px solid black;background-color:pink;' align='center'>";
     //== print out the tag cloud
     $HTMLOUT .= cloud() . "
     </div>";
