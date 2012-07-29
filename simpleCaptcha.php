@@ -9,7 +9,7 @@
 // This is the handler for captcha image requests
 // The captcha ID is placed in the session, so session vars are required for this plug-in
 session_start();
-
+$numimages = '';
 // -------------------- EDIT THESE ----------------- //
 $images = array(
   'house'=> 'captchaImages/01.png',

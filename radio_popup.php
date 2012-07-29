@@ -14,8 +14,8 @@ loggedinorreturn();
 
 $lang = array_merge( load_language('global') );
 
-$radio = array('host'=>'127.0.0.1',
-			   'port'=>'666','password'=>'al_kickyercuntin');
+$radio = array('host'=>'radio.no-ip.org',
+			   'port'=>'8888','password'=>'AlBootYerBaws');
 
 $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
               'SERVERTITLE'=>'Server: <b>%s</b>',
@@ -26,7 +26,8 @@ $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
               'PEAKLISTENERS'=>'Peak listeners: <b>%d</b>',
             );
 
-    function radioinfo($radio) {
+
+ function radioinfo($radio) {
     global $langs, $INSTALLER09, $mc1, $CURUSER;    
     $xml = $html = $history = '';        
     if($hand = @fsockopen($radio['host'],$radio['port'],$errno,$errstr,30)) {
@@ -47,8 +48,7 @@ $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
         }
         preg_match_all('/\<HOSTNAME>(.*?)<\/HOSTNAME>/',$xml,$temph);
         if(count($temph[1]))
-          $users_ip = join(', ',array_map('sqlesc',$temph[1]));
-        $data = 0;
+        $users_ip = join(', ',array_map('sqlesc',$temph[1]));
         if($data['STREAMSTATUS'] == 0)
                 return 'Sorry '.$CURUSER['username'].'... : Server '.$radio['host'].' is online but there is no stream';
         else {
@@ -85,15 +85,15 @@ $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
     <b>Sorry '.$CURUSER['username'].' Radio is currently Offline</b></font></fieldset><br />';
     return $html;
     }
-    
+
     $HTMLOUT = '';
     $HTMLOUT = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 		\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 		<html xmlns='http://www.w3.org/1999/xhtml'>
 		<head>
-    <meta name='generator' content='TBDev.net' />
-	  <meta name='MSSmartTagsPreventParsing' content='TRUE' />
-		<title>{$INSTALLER09['site_name']} Radio</title>
+    <meta name='generator' content='u-232.com' />
+	 <meta name='MSSmartTagsPreventParsing' content='TRUE' />
+	 <title>{$INSTALLER09['site_name']} Radio</title>
     <link rel='stylesheet' href='./templates/".$CURUSER['stylesheet']."/".$CURUSER['stylesheet'].".css' type='text/css' />
     </head>
     <body>";
