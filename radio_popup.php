@@ -44,7 +44,7 @@ $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
         $history = array();
         foreach($temph[0] as $temph2) {
                 preg_match_all('/\<(TITLE|PLAYEDAT)>(.*?)<\/\\1\>/i',$temph2,$temph3,PREG_PATTERN_ORDER);
-                $history[] = '<b>&nbsp;'.$temph3[2][1].'</b> <sub>('.get_date(TIME_NOW, 'DATE' ,$temph3[2][0]).')</sub>';
+                $history[] = '<b>&nbsp;'.$temph3[2][1].'</b> <sub>('.get_date($temph3[2][0], 'DATE').')</sub>';
         }
         preg_match_all('/\<HOSTNAME>(.*?)<\/HOSTNAME>/',$xml,$temph);
         if(count($temph[1]))

@@ -27,7 +27,6 @@ $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
 
   function radioinfo($radio) {
     global $langs, $INSTALLER09, $mc1, $CURUSER;    
-    $xml = $html = $history = '';        
     if($hand = @fsockopen($radio['host'],$radio['port'],$errno,$errstr,30)) {
         fputs($hand, "GET /admin.cgi?pass=".$radio['password']."&mode=viewxml HTTP/1.1\nUser-Agent:Mozilla/5.0 ".
         "(Windows; U; Windows NT 6.1; en-GB; rv:1.9.2.6) Gecko/20100625 Firefox/3.6.6\n\n");
@@ -42,12 +41,11 @@ $langs = array('CURRENTLISTENERS'=>'Current listeners: <b>%d</b>',
         $history = array();
         foreach($temph[0] as $temph2) {
                 preg_match_all('/\<(TITLE|PLAYEDAT)>(.*?)<\/\\1\>/i',$temph2,$temph3,PREG_PATTERN_ORDER);
-                $history[] = '<b>&nbsp;'.$temph3[2][1].'</b> <sub>('.get_date(TIME_NOW, 'DATE' ,$temph3[2][0]).')</sub>';
+                $history[] = '<b>&nbsp;'.$temph3[2][1].'</b> <sub>('.get_date($temph3[2][0], 'DATE').')</sub>';
         }
         preg_match_all('/\<HOSTNAME>(.*?)<\/HOSTNAME>/',$xml,$temph);
         if(count($temph[1]))
-          $users_ip = join(', ',array_map('sqlesc',$temph[1]));
-        $data = 0;
+        $users_ip = join(', ',array_map('sqlesc',$temph[1]));
         if($data['STREAMSTATUS'] == 0)
                 return 'Sorry '.$CURUSER['username'].'... : Server '.$radio['host'].' is online but there is no stream';
         else {
