@@ -276,17 +276,20 @@ function do_rate(rate,id,what) {
     if ($free_slot && !$double_slot) {
     $HTMLOUT .= '<tr><td align="right" class="heading">Slots</td><td align="left">'.$torrent['freeimg'].' <b><font color="'.$torrent['free_color'].'">Freeleech Slot In Use!</font></b> (only upload stats are recorded) - Expires: 12:01AM '.$torrent['addfree'].'</td></tr>';
     $freeslot = ($CURUSER['freeslots'] >= 1 ? "&nbsp;&nbsp;<b>Use: </b><a class=\"index\" href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."&amp;slot=double\" rel='balloon2' onclick=\"return confirm('Are you sure you want to use a doubleseed slot?')\"><font color='".$torrent['free_color']."'><b>Doubleseed Slot</b></font></a>&nbsp;- " . htmlsafechars($CURUSER['freeslots']) . " Slots Remaining. " : "");
+    $freeslot_zip = ($CURUSER['freeslots'] >= 1 ? "&nbsp;&nbsp;<b>Use: </b><a class=\"index\" href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."&amp;slot=double&amp;zip=1\" rel='balloon2' onclick=\"return confirm('Are you sure you want to use a doubleseed slot?')\"><font color='".$torrent['free_color']."'><b>Doubleseed Slot</b></font></a>&nbsp;- " . htmlsafechars($CURUSER['freeslots']) . " Slots Remaining. " : "");
     }
     elseif (!$free_slot && $double_slot) {
     $HTMLOUT .= '<tr><td align="right" class="heading">Slots</td><td align="left">'.$torrent['doubleimg'].' <b><font color="'.$torrent['free_color'].'">Doubleseed Slot In Use!</font></b> (upload stats x2) - Expires: 12:01AM '.$torrent['addup'].'</td></tr>';
     $freeslot = ($CURUSER['freeslots'] >= 1 ? "&nbsp;&nbsp;<b>Use: </b><a class=\"index\" href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."&amp;slot=free\" rel='balloon1' onclick=\"return confirm('Are you sure you want to use a freeleech slot?')\"><font color='".$torrent['free_color']."'><b>Freeleech Slot</b></font></a>&nbsp;- " . htmlsafechars($CURUSER['freeslots']) . " Slots Remaining. " : "");
+    $freeslot_zip = ($CURUSER['freeslots'] >= 1 ? "&nbsp;&nbsp;<b>Use: </b><a class=\"index\" href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."&amp;slot=free&amp;zip=1\" rel='balloon1' onclick=\"return confirm('Are you sure you want to use a freeleech slot?')\"><font color='".$torrent['free_color']."'><b>Freeleech Slot</b></font></a>&nbsp;- " . htmlsafechars($CURUSER['freeslots']) . " Slots Remaining. " : "");
     }
     elseif ($free_slot && $double_slot) {
     $HTMLOUT .= '<tr><td align="right" class="heading">Slots</td><td align="left">'.$torrent['freeimg'].' '.$torrent['doubleimg'].' <b><font color="'.$torrent['free_color'].'">Freeleech and Doubleseed Slots In Use!</font></b> (upload stats x2 and no download stats are recorded)<p>Freeleech Expires: 12:01AM '.$torrent['addfree'].' and Doubleseed Expires: 12:01AM '.$torrent['addup'].'</p></td></tr>';
-    $freeslot = '';
+    $freeslot = $freeslot_zip = '';
     }
     else
     $freeslot = ($CURUSER['freeslots'] >= 1 ? "&nbsp;&nbsp;<b>Use: </b><a class=\"index\" href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."&amp;slot=free\" rel='balloon1' onclick=\"return confirm('Are you sure you want to use a freeleech slot?')\"><font color='".$torrent['free_color']."'><b>Freeleech Slot</b></font></a> &nbsp;&nbsp;<b>Use: </b><a class=\"index\" href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."&amp;slot=double\" rel='balloon2' onclick=\"return confirm('Are you sure you want to use a doubleseed slot?')\"><font color='".$torrent['free_color']."'><b>Doubleseed Slot</b></font></a>&nbsp;- " . htmlsafechars($CURUSER['freeslots']) . " Slots Remaining. " : "");
+    $freeslot_zip = ($CURUSER['freeslots'] >= 1 ? "&nbsp;&nbsp;<b>Use: </b><a class=\"index\" href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."&amp;slot=free&amp;zip=1\" rel='balloon1' onclick=\"return confirm('Are you sure you want to use a freeleech slot?')\"><font color='".$torrent['free_color']."'><b>Freeleech Slot</b></font></a> &nbsp;&nbsp;<b>Use: </b><a class=\"index\" href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."&amp;slot=double&amp;zip=1\" rel='balloon2' onclick=\"return confirm('Are you sure you want to use a doubleseed slot?')\"><font color='".$torrent['free_color']."'><b>Doubleseed Slot</b></font></a>&nbsp;- " . htmlsafechars($CURUSER['freeslots']) . " Slots Remaining. " : "");
     //==
     require_once MODS_DIR.'free_details.php';
     $HTMLOUT .="<tr><td align=\"right\" class=\"heading\" width=\"1%\">{$lang['details_download']}</td><td align=\"left\">
@@ -294,7 +297,7 @@ function do_rate(rate,id,what) {
     /** end **/
     //==Torrent as zip by putyn
     $HTMLOUT .="<tr><td align=\"right\" class=\"heading\" width=\"1%\">{$lang['details_zip']}</td><td align=\"left\">
-    <a class=\"index\" href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."&amp;zip=1\">&nbsp;<u>".htmlsafechars($torrents["filename"]) . "</u></a>{$freeslot}</td></tr>";
+    <a class=\"index\" href=\"download.php?torrent={$id}".($CURUSER['ssluse'] == 3 ? "&amp;ssl=1" : "")."&amp;zip=1\">&nbsp;<u>".htmlsafechars($torrents["filename"]) . "</u></a>{$freeslot_zip}</td></tr>";
     $HTMLOUT .="<tr><td align=\"right\" class=\"heading\" width=\"1%\">{$lang['details_tags']}</td><td align=\"left\">".$keywords."</td></tr>";
     /**  Mod by dokty, rewrote by pdq  **/
     $my_points = 0;
