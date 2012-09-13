@@ -1,24 +1,24 @@
 <?php
 // === Staff shoutbox 09
-   if ($CURUSER['show_staffshout'] === "yes") {
-   $commandbutton = $refreshbutton = $smilebutton = $custombutton = $staffsmiliebutton = '';
-   if ($CURUSER['class'] >= UC_STAFF){
-   $staffsmiliebutton .="<span style='float:right;'><a href=\"javascript:PopStaffSmiles('staff_shbox','staff_shbox_text')\">{$lang['index_shoutbox_ssmilies']}</a></span>";
-   }
-   if(get_smile() != '0')
-   $custombutton .="<span style='float:right;'><a href=\"javascript:PopCustomSmiles('staff_shbox','staff_shbox_text')\">{$lang['index_shoutbox_csmilies']}</a></span>";
-   if ($CURUSER['class'] >= UC_STAFF){
-   $commandbutton = "<span style='float:right;'><a href=\"javascript:popUp('shoutbox_commands.php')\">{$lang['index_shoutbox_commands']}</a></span>\n";}
-   $refreshbutton = "<span style='float:right;'><a href='staff_shoutbox.php' target='staff_shoutbox'>{$lang['index_shoutbox_refresh']}</a></span>\n";
-   $smilebutton = "<span style='float:right;'><a href=\"javascript:PopMoreSmiles('staff_shbox','staff_shbox_text')\">{$lang['index_shoutbox_smilies']}</a></span>\n";
-   $HTMLOUT .= "<form action='staff_shoutbox.php' method='get' target='staff_shoutbox' name='staff_shbox' onsubmit='mysubmit()'>
+if ($CURUSER['show_staffshout'] === "yes") {
+    $commandbutton = $refreshbutton = $smilebutton = $custombutton = $staffsmiliebutton = '';
+    if ($CURUSER['class'] >= UC_STAFF) {
+        $staffsmiliebutton.= "<span style='float:right;'><a href=\"javascript:PopStaffSmiles('staff_shbox','staff_shbox_text')\">{$lang['index_shoutbox_ssmilies']}</a></span>";
+    }
+    if (get_smile() != '0') $custombutton.= "<span style='float:right;'><a href=\"javascript:PopCustomSmiles('staff_shbox','staff_shbox_text')\">{$lang['index_shoutbox_csmilies']}</a></span>";
+    if ($CURUSER['class'] >= UC_STAFF) {
+        $commandbutton = "<span style='float:right;'><a href=\"javascript:popUp('shoutbox_commands.php')\">{$lang['index_shoutbox_commands']}</a></span>\n";
+    }
+    $refreshbutton = "<span style='float:right;'><a href='staff_shoutbox.php' target='staff_shoutbox'>{$lang['index_shoutbox_refresh']}</a></span>\n";
+    $smilebutton = "<span style='float:right;'><a href=\"javascript:PopMoreSmiles('staff_shbox','staff_shbox_text')\">{$lang['index_shoutbox_smilies']}</a></span>\n";
+    $HTMLOUT.= "<form action='staff_shoutbox.php' method='get' target='staff_shoutbox' name='staff_shbox' onsubmit='mysubmit()'>
    <div class='headline'>
    Staff ShoutBox
    <span class='shouthis'>";
-   if ($CURUSER['class'] >= UC_STAFF){
-   $HTMLOUT .= "<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=shistory&amp;action=shistory'><b>{$lang['index_shoutbox_history']}</b></a>";
-   }
-   $HTMLOUT .= "</span>
+    if ($CURUSER['class'] >= UC_STAFF) {
+        $HTMLOUT.= "<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=shistory&amp;action=shistory'><b>{$lang['index_shoutbox_history']}</b></a>";
+    }
+    $HTMLOUT.= "</span>
    </div>
    <div class='headbody'>
    <iframe src='{$INSTALLER09['baseurl']}/staff_shoutbox.php' width='100%' height='200' frameborder='0' name='staff_shoutbox' marginwidth='0' marginheight='0'></iframe>
@@ -57,11 +57,10 @@
    </div>
 	 </div>
    </form><br />\n";
-   }
-   if ($CURUSER['show_staffshout'] === "no") {
-   $HTMLOUT .="<div class='headline'><b>{$lang['index_staff_shoutbox']}&nbsp;</b></div><div class='headbody'>[&nbsp;<a href='{$INSTALLER09['baseurl']}/staff_shoutbox.php?show_staffshout=1&amp;show_staff=yes'>{$lang['index_shoutbox_open']}&nbsp;]</a></div><br />";
-   }
+}
+if ($CURUSER['show_staffshout'] === "no") {
+    $HTMLOUT.= "<div class='headline'><b>{$lang['index_staff_shoutbox']}&nbsp;</b></div><div class='headbody'>[&nbsp;<a href='{$INSTALLER09['baseurl']}/staff_shoutbox.php?show_staffshout=1&amp;show_staff=yes'>{$lang['index_shoutbox_open']}&nbsp;]</a></div><br />";
+}
 //==end 09 Staff shoutbox
 // End Class
-
 // End File

@@ -1,11 +1,8 @@
-<?php 
-    if ($CURUSER) { 
-    if (isset($free))
-    {
-    foreach ($free as $fl)
-    {
-        switch ($fl['modifier'])
-        {
+<?php
+if ($CURUSER) {
+    if (isset($free)) {
+        foreach ($free as $fl) {
+            switch ($fl['modifier']) {
             case 1:
                 $mode = 'All Torrents Free';
                 break;
@@ -24,20 +21,17 @@
 
             default:
                 $mode = 0;
-        }
-        
-     $htmlout .= ($fl['modifier'] != 0 && $fl['expires'] > TIME_NOW ? '
+            }
+            $htmlout.= ($fl['modifier'] != 0 && $fl['expires'] > TIME_NOW ? '
      <li>
      <a class="tooltip" href="#"><b><font color="red">'.$lang['gl_freeleech'].'</font></b><span class="custom info"><img src="./templates/1/images/Info.png" alt="Freeleech" height="48" width="48" />
      <em>'.$fl['title'].'</em>
      '.$mode.'<br />
-     '.$fl['message'].' '.$lang['gl_freeleech_sb'].' '.$fl['setby'].'<br />'.($fl['expires'] != 1 ? 
-     ''.$lang['gl_freeleech_u'].' '.get_date($fl['expires'], 'DATE').' ('.mkprettytime($fl['expires'] - TIME_NOW).' '.$lang['gl_freeleech_tg'].')' : '').'  
+     '.$fl['message'].' '.$lang['gl_freeleech_sb'].' '.$fl['setby'].'<br />'.($fl['expires'] != 1 ? ''.$lang['gl_freeleech_u'].' '.get_date($fl['expires'], 'DATE').' ('.mkprettytime($fl['expires'] - TIME_NOW).' '.$lang['gl_freeleech_tg'].')' : '').'  
      </span></a></li>' : '');
-}
-}
+        }
+    }
 }
 //=== free addon end
 // End Class
-
 // End File

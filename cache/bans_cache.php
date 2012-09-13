@@ -1,7 +1,3 @@
 <?php
-
-$bans = array(
-
-);
-
+$bans = array();
 ?>

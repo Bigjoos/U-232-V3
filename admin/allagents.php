@@ -5,12 +5,11 @@
  *   Copyright (C) 2010 U-232 v.3
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
- **/
-	
-	if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
-  {
-	$HTMLOUT='';
-	$HTMLOUT .= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
+ *
+ */
+if (!defined('IN_INSTALLER09_ADMIN')) {
+    $HTMLOUT = '';
+    $HTMLOUT.= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 		\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 		<html xmlns='http://www.w3.org/1999/xhtml'>
 		<head>
@@ -19,10 +18,9 @@
 		<body>
 	<div style='font-size:33px;color:white;background-color:red;text-align:center;'>Incorrect access<br />You cannot access this file directly.</div>
 	</body></html>";
-	echo $HTMLOUT;
-	exit();
-  }
-  
+    echo $HTMLOUT;
+    exit();
+}
 /*
   function deny_access($def) {
         global $INSTALLER09;
@@ -56,23 +54,19 @@
 
 
   deny_access('IN_INSTALLER09_ADMIN');
-  */
-  require_once(INCL_DIR.'user_functions.php');
-  require_once(CLASS_DIR.'class_check.php');
-  class_check(UC_MODERATOR);
-  
- 
-  //error_reporting(E_ALL);
-  
-  $lang = array_merge( $lang );
-	$HTMLOUT='';
-	$res = sql_query("SELECT agent, peer_id FROM peers GROUP BY agent") or sqlerr();
-	$HTMLOUT .="<table align='center' border='3' cellspacing='0' cellpadding='5'>
+*/
+require_once (INCL_DIR.'user_functions.php');
+require_once (CLASS_DIR.'class_check.php');
+class_check(UC_MODERATOR);
+//error_reporting(E_ALL);
+$lang = array_merge($lang);
+$HTMLOUT = '';
+$res = sql_query("SELECT agent, peer_id FROM peers GROUP BY agent") or sqlerr();
+$HTMLOUT.= "<table align='center' border='3' cellspacing='0' cellpadding='5'>
 	<tr><td class='colhead'>Client</td><td class='colhead'>Peer ID</td></tr>";
-	while($arr = mysqli_fetch_assoc($res))
-	{
-	$HTMLOUT .="<tr><td align='left'>".htmlsafechars($arr["agent"])."</td><td align='left'>".htmlsafechars($arr["peer_id"])."</td></tr>\n";
-	}
-  $HTMLOUT .="</table>\n";
-echo stdhead("All Clients") . $HTMLOUT . stdfoot();
+while ($arr = mysqli_fetch_assoc($res)) {
+    $HTMLOUT.= "<tr><td align='left'>".htmlsafechars($arr["agent"])."</td><td align='left'>".htmlsafechars($arr["peer_id"])."</td></tr>\n";
+}
+$HTMLOUT.= "</table>\n";
+echo stdhead("All Clients").$HTMLOUT.stdfoot();
 ?>

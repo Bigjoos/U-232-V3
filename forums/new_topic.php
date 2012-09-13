@@ -12,11 +12,9 @@ new topic
 Powered by Bunnies!!!
  
  ***************************************************************/
-
-if (!defined('BUNNY_FORUMS')) 
-{
-	$HTMLOUT = '';
-	$HTMLOUT .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+if (!defined('BUNNY_FORUMS')) {
+    $HTMLOUT = '';
+    $HTMLOUT.= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
         <head>
         <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
@@ -25,190 +23,159 @@ if (!defined('BUNNY_FORUMS'))
         <h1 style="text-align:center;">ERROR</h1>
         <p style="text-align:center;">How did you get here? silly rabbit Trix are for kids!.</p>
         </body></html>';
-	echo $HTMLOUT;
-	exit();
+    echo $HTMLOUT;
+    exit();
 }
-
-    $forum_id = (isset($_GET['forum_id']) ? intval($_GET['forum_id']) :  (isset($_POST['forum_id']) ? intval($_POST['forum_id']) :  0));
-    
-    if (!is_valid_id($forum_id))
-    {
-	stderr('Error', 'Bad ID.');
+$forum_id = (isset($_GET['forum_id']) ? intval($_GET['forum_id']) : (isset($_POST['forum_id']) ? intval($_POST['forum_id']) : 0));
+if (!is_valid_id($forum_id)) {
+    stderr('Error', 'Bad ID.');
+}
+//=== stop suspended users from posting
+if ($CURUSER['forum_post'] == 'no' || $CURUSER['suspended'] == 'yes') {
+    stderr('Error', 'Your posting rights have been suspended.');
+}
+$extension_error = $size_error = '';
+//=== topic stuff
+$topic_name = strip_tags(isset($_POST['topic_name']) ? $_POST['topic_name'] : '');
+$topic_desc = strip_tags(isset($_POST['topic_desc']) ? $_POST['topic_desc'] : '');
+//=== post stuff
+$post_title = strip_tags(isset($_POST['post_title']) ? $_POST['post_title'] : '');
+$icon = htmlsafechars(isset($_POST['icon']) ? $_POST['icon'] : '');
+$body = (isset($_POST['body']) ? $_POST['body'] : '');
+$ip = htmlsafechars($CURUSER['ip'] == '' ? $_SERVER['REMOTE_ADDR'] : $CURUSER['ip']);
+$bb_code = (isset($_POST['bb_code']) && $_POST['bb_code'] == 'no' ? 'no' : 'yes');
+//=== poll stuff
+$poll_question = strip_tags(isset($_POST['poll_question']) ? trim($_POST['poll_question']) : '');
+$poll_answers = strip_tags(isset($_POST['poll_answers']) ? trim($_POST['poll_answers']) : '');
+$poll_ends = (isset($_POST['poll_ends']) ? (($_POST['poll_ends'] > 168) ? 1356048000 : (TIME_NOW + $_POST['poll_ends'] * 86400)) : '');
+$poll_starts = (isset($_POST['poll_starts']) ? (($_POST['poll_starts'] === 0) ? TIME_NOW : (TIME_NOW + $_POST['poll_starts'] * 86400)) : '');
+$poll_starts = ($poll_starts > ($poll_ends + 1) ? TIME_NOW : $poll_starts);
+$change_vote = ((isset($_POST['change_vote']) && $_POST['change_vote'] === 'yes') ? 'yes' : 'no');
+$subscribe = (isset($_POST['subscribe']) && $_POST['subscribe'] === 'yes' ? 'yes' : 'no');
+if (isset($_POST['button']) && $_POST['button'] == 'Post') {
+    //=== make sure they are posting something
+    if ($body === '') {
+        stderr('Error', 'No body text.');
     }
-      
-		//=== stop suspended users from posting 
-		if ($CURUSER['forum_post'] == 'no' || $CURUSER['suspended'] == 'yes')
-		{
-		stderr('Error', 'Your posting rights have been suspended.');
-		}		
-      $extension_error = $size_error = ''; 
-      //=== topic stuff
-      $topic_name = strip_tags(isset($_POST['topic_name']) ? $_POST['topic_name'] : '');
-      $topic_desc = strip_tags(isset($_POST['topic_desc']) ? $_POST['topic_desc'] : '');
-	  //=== post stuff
-      $post_title = strip_tags(isset($_POST['post_title']) ? $_POST['post_title'] : '');
-      $icon = htmlsafechars(isset($_POST['icon']) ? $_POST['icon'] : '');
-	  $body = (isset($_POST['body']) ? $_POST['body'] : '');
-      $ip = htmlsafechars($CURUSER['ip'] == '' ? $_SERVER['REMOTE_ADDR'] : $CURUSER['ip']); 
-      $bb_code = (isset($_POST['bb_code']) && $_POST['bb_code'] == 'no' ? 'no' : 'yes');
-
-	//=== poll stuff
-	$poll_question = strip_tags(isset($_POST['poll_question']) ? trim($_POST['poll_question']) : '');
-	$poll_answers = strip_tags(isset($_POST['poll_answers']) ? trim($_POST['poll_answers']) : '');
-	$poll_ends = (isset($_POST['poll_ends']) ? (($_POST['poll_ends'] > 168) ? 1356048000 : (TIME_NOW + $_POST['poll_ends'] * 86400)) : ''); 
-	$poll_starts = (isset($_POST['poll_starts']) ? (($_POST['poll_starts'] === 0) ? TIME_NOW : (TIME_NOW + $_POST['poll_starts'] * 86400)) : ''); 
-
-	
-	$poll_starts = ($poll_starts > ($poll_ends + 1) ? TIME_NOW : $poll_starts);
-	$change_vote = ((isset($_POST['change_vote']) && $_POST['change_vote'] === 'yes') ? 'yes' : 'no');
-	
-	$subscribe = (isset($_POST['subscribe']) && $_POST['subscribe'] === 'yes' ? 'yes' : 'no'); 
-
-	if (isset($_POST['button']) && $_POST['button'] == 'Post')
-	{
-	
-	//=== make sure they are posting something
-	if($body === '')
-	{
-	stderr('Error', 'No body text.');
-	}
-	if($topic_name === '')
-	{
-	stderr('Error', 'No Topic name!');
-	}
-	
-	//=== if no poll give a dummy id
-	$poll_id = 0;
-	
-	//=== stuff for polls
-	if ($poll_answers !== '')
-	{
-	//=== make it an array with a max of 20 options
-	$break_down_poll_options = explode("\n", $poll_answers); 
-
-		//=== be sure there are no blank options
-		for($i = 0; $i < count($break_down_poll_options); $i++){
-
-			if (strlen($break_down_poll_options[$i]) < 2)
-			{
-			stderr('Error', 'No blank lines in the poll, each option should be on it\'s own line, one line, one option.');
-			}
-		}
-		
-		if ($i > 20 || $i < 2)
-		{
-		stderr('Error', 'There is a minimum of 2 options, and a maximun of 20 options. you have entered '.$i.'.');
-		}
-
-	$multi_options = ((isset($_POST['multi_options']) && $_POST['multi_options'] <= $i) ? intval($_POST['multi_options']) : 1);
-	
-	//=== serialize it and slap it in the DB FFS!
-	$poll_options = serialize($break_down_poll_options); 
-
-      sql_query('INSERT INTO `forum_poll` (`user_id` ,`question` ,`poll_answers` ,`number_of_options` ,`poll_starts` ,`poll_ends` ,`change_vote` ,`multi_options`)
+    if ($topic_name === '') {
+        stderr('Error', 'No Topic name!');
+    }
+    //=== if no poll give a dummy id
+    $poll_id = 0;
+    //=== stuff for polls
+    if ($poll_answers !== '') {
+        //=== make it an array with a max of 20 options
+        $break_down_poll_options = explode("\n", $poll_answers);
+        //=== be sure there are no blank options
+        for ($i = 0; $i < count($break_down_poll_options); $i++) {
+            if (strlen($break_down_poll_options[$i]) < 2) {
+                stderr('Error', 'No blank lines in the poll, each option should be on it\'s own line, one line, one option.');
+            }
+        }
+        if ($i > 20 || $i < 2) {
+            stderr('Error', 'There is a minimum of 2 options, and a maximun of 20 options. you have entered '.$i.'.');
+        }
+        $multi_options = ((isset($_POST['multi_options']) && $_POST['multi_options'] <= $i) ? intval($_POST['multi_options']) : 1);
+        //=== serialize it and slap it in the DB FFS!
+        $poll_options = serialize($break_down_poll_options);
+        sql_query('INSERT INTO `forum_poll` (`user_id` ,`question` ,`poll_answers` ,`number_of_options` ,`poll_starts` ,`poll_ends` ,`change_vote` ,`multi_options`)
 					VALUES ('.$CURUSER['id'].', '.sqlesc($poll_question).', '.sqlesc($poll_options).', '.$i.', '.$poll_starts.', '.$poll_ends.', \''.$change_vote.'\', '.$multi_options.')');
-	$poll_id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
-	}
-	  
-      sql_query('INSERT INTO topics (`id`, `user_id`, `topic_name`, `forum_id`, `topic_desc`, `poll_id`) VALUES (NULL, '.$CURUSER['id'].', '.sqlesc($topic_name).', '.$forum_id.', '.sqlesc($topic_desc).', '.$poll_id.')');
-      $topic_id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
-	  
-      sql_query('INSERT INTO `posts` ( `topic_id` , `user_id` , `added` , `body` , `icon` , `post_title` , `bbcode` , `ip` ) VALUES 
+        $poll_id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
+    }
+    sql_query('INSERT INTO topics (`id`, `user_id`, `topic_name`, `forum_id`, `topic_desc`, `poll_id`) VALUES (NULL, '.$CURUSER['id'].', '.sqlesc($topic_name).', '.$forum_id.', '.sqlesc($topic_desc).', '.$poll_id.')');
+    $topic_id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
+    sql_query('INSERT INTO `posts` ( `topic_id` , `user_id` , `added` , `body` , `icon` , `post_title` , `bbcode` , `ip` ) VALUES 
       		('.$topic_id.', '.$CURUSER['id'].', '.TIME_NOW.', '.sqlesc($body).', '.sqlesc($icon).',  '.sqlesc($post_title).', '.sqlesc($bb_code).',  '.sqlesc($ip).')');
-      $post_id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
-      $mc1->delete_value('last_posts_'.$CURUSER['class']);
-      $mc1->delete_value('forum_posts_'.$CURUSER['id']);
-      sql_query('UPDATE `topics` SET last_post = '.$post_id.', first_post =  '.$post_id.', post_count = 1 WHERE id='.sqlesc($topic_id));
-      sql_query('UPDATE `forums` SET post_count = post_count +1, topic_count = topic_count + 1 WHERE id ='.sqlesc($forum_id));
-      
-      if($INSTALLER09['autoshout_on'] == 1){
-	   $message = $CURUSER['username'] . " Created a new topic [url={$INSTALLER09['baseurl']}/forums.php?action=view_topic&topic_id=$topic_id&page=last]{$topic_name}[/url]";
-	   //////remember to edit the ids to your staffforum ids :)
-	   if (!in_array($forum_id, $INSTALLER09['staff_forums'])) {
-  	   autoshout($message);
-      $mc1->delete_value('shoutbox_');
-	   }
-	   }
-	    
-      if($INSTALLER09['seedbonus_on'] == 1){
-	    sql_query("UPDATE users SET seedbonus = seedbonus+3.0 WHERE id =  ". sqlesc($CURUSER['id']."")) or sqlerr(__FILE__, __LINE__);
-	    $update['seedbonus'] = ($CURUSER['seedbonus'] + 3);
-      $mc1->begin_transaction('userstats_'.$CURUSER["id"]);
-      $mc1->update_row(false, array('seedbonus' => $update['seedbonus']));
-      $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
-      $mc1->begin_transaction('user_stats_'.$CURUSER["id"]);
-      $mc1->update_row(false, array('seedbonus' => $update['seedbonus']));
-      $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
-	   }
-    
-    
+    $post_id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
+    $mc1->delete_value('last_posts_'.$CURUSER['class']);
+    $mc1->delete_value('forum_posts_'.$CURUSER['id']);
+    sql_query('UPDATE `topics` SET last_post = '.$post_id.', first_post =  '.$post_id.', post_count = 1 WHERE id='.sqlesc($topic_id));
+    sql_query('UPDATE `forums` SET post_count = post_count +1, topic_count = topic_count + 1 WHERE id ='.sqlesc($forum_id));
+    if ($INSTALLER09['autoshout_on'] == 1) {
+        $message = $CURUSER['username']." Created a new topic [url={$INSTALLER09['baseurl']}/forums.php?action=view_topic&topic_id=$topic_id&page=last]{$topic_name}[/url]";
+        //////remember to edit the ids to your staffforum ids :)
+        if (!in_array($forum_id, $INSTALLER09['staff_forums'])) {
+            autoshout($message);
+            $mc1->delete_value('shoutbox_');
+        }
+    }
+    if ($INSTALLER09['seedbonus_on'] == 1) {
+        sql_query("UPDATE users SET seedbonus = seedbonus+3.0 WHERE id =  ".sqlesc($CURUSER['id']."")) or sqlerr(__FILE__, __LINE__);
+        $update['seedbonus'] = ($CURUSER['seedbonus'] + 3);
+        $mc1->begin_transaction('userstats_'.$CURUSER["id"]);
+        $mc1->update_row(false, array(
+            'seedbonus' => $update['seedbonus']
+        ));
+        $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
+        $mc1->begin_transaction('user_stats_'.$CURUSER["id"]);
+        $mc1->update_row(false, array(
+            'seedbonus' => $update['seedbonus']
+        ));
+        $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
+    }
     //=== stuff for file uploads
-if ($CURUSER['class'] >= $min_upload_class)
-{
- //=== make sure file is kosher
- 
-	while(list($key,$name) = each($_FILES['attachment']['name']))
-	{
-		if(!empty($name))
-		{ 
-		$size =  intval($_FILES['attachment']['size'][$key]); 
-		$type =  $_FILES['attachment']['type'][$key]; 
-		//=== make sure file is kosher
-		$extension_error = $size_error = 0; 
-		//=== get rid of spaces
-		$name = str_replace(' ','_',$name);
-		//=== allowed file types (2 checks) but still can't really trust it 
-		$accepted_file_types = array('application/zip', 'application/x-zip','application/rar', 'application/x-rar');
-		$accepted_file_extension = strrpos($name, '.');
-		$file_extension = strtolower(substr($name, $accepted_file_extension));
-		//===  make sure the name is only alphanumeric or _ or - 
-		$name = preg_replace('#[^a-zA-Z0-9_-]#', '', $name); // hell, it could even be 0_0 if it wanted to!	
-			
-			switch(true)
-			{
-			case($size > $max_file_size);
-			$size_error = ($size_error  + 1);
-			break;
-			case(!in_array($file_extension, $accepted_file_extension) && $accepted_file_extension == false):
-			$extension_error = ($extension_error  + 1);
-			break;
-			case($accepted_file_extension === 0):
-			$extension_error = ($extension_error  + 1);
-			break;
-			case(!in_array($type, $accepted_file_types)):
-			$extension_error = ($extension_error  + 1);
-			break;
-			default:
-			//=== woohoo passed all our silly tests but just to be sure, let's mess it up a bit ;)
-			//=== get rid of the file extension
-			$name = substr($name, 0, -strlen($file_extension));
-			$upload_to  = $upload_folder.$name.'(id-'.$post_id.')'.$file_extension; 
-			//===plop it into the DB all safe and snuggly			
-			 sql_query('INSERT INTO `attachments` (`post_id`, `user_id`, `file`, `file_name`, `added`, `extension`, `size`) VALUES 
+    if ($CURUSER['class'] >= $min_upload_class) {
+        //=== make sure file is kosher
+        while (list($key, $name) = each($_FILES['attachment']['name'])) {
+            if (!empty($name)) {
+                $size = intval($_FILES['attachment']['size'][$key]);
+                $type = $_FILES['attachment']['type'][$key];
+                //=== make sure file is kosher
+                $extension_error = $size_error = 0;
+                //=== get rid of spaces
+                $name = str_replace(' ', '_', $name);
+                //=== allowed file types (2 checks) but still can't really trust it
+                $accepted_file_types = array(
+                    'application/zip',
+                    'application/x-zip',
+                    'application/rar',
+                    'application/x-rar'
+                );
+                $accepted_file_extension = strrpos($name, '.');
+                $file_extension = strtolower(substr($name, $accepted_file_extension));
+                //===  make sure the name is only alphanumeric or _ or -
+                $name = preg_replace('#[^a-zA-Z0-9_-]#', '', $name); // hell, it could even be 0_0 if it wanted to!
+                switch (true) {
+                case ($size > $max_file_size);
+                $size_error = ($size_error + 1);
+                break;
+
+            case (!in_array($file_extension, $accepted_file_extension) && $accepted_file_extension == false):
+                $extension_error = ($extension_error + 1);
+                break;
+
+            case ($accepted_file_extension === 0):
+                $extension_error = ($extension_error + 1);
+                break;
+
+            case (!in_array($type, $accepted_file_types)):
+                $extension_error = ($extension_error + 1);
+                break;
+
+            default:
+                //=== woohoo passed all our silly tests but just to be sure, let's mess it up a bit ;)
+                //=== get rid of the file extension
+                $name = substr($name, 0, -strlen($file_extension));
+                $upload_to = $upload_folder.$name.'(id-'.$post_id.')'.$file_extension;
+                //===plop it into the DB all safe and snuggly
+                sql_query('INSERT INTO `attachments` (`post_id`, `user_id`, `file`, `file_name`, `added`, `extension`, `size`) VALUES 
 ( '.$post_id.', '.$CURUSER['id'].', '.sqlesc($name.'(id-'.$post_id.')'.$file_extension).', '.sqlesc($name).', '.TIME_NOW.', '.($file_extension === '.zip' ? '\'zip\'' : '\'rar\'').', '.$size.')');
-				copy($_FILES['attachment']['tmp_name'][$key], $upload_to ); 
-				chmod($upload_to, 0777);      
-				}
-		}
-	}	
+                copy($_FILES['attachment']['tmp_name'][$key], $upload_to);
+                chmod($upload_to, 0777);
+            }
+        }
+    }
 } //=== end attachment stuff
-      
-      if ($subscribe == 'yes')
-      {
-       sql_query('INSERT INTO `subscriptions` (`user_id`, `topic_id`) VALUES ('.sqlesc($CURUSER['id']).', '.sqlesc($topic_id).')');
-     
-      }
-  
-      
-	header('Location: forums.php?action=view_topic&topic_id='.$topic_id.($extension_error !== 0 ? '&ee='.$extension_error  : '').($size_error !== 0 ? '&se='.$size_error  : ''));   
-      die();
-      }
-
-	$res = sql_query('SELECT name FROM forums WHERE id='.sqlesc($forum_id)); 
-	$arr = mysqli_fetch_assoc($res);
-	$section_name = htmlsafechars($arr['name'], ENT_QUOTES);
-
-	$HTMLOUT .= '<table align="center" class="main" width="750px" border="0" cellspacing="0" cellpadding="0">
+if ($subscribe == 'yes') {
+    sql_query('INSERT INTO `subscriptions` (`user_id`, `topic_id`) VALUES ('.sqlesc($CURUSER['id']).', '.sqlesc($topic_id).')');
+}
+header('Location: forums.php?action=view_topic&topic_id='.$topic_id.($extension_error !== 0 ? '&ee='.$extension_error : '').($size_error !== 0 ? '&se='.$size_error : ''));
+die();
+}
+$res = sql_query('SELECT name FROM forums WHERE id='.sqlesc($forum_id));
+$arr = mysqli_fetch_assoc($res);
+$section_name = htmlsafechars($arr['name'], ENT_QUOTES);
+$HTMLOUT.= '<table align="center" class="main" width="750px" border="0" cellspacing="0" cellpadding="0">
     	<tr><td class="embedded" align="center">
     	<h1 style="text-align: center;">New topic in "<a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$forum_id.'">'.$section_name.'</a>"</h1>
 	<form method="post" action="forums.php?action=new_topic&amp;forum_id='.$forum_id.'" enctype="multipart/form-data">
@@ -217,7 +184,7 @@ if ($CURUSER['class'] >= $min_upload_class)
 	<table align="center" width="80%" border="0" cellspacing="5" cellpadding="5">
 	<tr><td class="forum_head" colspan="2"><span style="color: black; font-weight: bold;">Preview</span></td></tr>
 	<tr><td width="80" valign="top" class="one">'.avatar_stuff($CURUSER).'</td>
-	<td valign="top" align="left" class="two">'.($bb_code === 'yes'  ? format_comment($body) : format_comment_no_bbcode($body)).'</td>
+	<td valign="top" align="left" class="two">'.($bb_code === 'yes' ? format_comment($body) : format_comment_no_bbcode($body)).'</td>
 	</tr></table><br />' : '').'
 	<table align="center" width="80%" border="0" cellspacing="0" cellpadding="5">
 	<tr><td align="left" class="forum_head_dark" colspan="2">Compose</td></tr>
@@ -297,5 +264,4 @@ if ($CURUSER['class'] >= $min_upload_class)
 	</td></tr>
 	</table></form>
 	</td></tr></table><br />';
-     
 ?>

@@ -5,11 +5,11 @@
  *   Copyright (C) 2010 U-232 v.3
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
- **/
-if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
-{
-	$HTMLOUT='';
-	$HTMLOUT .= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
+ *
+ */
+if (!defined('IN_INSTALLER09_ADMIN')) {
+    $HTMLOUT = '';
+    $HTMLOUT.= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 		\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 		<html xmlns='http://www.w3.org/1999/xhtml'>
 		<head>
@@ -18,100 +18,74 @@ if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
 		<body>
 	<div style='font-size:33px;color:white;background-color:red;text-align:center;'>Incorrect access<br />You cannot access this file directly.</div>
 	</body></html>";
-	echo $HTMLOUT;
-	exit();
+    echo $HTMLOUT;
+    exit();
 }
-
-require_once(INCL_DIR.'user_functions.php');
-require_once(INCL_DIR.'html_functions.php');
-require_once(CLASS_DIR.'class_check.php');
+require_once (INCL_DIR.'user_functions.php');
+require_once (INCL_DIR.'html_functions.php');
+require_once (CLASS_DIR.'class_check.php');
 class_check(UC_MAX);
-
-	$lang = array_merge( $lang );
-	
+$lang = array_merge($lang);
 $rep_set_cache = "./cache/rep_settings_cache.php";
-
-	if ( 'POST' == $_SERVER['REQUEST_METHOD'] )
-	{
-	unset($_POST['submit']);
-	//print_r($_POST);
-	rep_cache();
-	exit;
-	}
-	
+if ('POST' == $_SERVER['REQUEST_METHOD']) {
+    unset($_POST['submit']);
+    //print_r($_POST);
+    rep_cache();
+    exit;
+}
 /////////////////////////////
 //	cache rep function
 /////////////////////////////
 function rep_cache()
-	{
-		
-		global $rep_set_cache, $INSTALLER09;
-		
-		$rep_out = "<"."?php\n\n\$GVARS = array(\n";
-		
-		foreach( $_POST as $k => $v)
-		{
-			$rep_out .= ($k == 'rep_undefined') ? "\t'{$k}' => '".htmlsafechars($v, ENT_QUOTES)."',\n" : "\t'{$k}' => ".intval($v).",\n";
-		}
-		
-		$rep_out .= "\t'g_rep_negative' => TRUE,\n";
-		$rep_out .=	"\t'g_rep_seeown' => TRUE,\n";
-		$rep_out .= "\t'g_rep_use' => \$CURUSER['class'] > UC_USER ? TRUE : FALSE\n";
-		$rep_out .= "\n);\n\n?".">";
-		
-		if( file_exists( $rep_set_cache ) && is_writable( pathinfo($rep_set_cache, PATHINFO_DIRNAME) ) )
-		{
-			$filenum = fopen ( $rep_set_cache, 'w' );
-			ftruncate( $filenum, 0 );
-			fwrite( $filenum, $rep_out );
-			fclose( $filenum );
-			//echo '<pre>'.$rep_out.'</pre>';exit;
-		}
-		
-		redirect('staffpanel.php?tool=reputation_settings', 'Reputation Settings Have Been Updated!', 3);
-	}
-	
-		
-function get_cache_array() 
-	{
-		return array(	'rep_is_online' => 1,
-						'rep_adminpower' => 5,
-						'rep_minpost' => 50,
-						'rep_default' => 10,
-						'rep_userrates' => 5,
-						'rep_rdpower' => 365,
-						'rep_pcpower' => 1000,
-						'rep_kppower' => 100,
-						'rep_minrep' => 10,
-						'rep_minpost' => 50,
-						'rep_maxperday' => 10,
-						'rep_repeat' => 20,
-						'rep_undefined' => 'is off the scale',
-						/*'g_rep_negative' => TRUE,
-						'g_rep_seeown' => TRUE,
-						'g_rep_use' => $CURUSER['class'] > UC_USER ? TRUE : FALSE*/
-					);
-	}
-
-	
-	if ( ! file_exists( $rep_set_cache ) )
-	{
-		$GVARS = get_cache_array();
-	}
-	else
-	{
-		require_once $rep_set_cache;
-		
-		if( ! is_array($GVARS) || ( count($GVARS) < 15 ) )
-		{	
-			$GVARS = get_cache_array();
-		}
-	}
-	
-
-
-
-
+{
+    global $rep_set_cache, $INSTALLER09;
+    $rep_out = "<"."?php\n\n\$GVARS = array(\n";
+    foreach ($_POST as $k => $v) {
+        $rep_out.= ($k == 'rep_undefined') ? "\t'{$k}' => '".htmlsafechars($v, ENT_QUOTES)."',\n" : "\t'{$k}' => ".intval($v).",\n";
+    }
+    $rep_out.= "\t'g_rep_negative' => TRUE,\n";
+    $rep_out.= "\t'g_rep_seeown' => TRUE,\n";
+    $rep_out.= "\t'g_rep_use' => \$CURUSER['class'] > UC_USER ? TRUE : FALSE\n";
+    $rep_out.= "\n);\n\n?".">";
+    if (file_exists($rep_set_cache) && is_writable(pathinfo($rep_set_cache, PATHINFO_DIRNAME))) {
+        $filenum = fopen($rep_set_cache, 'w');
+        ftruncate($filenum, 0);
+        fwrite($filenum, $rep_out);
+        fclose($filenum);
+        //echo '<pre>'.$rep_out.'</pre>';exit;
+        
+    }
+    redirect('staffpanel.php?tool=reputation_settings', 'Reputation Settings Have Been Updated!', 3);
+}
+function get_cache_array()
+{
+    return array(
+        'rep_is_online' => 1,
+        'rep_adminpower' => 5,
+        'rep_minpost' => 50,
+        'rep_default' => 10,
+        'rep_userrates' => 5,
+        'rep_rdpower' => 365,
+        'rep_pcpower' => 1000,
+        'rep_kppower' => 100,
+        'rep_minrep' => 10,
+        'rep_minpost' => 50,
+        'rep_maxperday' => 10,
+        'rep_repeat' => 20,
+        'rep_undefined' => 'is off the scale',
+        /*'g_rep_negative' => TRUE,
+        'g_rep_seeown' => TRUE,
+        'g_rep_use' => $CURUSER['class'] > UC_USER ? TRUE : FALSE*/
+    );
+}
+if (!file_exists($rep_set_cache)) {
+    $GVARS = get_cache_array();
+} else {
+    require_once $rep_set_cache;
+    if (!is_array($GVARS) || (count($GVARS) < 15)) {
+        $GVARS = get_cache_array();
+    }
+}
 $HTMLOUT = '<div>
 				<table width="100%" border="0" cellpadding="5" cellspacing="0">
 				   <tr>
@@ -245,42 +219,23 @@ $HTMLOUT = '<div>
 <input type="submit" name="submit" value="Submit" class="btn" tabindex="2" accesskey="s" />
 </form>
 </div>';
-
-
-$HTMLOUT = preg_replace_callback( "|<#(.*?)#>|", "template_out", $HTMLOUT);
-
-
-
-echo stdhead("Reputation Settings") . $HTMLOUT . stdfoot();
-
-
-
-
-
-
+$HTMLOUT = preg_replace_callback("|<#(.*?)#>|", "template_out", $HTMLOUT);
+echo stdhead("Reputation Settings").$HTMLOUT.stdfoot();
 function template_out($matches)
-	{
-	  global $GVARS, $INSTALLER09;
-	  
-	  if ( $matches[1] == 'rep_is_online' )
-	  {
-	  return 'Yes &nbsp; <input name="rep_is_online" value="1" '.($GVARS['rep_is_online'] == 1 ? 'checked="checked"' : "").' type="radio">&nbsp;&nbsp;&nbsp;<input name="rep_is_online" value="0" '.($GVARS['rep_is_online'] == 1 ? "" : 'checked="checked"').' type="radio"> &nbsp; No';
-	  }
-	  else
-	  {
-	  return $GVARS[ $matches[1] ];
-	  }
-	}
-
-
-function redirect($url, $text, $time=2)
-	{
-		global $INSTALLER09;
-		
-		$page_title  = "Admin Rep Redirection";
-		$page_detail = "<em>Redirecting...</em>";
-		
-		$html = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
+{
+    global $GVARS, $INSTALLER09;
+    if ($matches[1] == 'rep_is_online') {
+        return 'Yes &nbsp; <input name="rep_is_online" value="1" '.($GVARS['rep_is_online'] == 1 ? 'checked="checked"' : "").' type="radio">&nbsp;&nbsp;&nbsp;<input name="rep_is_online" value="0" '.($GVARS['rep_is_online'] == 1 ? "" : 'checked="checked"').' type="radio"> &nbsp; No';
+    } else {
+        return $GVARS[$matches[1]];
+    }
+}
+function redirect($url, $text, $time = 2)
+{
+    global $INSTALLER09;
+    $page_title = "Admin Rep Redirection";
+    $page_detail = "<em>Redirecting...</em>";
+    $html = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 		\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 		<html xmlns='http://www.w3.org/1999/xhtml'>
 		<head>
@@ -299,10 +254,7 @@ function redirect($url, $text, $time=2)
 							 </div>
 							</div>
 						   </div></body></html>";
-		
-		echo $html;
-		exit;
-	}         
-            
-
+    echo $html;
+    exit;
+}
 ?>

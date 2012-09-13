@@ -1,10 +1,8 @@
 <?php
 //=== share ratio
-    if ($user['paranoia'] < 2 || $CURUSER['id'] == $id || $CURUSER['class'] >= UC_STAFF) 
-    {
-    if ($user_stats['downloaded'] > 0) 
-    {
-    $HTMLOUT .='<tr>
+if ($user['paranoia'] < 2 || $CURUSER['id'] == $id || $CURUSER['class'] >= UC_STAFF) {
+    if ($user_stats['downloaded'] > 0) {
+        $HTMLOUT.= '<tr>
 			<td class="rowhead" style="vertical-align: middle">Share ratio</td>
 			<td align="left" valign="middle" style="padding-top: 1px; padding-bottom: 0px">
 	<table border="0"cellspacing="0" cellpadding="0">
@@ -15,10 +13,8 @@
 	</table>
 			</td>
 		</tr>';
-    } 
     }
+}
 //==end
 // End Class
-
 // End File
-

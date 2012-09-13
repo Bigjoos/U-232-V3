@@ -1,9 +1,7 @@
 <?php
-
 $lang = array(
-
-#VIDEOFORMATS
-'videoformats_body' => "<h2>Downloaded a movie and don't know what CAM/TS/TC/SCR means?</h2>
+    //VIDEOFORMATS
+    'videoformats_body' => "<h2>Downloaded a movie and don't know what CAM/TS/TC/SCR means?</h2>
     <table width='100%' border='1' cellspacing='0' cellpadding='10'><tr><td class='text'> 
 
     <b>CAM -</b><br />
@@ -195,7 +193,6 @@ $lang = array(
     again without proper reason.<br />
     <br />
     <br />",
-'videoformats_header' => "Video Formats"
+    'videoformats_header' => "Video Formats"
 );
-
 ?>

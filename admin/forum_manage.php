@@ -5,7 +5,8 @@
  *   Copyright (C) 2010 U-232 v.3
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
- **/
+ *
+ */
 /**********************************************************
 New 2010 forums that don't suck for TB based sites....
 
@@ -13,9 +14,8 @@ Beta Thurs Sept 9th 2010 v0.5
 
 //===  forum manager by Retro, but newer \o/ march 2010
 ***************************************************************/
-if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
-{
-	$HTMLOUT.='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+if (!defined('IN_INSTALLER09_ADMIN')) {
+    $HTMLOUT.= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
         <head>
         <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
@@ -24,19 +24,15 @@ if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
         <h1 style="text-align:center;">ERROR</h1>
         <p style="text-align:center;">How did you get here? silly rabbit Trix are for kids!.</p>
         </body></html>';
-	echo $HTMLOUT;
-	exit();
+    echo $HTMLOUT;
+    exit();
 }
-
-require_once(INCL_DIR.'html_functions.php');
-require_once(CLASS_DIR.'class_check.php');
+require_once (INCL_DIR.'html_functions.php');
+require_once (CLASS_DIR.'class_check.php');
 class_check(UC_ADMINISTRATOR);
-
-$lang = array_merge( $lang );
-
-$HTMLOUT = $options = $options_2 = $options_3 = $options_4 = $options_5 = $options_6 = $option_7 = $option_8 = $option_9 = $option_10 = $option_11  = $count = $forums_stuff  = '';
-$row=0;
-
+$lang = array_merge($lang);
+$HTMLOUT = $options = $options_2 = $options_3 = $options_4 = $options_5 = $options_6 = $option_7 = $option_8 = $option_9 = $option_10 = $option_11 = $count = $forums_stuff = '';
+$row = 0;
 //=== defaults:
 $maxclass = $CURUSER['class'];
 $id = (isset($_GET['id']) ? intval($_GET['id']) : (isset($_POST['id']) ? intval($_POST['id']) : 0));
@@ -47,82 +43,66 @@ $parent_forum = (isset($_POST['parent_forum']) ? intval($_POST['parent_forum']) 
 $over_forums = (isset($_POST['over_forums']) ? intval($_POST['over_forums']) : 0);
 $min_class_read = (isset($_POST['min_class_read']) ? intval($_POST['min_class_read']) : 0);
 $min_class_write = (isset($_POST['min_class_write']) ? intval($_POST['min_class_write']) : 0);
-$min_class_create = (isset($_POST['min_class_create']) ? intval($_POST['min_class_create']) : 0);	
-
+$min_class_create = (isset($_POST['min_class_create']) ? intval($_POST['min_class_create']) : 0);
 $main_links = '<p><a class="altlink" href="staffpanel.php?tool=over_forums&amp;action=over_forums">Over Forums</a> :: 
 						<span style="font-weight: bold;">Forum Manager</span> :: 
 						<a class="altlink" href="staffpanel.php?tool=forum_config&amp;action=forum_config">Configure Forums</a><br /></p>';
-	
- 
-	//=== post / get action posted so we know what to do :P
-	$posted_action = (isset($_GET['action2']) ? $_GET['action2'] : (isset($_POST['action2']) ? $_POST['action2'] : ''));
-	
-	//=== add all possible actions here and check them to be sure they are ok
-	$valid_actions = array('delete', 'edit_forum', 'add_forum', 'edit_forum_page');
-	
-	$action = (in_array($posted_action, $valid_actions) ? $posted_action : 'no_action');
-
+//=== post / get action posted so we know what to do :P
+$posted_action = (isset($_GET['action2']) ? $_GET['action2'] : (isset($_POST['action2']) ? $_POST['action2'] : ''));
+//=== add all possible actions here and check them to be sure they are ok
+$valid_actions = array(
+    'delete',
+    'edit_forum',
+    'add_forum',
+    'edit_forum_page'
+);
+$action = (in_array($posted_action, $valid_actions) ? $posted_action : 'no_action');
 //=== here we go with all the possibilities \\o\o/o//
-	switch ($action)
-	{
-	//=== delete forums
-	case 'delete':
-	
-		if (!$id) 
-		{ 
-		header('Location: staffpanel.php?tool=forum_manage&action=forum_manage'); 
-		die();
-		}
-
-			$res = sql_query ('SELECT * FROM topics where forum_id = '.sqlesc($id));
-			$row = mysqli_fetch_array($res);
-				sql_query ('DELETE FROM posts where topic_id ='.sqlesc($row['id']));
-				sql_query ('DELETE FROM topics where forum_id = '.sqlesc($id));
-				sql_query ('DELETE FROM forums where id = '.sqlesc($id));
-				header('Location: staffpanel.php?tool=forum_manage&action=forum_manage'); 
-				die();
-	break;
-	
-	//=== edit forum
-	case 'edit_forum':	
-
-			if (!$name && !$desc && !$id) 
-			{ 
-			header('Location: staffpanel.php?tool=forum_manage&action=forum_manage'); 
-			die();
-			}
-
-			sql_query('UPDATE forums SET sort = '.sqlesc($sort).', name = '.sqlesc($name).', parent_forum = '.sqlesc($parent_forum).', description = '.sqlesc($desc).', forum_id = '.sqlesc($over_forums).', min_class_read = '.sqlesc($min_class_read).', min_class_write = '.sqlesc($min_class_write).', min_class_create = '.sqlesc($min_class_create).' where id = '.sqlesc($id));
-			header('Location: staffpanel.php?tool=forum_manage&action=forum_manage'); 
-			die();
-	
-	break;
-	
-	//=== add forum
-	case 'add_forum':	
-
-			if (!$name && !$desc) 
-			{ 
-			header('Location: staffpanel.php?tool=forum_manage&action=forum_manage'); 
-			die();
-			}
-
-		sql_query('INSERT INTO forums (sort, name, parent_forum, description,  min_class_read,  min_class_write, min_class_create, forum_id) VALUES ('.sqlesc($sort).', '.sqlesc($name).', '.sqlesc($parent_forum).', '.sqlesc($desc).', '.sqlesc($min_class_read).', '.sqlesc($min_class_write).', '.sqlesc($min_class_create).', '.sqlesc($over_forums).')');
-		header('Location: staffpanel.php?tool=forum_manage&action=forum_manage'); 
-		die();
-
-	break;
-	
-	//=== edit forum stuff
-	case 'edit_forum_page':
-
-	$res = sql_query ('SELECT * FROM forums where id = '.sqlesc($id));
-	
-		if (mysqli_num_rows($res) > 0)
-				{
-				$row = mysqli_fetch_array($res);
-				
-		$HTMLOUT .= $main_links.'<form method="post" action="staffpanel.php?tool=forum_manage&amp;action=forum_manage">
+switch ($action) {
+    //=== delete forums
+    
+case 'delete':
+    if (!$id) {
+        header('Location: staffpanel.php?tool=forum_manage&action=forum_manage');
+        die();
+    }
+    $res = sql_query('SELECT * FROM topics where forum_id = '.sqlesc($id));
+    $row = mysqli_fetch_array($res);
+    sql_query('DELETE FROM posts where topic_id ='.sqlesc($row['id']));
+    sql_query('DELETE FROM topics where forum_id = '.sqlesc($id));
+    sql_query('DELETE FROM forums where id = '.sqlesc($id));
+    header('Location: staffpanel.php?tool=forum_manage&action=forum_manage');
+    die();
+    break;
+    //=== edit forum
+    
+case 'edit_forum':
+    if (!$name && !$desc && !$id) {
+        header('Location: staffpanel.php?tool=forum_manage&action=forum_manage');
+        die();
+    }
+    sql_query('UPDATE forums SET sort = '.sqlesc($sort).', name = '.sqlesc($name).', parent_forum = '.sqlesc($parent_forum).', description = '.sqlesc($desc).', forum_id = '.sqlesc($over_forums).', min_class_read = '.sqlesc($min_class_read).', min_class_write = '.sqlesc($min_class_write).', min_class_create = '.sqlesc($min_class_create).' where id = '.sqlesc($id));
+    header('Location: staffpanel.php?tool=forum_manage&action=forum_manage');
+    die();
+    break;
+    //=== add forum
+    
+case 'add_forum':
+    if (!$name && !$desc) {
+        header('Location: staffpanel.php?tool=forum_manage&action=forum_manage');
+        die();
+    }
+    sql_query('INSERT INTO forums (sort, name, parent_forum, description,  min_class_read,  min_class_write, min_class_create, forum_id) VALUES ('.sqlesc($sort).', '.sqlesc($name).', '.sqlesc($parent_forum).', '.sqlesc($desc).', '.sqlesc($min_class_read).', '.sqlesc($min_class_write).', '.sqlesc($min_class_create).', '.sqlesc($over_forums).')');
+    header('Location: staffpanel.php?tool=forum_manage&action=forum_manage');
+    die();
+    break;
+    //=== edit forum stuff
+    
+case 'edit_forum_page':
+    $res = sql_query('SELECT * FROM forums where id = '.sqlesc($id));
+    if (mysqli_num_rows($res) > 0) {
+        $row = mysqli_fetch_array($res);
+        $HTMLOUT.= $main_links.'<form method="post" action="staffpanel.php?tool=forum_manage&amp;action=forum_manage">
 					<table  border="0" cellspacing="0" cellpadding="3" align="center">
 					<tr>
 					<td colspan="2" class="forum_head_dark">Edit forum: '.htmlsafechars($row['name'], ENT_QUOTES).'</td>
@@ -139,76 +119,53 @@ $main_links = '<p><a class="altlink" href="staffpanel.php?tool=over_forums&amp;a
 					<td align="right" class="three"><span style="font-weight: bold;">OverForum:</span></td>
 					<td  align="left" class="three">
 					<select name="over_forums">';
-					
-		$forum_id = (int)$row['forum_id'];
-		$res = sql_query('SELECT * FROM over_forums');
-
-			while ($arr = mysqli_fetch_array($res)) 
-			{
-			$i = (int)$arr['id'];
-			$options .= '<option class="body" value="'.$i.'"'.($forum_id == $i ? ' selected="selected"' : '').'>'.htmlsafechars($arr['name'], ENT_QUOTES).'</option>';
-			}
-					
-	$HTMLOUT .= $options.'</select></td></tr>
+        $forum_id = (int)$row['forum_id'];
+        $res = sql_query('SELECT * FROM over_forums');
+        while ($arr = mysqli_fetch_array($res)) {
+            $i = (int)$arr['id'];
+            $options.= '<option class="body" value="'.$i.'"'.($forum_id == $i ? ' selected="selected"' : '').'>'.htmlsafechars($arr['name'], ENT_QUOTES).'</option>';
+        }
+        $HTMLOUT.= $options.'</select></td></tr>
 				<tr>
 				<td align="right" class="three"><span style="font-weight: bold;">Sub-Forum of? </span></td>
 				<td align="left" class="three">
 				<select name="parent_forum">
 				<option class="body" value="0"'.($parent_forum == 0 ? ' selected="selected"' : '').'> - select parent forum if sub-forum</option>';
-            
-            $res = sql_query('SELECT name, id FROM forums');
-			
-			while ($arr = mysqli_fetch_array($res)) 
-			{
-			 if (is_valid_id($arr['id']))
-			$options_2 .= '<option class="body" value="'.$arr['id'].'"'.($parent_forum == $arr['id'] ? ' selected="selected"' : '').'>'.htmlsafechars($arr['name'], ENT_QUOTES).'</option>';
-			}
-
-	$HTMLOUT .= $options_2.'</select></td></tr>
+        $res = sql_query('SELECT name, id FROM forums');
+        while ($arr = mysqli_fetch_array($res)) {
+            if (is_valid_id($arr['id'])) $options_2.= '<option class="body" value="'.$arr['id'].'"'.($parent_forum == $arr['id'] ? ' selected="selected"' : '').'>'.htmlsafechars($arr['name'], ENT_QUOTES).'</option>';
+        }
+        $HTMLOUT.= $options_2.'</select></td></tr>
 				<tr>
 				<td align="right" class="three"><span style="font-weight: bold;">Minimun read permission:</span></td>
 				<td  align="left" class="three">
 				<select name="min_class_read">';
-
-	for ($i = 0; $i <= $maxclass; ++$i)
-	{
-        $options_3 .= '<option class="body" value="'.$i.'"'.($row['min_class_read'] == $i ? ' selected="selected"' : '').'>'.get_user_class_name($i).'</option>';
+        for ($i = 0; $i <= $maxclass; ++$i) {
+            $options_3.= '<option class="body" value="'.$i.'"'.($row['min_class_read'] == $i ? ' selected="selected"' : '').'>'.get_user_class_name($i).'</option>';
         }
-
- $HTMLOUT .= $options_3.'</select></td></tr><tr>
+        $HTMLOUT.= $options_3.'</select></td></tr><tr>
     			<td align="right" class="three"><span style="font-weight: bold;">Minimun write permission:</span></td>
     			<td align="left" class="three"><select name="min_class_write">';
-
-          for ($i = 0; $i <= $maxclass; ++$i)
-          {
-          $options_4 .= '<option class="body" value="'.$i.'"'.($row['min_class_write'] == $i ? ' selected="selected"' : '').'>'.get_user_class_name($i).'</option>';
-          }
-
-$HTMLOUT .= $options_4.'</select></td></tr><tr>
+        for ($i = 0; $i <= $maxclass; ++$i) {
+            $options_4.= '<option class="body" value="'.$i.'"'.($row['min_class_write'] == $i ? ' selected="selected"' : '').'>'.get_user_class_name($i).'</option>';
+        }
+        $HTMLOUT.= $options_4.'</select></td></tr><tr>
 			<td align="right" class="three"><span style="font-weight: bold;">Minimun create topic permission:</span></td>
 			<td align="left" class="three"><select name="min_class_create">';
-
-
-          for ($i = 0; $i <= $maxclass; ++$i)
-          {
-          $options_5 .= '<option class="body" value="'.$i.'"'.($row['min_class_create'] == $i ? ' selected="selected"' : '').'>'.get_user_class_name($i).'</option>';
-          }
-          
-$HTMLOUT .= $options_5.'</select></td></tr><tr>
+        for ($i = 0; $i <= $maxclass; ++$i) {
+            $options_5.= '<option class="body" value="'.$i.'"'.($row['min_class_create'] == $i ? ' selected="selected"' : '').'>'.get_user_class_name($i).'</option>';
+        }
+        $HTMLOUT.= $options_5.'</select></td></tr><tr>
 			<td align="right" class="three"><span style="font-weight: bold;">Forum rank:</span> </td>
 			<td align="left" class="three">
 			<select name="sort">';
-
-	$res = sql_query ('SELECT sort FROM forums');
-	$nr = mysqli_num_rows($res);
+        $res = sql_query('SELECT sort FROM forums');
+        $nr = mysqli_num_rows($res);
         $maxclass = $nr + 1;
-        	for ($i = 0; $i <= $maxclass; ++$i)
-        	{
-            	$options_6 .= '<option class="body" value="'.$i.'"'.($row['sort'] == $i ? ' selected="selected"' : '').'>'.$i.'</option>'; 
-			}				
-					
-					
-$HTMLOUT .= $options_6. '</select></td></tr>
+        for ($i = 0; $i <= $maxclass; ++$i) {
+            $options_6.= '<option class="body" value="'.$i.'"'.($row['sort'] == $i ? ' selected="selected"' : '').'>'.$i.'</option>';
+        }
+        $HTMLOUT.= $options_6.'</select></td></tr>
 			<tr>
 			<td colspan="2" align="center" class="three">
 			<input type="hidden" name="action2" value="edit_forum" />
@@ -216,12 +173,11 @@ $HTMLOUT .= $options_6. '</select></td></tr>
 			<input type="submit" name="button" class="button" value="Edit forum" onmouseover="this.className=\'button_hover\'" onmouseout="this.className=\'button\'" />
 			</td>
 			</tr></table></form><br /><br />';
-				}
-	break;
-	} //=== end switch
-	
+    }
+    break;
+} //=== end switch
 //=== basic page
-$HTMLOUT .= $main_links.'<table width="750"  border="0" align="center" cellpadding="2" cellspacing="0">
+$HTMLOUT.= $main_links.'<table width="750"  border="0" align="center" cellpadding="2" cellspacing="0">
 		<tr><td class="forum_head_dark" align="left">Name</td>
 		<td class="forum_head_dark" align="center">Sub-Forum of</td>
 		<td class="forum_head_dark" align="center">OverForum</td>
@@ -229,38 +185,25 @@ $HTMLOUT .= $main_links.'<table width="750"  border="0" align="center" cellpaddi
 		<td class="forum_head_dark" align="center">Write</td>
 		<td class="forum_head_dark" align="center">Create topic</td>
 		<td class="forum_head_dark" align="center">Modify</td></tr>';
-		
-	$res = sql_query('SELECT * FROM forums ORDER BY forum_id ASC');
-	
-	if (mysqli_num_rows($res) > 0) 
-	{
-	while($row = mysqli_fetch_array($res))
-	{
-	
-	$forum_id = (int)$row['forum_id'];
-		
-		$res2 = sql_query('SELECT name FROM over_forums WHERE id='.sqlesc($forum_id));
-		$arr2 = mysqli_fetch_assoc($res2);
-
-			$name = htmlsafechars($arr2['name'], ENT_QUOTES);
-			$subforum = (int)$row['parent_forum'];
-
-				if ($subforum)
-				{
-				$res3 = sql_query('SELECT name FROM forums WHERE id='.sqlesc($subforum));
-				$arr3 = mysqli_fetch_assoc($res3);
-				$subforum_name = htmlsafechars($arr3['name'], ENT_QUOTES);
-				}
-				else
-				{
-				$subforum_name = '';
-				}
-				
-	//=== change colors
-	$count= (++$count)%2;
-	$class = ($count == 0 ? 'one' : 'two');
-		
-$HTMLOUT .= '<tr><td class="'.$class.'"><a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$row['id'].'">
+$res = sql_query('SELECT * FROM forums ORDER BY forum_id ASC');
+if (mysqli_num_rows($res) > 0) {
+    while ($row = mysqli_fetch_array($res)) {
+        $forum_id = (int)$row['forum_id'];
+        $res2 = sql_query('SELECT name FROM over_forums WHERE id='.sqlesc($forum_id));
+        $arr2 = mysqli_fetch_assoc($res2);
+        $name = htmlsafechars($arr2['name'], ENT_QUOTES);
+        $subforum = (int)$row['parent_forum'];
+        if ($subforum) {
+            $res3 = sql_query('SELECT name FROM forums WHERE id='.sqlesc($subforum));
+            $arr3 = mysqli_fetch_assoc($res3);
+            $subforum_name = htmlsafechars($arr3['name'], ENT_QUOTES);
+        } else {
+            $subforum_name = '';
+        }
+        //=== change colors
+        $count = (++$count) % 2;
+        $class = ($count == 0 ? 'one' : 'two');
+        $HTMLOUT.= '<tr><td class="'.$class.'"><a class="altlink" href="forums.php?action=view_forum&amp;forum_id='.$row['id'].'">
 			<span style="font-weight: bold;">'.htmlsafechars($row['name'], ENT_QUOTES).'</span></a><br />
 			'.htmlsafechars($row['description'], ENT_QUOTES).'</td>
 			<td class="'.$class.'" align="center"><span style="font-weight: bold;">'.$subforum_name.'</span></td>
@@ -272,12 +215,9 @@ $HTMLOUT .= '<tr><td class="'.$class.'"><a class="altlink" href="forums.php?acti
 			<span style="font-weight: bold;">Edit</span></a>&nbsp;
 			<a href="javascript:confirm_delete(\''.(int)$row['id'].'\');"><span style="font-weight: bold;">Delete</span></a>
 			</td></tr>';
-
-	
-	}
+    }
 }
-	
-$HTMLOUT .= '</table><br /><br />
+$HTMLOUT.= '</table><br /><br />
 			<form method="post" action="staffpanel.php?tool=forum_manage&amp;action=forum_manage">
 			<table width="600"  border="0" cellspacing="0" cellpadding="3" align="center">
 			<tr>
@@ -295,81 +235,59 @@ $HTMLOUT .= '</table><br /><br />
 			<td align="right" class="three"><span style="font-weight: bold;">OverForum:</span> </td>
 			<td align="left" class="three">
 			<select name="over_forums">';
-
-            $forum_id = (int)$row['forum_id'];
-            $res = sql_query('SELECT * FROM over_forums');
-             
-             	while ($arr = mysqli_fetch_array($res)) 
-		{
-		$i = (int)$arr['id'];
-		$option_7 .= '<option class="body" value="'.$i.'"'.($forum_id == $i ? ' selected="selected"' : '').'>'.htmlsafechars($arr['name'], ENT_QUOTES).'</option>';
-		}
-
-
-$HTMLOUT .= $option_7.'</select></td></tr>
+$forum_id = (int)$row['forum_id'];
+$res = sql_query('SELECT * FROM over_forums');
+while ($arr = mysqli_fetch_array($res)) {
+    $i = (int)$arr['id'];
+    $option_7.= '<option class="body" value="'.$i.'"'.($forum_id == $i ? ' selected="selected"' : '').'>'.htmlsafechars($arr['name'], ENT_QUOTES).'</option>';
+}
+$HTMLOUT.= $option_7.'</select></td></tr>
 			<tr>
 			<td align="right" class="three"><span style="font-weight: bold;">Sub-Forum of?:</span></td>
 			<td align="left" class="three">
 			<select name="parent_forum">
 			<option class="body" value="0"> none </option>';
-
-            $forum_id = (int)$row['forum_id'];
-            $res = sql_query('SELECT * FROM forums');
-             	
-             	while ($arr = mysqli_fetch_array($res)) 
-             	{
-		$i = (int)$arr['id'];
-		$option_8 .= '<option class="body" value="'.$i.'"'.($forum_id == $i ? ' selected="selected"' : '').'>'.htmlsafechars($arr['name'], ENT_QUOTES).'</option>';
-		}
-
-$HTMLOUT .= $option_8.'</select></td></tr><tr>
+$forum_id = (int)$row['forum_id'];
+$res = sql_query('SELECT * FROM forums');
+while ($arr = mysqli_fetch_array($res)) {
+    $i = (int)$arr['id'];
+    $option_8.= '<option class="body" value="'.$i.'"'.($forum_id == $i ? ' selected="selected"' : '').'>'.htmlsafechars($arr['name'], ENT_QUOTES).'</option>';
+}
+$HTMLOUT.= $option_8.'</select></td></tr><tr>
 			<td align="right" class="three"><span style="font-weight: bold;">Minimun read permission:</span> </td>
 			<td align="left" class="three">
 			<select name="min_class_read">';
-
-          for ($i = 0; $i <= $maxclass; ++$i)
-          {
-          $option_9 .= '<option class="body" value="'.$i.'">'.get_user_class_name($i).'</option>';
-          }
-
-$HTMLOUT .= $option_9.'</select></td></tr>
+for ($i = 0; $i <= $maxclass; ++$i) {
+    $option_9.= '<option class="body" value="'.$i.'">'.get_user_class_name($i).'</option>';
+}
+$HTMLOUT.= $option_9.'</select></td></tr>
 			<tr>
 			<td align="right" class="three"><span style="font-weight: bold;">Minimun write permission:</span> </td>
 			<td align="left" class="three">
 			<select name="min_class_write">';
-
-          for ($i = 0; $i <= $maxclass; ++$i)
-          {
-          $option_10 .= '<option class="body" value="'.$i.'">'.get_user_class_name($i).'</option>';
-          }
-          
- $HTMLOUT .=$option_10.'</select></td></tr>
+for ($i = 0; $i <= $maxclass; ++$i) {
+    $option_10.= '<option class="body" value="'.$i.'">'.get_user_class_name($i).'</option>';
+}
+$HTMLOUT.= $option_10.'</select></td></tr>
 			<tr>
 			<td align="right" class="three"><span style="font-weight: bold;">Minimun create topic permission:</span> </td>
 			<td align="left" class="three">
 			<select name="min_class_create">';
-
-          for ($i = 0; $i <= $maxclass; ++$i)
-          {
-          $option_10 .= '<option class="body" value="'.$i.'">'.get_user_class_name($i).'</option>';
-          }
-          
-$HTMLOUT .= $option_10.'</select></td></tr>
+for ($i = 0; $i <= $maxclass; ++$i) {
+    $option_10.= '<option class="body" value="'.$i.'">'.get_user_class_name($i).'</option>';
+}
+$HTMLOUT.= $option_10.'</select></td></tr>
 			<tr>
 			<td align="right" class="three"><span style="font-weight: bold;">Forum rank:</span> </td>
 			<td align="left" class="three">
 			<select name="sort">';
-
-	$res = sql_query ('SELECT sort FROM forums');
-	$nr = mysqli_num_rows($res);
-        $maxclass = $nr + 1;
-        
-          for ($i = 0; $i <= $maxclass; ++$i)
-          {
-          $option_11 .= '<option class="body" value="'.$i.'">'.$i.'</option>';
-          }
-
- $HTMLOUT .= $option_11.'</select></td></tr>
+$res = sql_query('SELECT sort FROM forums');
+$nr = mysqli_num_rows($res);
+$maxclass = $nr + 1;
+for ($i = 0; $i <= $maxclass; ++$i) {
+    $option_11.= '<option class="body" value="'.$i.'">'.$i.'</option>';
+}
+$HTMLOUT.= $option_11.'</select></td></tr>
 			<tr>
 			<td colspan="2" align="center" class="three">
 			<input type="hidden" name="action2" value="add_forum" />
@@ -388,6 +306,5 @@ $HTMLOUT .= $option_10.'</select></td></tr>
 			}
 		//-->
 	</script>';
-	
-echo stdhead('Forum Management Tools') . $HTMLOUT . stdfoot();
+echo stdhead('Forum Management Tools').$HTMLOUT.stdfoot();
 ?>

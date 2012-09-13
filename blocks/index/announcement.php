@@ -16,8 +16,7 @@
    Click <a href='{$INSTALLER09['baseurl']}/clear_announcement.php'>
    <i><b>here</b></i></a> to clear this announcement.</td></tr></table></div><br />\n";
    }
-  */
+*/
 //==
 // End Class
-
 // End File

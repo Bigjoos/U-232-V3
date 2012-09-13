@@ -5,37 +5,27 @@
  *   Copyright (C) 2010 U-232 v.3
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
- **/
-require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
-require_once(INCL_DIR.'user_functions.php');
+ *
+ */
+require_once (dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
+require_once (INCL_DIR.'user_functions.php');
 require_once INCL_DIR.'html_functions.php';
 require_once INCL_DIR.'bbcode_functions.php';
 require_once CLASS_DIR.'page_verify.php';
 dbconn(false);
-
 loggedinorreturn();
-
-    $lang = array_merge( load_language('global'), load_language('upload') );
-    
-    if (function_exists('parked'))
-    parked();
-    
-    $newpage = new page_verify(); 
-    $newpage->create('tamud');
-    $HTMLOUT = '';
-    
-    if ($CURUSER['class'] < UC_UPLOADER OR $CURUSER["uploadpos"] == 0|| $CURUSER["uploadpos"] > 1 || $CURUSER['suspended'] == 'yes')
-    stderr($lang['upload_sorry'], $lang['upload_no_auth']);
-
-    $s='';
-    $cats = genrelist();
-    foreach ($cats as $row)
-    {
-    $s .= "<option value='{$row["id"]}'>" . htmlspecialchars($row["name"]) . "</option>\n";
-    }
-
-
-$HTMLOUT .= "<div align='center'>
+$lang = array_merge(load_language('global') , load_language('upload'));
+if (function_exists('parked')) parked();
+$newpage = new page_verify();
+$newpage->create('tamud');
+$HTMLOUT = '';
+if ($CURUSER['class'] < UC_UPLOADER OR $CURUSER["uploadpos"] == 0 || $CURUSER["uploadpos"] > 1 || $CURUSER['suspended'] == 'yes') stderr($lang['upload_sorry'], $lang['upload_no_auth']);
+$s = '';
+$cats = genrelist();
+foreach ($cats as $row) {
+    $s.= "<option value='{$row["id"]}'>".htmlspecialchars($row["name"])."</option>\n";
+}
+$HTMLOUT.= "<div align='center'>
 <form enctype='multipart/form-data' action='takemultiupload.php' method='post'>
 <input type='hidden' name='MAX_FILE_SIZE' value='{$INSTALLER09['max_torrent_size']}' />
 <p>{$lang['upload_announce_url']}<b><input type=\"text\" size=\"38\" readonly=\"readonly\" value=\"{$INSTALLER09['announce_urls'][0]}\" onclick=\"select()\" /></b></p>
@@ -67,6 +57,5 @@ $HTMLOUT .= "<div align='center'>
 <input type='submit' class='btn' value='Do it!' /></td></tr>
 </table>
 </form></div>";
-
-echo stdhead("Multi-Upload") . $HTMLOUT . stdfoot();
+echo stdhead("Multi-Upload").$HTMLOUT.stdfoot();
 ?>

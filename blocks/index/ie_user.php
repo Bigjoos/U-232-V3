@@ -1,8 +1,8 @@
 <?php
 $browser = $_SERVER['HTTP_USER_AGENT'];
-   if(preg_match("/MSIE/i",$browser))//browser is IE
-   {
-   $HTMLOUT .="
+if (preg_match("/MSIE/i", $browser)) //browser is IE
+{
+    $HTMLOUT.= "
    <div class='headline'>
     Warning - Internet Explorer Browser
    </div>
@@ -12,8 +12,7 @@ $browser = $_SERVER['HTTP_USER_AGENT'];
    <br /><br /><center><a href='http://www.mozilla.com/firefox'><img border='0' alt='Get Firefox!' title='Get Firefox!' src='{$INSTALLER09['pic_base_url']}getfirefox.gif' /></a>
    <br /><strong>Get a SAFER browser !</center>
    </div><br />";
-   }
+}
 //==
 // End Class
-
 // End File

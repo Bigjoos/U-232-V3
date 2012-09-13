@@ -5,18 +5,22 @@
  *   Copyright (C) 2010 U-232 v.3
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
- **/
-require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
-require_once(INCL_DIR.'user_functions.php');
-require_once(INCL_DIR.'html_functions.php');
+ *
+ */
+require_once (dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
+require_once (INCL_DIR.'user_functions.php');
+require_once (INCL_DIR.'html_functions.php');
 dbconn();
 loggedinorreturn();
-
-    $lang = array_merge( load_language('global'), load_language('rules') );
-    $stdhead = array(/** include the css **/'css' => array('rules'));
-    $HTMLOUT = '';
-        
-    $HTMLOUT .='<script type="text/javascript">
+$lang = array_merge(load_language('global') , load_language('rules'));
+$stdhead = array(
+    /** include the css **/
+    'css' => array(
+        'rules'
+    )
+);
+$HTMLOUT = '';
+$HTMLOUT.= '<script type="text/javascript">
     /*<![CDATA[*/
     $(document).ready(function()
     {
@@ -35,11 +39,11 @@ loggedinorreturn();
     });
     /*]]>*/
     </script>';
-    $HTMLOUT .= begin_main_frame();
-    $HTMLOUT .='<div class="global_icon_r"><img src="images/global.design/info.png" alt="" title="Guidelines" class="global_image" width="25"/></div>
+$HTMLOUT.= begin_main_frame();
+$HTMLOUT.= '<div class="global_icon_r"><img src="images/global.design/info.png" alt="" title="Guidelines" class="global_image" width="25"/></div>
     <div class="global_head_r">Guidelines</div><br />
     <div class="global_text_r"><br />';
-    $HTMLOUT .= "
+$HTMLOUT.= "
     <div id='firstpanel' class='menu_list'><!-- accordian starts here secondpanel as id is mouseover -->
 	  <p class='menu_head'>
     {$lang['rules_general_header']}<font color='#004E98'>{$lang['rules_general_header_sub']}</font>
@@ -50,7 +54,7 @@ loggedinorreturn();
     <li>{$lang['rules_general_body1']}</li>
     <li><a name='warning'></a>{$lang['rules_general_body2']}</li>
     </ul></div>";
-    $HTMLOUT .= "
+$HTMLOUT.= "
     <p class='menu_head'>
     {$lang['rules_downloading_header']}<font color='#004E98'>{$lang['rules_downloading_header_sub']}</font></p>
     <div class='menu_body'>
@@ -58,7 +62,7 @@ loggedinorreturn();
     <li>{$lang['rules_downloading_body']}</li>
     <li>{$lang['rules_downloading_body1']}</li>
     </ul></div>";
-    $HTMLOUT .= "
+$HTMLOUT.= "
     <p class='menu_head'>
     {$lang['rules_forum_header']}<font color='#004E98'>{$lang['rules_forum_header_sub']}</font></p>
     <div class='menu_body'>
@@ -76,7 +80,7 @@ loggedinorreturn();
     <li>{$lang['rules_forum_body10']}</li>
     <li>{$lang['rules_forum_body11']}</li>
     </ul></div>";
-    $HTMLOUT .= "
+$HTMLOUT.= "
     <p class='menu_head'>
     {$lang['rules_avatar_header']}<font color='#004E98'>{$lang['rules_avatar_header_sub']}</font></p>
     <div class='menu_body'>
@@ -85,9 +89,8 @@ loggedinorreturn();
     <li>{$lang['rules_avatar_body1']}</li>
     <li>{$lang['rules_avatar_body2']}</li>
     </ul></div>";
-    if (isset($CURUSER) AND $CURUSER['class'] >= UC_UPLOADER) 
-    {
-      $HTMLOUT .= "
+if (isset($CURUSER) AND $CURUSER['class'] >= UC_UPLOADER) {
+    $HTMLOUT.= "
       <p class='menu_head'>
       {$lang['rules_uploading_header']}<font color='#004E98'>{$lang['rules_uploading_header_sub']}</font></p>
       <div class='menu_body'>
@@ -105,10 +108,9 @@ loggedinorreturn();
       <br />
       <br />
       {$lang['rules_uploading_body9']}</div>";
-    }
-    if (isset($CURUSER) AND $CURUSER['class'] >= UC_STAFF) 
-    {
-     $HTMLOUT .= "
+}
+if (isset($CURUSER) AND $CURUSER['class'] >= UC_STAFF) {
+    $HTMLOUT.= "
      <p class='menu_head'>
      {$lang['rules_moderating_header']}<font color='#004E98'>{$lang['rules_moderating_header_sub']}</font></p>
      <div class='menu_body'>
@@ -144,7 +146,7 @@ loggedinorreturn();
         <td class='embedded'>{$lang['rules_moderating_body5']}</td>
       </tr>
       </table></div>";
-      $HTMLOUT .= "
+    $HTMLOUT.= "
       <p class='menu_head'>
       {$lang['rules_mod_rules_header']}<font color='#004E98'>{$lang['rules_mod_rules_header_sub']}</font></p>
       <div class='menu_body'>
@@ -162,7 +164,7 @@ loggedinorreturn();
       <li>{$lang['rules_mod_rules_body10']}</li>
       <li>{$lang['rules_mod_rules_body11']}</li>
       </ul></div>";
-      $HTMLOUT .= "
+    $HTMLOUT.= "
       <p class='menu_head'>
       {$lang['rules_mod_options_header']}<font color='#004E98'>{$lang['rules_mod_options_header_sub']}</font></p>
       <div class='menu_body'>
@@ -177,8 +179,8 @@ loggedinorreturn();
       <li>{$lang['rules_mod_options_body7']}</li>
       <li>{$lang['rules_mod_options_body8']}</li>
       </ul></div></div>";
-    }
-    $HTMLOUT .='</div>';
-    $HTMLOUT .= end_main_frame();
-echo stdhead("Rules", true, $stdhead) . $HTMLOUT . stdfoot();
+}
+$HTMLOUT.= '</div>';
+$HTMLOUT.= end_main_frame();
+echo stdhead("Rules", true, $stdhead).$HTMLOUT.stdfoot();
 ?>

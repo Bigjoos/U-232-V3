@@ -5,21 +5,21 @@
  *   Copyright (C) 2010 U-232 V3
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless,putyn.
- **/
+ *
+ */
 error_reporting(E_ALL); //== turn off = 0 when live
 define('PUBLIC_ACCESS', true);
 define('SQL_DEBUG', 1);
 //==charset
-$INSTALLER09['char_set']='UTF-8';//also to be used site wide in meta tags
-if (ini_get('default_charset') != $INSTALLER09['char_set']){
-ini_set('default_charset',$INSTALLER09['char_set']);
+$INSTALLER09['char_set'] = 'UTF-8'; //also to be used site wide in meta tags
+if (ini_get('default_charset') != $INSTALLER09['char_set']) {
+    ini_set('default_charset', $INSTALLER09['char_set']);
 }
 /* Compare php version for date/time stuff etc! */
-if (version_compare(PHP_VERSION, "5.1.0RC1", ">="))
-date_default_timezone_set('Europe/London');
+if (version_compare(PHP_VERSION, "5.1.0RC1", ">=")) date_default_timezone_set('Europe/London');
 define('TIME_NOW', time());
-$INSTALLER09['time_adjust'] =  0;
-$INSTALLER09['time_offset'] = '0'; 
+$INSTALLER09['time_adjust'] = 0;
+$INSTALLER09['time_offset'] = '0';
 $INSTALLER09['time_use_relative'] = 1;
 $INSTALLER09['time_use_relative_format'] = '{--}, h:i A';
 $INSTALLER09['time_joined'] = 'j-F y';
@@ -31,15 +31,15 @@ $INSTALLER09['time_date'] = '';
 $INSTALLER09['mysql_host'] = '#mysql_host';
 $INSTALLER09['mysql_user'] = '#mysql_user';
 $INSTALLER09['mysql_pass'] = '#mysql_pass';
-$INSTALLER09['mysql_db']   = '#mysql_db';
+$INSTALLER09['mysql_db'] = '#mysql_db';
 //== Cookie setup
-$INSTALLER09['cookie_prefix']  = '#cookie_prefix'; // This allows you to have multiple trackers, eg for demos, testing etc.
-$INSTALLER09['cookie_path']    = '#cookie_path';   // ATTENTION: You should never need this unless the above applies eg: /tbdev
-$INSTALLER09['cookie_domain']  = '#cookie_domain'; // set to eg: .somedomain.com or is subdomain set to: .sub.somedomain.com
+$INSTALLER09['cookie_prefix'] = '#cookie_prefix'; // This allows you to have multiple trackers, eg for demos, testing etc.
+$INSTALLER09['cookie_path'] = '#cookie_path'; // ATTENTION: You should never need this unless the above applies eg: /tbdev
+$INSTALLER09['cookie_domain'] = '#cookie_domain'; // set to eg: .somedomain.com or is subdomain set to: .sub.somedomain.com
 $INSTALLER09['domain'] = '#domain';
 //==
 $INSTALLER09['tracker_post_key'] = 'lsdflksfda4545frwe35@kk';
-$INSTALLER09['max_torrent_size'] = 3*1024*1024; 
+$INSTALLER09['max_torrent_size'] = 3 * 1024 * 1024;
 $INSTALLER09['announce_interval'] = 60 * 30;
 $INSTALLER09['signup_timeout'] = 86400 * 3;
 $INSTALLER09['autoclean_interval'] = 1800;
@@ -57,38 +57,38 @@ $INSTALLER09['catsperrow'] = 4;
 $INSTALLER09['subcatperrow'] = 1;
 $INSTALLER09['maxwidth'] = '90%';
 //== Memcache expires
-$INSTALLER09['expires']['latestuser'] = 0; // 0 = infinite  
-$INSTALLER09['expires']['MyPeers_'] = 120; // 60 = 60 seconds 
-$INSTALLER09['expires']['unread'] = 86400; // 86400 = 1 day 
-$INSTALLER09['expires']['alerts'] = 0;  // 0 = infinite
-$INSTALLER09['expires']['searchcloud'] = 0;  // 0 = infinite
-$INSTALLER09['expires']['user_cache'] = 30 *86400;  // 30 days
-$INSTALLER09['expires']['curuser'] = 30*86400;  // 30 days
-$INSTALLER09['expires']['u_status'] = 30*84600; // 30x86400 = 30 days
+$INSTALLER09['expires']['latestuser'] = 0; // 0 = infinite
+$INSTALLER09['expires']['MyPeers_'] = 120; // 60 = 60 seconds
+$INSTALLER09['expires']['unread'] = 86400; // 86400 = 1 day
+$INSTALLER09['expires']['alerts'] = 0; // 0 = infinite
+$INSTALLER09['expires']['searchcloud'] = 0; // 0 = infinite
+$INSTALLER09['expires']['user_cache'] = 30 * 86400; // 30 days
+$INSTALLER09['expires']['curuser'] = 30 * 86400; // 30 days
+$INSTALLER09['expires']['u_status'] = 30 * 84600; // 30x86400 = 30 days
 $INSTALLER09['expires']['u_stats'] = 300; // 300 = 5 min
-$INSTALLER09['expires']['user_status'] = 30*84600; // 30x86400 = 30 days
+$INSTALLER09['expires']['user_status'] = 30 * 84600; // 30x86400 = 30 days
 $INSTALLER09['expires']['user_stats'] = 300; // 300 = 5 min
 $INSTALLER09['expires']['announcement'] = 600; // 600 = 10 min
 $INSTALLER09['expires']['shoutbox'] = 86400; // 86400 = 1 day
 $INSTALLER09['expires']['staff_shoutbox'] = 86400; // 86400 = 1 day
-$INSTALLER09['expires']['forum_posts'] = 0;  
-$INSTALLER09['expires']['torrent_comments'] = 900;  // 900 = 15 min
-$INSTALLER09['expires']['latestposts'] = 0;  // 900 = 15 min
+$INSTALLER09['expires']['forum_posts'] = 0;
+$INSTALLER09['expires']['torrent_comments'] = 900; // 900 = 15 min
+$INSTALLER09['expires']['latestposts'] = 0; // 900 = 15 min
 $INSTALLER09['expires']['top5_torrents'] = 0; // 0 = infinite
-$INSTALLER09['expires']['last5_torrents'] = 0; // 0 = infinite 
+$INSTALLER09['expires']['last5_torrents'] = 0; // 0 = infinite
 $INSTALLER09['expires']['scroll_torrents'] = 0; // 0 = infinite
-$INSTALLER09['expires']['torrent_details'] = 30*86400; // = 30 days
-$INSTALLER09['expires']['torrent_details_text'] = 30*86400; // = 30 days
-$INSTALLER09['expires']['insertJumpTo'] = 30*86400; // = 30 days
-$INSTALLER09['expires']['get_all_boxes'] = 30*86400; // = 30 days
+$INSTALLER09['expires']['torrent_details'] = 30 * 86400; // = 30 days
+$INSTALLER09['expires']['torrent_details_text'] = 30 * 86400; // = 30 days
+$INSTALLER09['expires']['insertJumpTo'] = 30 * 86400; // = 30 days
+$INSTALLER09['expires']['get_all_boxes'] = 30 * 86400; // = 30 days
 $INSTALLER09['expires']['thumbsup'] = 0; // 0 = infinite
-$INSTALLER09['expires']['iphistory'] = 900;  // 900 = 15 min
-$INSTALLER09['expires']['newpoll'] = 0;  // 900 = 15 min
-$INSTALLER09['expires']['genrelist'] = 30*86400; // 30x86400 = 30 days
-$INSTALLER09['expires']['genrelist2'] = 30*86400; // 30x86400 = 30 days
+$INSTALLER09['expires']['iphistory'] = 900; // 900 = 15 min
+$INSTALLER09['expires']['newpoll'] = 0; // 900 = 15 min
+$INSTALLER09['expires']['genrelist'] = 30 * 86400; // 30x86400 = 30 days
+$INSTALLER09['expires']['genrelist2'] = 30 * 86400; // 30x86400 = 30 days
 $INSTALLER09['expires']['poll_data'] = 900; // 300 = 5 min
 $INSTALLER09['expires']['torrent_data'] = 900; // 900 = 15 min
-$INSTALLER09['expires']['user_flag'] = 86400*28; // 900 = 15 min
+$INSTALLER09['expires']['user_flag'] = 86400 * 28; // 900 = 15 min
 $INSTALLER09['expires']['shit_list'] = 900; // 900 = 15 min
 $INSTALLER09['expires']['port_data'] = 900; // 900 = 15 min
 $INSTALLER09['expires']['user_peers'] = 900; // 900 = 15 min
@@ -108,23 +108,23 @@ $INSTALLER09['expires']['birthdayusers'] = 43200; //== 43200 = 12 hours
 $INSTALLER09['expires']['news_users'] = 3600; // 3600 = 1 hours
 $INSTALLER09['expires']['user_invitees'] = 900; // 900 = 15 min
 $INSTALLER09['expires']['ip_data'] = 900; // 900 = 15 min
-$INSTALLER09['expires']['latesttorrents'] = 0;  // 0 = infinite
+$INSTALLER09['expires']['latesttorrents'] = 0; // 0 = infinite
 $INSTALLER09['expires']['invited_by'] = 900; // 900 = 15 min
 $INSTALLER09['expires']['user_torrents'] = 900; // 900 = 15 min
 $INSTALLER09['expires']['user_seedleech'] = 900; // 900 = 15 min
-$INSTALLER09['expires']['radio'] = 0; // 0 = infinite 
+$INSTALLER09['expires']['radio'] = 0; // 0 = infinite
 $INSTALLER09['expires']['total_funds'] = 0; // 0 = infinite
 $INSTALLER09['expires']['latest_news'] = 0; // 0 = infinite
 $INSTALLER09['expires']['site_stats'] = 300; // 300 = 5 min
 $INSTALLER09['expires']['share_ratio'] = 900; // 900 = 15 min
-$INSTALLER09['expires']['checked_by'] = 0; // 0 = infinite 
+$INSTALLER09['expires']['checked_by'] = 0; // 0 = infinite
 $INSTALLER09['expires']['movieofweek'] = 300; // 604800 = 1 week
 $INSTALLER09['expires']['latest_news_tpl'] = 0; // 0 = infinite
-$INSTALLER09['expires']['latesttorrents_tpl'] = 0;  // 0 = infinite
-$INSTALLER09['expires']['latestposts_tpl'] = 0;  // 0 = infinite
-$INSTALLER09['expires']['site_stats_tpl'] = 0;  // 0 = infinite
-$INSTALLER09['expires']['latestuser_tpl'] = 0;  // 0 = infinite
-$INSTALLER09['expires']['activeusers_tpl'] = 0;  // 0 = infinite
+$INSTALLER09['expires']['latesttorrents_tpl'] = 0; // 0 = infinite
+$INSTALLER09['expires']['latestposts_tpl'] = 0; // 0 = infinite
+$INSTALLER09['expires']['site_stats_tpl'] = 0; // 0 = infinite
+$INSTALLER09['expires']['latestuser_tpl'] = 0; // 0 = infinite
+$INSTALLER09['expires']['activeusers_tpl'] = 0; // 0 = infinite
 //== Latest posts limit
 $INSTALLER09['latest_posts_limit'] = 5; //query limit for latest forum posts on index
 //latest torrents limit
@@ -132,12 +132,13 @@ $INSTALLER09['latest_torrents_limit'] = 5;
 $INSTALLER09['latest_torrents_limit_2'] = 5;
 $INSTALLER09['latest_torrents_limit_scroll'] = 20;
 /** Settings **/
-$INSTALLER09['reports']      = 1;// 1/0 on/off
-$INSTALLER09['karma']        = 1;// 1/0 on/off
-$INSTALLER09['BBcode']   = 1;// 1/0 on/off
+$INSTALLER09['reports'] = 1; // 1/0 on/off
+$INSTALLER09['karma'] = 1; // 1/0 on/off
+$INSTALLER09['BBcode'] = 1; // 1/0 on/off
 $INSTALLER09['inviteusers'] = 10000;
 $INSTALLER09['flood_time'] = 900; //comment/forum/pm flood limit
-$INSTALLER09['readpost_expiry'] = 14*86400; // 14 days
+$INSTALLER09['readpost_expiry'] = 14 * 86400; // 14 days
+
 /** define dirs **/
 define('INCL_DIR', dirname(__FILE__).DIRECTORY_SEPARATOR);
 define('ROOT_DIR', realpath(INCL_DIR.'..'.DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR);
@@ -146,7 +147,7 @@ define('FORUM_DIR', ROOT_DIR.'forums'.DIRECTORY_SEPARATOR);
 define('PM_DIR', ROOT_DIR.'pm_system'.DIRECTORY_SEPARATOR);
 define('CACHE_DIR', ROOT_DIR.'cache'.DIRECTORY_SEPARATOR);
 define('MODS_DIR', ROOT_DIR.'mods'.DIRECTORY_SEPARATOR);
-define('LANG_DIR', ROOT_DIR.'lang'.DIRECTORY_SEPARATOR);  
+define('LANG_DIR', ROOT_DIR.'lang'.DIRECTORY_SEPARATOR);
 define('TEMPLATE_DIR', ROOT_DIR.'templates'.DIRECTORY_SEPARATOR);
 define('BLOCK_DIR', ROOT_DIR.'blocks'.DIRECTORY_SEPARATOR);
 define('IMDB_DIR', ROOT_DIR.'imdb'.DIRECTORY_SEPARATOR);
@@ -154,24 +155,23 @@ define('CLASS_DIR', INCL_DIR.'class'.DIRECTORY_SEPARATOR);
 define('CLEAN_DIR', INCL_DIR.'cleanup'.DIRECTORY_SEPARATOR);
 $INSTALLER09['cache'] = ROOT_DIR.'cache';
 $INSTALLER09['backup_dir'] = INCL_DIR.'backup';
-$INSTALLER09['torrent_dir'] = ROOT_DIR.'torrents'; # must be writable for httpd user   
+$INSTALLER09['torrent_dir'] = ROOT_DIR.'torrents'; // must be writable for httpd user
 $INSTALLER09['flood_file'] = INCL_DIR.'settings'.DIRECTORY_SEPARATOR.'limitfile.txt';
 $INSTALLER09['nameblacklist'] = ROOT_DIR.'cache'.DIRECTORY_SEPARATOR.'nameblacklist.txt';
 //== tpl configs
 $INSTALLER09['tpl_path'] = 'tpl/templates/';
 $INSTALLER09['tpl_delimiters'] = '{#%s#}';
 $INSTALLER09['tpl_cache_time'] = 30;
-# the first one will be displayed on the pages
+// the first one will be displayed on the pages
 $INSTALLER09['announce_urls'] = array();
 $INSTALLER09['announce_urls'][] = '#announce_urls';
 $INSTALLER09['announce_urls'][] = '#announce_https';
-if ($_SERVER["HTTP_HOST"] == "")
-$_SERVER["HTTP_HOST"] = $_SERVER["SERVER_NAME"];
-$INSTALLER09['baseurl'] = 'http'.(isset($_SERVER['HTTPS']) && (bool)$_SERVER['HTTPS'] == true ? 's':'').'://'. $_SERVER['HTTP_HOST'];
+if ($_SERVER["HTTP_HOST"] == "") $_SERVER["HTTP_HOST"] = $_SERVER["SERVER_NAME"];
+$INSTALLER09['baseurl'] = 'http'.(isset($_SERVER['HTTPS']) && (bool)$_SERVER['HTTPS'] == true ? 's' : '').'://'.$_SERVER['HTTP_HOST'];
 //== Email for sender/return path.
 $INSTALLER09['site_email'] = '#site_email';
 $INSTALLER09['site_name'] = '#site_name';
-$INSTALLER09['xhtml_strict'] = 0;          // enable for all users
+$INSTALLER09['xhtml_strict'] = 0; // enable for all users
 $INSTALLER09['xhtml_strict'] = ''; // enable for one user
 $INSTALLER09['msg_alert'] = 1; // saves a query when off
 $INSTALLER09['report_alert'] = 1; // saves a query when off
@@ -183,7 +183,13 @@ $INSTALLER09['pic_base_url'] = "./pic/";
 $INSTALLER09['stylesheet'] = 1;
 $INSTALLER09['categorie_icon'] = 1;
 //for subs & youtube mode
-$INSTALLER09['movie_cats'] = array(3,5,6,10,11);
+$INSTALLER09['movie_cats'] = array(
+    3,
+    5,
+    6,
+    10,
+    11
+);
 $INSTALLER09['moviecats'] = "3,5,6,10,11";
 $youtube_pattern = "/^http\:\/\/www\.youtube\.com\/watch\?v\=[\w]{11}/i";
 //== set this to size of user avatars
@@ -193,20 +199,24 @@ $INSTALLER09['av_img_width'] = 100;
 $INSTALLER09['sig_img_height'] = 100;
 $INSTALLER09['sig_img_width'] = 500;
 $INSTALLER09['bucket_allowed'] = 0;
-$INSTALLER09['bucket_dir'] = ROOT_DIR . '/bitbucket'; # must be writable for httpd user  
-$INSTALLER09['allowed_ext'] = array('image/gif', 'image/png', 'image/jpeg');
-$INSTALLER09['bucket_maxsize'] = 500*1024; #max size set to 500kb
+$INSTALLER09['bucket_dir'] = ROOT_DIR.'/bitbucket'; // must be writable for httpd user
+$INSTALLER09['allowed_ext'] = array(
+    'image/gif',
+    'image/png',
+    'image/jpeg'
+);
+$INSTALLER09['bucket_maxsize'] = 500 * 1024; //max size set to 500kb
 $INSTALLER09['happyhour'] = CACHE_DIR.'happyhour'.DIRECTORY_SEPARATOR.'happyhour.txt';
 //==User class defines
-define ('UC_USER', 0);
-define ('UC_POWER_USER', 1);
-define ('UC_VIP', 2);
-define ('UC_UPLOADER', 3);
-define ('UC_MODERATOR', 4);
-define ('UC_ADMINISTRATOR', 5);
-define ('UC_SYSOP', 6);
-define('UC_MIN', 0);   // minimum class
-define('UC_MAX', 6);   // maximum class
+define('UC_USER', 0);
+define('UC_POWER_USER', 1);
+define('UC_VIP', 2);
+define('UC_UPLOADER', 3);
+define('UC_MODERATOR', 4);
+define('UC_ADMINISTRATOR', 5);
+define('UC_SYSOP', 6);
+define('UC_MIN', 0); // minimum class
+define('UC_MAX', 6); // maximum class
 define('UC_STAFF', 4); // start of staff classes
 //==View source code
 $INSTALLER09['staff_viewcode_on'] = false;
@@ -220,7 +230,10 @@ $INSTALLER09['staff']['staff_pin'] = 'uFll0y3Ihgtij8'; // should be mix of u/l c
 $INSTALLER09['staff']['owner_pin'] = 'jjknnkuuyqhjj0'; // should be mix of u/l case and min 12 chars length
 //== Staff forum ID for autopost
 $INSTALLER09['staff']['forumid'] = 2; // this forum ID should exist and be a staff forum
-$INSTALLER09['staff_forums'] = array(1,2); // these forum ID's' should exist and be a staff forum's to stop autoshouts
+$INSTALLER09['staff_forums'] = array(
+    1,
+    2
+); // these forum ID's' should exist and be a staff forum's to stop autoshouts
 $INSTALLER09['variant'] = 'U-232 V3';
-define ('TBVERSION', $INSTALLER09['variant']);
+define('TBVERSION', $INSTALLER09['variant']);
 ?>

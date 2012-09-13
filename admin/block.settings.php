@@ -5,14 +5,12 @@
  *   Copyright (C) 2010 U-232 v.3
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
- **/
- 
+ *
+ */
 /*Block settings by elephant*/
-
-if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
-{
-	$HTMLOUT='';
-	$HTMLOUT .= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
+if (!defined('IN_INSTALLER09_ADMIN')) {
+    $HTMLOUT = '';
+    $HTMLOUT.= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 		\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 		<html xmlns='http://www.w3.org/1999/xhtml'>
 		<head>
@@ -21,133 +19,123 @@ if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
 		<body>
 	<div style='font-size:33px;color:white;background-color:red;text-align:center;'>Incorrect access<br />You cannot access this file directly.</div>
 	</body></html>";
-	echo $HTMLOUT;
-	exit();
+    echo $HTMLOUT;
+    exit();
 }
-  $stdfoot = array(/** include js **/'js' => array('custom-form-elements'));
-  $stdhead = array(/** include css **/'css' => array('global_blocks'));
-	$block_set_cache = CACHE_DIR.'block_settings_cache.php';
-
-	if ( 'POST' == $_SERVER['REQUEST_METHOD'] )
-	{
-	unset($_POST['submit']);
-	block_cache();
-	exit;
-	}
-	
+$stdfoot = array(
+    /** include js **/
+    'js' => array(
+        'custom-form-elements'
+    )
+);
+$stdhead = array(
+    /** include css **/
+    'css' => array(
+        'global_blocks'
+    )
+);
+$block_set_cache = CACHE_DIR.'block_settings_cache.php';
+if ('POST' == $_SERVER['REQUEST_METHOD']) {
+    unset($_POST['submit']);
+    block_cache();
+    exit;
+}
 /////////////////////////////
 //	cache block function
 /////////////////////////////
 function block_cache()
-	{
-		global $block_set_cache;
-		
-		$block_out = "<"."?php\n\n\$BLOCKS = array(\n";
-		
-		foreach( $_POST as $k => $v)
-		{
-			$block_out .= ($k == 'block_undefined') ? "\t'{$k}' => '".htmlsafechars($v)."',\n" : "\t'{$k}' => ".intval($v).",\n";
-		}
-		
-
-		$block_out .= "\n);\n\n?".">";
-		
-		if( is_file( $block_set_cache ) && is_writable( pathinfo($block_set_cache, PATHINFO_DIRNAME) ) )
-		{
-			$filenum = fopen ( $block_set_cache, 'w' );
-			ftruncate( $filenum, 0 );
-			fwrite( $filenum, $block_out );
-			fclose( $filenum );
-		}
-		
-		redirect('staffpanel.php?tool=block.settings&amp;action=block.settings', 'Block Settings Have Been Updated!', 3);
-	}
-	
-function get_cache_array() 
-	{
-		return array(
-                       	'ie_user_alert'              => 1,
-                       	'active_users_on'              => 1,
-                       	'active_24h_users_on'              => 1,
-                       	'active_irc_users_on'              => 1,
-                       	'active_birthday_users_on'              => 1,
-                    	   'disclaimer_on'                => 1,
-                    	   'shoutbox_on'                  => 1,
-                        'staff_shoutbox_on'                  => 1,
-                        'news_on'                      => 1,
-                        'stats_on'                     => 1,
-                        'latest_user_on'                     => 1,
-                        'forum_posts_on'                     => 1,
-                        'latest_torrents_on'                     => 1,
-                        'latest_torrents_scroll_on'                     => 1,
-                        'announcement'                     => 1,
-                        'donation_progress_on'                     => 1,
-                        'ads_on'                     => 1,
-                        'radio_on'                     => 1,
-                        'torrentfreak_on'                     => 1,
-                        'xmas_gift_on'                     => 1,
-                        'active_poll_on'                     => 1,
-                        'movie_ofthe_week_on'                     => 1,
-                        'global_demotion_on'             => 1,
-                        'global_staff_warn_on'         => 1,
-                        'global_message_on'          => 1,
-                        'global_staff_uploadapp_on'           => 1,
-                        'global_staff_report_on'           => 1,
-                        'global_freeleech_on'          => 1,
-                        'global_happyhour_on'          => 1,
-                        'global_crazyhour_on'          => 1,
-                        'global_bug_message_on'          => 1,
-                        'userdetails_login_link_on'          => 1,
-                        'userdetails_flush_on'          => 1,
-                        'userdetails_joined_on'          => 1,
-                        'userdetails_online_time_on'          => 1,
-                        'userdetails_browser_on'          => 1,
-                        'userdetails_reputation_on'          => 1,
-                        'userdetails_profile_hits_on'          => 1,
-                        'userdetails_birthday_on'          => 1,
-                        'userdetails_contact_info_on'          => 1,
-                        'userdetails_iphistory_on'          => 1,
-                        'userdetails_traffic_on'          => 1,
-                        'userdetails_share_ratio_on'          => 1,
-                        'userdetails_seedtime_ratio_on'          => 1,
-                        'userdetails_seedbonus_on'          => 1,
-                        'userdetails_irc_stats_on'          => 1,
-                        'userdetails_connectable_port_on'          => 1,
-                        'userdetails_avatar_on'          => 1,
-                        'userdetails_userclass_on'          => 1,
-                        'userdetails_gender_on'          => 1,
-                        'userdetails_freestuffs_on'          => 1,
-                        'userdetails_comments_on'          => 1,
-                        'userdetails_forumposts_on'          => 1,
-                        'userdetails_invitedby_on'          => 1,
-                        'userdetails_torrents_block_on'          => 1,
-                        'userdetails_completed_on'          => 1,
-                        'userdetails_snatched_staff_on'          => 1,
-                        'userdetails_userinfo_on'          => 1,
-                        'userdetails_showpm_on'          => 1,
-                        'userdetails_report_user_on'          => 1,
-                        'userdetails_user_status_on'          => 1,
-                        'userdetails_user_comments_on'          => 1
-                        );
-	}
-	
-	if ( ! is_file( $block_set_cache ) )
-	{
-		$BLOCKS = get_cache_array();
-	}
-	else
-	{
-		require_once $block_set_cache;
-		
-		if( ! is_array($BLOCKS))
-		{	
-			$BLOCKS = get_cache_array();
-		}
-	}
-	
-
+{
+    global $block_set_cache;
+    $block_out = "<"."?php\n\n\$BLOCKS = array(\n";
+    foreach ($_POST as $k => $v) {
+        $block_out.= ($k == 'block_undefined') ? "\t'{$k}' => '".htmlsafechars($v)."',\n" : "\t'{$k}' => ".intval($v).",\n";
+    }
+    $block_out.= "\n);\n\n?".">";
+    if (is_file($block_set_cache) && is_writable(pathinfo($block_set_cache, PATHINFO_DIRNAME))) {
+        $filenum = fopen($block_set_cache, 'w');
+        ftruncate($filenum, 0);
+        fwrite($filenum, $block_out);
+        fclose($filenum);
+    }
+    redirect('staffpanel.php?tool=block.settings&amp;action=block.settings', 'Block Settings Have Been Updated!', 3);
+}
+function get_cache_array()
+{
+    return array(
+        'ie_user_alert' => 1,
+        'active_users_on' => 1,
+        'active_24h_users_on' => 1,
+        'active_irc_users_on' => 1,
+        'active_birthday_users_on' => 1,
+        'disclaimer_on' => 1,
+        'shoutbox_on' => 1,
+        'staff_shoutbox_on' => 1,
+        'news_on' => 1,
+        'stats_on' => 1,
+        'latest_user_on' => 1,
+        'forum_posts_on' => 1,
+        'latest_torrents_on' => 1,
+        'latest_torrents_scroll_on' => 1,
+        'announcement' => 1,
+        'donation_progress_on' => 1,
+        'ads_on' => 1,
+        'radio_on' => 1,
+        'torrentfreak_on' => 1,
+        'xmas_gift_on' => 1,
+        'active_poll_on' => 1,
+        'movie_ofthe_week_on' => 1,
+        'global_demotion_on' => 1,
+        'global_staff_warn_on' => 1,
+        'global_message_on' => 1,
+        'global_staff_uploadapp_on' => 1,
+        'global_staff_report_on' => 1,
+        'global_freeleech_on' => 1,
+        'global_happyhour_on' => 1,
+        'global_crazyhour_on' => 1,
+        'global_bug_message_on' => 1,
+        'userdetails_login_link_on' => 1,
+        'userdetails_flush_on' => 1,
+        'userdetails_joined_on' => 1,
+        'userdetails_online_time_on' => 1,
+        'userdetails_browser_on' => 1,
+        'userdetails_reputation_on' => 1,
+        'userdetails_profile_hits_on' => 1,
+        'userdetails_birthday_on' => 1,
+        'userdetails_contact_info_on' => 1,
+        'userdetails_iphistory_on' => 1,
+        'userdetails_traffic_on' => 1,
+        'userdetails_share_ratio_on' => 1,
+        'userdetails_seedtime_ratio_on' => 1,
+        'userdetails_seedbonus_on' => 1,
+        'userdetails_irc_stats_on' => 1,
+        'userdetails_connectable_port_on' => 1,
+        'userdetails_avatar_on' => 1,
+        'userdetails_userclass_on' => 1,
+        'userdetails_gender_on' => 1,
+        'userdetails_freestuffs_on' => 1,
+        'userdetails_comments_on' => 1,
+        'userdetails_forumposts_on' => 1,
+        'userdetails_invitedby_on' => 1,
+        'userdetails_torrents_block_on' => 1,
+        'userdetails_completed_on' => 1,
+        'userdetails_snatched_staff_on' => 1,
+        'userdetails_userinfo_on' => 1,
+        'userdetails_showpm_on' => 1,
+        'userdetails_report_user_on' => 1,
+        'userdetails_user_status_on' => 1,
+        'userdetails_user_comments_on' => 1
+    );
+}
+if (!is_file($block_set_cache)) {
+    $BLOCKS = get_cache_array();
+} else {
+    require_once $block_set_cache;
+    if (!is_array($BLOCKS)) {
+        $BLOCKS = get_cache_array();
+    }
+}
 $HTMLOUT = '';
-$HTMLOUT .='
+$HTMLOUT.= '
     <div>Global Block Settings</div><br />
     <div><br />
     <form action="staffpanel.php?tool=block.settings&amp;action=block.settings" method="post">
@@ -592,30 +580,19 @@ $HTMLOUT .='
     <input type="submit" name="submit" value="Submit" class="btn" tabindex="2" accesskey="s" />
     </form>
     </div>';
-
-$HTMLOUT = preg_replace_callback( "|<#(.*?)#>|", "template_out", $HTMLOUT);
-
-
-
-echo stdhead("Block Settings", true, $stdhead) , $HTMLOUT , stdfoot($stdfoot);
-
-
+$HTMLOUT = preg_replace_callback("|<#(.*?)#>|", "template_out", $HTMLOUT);
+echo stdhead("Block Settings", true, $stdhead) , $HTMLOUT, stdfoot($stdfoot);
 function template_out($matches)
-	{
-	  global $BLOCKS;
-
-	  return 'Yes &nbsp; <input name="'.$matches[1].'" value="1" '.($BLOCKS[$matches[1]] == 1 ? 'checked="checked"' : "").' type="radio" />&nbsp;&nbsp;&nbsp;<input name="'.$matches[1].'" value="0" '.($BLOCKS[$matches[1]] == 1 ? "" : 'checked="checked"').' type="radio" /> &nbsp; No';
-
-	}
-
-
-function redirect($url, $text, $time=2) {
-		global $INSTALLER09;
-		
-		$page_title  = "Admin Blocks Redirection";
-		$page_detail = "<em>Redirecting...</em>";
-		
-		$html = "
+{
+    global $BLOCKS;
+    return 'Yes &nbsp; <input name="'.$matches[1].'" value="1" '.($BLOCKS[$matches[1]] == 1 ? 'checked="checked"' : "").' type="radio" />&nbsp;&nbsp;&nbsp;<input name="'.$matches[1].'" value="0" '.($BLOCKS[$matches[1]] == 1 ? "" : 'checked="checked"').' type="radio" /> &nbsp; No';
+}
+function redirect($url, $text, $time = 2)
+{
+    global $INSTALLER09;
+    $page_title = "Admin Blocks Redirection";
+    $page_detail = "<em>Redirecting...</em>";
+    $html = "
 		<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 		\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 		<html xmlns='http://www.w3.org/1999/xhtml'>
@@ -635,9 +612,7 @@ function redirect($url, $text, $time=2) {
 		</div>
 		</div>
 		</div></body></html>";
-		echo $html;
-		exit;
-	}         
-            
-
+    echo $html;
+    exit;
+}
 ?>

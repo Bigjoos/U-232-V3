@@ -5,11 +5,11 @@
  *   Copyright (C) 2010 U-232 v.3
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
- **/
-if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
-{
-	$HTMLOUT='';
-	$HTMLOUT .= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
+ *
+ */
+if (!defined('IN_INSTALLER09_ADMIN')) {
+    $HTMLOUT = '';
+    $HTMLOUT.= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 		\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 		<html xmlns='http://www.w3.org/1999/xhtml'>
 		<head>
@@ -18,42 +18,33 @@ if ( ! defined( 'IN_INSTALLER09_ADMIN' ) )
 		<body>
 	<div style='font-size:33px;color:white;background-color:red;text-align:center;'>Incorrect access<br />You cannot access this file directly.</div>
 	</body></html>";
-	echo $HTMLOUT;
-	exit();
+    echo $HTMLOUT;
+    exit();
 }
-
-require_once(INCL_DIR.'user_functions.php');
-require_once(INCL_DIR.'html_functions.php');
-require_once(INCL_DIR.'pager_functions.php');
-require_once(CLASS_DIR.'class_check.php');
+require_once (INCL_DIR.'user_functions.php');
+require_once (INCL_DIR.'html_functions.php');
+require_once (INCL_DIR.'pager_functions.php');
+require_once (CLASS_DIR.'class_check.php');
 class_check(UC_MODERATOR);
-
-$lang = array_merge( $lang, load_language('cheaters') );
-$HTMLOUT="";
-
+$lang = array_merge($lang, load_language('cheaters'));
+$HTMLOUT = "";
 if (isset($_POST["nowarned"]) && $_POST["nowarned"] == "nowarned") {
-    if (empty($_POST["desact"]) && empty($_POST["remove"]))
-        stderr("Error...", "You must select a user.");
-
+    if (empty($_POST["desact"]) && empty($_POST["remove"])) stderr("Error...", "You must select a user.");
     if (!empty($_POST["remove"])) {
-        sql_query("DELETE FROM cheaters WHERE id IN (" . implode(", ", $_POST["remove"]) . ")") or sqlerr(__FILE__, __LINE__);
+        sql_query("DELETE FROM cheaters WHERE id IN (".implode(", ", $_POST["remove"]).")") or sqlerr(__FILE__, __LINE__);
     }
-
     if (!empty($_POST["desact"])) {
-        sql_query("UPDATE users SET enabled = 'no' WHERE id IN (" . implode(", ", $_POST["desact"]) . ")") or sqlerr(__FILE__, __LINE__);
+        sql_query("UPDATE users SET enabled = 'no' WHERE id IN (".implode(", ", $_POST["desact"]).")") or sqlerr(__FILE__, __LINE__);
     }
 }
-
-$HTMLOUT .= begin_main_frame();
-$HTMLOUT .= begin_frame("Cheating Users:", true);
-
+$HTMLOUT.= begin_main_frame();
+$HTMLOUT.= begin_frame("Cheating Users:", true);
 $res = sql_query("SELECT COUNT(*) FROM cheaters") or sqlerr(__FILE__, __LINE__);
 $row = mysqli_fetch_array($res);
 $count = $row[0];
 $perpage = 15;
 $pager = pager($perpage, $count, "staffpanel.php?tool=cheaters&amp;action=cheaters&amp;");
-
-$HTMLOUT .="<form action='staffpanel.php?tool=cheaters&amp;action=cheaters' method='post'>
+$HTMLOUT.= "<form action='staffpanel.php?tool=cheaters&amp;action=cheaters' method='post'>
 <script type='text/javascript'>
 /*<![CDATA[*/
 function klappe(id)
@@ -91,15 +82,13 @@ return 'Check All Remove'; }
 }
 /*]]>*/
 </script>";
-if ($count > $perpage)
-$HTMLOUT .= $pager['pagertop'];
-$HTMLOUT .="<table width=\"80%\">
+if ($count > $perpage) $HTMLOUT.= $pager['pagertop'];
+$HTMLOUT.= "<table width=\"80%\">
 <tr>
 <td class=\"table\" width=\"10\" align=\"center\" valign=\"middle\">#</td>
 <td class=\"table\">{$lang['cheaters_uname']}</td>
 <td class=\"table\" width=\"10\" align=\"center\" valign=\"middle\">{$lang['cheaters_d']}</td>
 <td class=\"table\" width=\"10\" align=\"center\" valign=\"middle\">{$lang['cheaters_r']}</td></tr>\n";
-
 $res = sql_query("SELECT c.id as cid, c.added, c.userid, c.torrentid, c.client, c.rate, c.beforeup, c.upthis, c.timediff, c.userip, u.id, u.username, u.class, u.downloaded, u.uploaded, u.chatpost, u.leechwarn, u.warned, u.pirate, u.king, u.donor, u.enabled, t.id AS tid, t.name AS tname FROM cheaters AS c LEFT JOIN users AS u ON u.id=c.userid LEFT JOIN torrents AS t ON t.id=c.torrentid ORDER BY added DESC ".$pager['limit']."") or sqlerr(__FILE__, __LINE__);
 while ($arr = mysqli_fetch_assoc($res)) {
     $torrname = htmlsafechars(CutName($arr["tname"], 80));
@@ -108,25 +97,21 @@ while ($arr = mysqli_fetch_assoc($res)) {
     $cheater = "<b><a href='{$INSTALLER09['baseurl']}/userdetails.php?id=".(int)$arr['id']."'>".format_username($users)."</a></b>{$lang['cheaters_hbcc']}<br />
     <b>{$lang['cheaters_torrent']} <a href='{$INSTALLER09['baseurl']}/details.php?id=".(int)$arr['tid']."' title='{$torrname}'>{$torrname}</a></b>
 <br />{$lang['cheaters_upped']} <b>".mksize((int)$arr['upthis'])."</b><br />{$lang['cheaters_speed']} <b>".mksize((int)$arr['rate'])."/s</b><br />{$lang['cheaters_within']} <b>".(int)$arr['timediff']." {$lang['cheaters_sec']}</b><br />{$lang['cheaters_uc']} <b>".htmlsafechars($arr['client'])."</b><br />{$lang['cheaters_ipa']} <b>".htmlsafechars($arr['userip'])."</b>";
-
-    $HTMLOUT .="<tr><td class=\"table\" width=\"10\" align=\"center\">".(int)$arr['cid']."</td>
+    $HTMLOUT.= "<tr><td class=\"table\" width=\"10\" align=\"center\">".(int)$arr['cid']."</td>
     <td class=\"table\" align=\"left\">".format_username($users)."<a href=\"javascript:klappe('a1".(int)$arr['cid']."')\"> - Added: ".get_date($arr['added'], 'DATE')."</a>
     <div id=\"ka1".(int)$arr['cid']."\" style=\"display: none;\"><font color=\"black\">{$cheater}</font></div></td>
     <td class=\"table\" valign=\"top\" width=\"10\"><input type=\"checkbox\" name=\"desact[]\" value=\"".(int)$arr["id"]."\"/></td>
     <td class=\"table\" valign=\"top\" width=\"10\"><input type=\"checkbox\" name=\"remove[]\" value=\"".(int)$arr["cid"]."\"/></td></tr>";
 }
-
-$HTMLOUT .="<tr>
+$HTMLOUT.= "<tr>
 <td class=\"table\" colspan=\"4\" align=\"right\">
 <input type=\"button\" value=\"{$lang['cheaters_cad']}\" onclick=\"this.value=check(this.form.elements['desact[]'])\"/> <input type=\"button\" value=\"{$lang['cheaters_car']}\" onclick=\"this.value=check(this.form.elements['remove[]'])\"/> <input type=\"hidden\" name=\"nowarned\" value=\"nowarned\" /><input type=\"submit\" name=\"submit\" value=\"{$lang['cheaters_ac']}\" />
 </td>
 </tr>
 </table></form>";
-if ($count > $perpage)
-$HTMLOUT .= $pager['pagerbottom'];
-
-$HTMLOUT .= end_frame();
-$HTMLOUT .= end_main_frame();
-echo stdhead('Ratio Cheats') . $HTMLOUT . stdfoot();
+if ($count > $perpage) $HTMLOUT.= $pager['pagerbottom'];
+$HTMLOUT.= end_frame();
+$HTMLOUT.= end_main_frame();
+echo stdhead('Ratio Cheats').$HTMLOUT.stdfoot();
 die;
 ?>

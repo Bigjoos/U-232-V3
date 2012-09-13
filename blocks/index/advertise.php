@@ -5,7 +5,8 @@
  *   Copyright (C) 2010 Installer09 v.1
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless,putyn,kidvision.
- **/
+ *
+ */
 /*
 //==Installer
    $HTMLOUT .= "
@@ -22,19 +23,18 @@
     </div><br />";
 */
 //==SVN
-   $HTMLOUT .= "
+$HTMLOUT.= "
     <div class='headline'>
     {$lang['index_u-232_git']}
      </div>
     <div class='headbody'>";
-   $HTMLOUT .= "
+$HTMLOUT.= "
     <div align='center'>
      <a href='https://github.com/Bigjoos'>
       <img border='0' src='pic/logo.png' alt='U-232' title='U-232' width='322' height='100' />
      </a></div>";
-   $HTMLOUT .= "
+$HTMLOUT.= "
     </div><br />";
 //==
 // End Class
-
 // End File

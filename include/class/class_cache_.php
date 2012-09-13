@@ -6,73 +6,79 @@
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn, kidvision.
  *   updated by putyn on a sunny day to support multiple trackers on the same memcache server 20/06/2011
- **/
-
+ *
+ */
 if (!extension_loaded('memcache')) {
     die('Memcache Extension not loaded.');
 }
-
-class CACHE extends Memcache {
+class CACHE extends Memcache
+{
     public $CacheHits = array();
     public $MemcacheDBArray = array();
     public $MemcacheDBKey = '';
-	 public $MemcachePrefix = '';
+    public $MemcachePrefix = '';
     protected $InTransaction = false;
     public $Time = 0;
     protected $Page = array();
     protected $Row = 1;
     protected $Part = 0;
-    
-    function __construct() {
+    function __construct()
+    {
         $this->connect('127.0.0.1', 11211);
     }
     //---------- Caching functions ----------//
     // Wrapper for Memcache::set, with the zlib option removed and default duration of 1 hour
-    public function cache_value($Key, $Value, $Duration=2592000) {
-        $StartTime=microtime(true);
+    public function cache_value($Key, $Value, $Duration = 2592000)
+    {
+        $StartTime = microtime(true);
         if (empty($Key)) {
             trigger_error("Cache insert failed for empty key");
         }
         if (!$this->set($this->MemcachePrefix.$Key, $Value, 0, $Duration)) {
             trigger_error("Cache insert failed for key ".$this->MemcachePrefix.$Key, E_USER_ERROR);
         }
-        $this->Time+=(microtime(true)-$StartTime)*1000;
+        $this->Time+= (microtime(true) - $StartTime) * 1000;
     }
-    public function add_value($Key, $Value, $Duration=2592000) {
-        $StartTime=microtime(true);
+    public function add_value($Key, $Value, $Duration = 2592000)
+    {
+        $StartTime = microtime(true);
         if (empty($Key)) {
             trigger_error("Cache insert failed for empty key");
         }
-       $add = $this->add($this->MemcachePrefix.$Key, $Value, 0, $Duration);
-       $this->Time+=(microtime(true)-$StartTime)*1000;
-       return $add;
+        $add = $this->add($this->MemcachePrefix.$Key, $Value, 0, $Duration);
+        $this->Time+= (microtime(true) - $StartTime) * 1000;
+        return $add;
     }
-    public function get_value($Key, $NoCache=false) {
-        $StartTime=microtime(true);
+    public function get_value($Key, $NoCache = false)
+    {
+        $StartTime = microtime(true);
         if (empty($Key)) {
             trigger_error("Cache retrieval failed for empty key");
         }
         $Return = $this->get($this->MemcachePrefix.$Key);
-        $this->Time+=(microtime(true)-$StartTime)*1000;
+        $this->Time+= (microtime(true) - $StartTime) * 1000;
         return $Return;
     }
-    public function replace_value($Key, $Value, $Duration=2592000) {
-        $StartTime=microtime(true);
+    public function replace_value($Key, $Value, $Duration = 2592000)
+    {
+        $StartTime = microtime(true);
         $this->replace($this->MemcachePrefix.$Key, $Value, false, $Duration);
-        $this->Time+=(microtime(true)-$StartTime)*1000;
+        $this->Time+= (microtime(true) - $StartTime) * 1000;
     }
     // Wrapper for Memcache::delete. For a reason, see above.
-    public function delete_value($Key) {
-        $StartTime=microtime(true);
+    public function delete_value($Key)
+    {
+        $StartTime = microtime(true);
         if (empty($Key)) {
             trigger_error("Cache retrieval failed for empty key");
         }
-        if (!$this->delete($this->MemcachePrefix.$Key,0)) {
+        if (!$this->delete($this->MemcachePrefix.$Key, 0)) {
         }
-        $this->Time+=(microtime(true)-$StartTime)*1000;
+        $this->Time+= (microtime(true) - $StartTime) * 1000;
     }
     //---------- memcachedb functions ----------//
-    public function begin_transaction($Key) {
+    public function begin_transaction($Key)
+    {
         $Value = $this->get($this->MemcachePrefix.$Key);
         if (!is_array($Value)) {
             $this->InTransaction = false;
@@ -85,25 +91,26 @@ class CACHE extends Memcache {
         $this->InTransaction = true;
         return true;
     }
-
-    public function cancel_transaction() {
+    public function cancel_transaction()
+    {
         $this->InTransaction = false;
         $this->MemcacheDBKey = array();
         $this->MemcacheDBKey = '';
     }
-
-    public function commit_transaction($Time=2592000) {
-		$StartTime=microtime(true);
+    public function commit_transaction($Time = 2592000)
+    {
+        $StartTime = microtime(true);
         if (!$this->InTransaction) {
             return false;
         }
         //$this->cache_value($this->MemcacheDBKey, $this->MemcacheDBArray, $Time);
         $this->set($this->MemcacheDBKey, $this->MemcacheDBArray, $Time);
         $this->InTransaction = false;
-		$this->Time+=(microtime(true)-$StartTime)*1000;
+        $this->Time+= (microtime(true) - $StartTime) * 1000;
     }
     // Updates multiple rows in an array
-    public function update_transaction($Rows, $Values) {
+    public function update_transaction($Rows, $Values)
+    {
         if (!$this->InTransaction) {
             return false;
         }
@@ -123,7 +130,8 @@ class CACHE extends Memcache {
     }
     // Updates multiple values in a single row in an array
     // $Values must be an associative array with key:value pairs like in the array we're updating
-    public function update_row($Row, $Values) {
+    public function update_row($Row, $Values)
+    {
         if (!$this->InTransaction) {
             return false;
         }
@@ -141,13 +149,16 @@ class CACHE extends Memcache {
                     trigger_error('Tried to increment non-number ('.$this->MemcachePrefix.$Key.') for cache '.$this->MemcacheDBKey);
                 }
                 ++$UpdateArray[$Key]; // Increment value
+                
             } elseif ($Value === '-1') {
                 if (!is_number($UpdateArray[$Key])) {
                     trigger_error('Tried to decrement non-number ('.$this->MemcachePrefix.$Key.') for cache '.$this->MemcacheDBKey);
                 }
                 --$UpdateArray[$Key]; // Decrement value
+                
             } else {
                 $UpdateArray[$Key] = $Value; // Otherwise, just alter value
+                
             }
         }
         if ($Row === false) {
@@ -156,8 +167,10 @@ class CACHE extends Memcache {
             $this->MemcacheDBArray[$Row] = $UpdateArray;
         }
     }
-    function dump(){
-		return print_r($this->CacheHits, true);
-	}
-}//end class
+    function dump()
+    {
+        return print_r($this->CacheHits, true);
+    }
+} //end class
+
 ?>

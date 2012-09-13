@@ -1,6 +1,6 @@
 <?php
 //=== member contact stuff
-	  $HTMLOUT .= (($CURUSER['class'] >= UC_STAFF || $user['show_email'] === 'yes') ? '
+$HTMLOUT.= (($CURUSER['class'] >= UC_STAFF || $user['show_email'] === 'yes') ? '
 		<tr>
 			<td class="rowhead">Email</td>
 			<td align="left"><a class="altlink" href="mailto:'.htmlsafechars($user['email']).'"  title="click to email" target="_blank"><img src="pic/email.gif" alt="email" width="25" /> Send Email</a></td>
@@ -31,5 +31,4 @@
 		</tr>' : '');
 //==end
 // End Class
-
 // End File

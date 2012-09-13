@@ -5,8 +5,9 @@
  *   Copyright (C) 2010 U-232 v.3
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
- **/
-require_once($_SERVER["DOCUMENT_ROOT"]."/include/bittorrent.php");
+ *
+ */
+require_once ($_SERVER["DOCUMENT_ROOT"]."/include/bittorrent.php");
 dbconn();
 loggedinorreturn();
 error_reporting(E_ALL);
@@ -63,8 +64,10 @@ error_reporting(E_ALL);
     <td valign="top"><fieldset style="width:170px;">
       <legend>Preview</legend>
       <div align="center">
-        <input type="hidden" value="<?php echo $CURUSER["username"]?>" id="user"  />
-        <img id="preview" src="avatar.php?user=<?php echo $CURUSER["username"]?>" width="150" height="190" alt="Avatar" /></div>
+        <input type="hidden" value="<?php
+echo $CURUSER["username"] ?>" id="user"  />
+        <img id="preview" src="avatar.php?user=<?php
+echo $CURUSER["username"] ?>" width="150" height="190" alt="Avatar" /></div>
       </fieldset></td>
     <td valign="top"><fieldset style="width:400px;">
       <legend>Avatar body</legend>
@@ -135,7 +138,9 @@ error_reporting(E_ALL);
       <legend>Final link</legend>
       <table border="0" cellpadding="4" cellspacing="2" style="border-collapse:separate" align="center" class="avy_body">
         <tr>
-          <td nowrap="nowrap" class="info"><input style="width:150px;" type="text" onclick="select();" value="<?php echo $INSTALLER09['baseurl']?>/avatar/settings/<?php echo strtolower($CURUSER["username"]) ?>.png" readonly="readonly"/>
+          <td nowrap="nowrap" class="info"><input style="width:150px;" type="text" onclick="select();" value="<?php
+echo $INSTALLER09['baseurl'] ?>/avatar/settings/<?php
+echo strtolower($CURUSER["username"]) ?>.png" readonly="readonly"/>
           </td>
         </tr>
       </table>

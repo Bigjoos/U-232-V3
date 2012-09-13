@@ -1,11 +1,6 @@
 <?php
-
 $lang = array(
-
-#Logout
-'logout_' => "",
-
-
+    //Logout
+    'logout_' => "",
 );
-
 ?>

@@ -1,10 +1,9 @@
 <?php
 $body = '';
-//=== don't allow direct access 
-if (!defined('BUNNY_PM_SYSTEM')) 
-{
-	$HTMLOUT ='';
-	$HTMLOUT .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+//=== don't allow direct access
+if (!defined('BUNNY_PM_SYSTEM')) {
+    $HTMLOUT = '';
+    $HTMLOUT.= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
         <head>
         <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
@@ -13,29 +12,21 @@ if (!defined('BUNNY_PM_SYSTEM'))
         <h1 style="text-align:center;">ERROR</h1>
         <p style="text-align:center;">How did you get here? silly rabbit Trix are for kids!.</p>
         </body></html>';
-	echo $HTMLOUT;
-	exit();
+    echo $HTMLOUT;
+    exit();
 }
-
-    //=== Get the info
-    $res = sql_query('SELECT * FROM messages WHERE id='.sqlesc($pm_id)) or sqlerr(__FILE__,__LINE__);
-    $message = mysqli_fetch_assoc($res);
-
-        if ($message['sender'] == $CURUSER['id'] && $message['sender'] == $CURUSER['id'] || mysqli_num_rows($res) === 0)  
-            stderr('Error','Come, you are a tedious fool.');
-
-    //=== if not from curuser then get who from
-    if($message['sender'] !== $CURUSER['id'])
-        {
-        $res_forward = sql_query('SELECT username FROM users WHERE id='.sqlesc($message['sender'])) or sqlerr(__FILE__,__LINE__);
-        $arr_forward = mysqli_fetch_assoc($res_forward);
-        $forwarded_username = ($message['sender'] === 0 ? 'System' : (mysqli_num_rows($res_forward) === 0 ? 'Un-known' : $arr_forward['username']));
-        }
-    else
-        $forwarded_username = htmlsafechars($CURUSER['username']);
-
+//=== Get the info
+$res = sql_query('SELECT * FROM messages WHERE id='.sqlesc($pm_id)) or sqlerr(__FILE__, __LINE__);
+$message = mysqli_fetch_assoc($res);
+if ($message['sender'] == $CURUSER['id'] && $message['sender'] == $CURUSER['id'] || mysqli_num_rows($res) === 0) stderr('Error', 'Come, you are a tedious fool.');
+//=== if not from curuser then get who from
+if ($message['sender'] !== $CURUSER['id']) {
+    $res_forward = sql_query('SELECT username FROM users WHERE id='.sqlesc($message['sender'])) or sqlerr(__FILE__, __LINE__);
+    $arr_forward = mysqli_fetch_assoc($res_forward);
+    $forwarded_username = ($message['sender'] === 0 ? 'System' : (mysqli_num_rows($res_forward) === 0 ? 'Un-known' : $arr_forward['username']));
+} else $forwarded_username = htmlsafechars($CURUSER['username']);
 //=== print out the forwarding page
-$HTMLOUT .='<h1>Fwd: '.htmlsafechars($message['subject']).'</h1>
+$HTMLOUT.= '<h1>Fwd: '.htmlsafechars($message['subject']).'</h1>
         <form action="pm_system.php" method="post">
         <input type="hidden" name="id" value="'.$pm_id.'" />
         <input type="hidden" name="action" value="forward_pm" />

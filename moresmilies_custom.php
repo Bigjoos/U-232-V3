@@ -5,20 +5,17 @@
  *   Copyright (C) 2010 U-232 v.3
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
- **/
-require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
+ *
+ */
+require_once (dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once INCL_DIR.'bbcode_functions.php';
 require_once INCL_DIR.'user_functions.php';
 dbconn(false);
 loggedinorreturn();
-
-$lang = array_merge( load_language('global'));
-
-if($CURUSER['smile_until'] == '0')
-stderr("Error", "you do not have access!"); 
-
-    $htmlout = '';
-    $htmlout = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
+$lang = array_merge(load_language('global'));
+if ($CURUSER['smile_until'] == '0') stderr("Error", "you do not have access!");
+$htmlout = '';
+$htmlout = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 		\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 		<html xmlns='http://www.w3.org/1999/xhtml'>
 		<head>
@@ -36,18 +33,15 @@ stderr("Error", "you do not have access!");
     }
     </script>
     <table class='list' width='100%' cellpadding='1' cellspacing='1'>";
-    $count = 0;
-    $ctr = 0;
-    global $customsmilies;
-    while ((list($code, $url) = each($customsmilies))) {
-    if ($count % 3==0)
- 	  $htmlout .= "<tr>";
- 	  $htmlout .= "<td align='center'><a href=\"javascript: SmileIT('".str_replace("'","\'",$code)."','".htmlsafechars($_GET['form'])."','".htmlsafechars($_GET['text'])."')\"><img border='0' src='./pic/smilies/".$url."' alt='' /></a></td>";
- 	  $count++;
-
-   if ($count % 3==0)
-   $htmlout .= "</tr>";
-   }
-   $htmlout .= "<!--</tr>--></table><br /><div align='center'><a class='altlink' href='javascript: window.close()'><b>[ Close window ]</b></a></div></body></html>";
-   echo $htmlout;
+$count = 0;
+$ctr = 0;
+global $customsmilies;
+while ((list($code, $url) = each($customsmilies))) {
+    if ($count % 3 == 0) $htmlout.= "<tr>";
+    $htmlout.= "<td align='center'><a href=\"javascript: SmileIT('".str_replace("'", "\'", $code)."','".htmlsafechars($_GET['form'])."','".htmlsafechars($_GET['text'])."')\"><img border='0' src='./pic/smilies/".$url."' alt='' /></a></td>";
+    $count++;
+    if ($count % 3 == 0) $htmlout.= "</tr>";
+}
+$htmlout.= "<!--</tr>--></table><br /><div align='center'><a class='altlink' href='javascript: window.close()'><b>[ Close window ]</b></a></div></body></html>";
+echo $htmlout;
 ?>

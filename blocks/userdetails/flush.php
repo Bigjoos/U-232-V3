@@ -1,9 +1,8 @@
 <?php
 /* Flush all torrents mod */
 //=== flush torrents staff or members own torrents
-   if ($CURUSER['class'] >=  UC_STAFF || $CURUSER['id'] == $user['id'])
-	{
-     $HTMLOUT .= '<tr valign="top"><td class="rowhead"><a name="flush"></a>Flush&nbsp;torrents</td>
+if ($CURUSER['class'] >= UC_STAFF || $CURUSER['id'] == $user['id']) {
+    $HTMLOUT.= '<tr valign="top"><td class="rowhead"><a name="flush"></a>Flush&nbsp;torrents</td>
 			<td align="left">
 			<form method="post" id="form" action="" name="flush_thing">
 			<input id="id" type="hidden" value="'.(int)$user['id'].'" name="id" />
@@ -17,8 +16,7 @@
 			<br /><span style="font-size: x-small;color:red;">*all flushes are logged, please do not abuse this feature*</span></span>
 			</form>
 			</td></tr>';
-     }
+}
 //==end
 // End Class
-
 // End File

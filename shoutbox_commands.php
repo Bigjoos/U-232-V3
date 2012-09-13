@@ -5,18 +5,16 @@
  *   Copyright (C) 2010 U-232 v.3
  *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
  *   Project Leaders: Mindless, putyn.
- **/
- 
-require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
+ *
+ */
+require_once (dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 dbconn(false);
-require_once(CLASS_DIR.'class_check.php');
+require_once (CLASS_DIR.'class_check.php');
 class_check(UC_STAFF);
 loggedinorreturn();
-
-$lang = array_merge( load_language('global'));
-
-  $htmlout = '';
-  $htmlout = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
+$lang = array_merge(load_language('global'));
+$htmlout = '';
+$htmlout = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
 	\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 	<html xmlns='http://www.w3.org/1999/xhtml'>
 	<head>
@@ -72,6 +70,5 @@ $lang = array_merge( load_language('global'));
 	<tr>
 	<td align='center'><b><input type='text' size='20' value='/private' onclick=\"command('/private','shbox','shbox_text')\" /></b></td>
 	</tr></table><br /><div align='center'><a class='altlink' href='javascript: window.close()'><b>[ Close window ]</b></a></div></body></html>";
-	
 echo $htmlout;
 ?>
