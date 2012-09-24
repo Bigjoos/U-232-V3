@@ -87,7 +87,11 @@ $res = sql_query("SELECT count(id) FROM reports") or sqlerr(__FILE__, __LINE__);
 $row = mysqli_fetch_array($res);
 $count = $row[0];
 $perpage = 15;
+//NOT SURE IF THIS WORKS IN V3, BUT IN V2 THE PAGE GOES BACK TO THE STAFFPANEL PAGE..
 $pager = pager($perpage, $count, $_SERVER["PHP_SELF"]."?&amp;");
+//MY EDIT WOULD BE THIS//
+$pager = pager($perpage, $count, "$INSTALLER09[baseurl]/staffpanel.php?tool=reports&action=reports" . "?&amp;");
+
 if ($count == '0') $HTMLOUT.= "<p align='center'><b>{$lang['reports_nice']}</b></p></td></tr>";
 else {
     $HTMLOUT.= $pager['pagertop'];
