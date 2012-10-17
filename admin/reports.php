@@ -87,7 +87,7 @@ $res = sql_query("SELECT count(id) FROM reports") or sqlerr(__FILE__, __LINE__);
 $row = mysqli_fetch_array($res);
 $count = $row[0];
 $perpage = 15;
-$pager = pager($perpage, $count, $_SERVER["PHP_SELF"]."?&amp;");
+$pager = pager($perpage, $count, "staffpanel.php?tool=reports&amp;");
 if ($count == '0') $HTMLOUT.= "<p align='center'><b>{$lang['reports_nice']}</b></p></td></tr>";
 else {
     $HTMLOUT.= $pager['pagertop'];
