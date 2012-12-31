@@ -33,7 +33,7 @@ if ($action == 'viewbug') {
             switch ($status) {
             case 'fixed':
                 $msg = sqlesc("Hello ".htmlsafechars($q1['username']).".\nYour bug: [b]".htmlsafechars($q1['title'])."[/b] has been treated by one of our coder, and is done.\n\nWe would to thank you and therefore we have added [b]2 GB[/b] to your upload total :].\n\nBest regards, {$INSTALLER09['site_name']}'s coders.\n");
-                $uq = "UPDATE users SET uploaded = uploaded +".1024 * 1024 * 1024 * 2." WHERE id = ".sqlesc($q1['sender'])."";
+                $uq = "UPDATE users SET uploaded = uploaded + \"1024 * 1024 * 1024 * 2\" WHERE id = ".sqlesc($q1['sender'])."";
                 $update['uploaded'] = ($q1['uploaded'] + 1024 * 1024 * 1024 * 2);
                 $mc1->begin_transaction('userstats_'.$q1['sender']);
                 $mc1->update_row(false, array(
