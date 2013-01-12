@@ -18,6 +18,7 @@ require_once (INCL_DIR.'user_functions.php');
 require_once (INCL_DIR.'bbcode_functions.php');
 dbconn(false);
 loggedinorreturn();
+class_check(UC_STAFF);
 $HTMLOUT = $query = $dellall = $dtcolor = $fontcolor = $bg = $pm = $reply = '';
 header('Content-Type: text/html; charset='.charset());
 // === added turn on / off shoutbox - sir snuggs

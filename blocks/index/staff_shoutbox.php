@@ -16,7 +16,7 @@ if ($CURUSER['show_staffshout'] === "yes") {
    Staff ShoutBox
    <span class='shouthis'>";
     if ($CURUSER['class'] >= UC_STAFF) {
-        $HTMLOUT.= "<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=shistory&amp;action=shistory'><b>{$lang['index_shoutbox_history']}</b></a>";
+        $HTMLOUT.= "<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=staff_history&amp;action=staff_history'><b>{$lang['index_shoutbox_history']}</b></a>";
     }
     $HTMLOUT.= "</span>
    </div>
@@ -49,9 +49,9 @@ if ($CURUSER['show_staffshout'] === "yes") {
    <a href=\"javascript:SmileIT(':huh:','staff_shbox','staff_shbox_text')\"><img border='0' src='{$INSTALLER09['pic_base_url']}smilies/huh.gif' alt='Huh' title='Huh' /></a> 
    <a href=\"javascript:SmileIT(':look:','staff_shbox','staff_shbox_text')\"><img border='0' src='{$INSTALLER09['pic_base_url']}smilies/look.gif' alt='Look' title='Look' /></a> 
    <a href=\"javascript:SmileIT(':rolleyes:','staff_shbox','staff_shbox_text')\"><img border='0' src='{$INSTALLER09['pic_base_url']}smilies/rolleyes.gif' alt='Roll Eyes' title='Roll Eyes' /></a> 
-   <a href=\"javascript:SmileIT(':kiss:','shbox','staff_shbox_text')\"><img border='0' src='{$INSTALLER09['pic_base_url']}smilies/kiss.gif' alt='Kiss' title='Kiss' /></a> 
-   <a href=\"javascript:SmileIT(':blink:','shbox','staff_shbox_text')\"><img border='0' src='{$INSTALLER09['pic_base_url']}smilies/blink.gif' alt='Blink' title='Blink' /></a> 
-   <a href=\"javascript:SmileIT(':baby:','shbox','staff_shbox_text')\"><img border='0' src='{$INSTALLER09['pic_base_url']}smilies/baby.gif' alt='Baby' title='Baby' /></a>
+   <a href=\"javascript:SmileIT(':kiss:','staff_shbox','staff_shbox_text')\"><img border='0' src='{$INSTALLER09['pic_base_url']}smilies/kiss.gif' alt='Kiss' title='Kiss' /></a> 
+   <a href=\"javascript:SmileIT(':blink:','staff_shbox','staff_shbox_text')\"><img border='0' src='{$INSTALLER09['pic_base_url']}smilies/blink.gif' alt='Blink' title='Blink' /></a> 
+   <a href=\"javascript:SmileIT(':baby:','staff_shbox','staff_shbox_text')\"><img border='0' src='{$INSTALLER09['pic_base_url']}smilies/baby.gif' alt='Baby' title='Baby' /></a>
    <span class='shoutextra'><a href='{$INSTALLER09['baseurl']}/staff_shoutbox.php?show_staffshout=1&amp;show_staff=no'>[&nbsp;{$lang['index_shoutbox_close']}&nbsp;]</a>
    {$staffsmiliebutton}{$smilebutton}{$custombutton}{$refreshbutton}{$commandbutton}</span>
    </div>
