@@ -7,9 +7,9 @@
  *   Project Leaders: Mindless, putyn.
  *
  */
-require_once (dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
-require_once (CLASS_DIR.'page_verify.php');
-require_once (CACHE_DIR.'timezones.php');
+require_once (dirname(__FILE__) . DIRECTORY_SEPARATOR . 'include' . DIRECTORY_SEPARATOR . 'bittorrent.php');
+require_once (CLASS_DIR . 'page_verify.php');
+require_once (CACHE_DIR . 'timezones.php');
 dbconn();
 global $CURUSER;
 if (!$CURUSER) {
@@ -28,8 +28,8 @@ $stdfoot = array(
         'jquery.simpleCaptcha-0.2'
     )
 );
-if (!$INSTALLER09['openreg']) stderr('Sorry', 'Invite only - Signups are closed presently if you have an invite code click <a href="'.$INSTALLER09['baseurl'].'/invite_signup.php"><b> Here</b></a>');
-$HTMLOUT = $year = $month = $day = '';
+if (!$INSTALLER09['openreg']) stderr('Sorry', 'Invite only - Signups are closed presently if you have an invite code click <a href="' . $INSTALLER09['baseurl'] . '/invite_signup.php"><b> Here</b></a>');
+$HTMLOUT = $year = $month = $day = $gender = '';
 $HTMLOUT.= "
     <script type='text/javascript'>
     /*<![CDATA[*/
@@ -51,6 +51,25 @@ foreach ($TZ as $off => $words) {
     }
 }
 $time_select.= "</select>";
+//==country by pdq
+function countries()
+{
+    global $mc1, $INSTALLER09;
+    if (($ret = $mc1->get_value('countries::arr')) === false) {
+        $res = sql_query("SELECT id, name, flagpic FROM countries ORDER BY name ASC") or sqlerr(__FILE__, __LINE__);
+        while ($row = mysqli_fetch_assoc($res)) $ret[] = $row;
+        $mc1->cache_value('countries::arr', $ret, $INSTALLER09['expires']['user_flag']);
+    }
+    return $ret;
+}
+$country = '';
+$countries = countries();
+foreach ($countries as $cntry) $country.= "<option value='" . (int)$cntry['id'] . "'" . ($CURUSER["country"] == $cntry['id'] ? " selected='selected'" : "") . ">" . htmlsafechars($cntry['name']) . "</option>\n";
+$gender.= "<select name=\"gender\">
+    <option value=\"Male\">{$lang['signup_male']}</option>
+    <option value=\"Female\">{$lang['signup_female']}</option>
+    <option value=\"N/A\">{$lang['signup_na']}</option>
+    </select>";
 // Normal Entry Point...
 //== click X by Retro
 $value = array(
@@ -82,9 +101,9 @@ $HTMLOUT.= "<script type='text/javascript'>
 //==09 Birthday mod
 $year.= "<select name=\"year\">";
 $year.= "<option value=\"0000\">{$lang['signup_year']}</option>";
-$i = "2050";
-while ($i >= 1920) {
-    $year.= "<option value=\"".$i."\">".$i."</option>";
+$i = "2020";
+while ($i >= 1950) {
+    $year.= "<option value=\"" . $i . "\">" . $i . "</option>";
     $i--;
 }
 $year.= "</select>";
@@ -108,14 +127,14 @@ $day.= "<option value=\"00\">{$lang['signup_day']}</option>";
 $i = 1;
 while ($i <= 31) {
     if ($i < 10) {
-        $day.= "<option value=\"0".$i."\">0".$i."</option>";
+        $day.= "<option value=\"0" . $i . "\">0" . $i . "</option>";
     } else {
-        $day.= "<option value=\"".$i."\">".$i."</option>";
+        $day.= "<option value=\"" . $i . "\">" . $i . "</option>";
     }
     $i++;
 }
 $day.= "</select>";
-$HTMLOUT.= "<tr><td align='right' class='heading'>{$lang['signup_birth']}<span style='color:red'>*</span></td><td align='left'>".$year.$month.$day."</td></tr>";
+$HTMLOUT.= "<tr><td align='right' class='heading'>{$lang['signup_birth']}<span style='color:red'>*</span></td><td align='left'>" . $year . $month . $day . "</td></tr>";
 //==End
 //==Passhint
 $passhint = "";
@@ -146,20 +165,22 @@ $questions = array(
     )
 );
 foreach ($questions as $sph) {
-    $passhint.= "<option value='".$sph['id']."'>".$sph['question']."</option>\n";
+    $passhint.= "<option value='" . $sph['id'] . "'>" . $sph['question'] . "</option>\n";
 }
 $HTMLOUT.= "<tr><td align='right' class='heading'>{$lang['signup_select']}</td><td align='left'><select name='passhint'>\n$passhint\n</select></td></tr>
-		<tr><td align='right' class='heading'>{$lang['signup_enter']}</td><td align='left'><input type='text' size='40'  name='hintanswer' /><br /><span style='font-size: 1em;'>{$lang['signup_this_answer']}<br />{$lang['signup_this_answer1']}</span></td></tr>	
+		<tr><td align='right' class='heading'>{$lang['signup_enter']}</td><td align='left'><input type='text' size='40'  name='hintanswer' /><br /><span style='font-size: 1em;'>{$lang['signup_this_answer']}<br />{$lang['signup_this_answer1']}</span></td></tr>
+     <tr><td align='right' class='heading'>{$lang['signup_country']}</td><td align='left'><select name='country'>\n$country\n</select></td></tr>	
+     <tr><td align='right' class='heading'>{$lang['signup_gender']}</td><td align='left'>$gender</td></tr>
     <tr><td align='right' class='heading'></td><td align='left'>
     <input type='checkbox' name='rulesverify' value='yes' /> {$lang['signup_rules']}<br />
     <input type='checkbox' name='faqverify' value='yes' /> {$lang['signup_faq']}<br />
     <input type='checkbox' name='ageverify' value='yes' /> {$lang['signup_age']}</td></tr>
-    ".($INSTALLER09['captcha_on'] ? "<tr><td class='rowhead' colspan='2' id='captchasignup'></td></tr>" : "")."
+    " . ($INSTALLER09['captcha_on'] ? "<tr><td class='rowhead' colspan='2' id='captchasignup'></td></tr>" : "") . "
     <tr><td align='center' colspan='2'>{$lang['signup_click']} <strong>{$lang['signup_x']}</strong> {$lang['signup_click1']}</td></tr><tr>
     <td colspan='2' align='center'>";
 for ($i = 0; $i < count($value); $i++) {
-    $HTMLOUT.= "<input name=\"submitme\" type=\"submit\" value=\"".$value[$i]."\" class=\"btn\" />";
+    $HTMLOUT.= "<input name=\"submitme\" type=\"submit\" value=\"" . $value[$i] . "\" class=\"btn\" />";
 }
 $HTMLOUT.= "</td></tr></table></form>";
-echo stdhead($lang['head_signup']).$HTMLOUT.stdfoot($stdfoot);
+echo stdhead($lang['head_signup']) . $HTMLOUT . stdfoot($stdfoot);
 ?>

@@ -9,6 +9,7 @@
  */
 error_reporting(E_ALL); //== turn off = 0 when live
 define('PUBLIC_ACCESS', true);
+define('EMAIL_CONFIRM', true); // false to auto confirm signups
 define('SQL_DEBUG', 1);
 //==charset
 $INSTALLER09['char_set'] = 'UTF-8'; //also to be used site wide in meta tags

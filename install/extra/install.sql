@@ -2530,7 +2530,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `invitees` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
   `invite_on` enum('yes','no') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT 'yes',
   `subscription_pm` enum('yes','no') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT 'no',
-  `gender` enum('Male','Female','N/A') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'N/A',
+  `gender` enum('Male','Female','NA') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'N/A',
   `anonymous_until` int(10) NOT NULL DEFAULT '0',
   `viewscloud` enum('yes','no') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT 'yes',
   `tenpercent` enum('yes','no') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'no',
