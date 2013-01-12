@@ -59,5 +59,11 @@ $lang = array(
     'signup_click' => "Now click the button marked",
     'signup_x' => "X",
     'signup_click1' => "to complete the sign up!",
+    'signup_none' => 'None selected',
+    'signup_country' => 'Country',
+    'signup_male' => 'Male',
+    'signup_female' => 'Female',
+    'signup_na' => 'N/A',
+    'signup_gender' => 'Gender',
 );
 ?>
