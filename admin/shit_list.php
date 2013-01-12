@@ -173,6 +173,6 @@ if (mysqli_num_rows($res) == 0) {
     $i++;
 } //=== end while
 $HTMLOUT.= (($i % 2 == 0) ? '<td class="one" align="center" colspan="2"></td></tr>' : '');
-$HTMLOUT.= '</table><p align="center"><a class="altlink" href="members.php">Find Member / Browse Member List</a></p>';
+$HTMLOUT.= '</table><p align="center"><a class="altlink" href="users.php">Find Member / Browse Member List</a></p>';
 echo stdhead('Shit list for '.htmlsafechars($CURUSER['username'])).$HTMLOUT.stdfoot();
 ?>
