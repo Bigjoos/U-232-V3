@@ -16,7 +16,7 @@ if ($CURUSER['show_shout'] === "yes") {
    ShoutBox - General Chit-chat
    <span class='shouthis'>";
     if ($CURUSER['class'] >= UC_STAFF) {
-        $HTMLOUT.= "<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=shistory&amp;action=shistory'><b>{$lang['index_shoutbox_history']}</b></a>";
+        $HTMLOUT.= "<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=shistory'><b>{$lang['index_shoutbox_history']}</b></a>";
     }
     $HTMLOUT.= "</span>
    </div>

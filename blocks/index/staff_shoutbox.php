@@ -16,7 +16,7 @@ if ($CURUSER['show_staffshout'] === "yes") {
    Staff ShoutBox
    <span class='shouthis'>";
     if ($CURUSER['class'] >= UC_STAFF) {
-        $HTMLOUT.= "<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=staff_history&amp;action=staff_history'><b>{$lang['index_shoutbox_history']}</b></a>";
+        $HTMLOUT.= "<a href='{$INSTALLER09['baseurl']}/staffpanel.php?tool=staff_shistory'><b>{$lang['index_shoutbox_history']}</b></a>";
     }
     $HTMLOUT.= "</span>
    </div>
