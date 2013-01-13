@@ -23,6 +23,7 @@ $res = sql_query("SELECT achpoints FROM usersachiev WHERE id =" . sqlesc($id) . 
 $row = mysqli_fetch_row($res);
 $count = $row['0'];
 if (!$count) {
+    header("Refresh: 3; url=achievementhistory.php?id=$id");
     stderr("No Achievement Bonus Points", "It appears that you currently have no Achievement Bonus Points available to spend.");
     exit();
 }
@@ -153,6 +154,7 @@ if ($bonus_type == 5) {
         $mc1->delete_value('user_achievement_points_' . $id);
     }
 }
+header("Refresh: 3; url=achievementhistory.php?id=$id");
 stderr("Random Achievement Bonus", "$msg");
 echo stdhead('Achievement Random Bonus') . $HTMLOUT . stdfoot();
 ?>
