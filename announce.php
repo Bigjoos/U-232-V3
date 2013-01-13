@@ -120,9 +120,9 @@ $res = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT $fields FROM peers WHERE
 unset($wantseeds);
 //== compact mod
 if ($_GET['compact'] != 1) {
-    $resp = "d".benc_str("interval")."i".$INSTALLER09['announce_interval']."e".benc_str("private").'i1e'.benc_str("peers")."l";
+    $resp = 'd' . benc_str("interval") . 'i' . $INSTALLER09['announce_interval'] . 'e' . benc_str("private") . 'i1e' . benc_str("peers") . 'l';
 } else {
-    $resp = "d".benc_str("interval")."i".$INSTALLER09['announce_interval']."e".benc_str("private").'i1e'.benc_str("min interval")."i".300."e5:"."peers";
+    $resp = 'd' . benc_str("interval") . 'i' . $INSTALLER09['announce_interval'] . 'e' . benc_str("private") . 'i1e' . benc_str("min interval") . 'i' . 300 . 'e5:' . 'peers';
 }
 $peer = array();
 $peer_num = 0;
