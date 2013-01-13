@@ -144,6 +144,7 @@ if (in_array($category, $INSTALLER09['movie_cats'])) {
 // ==09 Sticky torrents
 if (($sticky = (isset($_POST['sticky']) != '' ? 'yes' : 'no')) != $fetch_assoc['sticky']) {
     $updateset[] = 'sticky = '.sqlesc($sticky);
+    if ($sticky == 'yes') sql_query("UPDATE usersachiev SET stickyup = stickyup + 1 WHERE id = " . sqlesc($fetch_assoc['owner'])) or sqlerr(__FILE__, __LINE__);
     //$torrent_cache['sticky'] = $sticky;
     
 }

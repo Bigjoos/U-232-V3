@@ -232,15 +232,15 @@ chmod($dir, 0664);
 //==
 if ($INSTALLER09['seedbonus_on'] == 1) {
     //===add karma
-    sql_query("UPDATE users SET seedbonus = seedbonus+15.0 WHERE id = ".sqlesc($CURUSER["id"])) or sqlerr(__FILE__, __LINE__);
+    sql_query("UPDATE users SET seedbonus=seedbonus+15.0, numuploads=numuploads+1 WHERE id = " . sqlesc($CURUSER["id"])) or sqlerr(__FILE__, __LINE__);
     //===end
     $update['seedbonus'] = ($CURUSER['seedbonus'] + 15);
-    $mc1->begin_transaction('userstats_'.$CURUSER["id"]);
+    $mc1->begin_transaction('userstats_' . $CURUSER["id"]);
     $mc1->update_row(false, array(
         'seedbonus' => $update['seedbonus']
     ));
     $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
-    $mc1->begin_transaction('user_stats_'.$CURUSER["id"]);
+    $mc1->begin_transaction('user_stats_' . $CURUSER["id"]);
     $mc1->update_row(false, array(
         'seedbonus' => $update['seedbonus']
     ));
@@ -278,6 +278,7 @@ if ($request > 0) {
         $mc1->delete_value('inbox_new_sb_'.$arr_req['user_id']);
     }
     sql_query('UPDATE requests SET filled_by_user_id = '.sqlesc($CURUSER['id']).', filled_torrent_id = '.sqlesc($id).' WHERE id = '.sqlesc($request)) or sqlerr(__FILE__, __LINE__);
+    sql_query("UPDATE usersachiev SET reqfilled = reqfilled + 1 WHERE id =".sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
     write_log('Request for torrent '.$id.' ('.htmlspeciachars($torrent).') was filled by '.$CURUSER['username']);
     $filled = 1;
 }

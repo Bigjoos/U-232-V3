@@ -63,6 +63,7 @@ if ($action == "avatar") {
         $img_size = @GetImageSize($avatar);
         if ($img_size == FALSE || !in_array($img_size['mime'], $INSTALLER09['allowed_ext'])) stderr($lang['takeeditcp_user_error'], $lang['takeeditcp_image_error']);
         if ($img_size[0] < 5 || $img_size[1] < 5) stderr($lang['takeeditcp_user_error'], $lang['takeeditcp_small_image']);
+        sql_query("UPDATE usersachiev SET avatarset=avatarset+1 WHERE id=" . sqlesc($CURUSER["id"]) . " AND avatarset = '0'") or sqlerr(__FILE__, __LINE__);
         if (($img_size[0] > $INSTALLER09['av_img_width']) OR ($img_size[1] > $INSTALLER09['av_img_height'])) {
             $image = resize_image(array(
                 'max_width' => $INSTALLER09['av_img_width'],
@@ -113,6 +114,7 @@ elseif ($action == "signature") {
         $img_size = @GetImageSize($signature);
         if ($img_size == FALSE || !in_array($img_size['mime'], $INSTALLER09['allowed_ext'])) stderr('USER ERROR', 'Not an image or unsupported image!');
         if ($img_size[0] < 5 || $img_size[1] < 5) stderr('USER ERROR', 'Image is too small');
+        sql_query("UPDATE usersachiev SET sigset=sigset+1 WHERE id=" . sqlesc($CURUSER["id"]) . " AND sigset = '0'") or sqlerr(__FILE__, __LINE__);
         if (($img_size[0] > $INSTALLER09['sig_img_width']) OR ($img_size[1] > $INSTALLER09['sig_img_height'])) {
             $image = resize_image(array(
                 'max_width' => $INSTALLER09['sig_img_width'],

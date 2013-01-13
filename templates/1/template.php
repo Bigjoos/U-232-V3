@@ -322,6 +322,17 @@ function StatusBar()
             $connectable = "N/A";
         }
     } else $connectable = 'N/A';
+       
+    //== Achievement points
+       if(($Achievement_Points = $mc1->get_value('user_achievement_points_'.$CURUSER['id'])) === false) {
+       $Sql = sql_query("SELECT users.id, users.username, usersachiev.achpoints, usersachiev.spentpoints FROM users LEFT JOIN usersachiev ON users.id = usersachiev.id WHERE users.id = ".sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
+       $Achievement_Points = mysqli_fetch_assoc($Sql);
+       $Achievement_Points['id'] = (int)$Achievement_Points['id'];
+       $Achievement_Points['achpoints'] = (int)$Achievement_Points['achpoints'];
+       $Achievement_Points['spentpoints'] = (int)$Achievement_Points['spentpoints'];
+       $mc1->cache_value('user_achievement_points_'.$CURUSER['id'], $Achievement_Points, 0);
+       }
+    //==
     //////////// REP SYSTEM /////////////
     $member_reputation = get_reputation($CURUSER);
     ////////////// REP SYSTEM END //////////
@@ -346,6 +357,7 @@ function StatusBar()
          <div class='slide_c'>Reputation</div><div class='slide_d'>$member_reputation</div>
          <div class='slide_a'>Invites</div><div class='slide_b'><a href='./invite.php'>{$CURUSER['invites']}</a></div>
          <div class='slide_c'>Bonus Points</div><div class='slide_d'><a href='./mybonus.php'>{$CURUSER['seedbonus']}</a></div>
+         <div class='slide_a'>Achievements</div><div class='slide_b'><a href='./achievementhistory.php?id={$CURUSER['id']}'>".(int)$Achievement_Points['achpoints']."</a></div>
          <div class='slide_head'>:: Torrent Stats</div>
          <div class='slide_a'>Share Ratio</div><div class='slide_b'>".member_ratio($CURUSER['uploaded'], $INSTALLER09['ratio_free'] ? "0" : $CURUSER['downloaded'])."</div>";
     if ($INSTALLER09['ratio_free']) {

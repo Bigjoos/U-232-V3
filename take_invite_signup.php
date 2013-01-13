@@ -94,6 +94,7 @@ $new_user = sql_query("INSERT INTO users (username, passhash, secret, passhint, 
     (int)$assoc['sender'],
     $email
 ))).", ".(!$arr[0] ? UC_SYSOP.", " : "")."'".TIME_NOW."','".TIME_NOW."','".TIME_NOW."', $time_offset, {$dst_in_use['tm_isdst']}, $user_frees)");
+sql_query("UPDATE usersachiev SET invited=invited+1 WHERE id =".sqlesc($assoc['sender'])) or sqlerr(__FILE__, __LINE__);
 $message = "Welcome New {$INSTALLER09['site_name']} Member : - ".htmlsafechars($wantusername)."";
 if (!$new_user) {
     if (((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) == 1062) stderr("Error", "Username already exists!");

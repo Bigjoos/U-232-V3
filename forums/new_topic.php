@@ -86,6 +86,7 @@ if (isset($_POST['button']) && $_POST['button'] == 'Post') {
     $topic_id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
     sql_query('INSERT INTO `posts` ( `topic_id` , `user_id` , `added` , `body` , `icon` , `post_title` , `bbcode` , `ip` ) VALUES 
       		('.$topic_id.', '.$CURUSER['id'].', '.TIME_NOW.', '.sqlesc($body).', '.sqlesc($icon).',  '.sqlesc($post_title).', '.sqlesc($bb_code).',  '.sqlesc($ip).')');
+    sql_query("UPDATE usersachiev SET forumtopics=forumtopics+1 WHERE id=" . sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
     $post_id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
     $mc1->delete_value('last_posts_'.$CURUSER['class']);
     $mc1->delete_value('forum_posts_'.$CURUSER['id']);

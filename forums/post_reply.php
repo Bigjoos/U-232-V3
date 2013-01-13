@@ -75,6 +75,7 @@ if (isset($_POST['button']) && $_POST['button'] == 'Post') {
     $post_id = ((is_null($___mysqli_res = mysqli_insert_id($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
     sql_query('UPDATE topics SET last_post='.sqlesc($post_id).', post_count = post_count + 1 WHERE id='.sqlesc($topic_id));
     sql_query('UPDATE `forums` SET post_count = post_count +1 WHERE id ='.sqlesc($arr['real_forum_id']));
+    sql_query("UPDATE usersachiev SET forumposts=forumposts+1 WHERE id=" . sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
     if ($INSTALLER09['autoshout_on'] == 1) {
         $message = $CURUSER['username']." replied to topic [url={$INSTALLER09['baseurl']}/forums.php?action=view_topic&topic_id=$topic_id&page=last]{$topic_name}[/url]";
         //////remember to edit the ids to your staffforum ids :)
