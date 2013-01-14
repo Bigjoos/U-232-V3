@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `achievements` (
   `achievementid` int(5) NOT NULL DEFAULT '0',
   UNIQUE KEY `id` (`id`),
   KEY `userid` (`userid`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `achievements`
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `achievementist` (
   `clienticon` varchar(255) DEFAULT NULL,
   UNIQUE KEY `id` (`id`),
   KEY `hostname` (`achievname`)
-) ENGINE=MyISAM AUTO_INCREMENT=87 DEFAULT CHARSET=latin1 AUTO_INCREMENT=87 ;
+) ENGINE=MyISAM AUTO_INCREMENT=87 DEFAULT CHARSET=latin1;
  
 -- 
 -- Dumping data for table `achievementist`
@@ -2848,7 +2848,7 @@ CREATE TABLE IF NOT EXISTS `usersachiev` (
   `totalshouts` int(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=MyISAM AUTO_INCREMENT= DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT= DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `usersachiev`
