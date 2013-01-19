@@ -70,6 +70,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
     if ($CURUSER['class'] <= $user['class'] && ($CURUSER['id'] != $userid && $CURUSER['class'] < UC_ADMINISTRATOR)) stderr('Error', 'You cannot edit someone of the same or higher class.. injecting stuff arent we? Action logged');
     if (($user['immunity'] >= 1) && ($CURUSER['class'] < UC_MAX)) stderr("Error", "This user is immune to your commands !");
     $updateset = $curuser_cache = $user_cache = $stats_cache = $user_stats_cache = $useredit['update'] = array();
+    $username = ($CURUSER['perms'] & bt_options::PERMS_STEALTH ? 'System' : htmlsafechars($CURUSER['username']));
     $modcomment = (isset($_POST['modcomment']) && $CURUSER['class'] == UC_MAX) ? $_POST['modcomment'] : $user['modcomment'];
     //== Set class
     if ((isset($_POST['class'])) && (($class = $_POST['class']) != $user['class'])) {
@@ -77,14 +78,14 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         if (!valid_class($class) || $CURUSER['class'] <= $_POST['class']) stderr(("Error") , "Bad class :P");
         //== Notify user
         $what = ($class > $user['class'] ? "{$lang['modtask_promoted']}" : "{$lang['modtask_demoted']}");
-        $msg = sqlesc(sprintf($lang['modtask_have_been'], $what)." '".get_user_class_name($class)."' {$lang['modtask_by']} ".$CURUSER['username']);
+        $msg = sqlesc(sprintf($lang['modtask_have_been'], $what)." '".get_user_class_name($class)."' {$lang['modtask_by']} ".$username);
         $added = TIME_NOW;
         sql_query("INSERT INTO messages (sender, receiver, msg, added) VALUES(0, $userid, $msg, $added)") or sqlerr(__FILE__, __LINE__);
         $updateset[] = "class = ".sqlesc($class);
         $useredit['update'][] = ''.$what.' to '.get_user_class_name($class).'';
         $curuser_cache['class'] = $class;
         $user_cache['class'] = $class;
-        $modcomment = get_date(TIME_NOW, 'DATE', 1)." - $what to '".get_user_class_name($class)."' by $CURUSER[username].\n".$modcomment;
+        $modcomment = get_date(TIME_NOW, 'DATE', 1)." - $what to '".get_user_class_name($class)."' by {$CURUSER['username']}.\n".$modcomment;
     }
     // === add donated amount to user and to funds table
     if ((isset($_POST['donated'])) && (($donated = $_POST['donated']) != $user['donated'])) {
@@ -103,7 +104,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
     if ((isset($_POST['donorlength'])) && ($donorlength = 0 + $_POST['donorlength'])) {
         if ($donorlength == 255) {
             $modcomment = get_date(TIME_NOW, 'DATE', 1)."{$lang['modtask_donor_set']}".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc("You have received donor status from ".$CURUSER['username']);
+            $msg = sqlesc("You have received donor status from ".$username);
             $subject = sqlesc("Thank You for Your Donation!");
             $updateset[] = "donoruntil = '0'";
             $curuser_cache['donoruntil'] = '0';
@@ -121,7 +122,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
        cheers,
        {$INSTALLER09['site_name']} Staff
 
-       PS. Your donator status will last for $dur and can be found on your user details page and can only be seen by you :smile: It was set by ".$CURUSER['username']);
+       PS. Your donator status will last for $dur and can be found on your user details page and can only be seen by you :smile: It was set by ".$username);
             $subject = sqlesc("Thank You for Your Donation!");
             $modcomment = get_date(TIME_NOW, 'DATE', 1)."{$lang['modtask_donor_set']}".$CURUSER['username'].".\n".$modcomment;
             $updateset[] = "donoruntil = ".sqlesc($donoruntil);
@@ -157,7 +158,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
        cheers,
        {$INSTALLER09['site_name']} Staff
 
-        PS. Your donator status will last for an extra $dur on top of your current donation status, and can be found on your user details page and can only be seen by you :smile: It was set by ".$CURUSER['username']);
+        PS. Your donator status will last for an extra $dur on top of your current donation status, and can be found on your user details page and can only be seen by you :smile: It was set by ".$username);
         $subject = sqlesc("Thank You for Your Donation... Again!");
         $modcomment = get_date(TIME_NOW, 'DATE', 1)." - Donator status set for another $dur by ".$CURUSER['username'].".\n".$modcomment;
         $donorlengthadd = $donorlengthadd * 7;
@@ -189,7 +190,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         $user_cache['class'] = $user["vipclass_before"];
         if ($donor == 'no') {
             $modcomment = get_date(TIME_NOW, 'DATE', 1)."{$lang['modtask_donor_removed']} ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc(sprintf($lang['modtask_donor_removed']).$CURUSER['username']);
+            $msg = sqlesc(sprintf($lang['modtask_donor_removed']).$username);
             $added = TIME_NOW;
             $subject = sqlesc("Donator status expired.");
             sql_query("INSERT INTO messages (sender, subject, receiver, msg, added) VALUES (0, $subject, $userid, $msg, $added)") or sqlerr(__file__, __line__);
@@ -213,14 +214,14 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         $added = TIME_NOW;
         if ($downloadpos == 255) {
             $modcomment = get_date($added, 'DATE', 1)." - Download disablement by ".$CURUSER['username'].".\nReason: $disable_pm\n".$modcomment;
-            $msg = sqlesc("Your Downloading rights have been disabled by ".$CURUSER['username'].($disable_pm ? "\n\nReason: $disable_pm" : ''));
+            $msg = sqlesc("Your Downloading rights have been disabled by ".$username.($disable_pm ? "\n\nReason: $disable_pm" : ''));
             $updateset[] = 'downloadpos = 0';
             $useredit['update'][] = 'Download possible = No';
             $curuser_cache['downloadpos'] = '0';
             $user_cache['downloadpos'] = '0';
         } elseif ($downloadpos == 42) {
             $modcomment = get_date($added, 'DATE', 1)." - Download disablement status removed by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc("Your Downloading rights have been restored by ".$CURUSER['username'].".");
+            $msg = sqlesc("Your Downloading rights have been restored by ".$username.".");
             $updateset[] = 'downloadpos = 1';
             $useredit['update'][] = 'Download possible = Yes';
             $curuser_cache['downloadpos'] = '1';
@@ -228,7 +229,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         } else {
             $downloadpos_until = ($added + $downloadpos * 604800);
             $dur = $downloadpos.' week'.($downloadpos > 1 ? 's' : '');
-            $msg = sqlesc("You have received $dur Download disablement from ".$CURUSER['username'].($disable_pm ? "\n\nReason: $disable_pm" : ''));
+            $msg = sqlesc("You have received $dur Download disablement from ".$username.($disable_pm ? "\n\nReason: $disable_pm" : ''));
             $modcomment = get_date($added, 'DATE', 1)." - Download disablement for $dur by ".$CURUSER['username'].".\nReason: $disable_pm\n".$modcomment;
             $updateset[] = "downloadpos = ".$downloadpos_until;
             $useredit['update'][] = 'Downloads disabled  = '.$downloadpos_until.'';
@@ -246,14 +247,14 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         $added = TIME_NOW;
         if ($uploadpos == 255) {
             $modcomment = get_date($added, 'DATE', 1)." - Upload disablement by ".$CURUSER['username'].".\nReason: $updisable_pm\n".$modcomment;
-            $msg = sqlesc("Your Uploading rights have been disabled by ".$CURUSER['username'].($updisable_pm ? "\n\nReason: $updisable_pm" : ''));
+            $msg = sqlesc("Your Uploading rights have been disabled by ".$username.($updisable_pm ? "\n\nReason: $updisable_pm" : ''));
             $updateset[] = 'uploadpos = 0';
             $useredit['update'][] = 'Uploads enabled = No';
             $curuser_cache['uploadpos'] = '0';
             $user_cache['uploadpos'] = '0';
         } elseif ($uploadpos == 42) {
             $modcomment = get_date($added, 'DATE', 1)." - Upload disablement status removed by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc("Your Uploading rights have been restored by ".$CURUSER['username'].".");
+            $msg = sqlesc("Your Uploading rights have been restored by ".$username.".");
             $updateset[] = 'uploadpos = 1';
             $useredit['update'][] = 'Uploads enabled = Yes';
             $curuser_cache['uploadpos'] = '1';
@@ -261,7 +262,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         } else {
             $uploadpos_until = ($added + $uploadpos * 604800);
             $dur = $uploadpos.' week'.($uploadpos > 1 ? 's' : '');
-            $msg = sqlesc("You have received $dur Upload disablement from ".$CURUSER['username'].($updisable_pm ? "\n\nReason: $updisable_pm" : ''));
+            $msg = sqlesc("You have received $dur Upload disablement from ".$username.($updisable_pm ? "\n\nReason: $updisable_pm" : ''));
             $modcomment = get_date($added, 'DATE', 1)." - Upload disablement for $dur by ".$CURUSER['username'].".\nReason: $updisable_pm\n".$modcomment;
             $updateset[] = "uploadpos = ".$uploadpos_until;
             $useredit['update'][] = 'Uploads disabled  = '.$uploadpos_until.'';
@@ -279,14 +280,14 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         $added = TIME_NOW;
         if ($sendpmpos == 255) {
             $modcomment = get_date($added, 'DATE', 1)." - Pm disablement by ".$CURUSER['username'].".\nReason: $pmdisable_pm\n".$modcomment;
-            $msg = sqlesc("Your Pm rights have been disabled by ".$CURUSER['username'].($pmdisable_pm ? "\n\nReason: $pmdisable_pm" : ''));
+            $msg = sqlesc("Your Pm rights have been disabled by ".$username.($pmdisable_pm ? "\n\nReason: $pmdisable_pm" : ''));
             $updateset[] = 'sendpmpos = 0';
             $useredit['update'][] = 'Private messages enabled = No';
             $curuser_cache['sendpmpos'] = '0';
             $user_cache['sendpmpos'] = '0';
         } elseif ($sendpmpos == 42) {
             $modcomment = get_date($added, 'DATE', 1)." - Pm disablement status removed by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc("Your Pm rights have been restored by ".$CURUSER['username'].".");
+            $msg = sqlesc("Your Pm rights have been restored by ".$username.".");
             $updateset[] = 'sendpmpos = 1';
             $useredit['update'][] = 'Private messages enabled = Yes';
             $curuser_cache['sendpmpos'] = '1';
@@ -294,7 +295,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         } else {
             $sendpmpos_until = ($added + $sendpmpos * 604800);
             $dur = $sendpmpos.' week'.($sendpmpos > 1 ? 's' : '');
-            $msg = sqlesc("You have received $dur Pm disablement from ".$CURUSER['username'].($pmdisable_pm ? "\n\nReason: $pmdisable_pm" : ''));
+            $msg = sqlesc("You have received $dur Pm disablement from ".$username.($pmdisable_pm ? "\n\nReason: $pmdisable_pm" : ''));
             $modcomment = get_date($added, 'DATE', 1)." - Pm disablement for $dur by ".$CURUSER['username'].".\nReason: $pmdisable_pm\n".$modcomment;
             $updateset[] = "sendpmpos = ".$sendpmpos_until;
             $useredit['update'][] = 'Private messages disabled = '.$sendpmpos_until.'';
@@ -312,14 +313,14 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         $added = TIME_NOW;
         if ($chatpost == 255) {
             $modcomment = get_date($added, 'DATE', 1)." - Shout disablement by ".$CURUSER['username'].".\nReason: $chatdisable_pm\n".$modcomment;
-            $msg = sqlesc("Your Shoutbox rights have been disabled by ".$CURUSER['username'].($chatdisable_pm ? "\n\nReason: $chatdisable_pm" : ''));
+            $msg = sqlesc("Your Shoutbox rights have been disabled by ".$username.($chatdisable_pm ? "\n\nReason: $chatdisable_pm" : ''));
             $updateset[] = 'chatpost = 0';
             $useredit['update'][] = 'Shoutbox enabled = No';
             $curuser_cache['chatpost'] = '0';
             $user_cache['chatpost'] = '0';
         } elseif ($chatpost == 42) {
             $modcomment = get_date($added, 'DATE', 1)." - Shoutbox disablement status removed by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc("Your Shoutbox rights have been restored by ".$CURUSER['username'].".");
+            $msg = sqlesc("Your Shoutbox rights have been restored by ".$username.".");
             $updateset[] = 'chatpost = 1';
             $useredit['update'][] = 'Shoutbox enabled = Yes';
             $curuser_cache['chatpost'] = '1';
@@ -327,7 +328,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         } else {
             $chatpost_until = ($added + $chatpost * 604800);
             $dur = $chatpost.' week'.($chatpost > 1 ? 's' : '');
-            $msg = sqlesc("You have received $dur Shoutbox disablement from ".$CURUSER['username'].($chatdisable_pm ? "\n\nReason: $chatdisable_pm" : ''));
+            $msg = sqlesc("You have received $dur Shoutbox disablement from ".$username.($chatdisable_pm ? "\n\nReason: $chatdisable_pm" : ''));
             $modcomment = get_date($added, 'DATE', 1)." - Shoutbox disablement for $dur by ".$CURUSER['username'].".\nReason: $chatdisable_pm\n".$modcomment;
             $updateset[] = "chatpost = ".$chatpost_until;
             $useredit['update'][] = 'Shoutbox disabled = '.$chatpost_until.'';
@@ -345,20 +346,20 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         $added = TIME_NOW;
         if ($immunity == 255) {
             $modcomment = get_date($added, 'DATE', 1)." - Immune Status enabled by ".$CURUSER['username'].".\nReason: $immunity_pm\n".$modcomment;
-            $msg = sqlesc("You have received immunity Status from ".$CURUSER['username'].($immunity_pm ? "\n\nReason: $immunity_pm" : ''));
+            $msg = sqlesc("You have received immunity Status from ".$username.($immunity_pm ? "\n\nReason: $immunity_pm" : ''));
             $updateset[] = 'immunity = 1';
             $curuser_cache['immunity'] = '1';
             $user_cache['immunity'] = '1';
         } elseif ($immunity == 42) {
             $modcomment = get_date($added, 'DATE', 1)." - Immunity Status removed by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc("Your Immunity Status has been removed by ".$CURUSER['username'].".");
+            $msg = sqlesc("Your Immunity Status has been removed by ".$username.".");
             $updateset[] = 'immunity = 0';
             $curuser_cache['immunity'] = '0';
             $user_cache['immunity'] = '0';
         } else {
             $immunity_until = ($added + $immunity * 604800);
             $dur = $immunity.' week'.($immunity > 1 ? 's' : '');
-            $msg = sqlesc("You have received $dur Immunity Status from ".$CURUSER['username'].($immunity_pm ? "\n\nReason: $immunity_pm" : ''));
+            $msg = sqlesc("You have received $dur Immunity Status from ".$username.($immunity_pm ? "\n\nReason: $immunity_pm" : ''));
             $modcomment = get_date($added, 'DATE', 1)." - Immunity Status for $dur by ".$CURUSER['username'].".\nReason: $immunity_pm\n".$modcomment;
             $updateset[] = "immunity = ".$immunity_until;
             $curuser_cache['immunity'] = $immunity_until;
@@ -375,20 +376,20 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         $added = TIME_NOW;
         if ($leechwarn == 255) {
             $modcomment = get_date($added, 'DATE', 1)." - leechwarn Status enabled by ".$CURUSER['username'].".\nReason: $leechwarn_pm\n".$modcomment;
-            $msg = sqlesc("You have received leechwarn Status from ".$CURUSER['username'].($leechwarn_pm ? "\n\nReason: $leechwarn_pm" : ''));
+            $msg = sqlesc("You have received leechwarn Status from ".$username.($leechwarn_pm ? "\n\nReason: $leechwarn_pm" : ''));
             $updateset[] = 'leechwarn = 1';
             $curuser_cache['leechwarn'] = '1';
             $user_cache['leechwarn'] = '1';
         } elseif ($leechwarn == 42) {
             $modcomment = get_date($added, 'DATE', 1)." - leechwarn Status removed by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc("Your leechwarn Status has been removed by ".$CURUSER['username'].".");
+            $msg = sqlesc("Your leechwarn Status has been removed by ".$username.".");
             $updateset[] = 'leechwarn = 0';
             $curuser_cache['leechwarn'] = '0';
             $user_cache['leechwarn'] = '0';
         } else {
             $leechwarn_until = ($added + $leechwarn * 604800);
             $dur = $leechwarn.' week'.($leechwarn > 1 ? 's' : '');
-            $msg = sqlesc("You have received $dur leechwarn Status from ".$CURUSER['username'].($leechwarn_pm ? "\n\nReason: $leechwarn_pm" : ''));
+            $msg = sqlesc("You have received $dur leechwarn Status from ".$username.($leechwarn_pm ? "\n\nReason: $leechwarn_pm" : ''));
             $modcomment = get_date($added, 'DATE', 1)." - leechwarn Status for $dur by ".$CURUSER['username'].".\nReason: $leechwarn_pm\n".$modcomment;
             $updateset[] = "leechwarn = ".$leechwarn_until;
             $curuser_cache['leechwarn'] = $leechwarn_until;
@@ -405,20 +406,20 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         $added = TIME_NOW;
         if ($warned == 255) {
             $modcomment = get_date($added, 'DATE', 1)." - warned Status enabled by ".$CURUSER['username'].".\nReason: $warned_pm\n".$modcomment;
-            $msg = sqlesc("You have received warned Status from ".$CURUSER['username'].($warned_pm ? "\n\nReason: $warned_pm" : ''));
+            $msg = sqlesc("You have received warned Status from ".$username.($warned_pm ? "\n\nReason: $warned_pm" : ''));
             $updateset[] = 'warned = 1';
             $curuser_cache['warned'] = '1';
             $user_cache['warned'] = '1';
         } elseif ($warned == 42) {
             $modcomment = get_date($added, 'DATE', 1)." - warned Status removed by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc("Your warned Status has been removed by ".$CURUSER['username'].".");
+            $msg = sqlesc("Your warned Status has been removed by ".$username.".");
             $updateset[] = 'warned = 0';
             $curuser_cache['warned'] = '0';
             $user_cache['warned'] = '0';
         } else {
             $warned_until = ($added + $warned * 604800);
             $dur = $warned.' week'.($warned > 1 ? 's' : '');
-            $msg = sqlesc("You have received $dur warned Status from ".$CURUSER['username'].($warned_pm ? "\n\nReason: $warned_pm" : ''));
+            $msg = sqlesc("You have received $dur warned Status from ".$username.($warned_pm ? "\n\nReason: $warned_pm" : ''));
             $modcomment = get_date($added, 'DATE', 1)." - warned Status for $dur by ".$CURUSER['username'].".\nReason: $warned_pm\n".$modcomment;
             $updateset[] = "warned = ".$warned_until;
             $curuser_cache['warned'] = $warned_until;
@@ -617,14 +618,14 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         $added = TIME_NOW;
         if ($free_switch == 255) {
             $modcomment = get_date($added, 'DATE', 1)." - Freeleech Status enabled by ".$CURUSER['username'].".\nReason: $free_pm\n".$modcomment;
-            $msg = sqlesc("You have received Freeleech Status from ".$CURUSER['username'].($free_pm ? "\n\nReason: $free_pm" : ''));
+            $msg = sqlesc("You have received Freeleech Status from ".$username.($free_pm ? "\n\nReason: $free_pm" : ''));
             $updateset[] = 'free_switch = 1';
             $useredit['update'][] = 'Freeleech enabled = Yes';
             $curuser_cache['free_switch'] = '1';
             $user_cache['free_switch'] = '1';
         } elseif ($free_switch == 42) {
             $modcomment = get_date($added, 'DATE', 1)." - Freeleech Status removed by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc("Your Freeleech Status has been removed by ".$CURUSER['username'].".");
+            $msg = sqlesc("Your Freeleech Status has been removed by ".$username.".");
             $updateset[] = 'free_switch = 0';
             $useredit['update'][] = 'Freeleech enabled = No';
             $curuser_cache['free_switch'] = '0';
@@ -632,7 +633,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         } else {
             $free_until = ($added + $free_switch * 604800);
             $dur = $free_switch.' week'.($free_switch > 1 ? 's' : '');
-            $msg = sqlesc("You have received $dur Freeleech Status from ".$CURUSER['username'].($free_pm ? "\n\nReason: $free_pm" : ''));
+            $msg = sqlesc("You have received $dur Freeleech Status from ".$username.($free_pm ? "\n\nReason: $free_pm" : ''));
             $modcomment = get_date($added, 'DATE', 1)." - Freeleech Status for $dur by ".$CURUSER['username'].".\nReason: $free_pm\n".$modcomment;
             $updateset[] = "free_switch = ".$free_until;
             $useredit['update'][] = 'Freeleech enabled = '.get_date($free_until, 'DATE', 0, 1).'';
@@ -650,14 +651,14 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         $added = TIME_NOW;
         if ($game_access == 255) {
             $modcomment = get_date($added, 'DATE', 1)." - Gaming disablement by ".$CURUSER['username'].".\nReason: $game_disable_pm\n".$modcomment;
-            $msg = sqlesc("Your gaming rights have been disabled by ".$CURUSER['username'].($game_disable_pm ? "\n\nReason: $game_disable_pm" : ''));
+            $msg = sqlesc("Your gaming rights have been disabled by ".$username.($game_disable_pm ? "\n\nReason: $game_disable_pm" : ''));
             $updateset[] = 'game_access = 0';
             $useredit['update'][] = 'Games possible = No';
             $curuser_cache['game_access'] = 0;
             $user_cache['game_access'] = 0;
         } elseif ($game_access == 42) {
             $modcomment = get_date($added, 'DATE', 1)." - Gaming disablement status removed by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc("Your gaming rights have been restored by ".$CURUSER['username'].".");
+            $msg = sqlesc("Your gaming rights have been restored by ".$username.".");
             $updateset[] = 'game_access = 1';
             $useredit['update'][] = 'Games possible = Yes';
             $curuser_cache['game_access'] = 1;
@@ -665,7 +666,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         } else {
             $game_access_until = ($added + $game_access * 604800);
             $dur = $game_access.' week'.($game_access > 1 ? 's' : '');
-            $msg = sqlesc("You have received $dur games disablement from ".$CURUSER['username'].($game_disable_pm ? "\n\nReason: $game_disable_pm" : ''));
+            $msg = sqlesc("You have received $dur games disablement from ".$username.($game_disable_pm ? "\n\nReason: $game_disable_pm" : ''));
             $modcomment = get_date($added, 'DATE', 1)." - Games disablement for $dur by ".$CURUSER['username'].".\nReason: $game_disable_pm\n".$modcomment;
             $updateset[] = "game_access = ".$game_access_until;
             $useredit['update'][] = 'Games disabled  = '.get_date($game_access_until, 'DATE', 0, 1).'';
@@ -683,14 +684,14 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         $added = TIME_NOW;
         if ($avatarpos == 255) {
             $modcomment = get_date($added, 'DATE', 1)." - Avatar disablement by ".$CURUSER['username'].".\nReason: $avatardisable_pm\n".$modcomment;
-            $msg = sqlesc("Your Avatar rights have been disabled by ".$CURUSER['username'].($avatardisable_pm ? "\n\nReason: $avatardisable_pm" : ''));
+            $msg = sqlesc("Your Avatar rights have been disabled by ".$username.($avatardisable_pm ? "\n\nReason: $avatardisable_pm" : ''));
             $updateset[] = 'avatarpos = 0';
             $useredit['update'][] = 'Avatars possible = No';
             $curuser_cache['avatarpos'] = 0;
             $user_cache['avatarpos'] = 0;
         } elseif ($avatarpos == 42) {
             $modcomment = get_date($added, 'DATE', 1)." - Avatar disablement status removed by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc("Your Avatar rights have been restored by ".$CURUSER['username'].".");
+            $msg = sqlesc("Your Avatar rights have been restored by ".$username.".");
             $updateset[] = 'avatarpos = 1';
             $useredit['update'][] = 'Avatars possible = Yes';
             $curuser_cache['avatarpos'] = 1;
@@ -698,7 +699,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         } else {
             $avatarpos_until = ($added + $avatarpos * 604800);
             $dur = $avatarpos.' week'.($avatarpos > 1 ? 's' : '');
-            $msg = sqlesc("You have received $dur Avatar disablement from ".$CURUSER['username'].($avatardisable_pm ? "\n\nReason: $avatardisable_pm" : ''));
+            $msg = sqlesc("You have received $dur Avatar disablement from ".$username.($avatardisable_pm ? "\n\nReason: $avatardisable_pm" : ''));
             $modcomment = get_date($added, 'DATE', 1)." - Avatar disablement for $dur by ".$CURUSER['username'].".\nReason: $avatardisable_pm\n".$modcomment;
             $updateset[] = "avatarpos = ".$avatarpos_until;
             $useredit['update'][] = 'Avatar selection disabled  = '.get_date($avatarpos_until, 'DATE', 0, 1).'';
@@ -713,13 +714,13 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         if ($highspeed == 'yes') {
             $modcomment = get_date(TIME_NOW, 'DATE', 1)." - Highspeed Upload enabled by ".$CURUSER['username'].".\n".$modcomment;
             $subject = sqlesc("Highspeed uploader status.");
-            $msg = sqlesc("You  have been set as a high speed uploader by  ".$CURUSER['username'].". You can now upload torrents using highspeeds without being flagged as a cheater  .");
+            $msg = sqlesc("You  have been set as a high speed uploader by  ".$username.". You can now upload torrents using highspeeds without being flagged as a cheater  .");
             $added = TIME_NOW;
             sql_query("INSERT INTO messages (sender, receiver, msg, subject, added) VALUES (0, $userid, $msg, $subject, $added)") or sqlerr(__file__, __line__);
         } elseif ($highspeed == 'no') {
             $modcomment = get_date(TIME_NOW, 'DATE', 1)." - Highspeed Upload disabled by ".$CURUSER['username'].".\n".$modcomment;
             $subject = sqlesc("Highspeed uploader status.");
-            $msg = sqlesc("Your highspeed upload setting has been disabled by ".$CURUSER['username'].". Please PM ".$CURUSER['username']." for the reason why.");
+            $msg = sqlesc("Your highspeed upload setting has been disabled by ".$username.". Please PM ".$username." for the reason why.");
             $added = TIME_NOW;
             sql_query("INSERT INTO messages (sender, receiver, msg, subject, added) VALUES (0, $userid, $msg, $subject, $added)") or sqlerr(__file__, __line__);
         } else die(); //== Error
@@ -761,7 +762,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
             $user_cache['invite_on'] = 'no';
             $useredit['update'][] = 'Account suspended = Yes';
             $subject = sqlesc('Account Suspended!');
-            $msg = sqlesc("Your account has been suspended by ".$CURUSER['username'].".\n[b]The Reason:[/b]\n".sqlesc($suspended_reason).".\n\nWhile your account is suspended, your posting - uploading - downloading - commenting - invites will not work, and the only people that you can PM are staff members.\n\nIf you feel this suspension is in error, please feel free to contact a staff member. \n\ncheers,\n".$INSTALLER09['site_name']." Staff");
+            $msg = sqlesc("Your account has been suspended by ".$username.".\n[b]The Reason:[/b]\n".sqlesc($suspended_reason).".\n\nWhile your account is suspended, your posting - uploading - downloading - commenting - invites will not work, and the only people that you can PM are staff members.\n\nIf you feel this suspension is in error, please feel free to contact a staff member. \n\ncheers,\n".$INSTALLER09['site_name']." Staff");
             //=== post to forum
             //*** you'll need Retro's auto_post() function. Also, look at the $updateset[] stuff to be sure you use them ;)
             //$body = sqlesc("Account for [b][url=".$INSTALLER09['baseurl']."/member_details.php?id=".$user["id"]."]".$user["username"]."[/url][/b] has been suspended by " . $CURUSER['username'] . "\n\n [b]reason:[/b]\n ".sqlesc($suspended_reason).".\n" );
@@ -776,7 +777,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
             $updateset[] = "invite_on = 'yes'";
             $useredit['update'][] = 'Account suspended = No';
             $subject = sqlesc("Account Un-Suspended!");
-            $msg = sqlesc("Your account has had it's suspension lifted by ".$CURUSER['username'].".\n[b]The Reason:[/b]\n".sqlesc($suspended_reason).". \n\ncheers,\n".$INSTALLER09['site_name']." Staff");
+            $msg = sqlesc("Your account has had it's suspension lifted by ".$username.".\n[b]The Reason:[/b]\n".sqlesc($suspended_reason).". \n\ncheers,\n".$INSTALLER09['site_name']." Staff");
         }
         $updateset[] = 'suspended = '.sqlesc($_POST['suspended']);
         $curuser_cache['suspended'] = $_POST['suspended'];
@@ -804,10 +805,10 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
     if ((isset($_POST['forum_post'])) && (($forum_post = $_POST['forum_post']) != $user['forum_post'])) {
         if ($forum_post == 'yes') {
             $modcomment = get_date(TIME_NOW, 'DATE', 1)." - Posting enabled by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc('Your Posting rights have been given back by '.$CURUSER['username'].'. You can post to forum again.');
+            $msg = sqlesc('Your Posting rights have been given back by '.$username.'. You can post to forum again.');
         } else {
             $modcomment = get_date(TIME_NOW, 'DATE', 1)." - Posting disabled by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc('Your Posting rights have been removed by '.$CURUSER['username'].', Please PM '.$CURUSER['username'].' for the reason why.');
+            $msg = sqlesc('Your Posting rights have been removed by '.$username.', Please PM '.$username.' for the reason why.');
         }
         sql_query('INSERT INTO messages (sender, receiver, msg, subject, added) VALUES (0, '.$user['id'].', '.$msg.', \'Posting rights\', '.TIME_NOW.')');
         $updateset[] = 'forum_post = '.sqlesc($forum_post);
@@ -819,10 +820,10 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
     if ((isset($_POST['signature_post'])) && (($signature_post = $_POST['signature_post']) != $user['signature_post'])) {
         if ($signature_post == 'no') {
             $modcomment = get_date(TIME_NOW, 'DATE', 1)." - Signature rights turned off by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc('Your Signature rights turned off by '.$CURUSER['username'].'. PM them for more information.');
+            $msg = sqlesc('Your Signature rights turned off by '.$username.'. PM them for more information.');
         } else {
             $modcomment = get_date(TIME_NOW, 'DATE', 1)." - Signature rights turned on by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc('Your Signature rights turned back on by '.$CURUSER['username'].'.');
+            $msg = sqlesc('Your Signature rights turned back on by '.$username.'.');
         }
         sql_query('INSERT INTO messages (sender, receiver, msg, subject, added) VALUES (0, '.$user['id'].', '.$msg.', \'Signature rights\', '.TIME_NOW.')');
         $updateset[] = 'signature_post = '.sqlesc($signature_post);
@@ -846,10 +847,10 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
     if ((isset($_POST['offensive_avatar'])) && (($offensive_avatar = $_POST['offensive_avatar']) != $user['offensive_avatar'])) {
         if ($offensive_avatar == 'no') {
             $modcomment = get_date(TIME_NOW, 'DATE', 1)." - Offensive avatar set to no by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc('Your avatar has been set to not offensive by '.$CURUSER['username'].'.');
+            $msg = sqlesc('Your avatar has been set to not offensive by '.$username.'.');
         } else {
             $modcomment = get_date(TIME_NOW, 'DATE', 1)." - Offensive avatar set to yes by ".$CURUSER['username'].".\n".$modcomment;
-            $msg = sqlesc('Your avatar has been set to offensive by '.$CURUSER['username'].' PM them to ask why.');
+            $msg = sqlesc('Your avatar has been set to offensive by '.$username.' PM them to ask why.');
         }
         sql_query('INSERT INTO messages (sender, receiver, msg, subject, added) VALUES (0, '.$user['id'].', '.$msg.', \'Offensive avatar\', '.TIME_NOW.')');
         $updateset[] = 'offensive_avatar = '.sqlesc($offensive_avatar);
@@ -957,7 +958,7 @@ if ((isset($_POST['action'])) && ($_POST['action'] == "edituser")) {
         write_staffs();
     }
     //== 09 Updated Sysop log - thanks to pdq
-    write_info("User account $userid (<a href='userdetails.php?id=$userid'>$user[username]</a>)\nThings edited: ".join(', ', $useredit['update'])." by <a href='userdetails.php?id=$CURUSER[id]'>$CURUSER[username]</a>");
+    write_info("User account $userid [<a href='userdetails.php?id=$userid'>".htmlsafechars($user['username'])."</a>]\nThings edited: ".join(', ', $useredit['update'])." by <a href='userdetails.php?id={$CURUSER['id']}'>{$CURUSER['username']}</a>");
     $returnto = htmlsafechars($_POST["returnto"]);
     header("Location: {$INSTALLER09['baseurl']}/$returnto");
     stderr("{$lang['modtask_user_error']}", "{$lang['modtask_try_again']}");

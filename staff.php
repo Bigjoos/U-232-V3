@@ -20,7 +20,7 @@ $stdhead = array(
     )
 );
 $htmlout = $firstline = $support = '';
-$query = sql_query("SELECT users.id, username, support, supportfor, email, last_access, class, title, country, status, countries.flagpic, countries.name FROM users LEFT  JOIN countries ON countries.id = users.country WHERE class >= ".UC_STAFF." OR support='yes' AND status='confirmed' ORDER BY username") or sqlerr(__FILE__, __LINE__);
+$query = sql_query("SELECT u.id, u.perms, u.username, u.support, u.supportfor, u.email, u.last_access, u.class, u.title, u.country, u.status, countries.flagpic, countries.name FROM users AS u LEFT JOIN countries ON countries.id = u.country WHERE u.class >= ".UC_STAFF." OR u.support='yes' AND u.status='confirmed' ORDER BY username") or sqlerr(__FILE__, __LINE__);
 unset($support);
 while ($arr2 = mysqli_fetch_assoc($query)) {
     if ($arr2["support"] == 'yes') $support[] = $arr2;
@@ -43,7 +43,7 @@ function DoStaff($staff, $staffclass, $cols = 3)
         for ($i = 0; $i < $cols; $i++) {
             if (isset($staff[$r])) {
                 $htmlout.= "<td class='staff_username'><a href='userdetails.php?id=".(int)$staff[$r]['id']."'><font color='#".get_user_class_color($staff[$r]['class'])."'><b>".htmlsafechars($staff[$r]['username'])."</b></font></a></td>"."
-            <td class='staff_online'><img style='vertical-align: middle;' src='images/staff".($staff[$r]['last_access'] > $dt ? "/online.png" : "/offline.png")."' border='0' height='16' alt='' /></td>"."
+            <td class='staff_online'><img style='vertical-align: middle;' src='images/staff".($staff[$r]['last_access'] > $dt && $staff[$r]['perms'] < bt_options::PERMS_STEALTH ? "/online.png" : "/offline.png")."' border='0' height='16' alt='' /></td>"."
             <td class='staff_online'><a href='pm_system.php?action=send_message&amp;receiver=".(int)$staff[$r]['id']."&amp;returnto=".urlencode($_SERVER['REQUEST_URI'])."'><img style='vertical-align: middle;' src='{$INSTALLER09['pic_base_url']}mailicon.png' border='0' title=\"Personal Message\" alt='' /></a></td>"."
             <td class='staff_online'><img style='vertical-align: middle;' height='16' src='{$INSTALLER09['pic_base_url']}flag/".htmlsafechars($staff[$r]['flagpic'])."' border='0' alt='".htmlsafechars($staff[$r]['name'])."' /></td>";
                 $r++;

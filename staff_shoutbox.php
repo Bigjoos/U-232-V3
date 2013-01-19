@@ -484,7 +484,7 @@ if (isset($_GET['staff_sent']) && ($_GET['staff_sent'] == "yes")) {
 }
 //== cache the data
 if (($shouts = $mc1->get_value('staff_shoutbox_')) === false) {
-    $res = sql_query("SELECT s.id, s.userid, s.date, s.text, s.to_user, s.staff_shout, u.username, u.pirate, u.king, u.class, u.donor, u.warned, u.leechwarn, u.enabled, u.chatpost FROM shoutbox AS s LEFT JOIN users AS u ON s.userid=u.id WHERE s.staff_shout ='yes' ORDER BY s.id DESC LIMIT 30") or sqlerr(__FILE__, __LINE__);
+    $res = sql_query("SELECT s.id, s.userid, s.date, s.text, s.to_user, s.staff_shout, u.username, u.pirate, u.king, u.class, u.donor, u.warned, u.leechwarn, u.enabled, u.chatpost, u.perms FROM shoutbox AS s LEFT JOIN users AS u ON s.userid=u.id WHERE s.staff_shout ='yes' ORDER BY s.id DESC LIMIT 30") or sqlerr(__FILE__, __LINE__);
     while ($shout = mysqli_fetch_assoc($res)) $shouts[] = $shout;
     $mc1->cache_value('staff_shoutbox_', $shouts, $INSTALLER09['expires']['staff_shoutbox']);
 }
@@ -507,9 +507,9 @@ if (count($shouts) > 0) {
             //$delall
             $pm = ($CURUSER['id'] != $arr['userid'] ? "<span class='date' style=\"color:$dtcolor\"><a target='_blank' href='./pm_system.php?action=send_message&amp;receiver=".(int)$arr['userid']."'><img src='{$INSTALLER09['pic_base_url']}button_pm2.gif' border='0' alt=\"Pm User\" title=\"Pm User\" /></a></span>\n" : "");
             $date = get_date($arr["date"], 0, 1);
-            $reply = ($CURUSER['id'] != $arr['userid'] ? "<a href=\"javascript:window.top.SmileIT('[b][i]=>&nbsp;[color=#".get_user_class_color($arr['class'])."]".htmlsafechars($arr['username'])."[/color]&nbsp;-[/i][/b]','staff_shbox','staff_shbox_text')\"><img height='10' src='{$INSTALLER09['pic_base_url']}reply.gif' title='Reply' alt='Reply' style='border:none;' /></a>" : "");
-            $user_stuff = $arr;
-            $user_stuff['id'] = (int)$arr['userid'];
+            $reply = ($CURUSER['id'] != $arr['userid'] ? "<a href=\"javascript:window.top.SmileIT('[b][i]=>&nbsp;[color=#".get_user_class_color($arr['class'])."]".($arr['perms'] & bt_options::PERMS_STEALTH ? "UnKnown" : htmlsafechars($arr['username']))."[/color]&nbsp;-[/i][/b]','staff_shbox','staff_shbox_text')\"><img height='10' src='{$INSTALLER09['pic_base_url']}reply.gif' title='Reply' alt='Reply' style='border:none;' /></a>" : "" );
+            $user_stuff['id'] = ($arr['perms'] & bt_options::PERMS_STEALTH ? "".$user_stuff['id'] = $INSTALLER09['bot_id']."" : "".$user_stuff['id'] = (int)$arr['userid']."");
+            $user_stuff['username'] = ($arr['perms'] & bt_options::PERMS_STEALTH ? "".$user_stuff['username'] = 'UnKn0wn'."" : "".$user_stuff['username'] = htmlsafechars($arr['username'])."");
             $HTMLOUT.= "<tr style='background-color:$bg;'><td><span class='size1' style='color:$fontcolor;'>[$date]</span>\n$del$edit$pm$reply$private ".format_username($user_stuff, true)."<span class='size2' style='color:$fontcolor;'>".format_comment($arr["text"])."\n</span></td></tr>\n";
         }
         $HTMLOUT.= "</table>";

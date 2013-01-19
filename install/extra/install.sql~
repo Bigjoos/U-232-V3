@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `achievements` (
   `achievementid` int(5) NOT NULL DEFAULT '0',
   UNIQUE KEY `id` (`id`),
   KEY `userid` (`userid`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `achievements`
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `achievementist` (
   `clienticon` varchar(255) DEFAULT NULL,
   UNIQUE KEY `id` (`id`),
   KEY `hostname` (`achievname`)
-) ENGINE=MyISAM AUTO_INCREMENT=87 DEFAULT CHARSET=latin1 AUTO_INCREMENT=87 ;
+) ENGINE=MyISAM AUTO_INCREMENT=87 DEFAULT CHARSET=latin1;
  
 -- 
 -- Dumping data for table `achievementist`
@@ -749,7 +749,22 @@ INSERT INTO `cleanup` (`clean_id`, `clean_title`, `clean_file`, `clean_time`, `c
 (49, 'Movie of the week', 'mow_update.php', 1336316808, 604800, '716274782f2f7229d960a6661fb06b60', 1, 'Updates movie of the week', 1),
 (50, 'Silver torrents', 'silvertorrents_update.php', 1336179577, 3600, '3e1aab005271870d69934ebe37e28819', 1, 'Clean expired silver', 1),
 (51, 'Failed Logins', 'failedlogin_update.php', 1340568661, 86400, 'c90f0f030d7914db6ae1263de1730541', 1, 'Delete expired failed logins', 1),
-(52, 'Christmas Gift Rest', 'gift_update.php', 1372122786, 31556926, '4bdd6190a0ba3420d21b50b79945c06b', 1, 'Reset all users yearly xmas gift', 1);
+(52, 'Christmas Gift Rest', 'gift_update.php', 1372122786, 31556926, '4bdd6190a0ba3420d21b50b79945c06b', 1, 'Reset all users yearly xmas gift', 1),
+(53, 'Achievements Update', 'achievement_avatar_update.php', 1343436987, 86400, '0c5889bab74e7ff8f920ec524423f627', 1, 'Updates user avatar achievements', 1),
+(54, 'Achievements Update', 'achievement_bday_update.php', 1343487059, 86400, '2b95ff34a27d540f61ceca3ee1424216', 1, 'Updates user birthday achievements', 1),
+(55, 'Achievements Update', 'achievement_corrupt_update.php', 1343436995, 86400, 'afefaecc0e31e412c28dbab154e43f9d', 1, 'Updates user corrupt achievements', 1),
+(56, 'Achievements Update', 'achievement_fpost_update.php', 1343437005, 86400, 'f466ff2246e7e84bc60210aa947185da', 1, 'Updates user forum post achievements', 1),
+(57, 'Achievements Update', 'achievement_ftopics_update.php', 1343437011, 86400, '825f6cac5fa992f505ceea3992db5483', 1, 'Updates user forum topic achievements', 1),
+(58, 'Achievements Update', 'achievement_invite_update.php', 1343437021, 86400, '02e56c3aeba0b1e3e4bcca11699f23eb', 1, 'Updates user invite achievements', 1),
+(59, 'Achievements Update', 'achievement_karma_update.php', 1343437028, 86400, '3827839629ade62f03a9fccbacb8402a', 1, 'Updates user Karma achievements', 1),
+(60, 'Achievements Update', 'achievement_request_update.php', 1343437069, 86400, '48ec70ecc00c88b37977e2743d294888', 1, 'Updates user request achievements', 1),
+(61, 'Achievements Update', 'achievement_seedtime_update.php', 1343437078, 86400, '158fb134b7a1487bdda67d42544693fc', 1, 'Updates user seedtime achievements', 1),
+(62, 'Achievements Update', 'achievement_sheep_update.php', 1343437099, 86400, '97c3919a5947e00952bf82d1dc6f5c58', 1, 'Updates user sheep achievements', 1),
+(63, 'Achievements Update', 'achievement_shouts_update.php', 1343437084, 86400, 'b07151b274bb6d568ab1bc3b3364cb6c', 1, 'Updates user shout achievements', 1),
+(64, 'Achievements Update', 'achievement_sig_update.php', 1343437104, 86400, '82c3ff41b8e45a96bcd1582345d6dca9', 1, 'Updates user signature achievements', 1),
+(65, 'Achievements Update', 'achievement_sreset_update.php', 1343437109, 86400, 'b51582111414701c0bd512fd2b4f0507', 1, 'Updates user achievements - Reset shouts', 1),
+(66, 'Achievements Update', 'achievement_sticky_update.php', 1343437115, 86400, '00aaf60d3806924a42e95e64ee00c5fb', 1, 'Updates user sticky torrents achievements', 1),
+(67, 'Achievements Update', 'achievement_up_update.php', 1343437120, 86400, 'b0feb2e2c22dbf9f1575c798a5d1560d', 1, 'Updates user uploader achievements', 1);
 -- --------------------------------------------------------
 
 --
@@ -2833,7 +2848,7 @@ CREATE TABLE IF NOT EXISTS `usersachiev` (
   `totalshouts` int(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=MyISAM AUTO_INCREMENT= DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `usersachiev`

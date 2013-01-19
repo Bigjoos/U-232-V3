@@ -161,12 +161,12 @@ if ($user['ip'] && ($CURUSER['class'] >= UC_STAFF || $user['id'] == $CURUSER['id
     $dom = @gethostbyaddr($user['ip']);
     $addr = ($dom == $user['ip'] || @gethostbyname($dom) != $user['ip']) ? $user['ip'] : $user['ip'].' ('.$dom.')';
 }
-if ($user['added'] == 0) $joindate = "{$lang['userdetails_na']}";
-else $joindate = get_date($user['added'], '');
+if ($user['added'] == 0 OR $user['perms'] & bt_options::PERMS_STEALTH) $joindate = "{$lang['userdetails_na']}";
+else $joindate = get_date( $user['added'],'');
 $lastseen = $user["last_access"];
-if ($lastseen == 0) $lastseen = "{$lang['userdetails_never']}";
+if ($lastseen == 0 OR $user['perms'] & bt_options::PERMS_STEALTH) $lastseen = "{$lang['userdetails_never']}";
 else {
-    $lastseen = get_date($user['last_access'], '', 0, 1);
+    $lastseen = get_date( $user['last_access'],'',0,1);
 }
 /** #$^$&%$&@ invincible! NO IP LOGGING..pdq **/
 if ((($user['class'] == UC_MAX && $user['id'] == $CURUSER['id']) || ($user['class'] < UC_MAX) && $CURUSER['class'] == UC_MAX) && isset($_GET['invincible'])) {
@@ -175,6 +175,12 @@ if ((($user['class'] == UC_MAX && $user['id'] == $CURUSER['id']) || ($user['clas
     elseif ($_GET['invincible'] == 'remove_bypass') $HTMLOUT.= invincible($id, true, false);
     else $HTMLOUT.= invincible($id, false);
 } // End
+/** #$^$&%$&@ stealth!..Bigjoos **/
+if ((($user['class'] == UC_MAX OR $user['id'] == $CURUSER['id']) || ($user['class'] < UC_MAX) && $CURUSER['class'] == UC_MAX) && isset($_GET['stealth'])) {
+    require_once(INCL_DIR.'stealth.php');
+    if ($_GET['stealth'] == 'yes') $HTMLOUT .= stealth($id);
+    elseif ($_GET['stealth'] == 'no') $HTMLOUT .= stealth($id, false);
+}// End
 //==country by pdq
 function countries()
 {
@@ -219,7 +225,7 @@ if (!(isset($_GET["hit"])) && $CURUSER["id"] <> $user["id"]) {
         sql_query("INSERT INTO userhits (userid, hitid, number, added) VALUES(".sqlesc($CURUSER['id']).", ".sqlesc($id).", ".sqlesc($hitnumber).", ".sqlesc(TIME_NOW).")") or sqlerr(__FILE__, __LINE__);
     }
 }
-$HTMLOUT = $perms = $suspended = $watched_user = $h1_thingie = '';
+$HTMLOUT = $perms = $stealth = $suspended = $watched_user = $h1_thingie = '';
 if ($user['anonymous'] == 'yes' && ($CURUSER['class'] < UC_STAFF && $user["id"] != $CURUSER["id"])) {
     $HTMLOUT.= "<table width='100%' border='1' cellspacing='0' cellpadding='5' class='main'>";
     $HTMLOUT.= "<tr><td colspan='2' align='center'>{$lang['userdetails_anonymous']}</td></tr>";
@@ -237,6 +243,7 @@ $h1_thingie = ((isset($_GET['sn']) || isset($_GET['wu'])) ? '<h1>Member Updated<
 if ($CURUSER["id"] <> $user["id"] && $CURUSER['class'] >= UC_STAFF) $suspended.= ($user['suspended'] == 'yes' ? '&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" alt="Suspended" title="Suspended" />&nbsp;<b>This account has been suspended</b>&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" alt="Suspended" title="Suspended" />' : '');
 if ($CURUSER["id"] <> $user["id"] && $CURUSER['class'] >= UC_STAFF) $watched_user.= ($user['watched_user'] == 0 ? '' : '&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" align="middle" alt="Watched User" title="Watched User" /> <b>This account is currently on the <a href="staffpanel.php?tool=watched_users" >watched user list</a></b> <img src="'.$INSTALLER09['pic_base_url'].'smilies/excl.gif" align="middle" alt="Watched User" title="Watched User" />');
 $perms.= (($user['perms'] & bt_options::PERMS_NO_IP) ? '&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/super.gif" alt="Invincible!"  title="Invincible!" />' : '');
+$stealth .= ($CURUSER['class'] >= UC_STAFF ? (($user['perms'] & bt_options::PERMS_STEALTH) ? '&nbsp;&nbsp;<img src="'.$INSTALLER09['pic_base_url'].'smilies/ninja.gif" alt="Stealth mode !"  title="Stealth Mode !" />' : '') : '');
 $enabled = $user["enabled"] == 'yes';
 $HTMLOUT.= "<table class='main' border='0' cellspacing='0' cellpadding='0'>"."<tr><td class='embedded'><h1 style='margin:0px'>".format_username($user, true)."</h1>$country$perms$watched_user$suspended$h1_thingie</td></tr></table>\n";
 if ($user["parked"] == 'yes') $HTMLOUT.= "<p><b>{$lang['userdetails_parked']}</b></p>\n";
@@ -288,8 +295,12 @@ if ($CURUSER['id'] != $user['id']) $HTMLOUT.= "<h1><a href='{$INSTALLER09['baseu
 $invincible = $mc1->get_value('display_'.$CURUSER['id']);
 if ($invincible) $HTMLOUT.= '<h1>'.$user['username'].' is '.$invincible.' invincible!</h1>';
 //== links to make invincible method 1(PERMS_NO_IP/ no log ip) and 2(PERMS_BYPASS_BAN/cannot be banned)
-$HTMLOUT.= ($CURUSER['class'] === UC_MAX ? (($user['perms'] & bt_options::PERMS_NO_IP) ? ' - (<a title='."\n".'"Invincible means do not log IP. IP is set to localhost and user is logged out and all '."\n".'IP history is deleted." href="userdetails.php?id='.$id.'&amp;invincible=no">'."\n".'Remove Invincible</a>)'.(($user['perms'] & bt_options::PERMS_BYPASS_BAN) ? ' - '."\n".'(<a title="Invincible means do not log IP. IP is set to localhost and user is logged out.'."\n".' and all IP history is deleted. Immune to ban checks." href="userdetails.php?id='.$id.'&amp;'."\n".'invincible=remove_bypass">Remove Bypass Bans</a>)' : ' - (<a title="Invincible means do not '."\n".'log IP. IP is set to'."\n".' localhost and user is logged out and all IP history is deleted. '."\n".'Not immune to ban checks." href="userdetails.php?id='.$id.'&amp;invincible=yes">'."\n".'Add Bypass Bans</a>)') : ' - (<a title="Invincible means do not log IP. IP is set to localhost'."
-               \n".' and user is logged out and all IP history is deleted. Immune to ban checks." '."\n".'href="userdetails.php?id='.$id.'&amp;invincible=yes">Make Invincible</a>)') : '');
+$HTMLOUT.= ($CURUSER['class'] === UC_MAX ? (($user['perms'] & bt_options::PERMS_NO_IP) ? ' - (<a title='."\n".'"Invincible means do not log IP. IP is set to localhost and user is logged out and all '."\n".'IP history is deleted." href="userdetails.php?id='.$id.'&amp;invincible=no">'."\n".'Remove Invincible</a>)'.(($user['perms'] & bt_options::PERMS_BYPASS_BAN) ? ' - '."\n".'(<a title="Invincible means do not log IP. IP is set to localhost and user is logged out.'."\n".' and all IP history is deleted. Immune to ban checks." href="userdetails.php?id='.$id.'&amp;'."\n".'invincible=remove_bypass">Remove Bypass Bans</a>)' : ' - (<a title="Invincible means do not '."\n".'log IP. IP is set to'."\n".' localhost and user is logged out and all IP history is deleted. '."\n".'Not immune to ban checks." href="userdetails.php?id='.$id.'&amp;invincible=yes">'."\n".'Add Bypass Bans</a>)') : ' - (<a title="Invincible means do not log IP. IP is set to localhost'."\n".' and user is logged out and all IP history is deleted. Immune to ban checks." '."\n".'href="userdetails.php?id='.$id.'&amp;invincible=yes">Make Invincible</a>)') : '');
+//==Stealth mode by Bigjoos
+$stealth = $mc1->get_value('display_stealth'.$CURUSER['id']);
+if ($stealth) $HTMLOUT .= '<h1>'.htmlsafechars($user['username']).'&nbsp;'.$stealth.' in Stealth Mode !</h1>';
+//== links to make stealth method (PERMS_STEALTH)
+$HTMLOUT .= ($CURUSER['class'] === UC_MAX ? (($user['perms'] & bt_options::PERMS_STEALTH) ? ' - (<a title='."\n".'"Stealth mode means you lurk with intent you will become invisible to all on site including staff =] '."\n".' Blah blah blah." href="userdetails.php?id='.$id.'&amp;stealth=no">'."\n".'De-Activate Stealth</a>) ' : ' - (<a title="Stealth mode means you lurk with intent you will become invisible to all on site including staff =]'."\n".' Blah blah blah." '."\n".'href="userdetails.php?id='.$id.'&amp;stealth=yes">Activate Stealth</a>)') : '');
 $HTMLOUT.= begin_main_frame();
 $HTMLOUT.= "<div id='tabvanilla' class='widget'>";
 $HTMLOUT.= "<ul class='tabnav'>

@@ -126,6 +126,15 @@ $INSTALLER09['expires']['latestposts_tpl'] = 0; // 0 = infinite
 $INSTALLER09['expires']['site_stats_tpl'] = 0; // 0 = infinite
 $INSTALLER09['expires']['latestuser_tpl'] = 0; // 0 = infinite
 $INSTALLER09['expires']['activeusers_tpl'] = 0; // 0 = infinite
+$INSTALLER09['expires']['forum_users'] = 30; // 60 = 1 minutes
+$INSTALLER09['expires']['section_view'] = 30; // 60 = 1 minutes
+$INSTALLER09['expires']['child_boards'] = 900; // 60 = 1 minutes
+$INSTALLER09['expires']['sv_child_boards'] = 900; // 60 = 1 minutes
+$INSTALLER09['expires']['forum_insertJumpTo'] = 3600; // = 1 hour
+$INSTALLER09['expires']['last_post'] = 0; // infinite
+$INSTALLER09['expires']['sv_last_post'] = 0; // infinite
+$INSTALLER09['expires']['last_read_post'] = 0; // infinite
+$INSTALLER09['expires']['sv_last_read_post'] = 0; // infinite
 //== Latest posts limit
 $INSTALLER09['latest_posts_limit'] = 5; //query limit for latest forum posts on index
 //latest torrents limit

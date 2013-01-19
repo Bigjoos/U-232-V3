@@ -144,15 +144,15 @@ $user = mysqli_fetch_assoc($res) or stderr($lang['friends_error'], $lang['friend
 $HTMLOUT = '';
 //== Pending
 $i = 0;
-$res = sql_query("SELECT f.userid as id, u.username, u.class, u.avatar, u.title, u.donor, u.warned, u.enabled, u.leechwarn, u.chatpost, u.pirate, u.king, u.last_access FROM friends AS f LEFT JOIN users as u ON f.userid = u.id WHERE friendid=".sqlesc($CURUSER['id'])." AND f.confirmed='no' AND NOT f.userid IN (SELECT blockid FROM blocks WHERE blockid=f.userid) ORDER BY username") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT f.userid as id, u.username, u.class, u.avatar, u.title, u.donor, u.warned, u.enabled, u.leechwarn, u.chatpost, u.pirate, u.king, u.last_access, u.perms FROM friends AS f LEFT JOIN users as u ON f.userid = u.id WHERE friendid=".sqlesc($CURUSER['id'])." AND f.confirmed='no' AND NOT f.userid IN (SELECT blockid FROM blocks WHERE blockid=f.userid) ORDER BY username") or sqlerr(__FILE__, __LINE__);
 $friendsp = '';
 if (mysqli_num_rows($res) == 0) $friendsp = "<em>{$lang['friends_pending_empty']}.</em>";
 else while ($friendp = mysqli_fetch_assoc($res)) {
     $dt = TIME_NOW - 180;
-    $online = ($friendp["last_access"] >= $dt ? '&nbsp;<img src="'.$INSTALLER09['baseurl'].'/images/staff/online.png" border="0" alt="Online" title="Online" />' : '<img src="'.$INSTALLER09['baseurl'].'/images/staff/offline.png" border="0" alt="Offline" title="Offline" />');
+    $online = ($friendp["last_access"] >= $dt  && $friendp['perms'] < bt_options::PERMS_STEALTH ? '&nbsp;<img src="'.$INSTALLER09['baseurl'].'/images/staff/online.png" border="0" alt="Online" title="Online" />' : '<img src="'.$INSTALLER09['baseurl'].'/images/staff/offline.png" border="0" alt="Offline" title="Offline" />');
     $title = htmlsafechars($friendp["title"]);
     if (!$title) $title = get_user_class_name($friendp["class"]);
-    $linktouser = "<a href='userdetails.php?id=".(int)$friendp['id']."'><b>".format_username($friendp)."</b></a>($title)<br />{$lang['friends_last_seen']} ".get_date($friendp['last_access'], '');
+    $linktouser = "<a href='userdetails.php?id=".(int)$friendp['id']."'><b>".format_username($friendp)."</b></a>[$title]<br />{$lang['friends_last_seen']} ".($friendp['perms'] < bt_options::PERMS_STEALTH ?  get_date($friendp['last_access'],'') : "Never");
     $confirm = "<br /><span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=confirm&amp;type=friend&amp;targetid=".(int)$friendp['id']."'>Confirm</a></span>";
     $block = "&nbsp;<span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?action=add&amp;type=block&amp;targetid=".(int)$friendp['id']."'>Block</a></span>";
     $avatar = ($CURUSER["avatars"] == "yes" ? htmlsafechars($friendp["avatar"]) : "");
@@ -179,16 +179,16 @@ else {
 //== Awaiting ends
 //== Friends block
 $i = 0;
-$res = sql_query("SELECT f.friendid as id, u.username, u.class, u.avatar, u.title, u.donor, u.warned, u.enabled, u.leechwarn, u.chatpost, u.pirate, u.king, u.last_access, u.uploaded, u.downloaded, u.country FROM friends AS f LEFT JOIN users as u ON f.friendid = u.id WHERE userid=".sqlesc($userid)." AND f.confirmed='yes' ORDER BY username") or sqlerr(__FILE__, __LINE__);
+$res = sql_query("SELECT f.friendid as id, u.username, u.class, u.avatar, u.title, u.donor, u.warned, u.enabled, u.leechwarn, u.chatpost, u.pirate, u.king, u.last_access, u.uploaded, u.downloaded, u.country, u.perms FROM friends AS f LEFT JOIN users as u ON f.friendid = u.id WHERE userid=".sqlesc($userid)." AND f.confirmed='yes' ORDER BY username") or sqlerr(__FILE__, __LINE__);
 $friends = '';
 if (mysqli_num_rows($res) == 0) $friends = "<em>Your friends list is empty.</em>";
 else while ($friend = mysqli_fetch_assoc($res)) {
     $dt = TIME_NOW - 180;
-    $online = ($friend["last_access"] >= $dt ? '&nbsp;<img src="'.$INSTALLER09['baseurl'].'/images/staff/online.png" border="0" alt="Online" title="Online" />' : '<img src="'.$INSTALLER09['baseurl'].'/images/staff/offline.png" border="0" alt="Offline" title="Offline" />');
+    $online = ($friend["last_access"] >= $dt  && $friend['perms'] < bt_options::PERMS_STEALTH ? '&nbsp;<img src="'.$INSTALLER09['baseurl'].'/images/staff/online.png" border="0" alt="Online" title="Online" />' : '<img src="'.$INSTALLER09['baseurl'].'/images/staff/offline.png" border="0" alt="Offline" title="Offline" />');
     $title = htmlsafechars($friend["title"]);
     if (!$title) $title = get_user_class_name($friend["class"]);
     $ratio = member_ratio($friend['uploaded'], $INSTALLER09['ratio_free'] ? '0' : $friend['downloaded']);
-    $linktouser = "<a href='userdetails.php?id=".(int)$friend['id']."'><b>".format_username($friend)."</b></a>[$title]&nbsp;[$ratio]<br />{$lang['friends_last_seen']} ".get_date($friend['last_access'], '');
+    $linktouser = "<a href='userdetails.php?id=".(int)$friend['id']."'><b>".format_username($friend)."</b></a>[$title]&nbsp;[$ratio]<br />{$lang['friends_last_seen']} ".($friend['perms'] < bt_options::PERMS_STEALTH ?  get_date($friend['last_access'],'') : "Never");
     $delete = "<span class='btn'><a href='{$INSTALLER09['baseurl']}/friends.php?id=$userid&amp;action=delete&amp;type=friend&amp;targetid=".(int)$friend['id']."'>{$lang['friends_remove']}</a></span>";
     $pm_link = "&nbsp;<span class='btn'><a href='{$INSTALLER09['baseurl']}/pm_system.php?action=send_message&amp;receiver=".(int)$friend['id']."'>{$lang['friends_pm']}</a></span>";
     $avatar = ($CURUSER["avatars"] == "yes" ? htmlsafechars($friend["avatar"]) : "");

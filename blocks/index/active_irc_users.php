@@ -15,7 +15,7 @@ if (($active_irc_users_cache = $mc1->get_value($keys['activeircusers'])) === fal
     $dt = $_SERVER['REQUEST_TIME'] - 180;
     $activeircusers = '';
     $active_irc_users_cache = array();
-    $res = sql_query('SELECT id, username, irctotal, class, donor, title, warned, enabled, chatpost, leechwarn, pirate, king '.'FROM users WHERE onirc = "yes" '.'ORDER BY username ASC') or sqlerr(__FILE__, __LINE__);
+    $res = sql_query('SELECT id, username, irctotal, class, donor, title, warned, enabled, chatpost, leechwarn, pirate, king '.'FROM users WHERE onirc = "yes" '.'AND perms < '.bt_options::PERMS_STEALTH.' ORDER BY username ASC') or sqlerr(__FILE__, __LINE__);
     $actcount = mysqli_num_rows($res);
     while ($arr = mysqli_fetch_assoc($res)) {
         if ($activeircusers) $activeircusers.= ",\n";

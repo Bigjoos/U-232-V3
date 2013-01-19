@@ -5,7 +5,7 @@ $keys['birthdayusers'] = 'birthdayusers';
 if (($birthday_users_cache = $mc1->get_value($keys['birthdayusers'])) === false) {
     $birthdayusers = '';
     $birthday_users_cache = array();
-    $res = sql_query("SELECT id, username, class, donor, title, warned, enabled, chatpost, leechwarn, pirate, king, birthday FROM users WHERE MONTH(birthday) = ".sqlesc($current_date['mon'])." AND DAYOFMONTH(birthday) = ".sqlesc($current_date['mday'])." ORDER BY username ASC") or sqlerr(__FILE__, __LINE__);
+    $res = sql_query("SELECT id, username, class, donor, title, warned, enabled, chatpost, leechwarn, pirate, king, birthday FROM users WHERE MONTH(birthday) = ".sqlesc($current_date['mon'])." AND DAYOFMONTH(birthday) = ".sqlesc($current_date['mday'])." AND perms < ".bt_options::PERMS_STEALTH." ORDER BY username ASC") or sqlerr(__FILE__, __LINE__);
     $actcount = mysqli_num_rows($res);
     while ($arr = mysqli_fetch_assoc($res)) {
         if ($birthdayusers) $birthdayusers.= ",\n";
