@@ -19,11 +19,10 @@ function stdhead($title = "", $msgalert = true, $stdhead = false)
         $INSTALLER09['categorie_icon'] = isset($CURUSER['categorie_icon']) ? "{$CURUSER['categorie_icon']}" : $INSTALLER09['categorie_icon'];
         $INSTALLER09['language'] = isset($CURUSER['language']) ? "{$CURUSER['language']}" : $INSTALLER09['language'];
     }
-    /** ZZZZZZZZZZZZZZZZZZZZZZZZZZip it!
+    // ZZZZZZZZZZZZZZZZZZZZZZZZZZip it!
      if (!isset($_NO_COMPRESS))
      if (!ob_start('ob_gzhandler'))
      ob_start();
-     */
     //== Include js files needed only for the page being used by pdq
     $js_incl = '';
     $js_incl.= '<!-- javascript goes here or in footer -->';

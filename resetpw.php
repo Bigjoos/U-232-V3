@@ -98,10 +98,6 @@ if ($step == '1') {
     }
 } elseif ($step == '3') {
     if (!mkglobal('id:newpass:newpassagain')) die();
-    if ($assoc['id'] != $fetch['id']) {
-        stderr('Pmsl', 'Run along now - nothing to see here');
-        exit();
-    }
     $select = sql_query('SELECT id, editsecret FROM users WHERE id = ' . sqlesc($id)) or sqlerr(__FILE__, __LINE__);
     $fetch = mysqli_fetch_assoc($select) or stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_error8']}");
     if (empty($newpass)) stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_error9']}");
