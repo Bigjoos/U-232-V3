@@ -67,7 +67,7 @@ if ($game) {
             $res = sql_query("SELECT status, gameover FROM blackjack WHERE userid = " . sqlesc($CURUSER['id']));
             $arr = mysqli_fetch_assoc($res);
             if ($arr['status'] == 'waiting') stderr("Sorry", "You'll have to wait until your last game completes before you play a new one.");
-            elseif ($arr['status'] == 'playing') stderr("Sorry", "You must finish your old game first.<form method='post' action='" . $INSTALLER['baseurl'] . "/blackjack.php'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='hidden' name='continue' value='yes' readonly='readonly' /><input type='submit' value='Continue old game' /></form>");
+            elseif ($arr['status'] == 'playing') stderr("Sorry", "You must finish your old game first.<form method='post' action='" . $_SERVER['PHP_SELF'] . "'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='hidden' name='continue' value='yes' readonly='readonly' /><input type='submit' value='Continue old game' /></form>");
             cheater_check($arr['gameover'] == 'yes');
             $cardids = array();
             for ($i = 0; $i <= 1; $i++) $cardids[] = rand(1, $cardcount);
@@ -90,11 +90,11 @@ if ($game) {
 				<tr><td align='center'>" . trim($showcards) . "</td></tr>
 				<tr><td align='center'><b>Points = {$points}</b></td></tr>
 				<tr><td align='center'>
-				<form method='post' action='" . $INSTALLER['baseurl'] . "/blackjack.php'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='submit' value='Hitme' /></form>
+				<form method='post' action='" . $_SERVER['PHP_SELF'] . "'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='submit' value='Hitme' /></form>
 				</td></tr>";
                 if ($points >= 10) {
                     $HTMLOUT.= "<tr><td align='center'>
-				<form method='post' action='" . $INSTALLER['baseurl'] . "/blackjack.php'><input type='hidden' name='game' value='stop' readonly='readonly' /><input type='submit' value='Stay' /></form>
+				<form method='post' action='" . $_SERVER['PHP_SELF'] . "'><input type='hidden' name='game' value='stop' readonly='readonly' /><input type='submit' value='Stay' /></form>
 				</td></tr>";
                 }
                 $HTMLOUT.= "</table></td></tr></table>";
@@ -196,7 +196,7 @@ if ($game) {
             echo stdhead('Blackjack') . $HTMLOUT . stdfoot();
         } elseif ($points > 21) {
             if ($waitarr['c'] > 0) {
-                $r = sql_query("SELECT bj.*, u.username FROM blackjack AS bj LEFT JOIN users AS u ON u.id=bj.userid WHERE bj.status='waiting' AND bj.userid != " . sqlesc($CURUSER['id']) . " ORDER BY bj.date ASC LIMIT 1");
+                $r = sql_query("SELECT bj.*, u.username, u.uploaded, u.downloaded, u.bjwins, u.bjlosses FROM blackjack AS bj LEFT JOIN users AS u ON u.id=bj.userid WHERE bj.status='waiting' AND bj.userid != " . sqlesc($CURUSER['id']) . " ORDER BY bj.date ASC LIMIT 1");
                 $a = mysqli_fetch_assoc($r);
                 if ($a["points"] > 21) {
                     $subject = sqlesc("Blackjack Results");
@@ -275,10 +275,10 @@ if ($game) {
 			<tr><td align='center'>{$showcards}</td></tr>
 			<tr><td align='center'><b>Points = {$points}</b></td></tr>";
             $HTMLOUT.= "<tr>
-      <td align='center'><form method='post' action='" . $INSTALLER['baseurl'] . "/blackjack.php'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='submit' value='HitMe' /></form></td>
+      <td align='center'><form method='post' action='" . $_SERVER['PHP_SELF'] . "'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='submit' value='HitMe' /></form></td>
       </tr>";
             $HTMLOUT.= "<tr>
-      <td align='center'><form method='post' action='" . $INSTALLER['baseurl'] . "/blackjack.php'><input type='hidden' name='game' value='stop' readonly='readonly' /><input type='submit' value='Stay' /></form></td>
+      <td align='center'><form method='post' action='" . $_SERVER['PHP_SELF'] . "'><input type='hidden' name='game' value='stop' readonly='readonly' /><input type='submit' value='Stay' /></form></td>
       </tr>";
             $HTMLOUT.= "</table></td></tr></table><br />";
             echo stdhead('Blackjack') . $HTMLOUT . stdfoot();
@@ -294,7 +294,7 @@ if ($game) {
 		<tr><td align='center'>{$showcards}</td></tr>
 		<tr><td align='center'><b>Points = " . htmlsafechars($playerarr['points']) . "</b></td></tr>";
         if ($waitarr['c'] > 0) {
-            $r = sql_query("SELECT bj.*, u.username FROM blackjack AS bj LEFT JOIN users AS u ON u.id=bj.userid WHERE bj.status='waiting' AND bj.userid != " . sqlesc($CURUSER['id']) . " ORDER BY bj.date ASC LIMIT 1");
+            $r = sql_query("SELECT bj.*, u.username, u.uploaded, u.downloaded, u.bjwins, u.bjlosses FROM blackjack AS bj LEFT JOIN users AS u ON u.id=bj.userid WHERE bj.status='waiting' AND bj.userid != " . sqlesc($CURUSER['id']) . " ORDER BY bj.date ASC LIMIT 1");
             $a = mysqli_fetch_assoc($r);
             if ($a["points"] == $playerarr['points']) {
                 $subject = sqlesc("Blackjack Results");
@@ -393,7 +393,7 @@ if ($game) {
 	<tr><td align='left'>You must collect 21 points without going over.<br /><br />
 	<b>NOTE:</b> By playing blackjack, you are betting 100 MB of upload credit!</td></tr>
 	<tr><td align='center'>
-	<form method='post' action='" . $INSTALLER['baseurl'] . "/blackjack.php'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='hidden' name='start_' value='yes' readonly='readonly' /><input type='submit' value='Start!' /></form>
+	<form method='post' action='" . $_SERVER['PHP_SELF'] . "'><input type='hidden' name='game' value='hit' readonly='readonly' /><input type='hidden' name='start_' value='yes' readonly='readonly' /><input type='submit' value='Start!' /></form>
 	</td></tr></table>
 	</td></tr></table>
 	<br /><br /><br />
