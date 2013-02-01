@@ -21,7 +21,8 @@ if (!defined('IN_INSTALLER09_ADMIN')) {
     echo $HTMLOUT;
     exit();
 }
-require_once (INCL_DIR.'user_functions.php');
+require_once (INCL_DIR . 'user_functions.php');
+require_once (INCL_DIR . 'pager_functions.php');
 $params = array_merge($_GET, $_POST);
 $params['mode'] = isset($params['mode']) ? $params['mode'] : '';
 switch ($params['mode']) {
@@ -76,8 +77,8 @@ function manualclean()
     if ($row['clean_id']) {
         $next_clean = intval(TIME_NOW + ($row['clean_increment'] ? $row['clean_increment'] : 15 * 60));
         sql_query("UPDATE cleanup SET clean_time = $next_clean WHERE clean_id = {$row['clean_id']}") or sqlerr(__file__, __line__);
-        if (is_file(CLEAN_DIR.''.$row['clean_file'])) {
-            require_once (CLEAN_DIR.''.$row['clean_file']);
+        if (is_file(CLEAN_DIR . '' . $row['clean_file'])) {
+            require_once (CLEAN_DIR . '' . $row['clean_file']);
         }
         if (function_exists('docleanup')) {
             docleanup($row);
@@ -88,6 +89,9 @@ function manualclean()
 }
 function cleanup_show_main()
 {
+    $count1 = get_row_count('cleanup');
+    $perpage = 15;
+    $pager = pager($perpage, $count1, 'staffpanel.php?tool=cleanup_manager&amp;');
     $htmlout = "<h2>Current Cleanup Tasks</h2>
     <table class='torrenttable' bgcolor='#333333' border='1' cellpadding='5px' width='80%'>
     <tr>
@@ -99,7 +103,7 @@ function cleanup_show_main()
       <td class='colhead' width='40px'>Off/On</td>
       <td class='colhead' style='width: 40px;'>Run&nbsp;now</td>
     </tr>";
-    $sql = sql_query("SELECT * FROM cleanup ORDER BY clean_time ASC") or sqlerr(__FILE__, __LINE__);
+    $sql = sql_query("SELECT * FROM cleanup ORDER BY clean_time ASC " . $pager['limit']) or sqlerr(__FILE__, __LINE__);
     if (!mysqli_num_rows($sql)) stderr('Error', 'Fucking panic now!');
     while ($row = mysqli_fetch_assoc($sql)) {
         $row['_clean_time'] = get_date($row['clean_time'], 'LONG');
@@ -107,9 +111,10 @@ function cleanup_show_main()
         $row['_class'] = $row['clean_on'] != 1 ? " style='color:red'" : '';
         $row['_title'] = $row['clean_on'] != 1 ? " (Locked)" : '';
         $row['_clean_time'] = $row['clean_on'] != 1 ? "<span style='color:red'>{$row['_clean_time']}</span>" : $row['_clean_time'];
+    
         $htmlout.= "<tr>
           <td{$row['_class']}><strong>{$row['clean_title']}{$row['_title']}</strong><br />{$row['clean_desc']}</td>
-          <td>".mkprettytime($row['clean_increment'])."</td>
+          <td>" . mkprettytime($row['clean_increment']) . "</td>
           <td>{$row['_clean_time']}</td>
           <td align='center'><a href='staffpanel.php?tool=cleanup_manager&amp;action=cleanup_manager&amp;mode=edit&amp;cid={$row['clean_id']}'>
             <img src='./pic/aff_tick.gif' alt='Edit Cleanup' title='Edit' border='0' height='12' width='12' /></a></td>
@@ -121,9 +126,11 @@ function cleanup_show_main()
 <td align='center'><a href='staffpanel.php?tool=cleanup_manager&amp;action=cleanup_manager&amp;mode=run&amp;cid={$row['clean_id']}'>Run it now</a></td>
  </tr>";
     }
-    $htmlout.= "</table>
-                <br /><span class='btn'><a href='./staffpanel.php?tool=cleanup_manager&amp;action=cleanup_manager&amp;mode=new'>Add New</a></span>";
-    echo stdhead('Cleanup Manager - View').$htmlout.stdfoot();
+    $htmlout.= "</table>";
+    if ($count1 > $perpage) $htmlout .= $pager['pagerbottom'];
+    $htmlout.= "<br />
+                <span class='btn'><a href='./staffpanel.php?tool=cleanup_manager&amp;action=cleanup_manager&amp;mode=new'>Add New</a></span>";
+    echo stdhead('Cleanup Manager - View') . $htmlout . stdfoot();
 }
 function cleanup_show_edit()
 {
@@ -184,7 +191,7 @@ function cleanup_show_edit()
     <div style='text-align:center;'><input type='submit' name='submit' value='Edit' class='button' />&nbsp;<input type='button' value='Cancel' onclick='javascript: history.back()' /></div>
     </form>
     </div>";
-    echo stdhead('Cleanup Manager - Edit').$htmlout.stdfoot();
+    echo stdhead('Cleanup Manager - Edit') . $htmlout . stdfoot();
 }
 function cleanup_take_edit()
 {
@@ -229,7 +236,7 @@ function cleanup_take_edit()
         if (empty($params[$x])) stderr('Error', "Don't leave any field blank");
     }
     $params['clean_file'] = preg_replace('#\.{1,}#s', '.', $params['clean_file']);
-    if (!file_exists(CLEAN_DIR."{$params['clean_file']}")) {
+    if (!file_exists(CLEAN_DIR . "{$params['clean_file']}")) {
         stderr('Error', "You need to upload the cleanup file first!");
     }
     // new clean time =
@@ -283,7 +290,7 @@ function cleanup_show_new()
     <div style='text-align:center;'><input type='submit' name='submit' value='Add' class='button' />&nbsp;<input type='button' value='Cancel' onclick='javascript: history.back()' /></div>
     </form>
     </div>";
-    echo stdhead('Cleanup Manager - Add New').$htmlout.stdfoot();
+    echo stdhead('Cleanup Manager - Add New') . $htmlout . stdfoot();
 }
 function cleanup_take_new()
 {
@@ -327,7 +334,7 @@ function cleanup_take_new()
         if (empty($params[$x])) stderr('Error', "Don't leave any field blank");
     }
     $params['clean_file'] = preg_replace('#\.{1,}#s', '.', $params['clean_file']);
-    if (!file_exists(CLEAN_DIR."{$params['clean_file']}")) {
+    if (!file_exists(CLEAN_DIR . "{$params['clean_file']}")) {
         stderr('Error', "You need to upload the cleanup file first!");
     }
     // new clean time =

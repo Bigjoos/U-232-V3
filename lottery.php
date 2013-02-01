@@ -61,14 +61,14 @@ default:
         $uids = (strpos($lottery_config['lottery_winners'], '|') ? explode('|', $lottery_config['lottery_winners']) : $lottery_config['lottery_winners']);
         $last_winners = array();
         $qus = sql_query('SELECT id,username FROM users WHERE id '.(is_array($uids) ? 'IN ('.join(',', $uids).')' : '='.$uids)) or sqlerr(__FILE__, __LINE__);
-        while ($aus = mysqli_fetch_assoc($qus)) $last_winners[] = "<a href='userdetails.php?id={$aus['id']}'>{$aus['username']}</a>";
+        while ($aus = mysqli_fetch_assoc($qus)) $last_winners[] = "<a href='userdetails.php?id=" . (int)$aus['id'] . "'>" . htmlsafechars($aus['username']) ."</a>";
         $html.= begin_main_frame();
         $html.= stdmsg("Lottery Winners Info", "<ul style='text-align:left;'><li>Last winners: ".join(', ', $last_winners)."</li><li>Amount won	(each): ".$lottery_config['lottery_winners_amount']."</li></ul><br />
         <p style='text-align:center'>".($CURUSER['class'] >= $valid['config']['minclass'] ? "<a href='lottery.php?do=config'>[Lottery configuration]</a>&nbsp;&nbsp;" : "Nothing Configured Atm Sorry")."</p>");
         $html.= end_main_frame();
     } else {
         $html.= begin_main_frame();
-        $html.= "<ul><li> Nobody has won, because nobody has played yet : )</li>";
+        $html.= "<ul><li> Nobody has won, because nobody has played yet : )</li></ul>";
         $html.= "<p style='text-align:center'>".($CURUSER['class'] >= $valid['config']['minclass'] ? "<a href='lottery.php?do=config'>[Lottery configuration]</a>&nbsp;&nbsp;" : "Nothing Configured Atm Sorry")."</p>";
         $html.= end_main_frame();
     }
