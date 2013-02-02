@@ -27,8 +27,6 @@ oxo,
 snuggs
 ********************************************************************************/
 //=== move
-//$pm_messages = (isset($_POST['pm']) ? intval($_POST['pm']) : '');
-//$pm_messages = sqlesc((isset($_POST['pm']) && $_POST['pm'] !== 0) ? intval($_POST['pm']) : 0);
 $pm_messages = $_POST['pm'];
 if (isset($_POST['move'])) {
     if (is_valid_id($pm_messages)) {
@@ -44,6 +42,7 @@ if (isset($_POST['move'])) {
 //=== delete
 if (isset($_POST['delete'])) {
     //=== Delete multiple messages
+    $pm_messages = $_POST['pm'];
     foreach ($pm_messages as $id) {
         $res = sql_query('SELECT * FROM messages WHERE id='.sqlesc($id));
         $message = mysqli_fetch_assoc($res);

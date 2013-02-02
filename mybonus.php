@@ -763,7 +763,7 @@ $fslot = $slots + 2;
 if ($CURUSER['invites'] == 0)
 stderr("Error", "Time shall unfold what plighted cunning hides\n\nWho cover faults, at last shame them derides.");
 $bonuscomment = get_date( TIME_NOW, 'DATE', 1 ) . " - " .$points. " invites for bonus points.\n" .$bonuscomment;
-sql_query("UPDATE users SET invites = ".sqlesc($inv).", freeslots ".sqlesc($fslot)." WHERE id = ".sqlesc($userid)." AND invites = ".sqlesc($invites)."+1") or sqlerr(__FILE__, __LINE__);
+sql_query("UPDATE users SET invites = ".sqlesc($inv).", freeslots =".sqlesc($fslot)." WHERE id = ".sqlesc($userid)." AND invites = ".sqlesc($invites)."+1") or sqlerr(__FILE__, __LINE__);
 $mc1->begin_transaction('user'.$userid);
 $mc1->update_row(false, array('invites' => $inv, 'freeslots' => $fslot));
 $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);

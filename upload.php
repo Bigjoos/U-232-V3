@@ -239,7 +239,7 @@ $game = array(
     'Strategy',
     'Adventure',
     '3rd Person',
-    'Acton'
+    'Action'
 );
 for ($x = 0; $x < count($game); $x++) {
     $HTMLOUT.= "<label><input type=\"checkbox\" value=\"$game[$x]\" name=\"game[]\" class=\"DEPENDS ON genre BEING game\" />$game[$x]</label>";
