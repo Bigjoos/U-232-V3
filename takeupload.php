@@ -170,6 +170,7 @@ $expected_pieces = (int)ceil($totallen / $plen);
 if ($num_pieces != $expected_pieces) stderr('error', 'total file size and number of peices do not match');
 //==
 $tmaker = (isset($dict['created by']) && !empty($dict['created by'])) ? sqlesc($dict['created by']) : sqlesc($lang['takeupload_unkown']);
+$dict['comment'] = ("In using this torrent you are bound by the {$INSTALLER09['site_name']} Confidentiality Agreement By Law"); // change torrent comment
 // Replace punctuation characters with spaces
 $torrent = str_replace("_", " ", $torrent);
 $vip = (isset($_POST["vip"]) ? "1" : "0");

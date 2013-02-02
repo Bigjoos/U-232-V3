@@ -31,16 +31,16 @@ function docleanup($data)
             $msgs_buffer[] = '(0,'.$arr['id'].', '.TIME_NOW.', '.sqlesc($msg).', '.sqlesc($subject).')';
             $users_buffer[] = '('.$arr['id'].', 10737418240)';
             $update['uploaded'] = ($arr['uploaded'] + 10737418240);
-            $mc1->begin_transaction('MyUser_'.$arr['id']);
+            $mc1->begin_transaction('userstats_' . $arr['id']);
             $mc1->update_row(false, array(
                 'uploaded' => $update['uploaded']
             ));
-            $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
-            $mc1->begin_transaction('user'.$arr['id']);
+            $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
+            $mc1->begin_transaction('user_stats_' . $arr['id']);
             $mc1->update_row(false, array(
                 'uploaded' => $update['uploaded']
             ));
-            $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
+            $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
         }
         $count = count($users_buffer);
         if ($count > 0) {

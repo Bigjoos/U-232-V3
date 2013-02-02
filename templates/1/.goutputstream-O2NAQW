@@ -1,0 +1,147 @@
+<?php
+/**
+ *   https://github.com/Bigjoos/
+ *   Licence Info: GPL
+ *   Copyright (C) 2010 U-232 V3
+ *   A bittorrent tracker source based on TBDev.net/tbsource/bytemonsoon.
+ *   Project Leaders: Mindless,putyn.
+ **/
+ //==Template system by Terranova
+function stdhead($title = "", $msgalert = true, $stdhead=false) {
+    global $CURUSER, $INSTALLER09, $lang, $free, $_NO_COMPRESS, $query_stat, $querytime, $mc1, $BLOCKS, $CURBLOCK, $mood;
+    if (!$INSTALLER09['site_online'])
+    die("Site is down for maintenance, please check back again later... thanks<br />");
+    if ($title == "")
+    $title = $INSTALLER09['site_name'] .(isset($_GET['tbv'])?" (".TBVERSION.")":'');
+    else
+    $title = $INSTALLER09['site_name'].(isset($_GET['tbv'])?" (".TBVERSION.")":''). " :: " . htmlsafechars($title);
+
+    if ($CURUSER)
+    {
+    $INSTALLER09['stylesheet'] = isset($CURUSER['stylesheet']) ? "{$CURUSER['stylesheet']}.css" : $INSTALLER09['stylesheet'];
+    $INSTALLER09['categorie_icon'] = isset($CURUSER['categorie_icon']) ? "{$CURUSER['categorie_icon']}" : $INSTALLER09['categorie_icon'];
+    $INSTALLER09['language'] = isset($CURUSER['language']) ? "{$CURUSER['language']}" : $INSTALLER09['language'];
+    }
+    /** ZZZZZZZZZZZZZZZZZZZZZZZZZZip it!
+    if (!isset($_NO_COMPRESS))
+    if (!ob_start('ob_gzhandler'))
+    ob_start();
+    */
+    //== Include js files needed only for the page being used by pdq
+    $js_incl = '';
+    $js_incl .= '<!-- javascript goes here or in footer -->';
+    if (!empty($stdhead['js'])) {
+    foreach ($stdhead['js'] as $JS)
+    $js_incl .= "<script type='text/javascript' src='{$INSTALLER09['baseurl']}/scripts/".$JS.".js'></script>";
+    }
+    //== Include css files needed only for the page being used by pdq
+    $css_incl = '';
+    $css_incl .= '<!-- css goes here -->';
+   $salty = md5("Th15T3xtis5add3dto66uddy6he@water...".$CURUSER['username']."");
+    if (!empty($stdhead['css'])) {
+    foreach ($stdhead['css'] as $CSS)
+    $css_incl .= "<link type='text/css' rel='stylesheet' href='{$INSTALLER09['baseurl']}/templates/{$CURUSER['stylesheet']}/css/".$CSS.".css' />";
+    }
+    if (isset($INSTALLER09['xhtml_strict'])) { //== Use strict mime type/doctype
+    //== Only if browser/user agent supports xhtml
+    if (isset($_SERVER['HTTP_ACCEPT']) && stristr($_SERVER['HTTP_ACCEPT'],'application/xhtml+xml') && ($INSTALLER09['xhtml_strict'] === 1 || $INSTALLER09['xhtml_strict'] == $CURUSER['username'])) {
+    header('Content-type:application/xhtml+xml; charset='.charset());
+    $doctype ='<?xml version="1.0" encoding="'.charset().'"?>'.'<!DOCTYPE html PUBLIC  "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'.'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">';
+    }
+    }
+    if (!isset($doctype)) {
+    header('Content-type:text/html; charset='.charset());
+    $doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'.'"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'.'<html xmlns="http://www.w3.org/1999/xhtml">';
+    }
+    //== Needs revised - cant place code here == will fix it
+    /*
+    <!--<small>
+            <strong>
+            &nbsp;&nbsp;".$last24_cache['totalonline24']." Member".$last24_cache['ss24']." in last 24 hours<br />
+            &nbsp;&nbsp;".$lang["index_active"]."&nbsp;(".$active_users_cache["actcount"].")
+            </strong>
+            </small>-->
+	//== Last24 start - pdq
+     $keys['last24'] = 'last24';
+     if(($last24_cache = $mc1->get_value($keys['last24'])) === false) {
+     $last24_cache  = array();
+     $time24 = $_SERVER['REQUEST_TIME'] - 86400;
+     $activeusers24 = '';
+     $arr = mysqli_fetch_assoc(sql_query('SELECT * FROM avps WHERE arg = "last24"'));
+     $res = sql_query('SELECT id, username, class, donor, title, warned, enabled, chatpost, leechwarn, pirate, king '.
+                  'FROM users WHERE last_access >= '.$time24.' '.
+                  'ORDER BY username ASC') or sqlerr(__FILE__, __LINE__);
+     $totalonline24 = mysqli_num_rows($res);
+     $_ss24 = ($totalonline24 != 1 ? 's' : '');
+     $last24record  = get_date($arr['value_u'], '');
+     $last24 = $arr['value_i'];
+     if ($totalonline24 > $last24) {
+     $last24 = $totalonline24;
+     $period = $_SERVER['REQUEST_TIME'];
+     sql_query('UPDATE avps SET value_s = 0, '.
+                  'value_i = '.sqlesc($last24).', '.
+                  'value_u = '.sqlesc($period).' '.
+                  'WHERE arg = "last24"') or sqlerr(__FILE__, __LINE__);
+     }
+     while ($arr = mysqli_fetch_assoc($res)) {
+     if ($activeusers24)
+     $activeusers24 .= ",\n";
+     $activeusers24 .= '<b>'.format_username($arr).'</b>';
+     }
+     $last24_cache['activeusers24'] = $activeusers24;
+     $last24_cache['totalonline24'] = number_format($totalonline24);
+     $last24_cache['last24record'] = $last24record;
+     $last24_cache['last24'] = number_format($last24);
+     $last24_cache['ss24'] = $_ss24;
+     $mc1->cache_value($keys['last24'], $last24_cache, $INSTALLER09['expires']['last24']);
+     }
+     //== End Last24
+     //==Start activeusers - pdq
+     $keys['activeusers']    = 'activeusers';
+     if(($active_users_cache = $mc1->get_value($keys['activeusers'])) === false) {
+     $dt = $_SERVER['REQUEST_TIME'] - 180;
+     $activeusers = '';
+     $active_users_cache = array();
+     $res = sql_query('SELECT id, username, class, donor, title, warned, enabled, chatpost, leechwarn, pirate, king '.
+              'FROM users WHERE last_access >= '.$dt.' '.
+              'ORDER BY username ASC') or sqlerr(__FILE__, __LINE__);
+     $actcount = mysqli_num_rows($res);
+     while ($arr = mysqli_fetch_assoc($res)) {
+      if ($activeusers)
+      $activeusers .= ",\n";
+      $activeusers .= '<b>'.format_username($arr).'</b>';
+     }
+     $active_users_cache['activeusers'] = $activeusers;
+     $active_users_cache['actcount']    = $actcount;
+     $mc1->cache_value($keys['activeusers'] , $active_users_cache, $INSTALLER09['expires']['activeusers']);
+     }
+     if (!$active_users_cache['activeusers'])
+     $active_users_cache['activeusers'] = 'There have been no active users in the last 15 minutes.';
+     $active_users = '<div class="headline">'.$lang['index_active'].'&nbsp;('.$active_users_cache['actcount'].')</div>
+     <div class="headbody">
+     <!--<a href=\'javascript: klappe_news("a1")\'><img border=\'0\' src=\'pic/plus.gif\' id=\'pica1\' alt=\'[Hide/Show]\' /></a><div id=\'ka1\' style=\'display: none;\'>-->
+     <!--<a class="altlink"  title="Click for more info" id="div_open1" style="font-weight:bold;cursor:pointer;"><img border=\'0\' src=\'pic/plus.gif\' alt=\'[Hide/Show]\' /></a>
+     <div id="div_info1" style="display:none;background-color:#FEFEF4;max-width:940px;padding: 5px 5px 5px 10px;">-->
+     '.$active_users_cache['activeusers'].'
+     </div><!--</div>--><br />';
+     $HTMLOUT .= $active_users;
+//== end activeusers
+*/
+    $body_class = isset($_COOKIE['theme']) ? htmlspecialchars($_COOKIE['theme']) : 'background-15 h-style-1 text-1 skin-1';
+    $htmlout = $doctype."<head>
+        <meta http-equiv='Content-Language' content='en-us' />
+        <!-- ####################################################### -->
+        <!-- #   This website is powered by U-232 V3               # -->
+        <!-- #   Download and support at: https://u-232.com        # -->
+        <!-- #   This Template was Moded  by  RogueSurfer	       # -->
+        <!-- ####################################################### -->
+        <title>{$title}</title>
+        <link rel='alternate' type='application/rss+xml' title='Latest Torrents' href='./rss.php?passkey={$CURUSER['passkey']}' />
+        <link rel='stylesheet' href='./templates/1/1.css' type='text/css' />
+        <link rel='stylesheet' href='./templates/1/themeChanger/css/colorpicker.css' type='text/css' />
+        <link rel='stylesheet' href='./templates/1/themeChanger/css/themeChanger.css' type='text/css' />
+        <link rel='shortcut icon' href='favicon.ico' />
+        <script type='text/javascript' src='./scripts/jquery.js'></script>
+        <script type='text/javascript' src='./scripts/jquery.status.js'></script>
+        <script type='text/javascript' src='./scripts

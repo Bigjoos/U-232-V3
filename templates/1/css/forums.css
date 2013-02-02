@@ -17,12 +17,12 @@
      background-repeat: no-repeat;
      background-position: bottom right;
   }
-  
+
 marquee.style {
 	block-progression: tb;
 	direction: ltr;
-	overflow: auto; 
-	overflow-style: marquee; 
+	overflow: auto;
+	overflow-style: marquee;
 	white-space: nowrap;
 }
 
@@ -54,35 +54,42 @@ td.one and td.two are for alternating colours
 they are the same now, but they should be slightly different
 */
 td.one {
-  background-color: #222222;
+  background-color: #CCCCCC;
   border: none;
 }
 
 td.two {
-  background-color: #333333;
+  background-color: #dddddd;
   border: none;
 }
 
 td.three {
-  background-color: #111111;
+  background-color: #bbbbbb;
   border: none;
 }
 
 td.forum_head {
-  background-color: #0a2030;
+  background-color: #999999;
   border: none;
-  background: url(pic/forums/headindex.png); 
+  /*background: url(pic/forums/headindex.png);*/
 }
 
 td.forum_head_dark {
-  font-weight: bold;
-  background-color: #e8e3c5;
-  border: none;
-  background: url(./pic/forums/headindex.png); 
+-webkit-margin-start: 2px;
+-webkit-margin-end: 2px;
+-webkit-padding-before: 0.35em;
+-webkit-padding-start: 0.75em;
+-webkit-padding-end: 0.75em;
+-webkit-padding-after: 0.625em;
+border: 2px groove threedface;
+    height: 30px; font-weight: bold; color: #555;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#aaaaaa), to(#dddddd));
+    background: -moz-linear-gradient(100% 100% 90deg, #aaaaaa, #dddddd);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dddddd', endColorstr='#aaaaaa',GradientType=0 )
 }
 
 td.recycled {
-  background: url(pic/forums/recycle_big.gif) center no-repeat;
+  /*background: url(pic/forums/recycle_big.gif) center no-repeat;*/
   background-color: #C0D9AF;
   border: none;
 }
@@ -106,7 +113,7 @@ td.spoiler {
 }
 
 td.spoiler a:hover
-{ 
+{
 	text-decoration:none;
 	border: 1px black dotted;
 	background-color: #000000;
@@ -189,8 +196,8 @@ a.tt_f:hover span.top{
 }
 a.tt_f:hover span.middle{ /* different middle bg for stretch */
 	display: block;
-	padding: 0 8px; 
-	background: url(pic/bubble_filler.gif) repeat bottom; 
+	padding: 0 8px;
+	background: url(pic/bubble_filler.gif) repeat bottom;
 }
 a.tt_f:hover span.bottom{
 	display: block;
@@ -203,8 +210,8 @@ a.tt_f2{
     z-index:24;
     text-decoration:none;
 }
-a.tt_f2 span{ 
-	display: none; 
+a.tt_f2 span{
+	display: none;
 }
 
 /*background:; ie hack, something must be changed in a for ie to execute it*/
@@ -215,7 +222,7 @@ a.tt_f2:hover span.tooltip_forum_tip{
 	cursor: help;
     top:0px; left:0;
 	padding: 5px 5px 5px 5px;
-	background-color: #0a2035; 
+	background-color: #0a2035;
 	width:400px;
 	max-height:300px;
 	filter: alpha(opacity:90);
@@ -229,12 +236,12 @@ a.tt_f2:hover span.top{
 	color: black;
 	font-weight: bold;
 	background-color: #0055A4;
-	background: url(pic/forums/headindex.png); 
+	background: url(pic/forums/headindex.png);
 }
 a.tt_f2:hover span.middle{ /* different middle bg for stretch */
 	display: block;
 	padding: 5px 10px 5px 10px;
-	background-color: #FEFEF4; 
+	background-color: #FEFEF4;
 	color: #000000;
 	max-height:300px;
 	overflow:hidden;
@@ -243,7 +250,19 @@ a.tt_f2:hover span.middle{ /* different middle bg for stretch */
 /* rounded button set... can be any image, just be sure to make them the same size! */
 
 .button_tiny {
-	background: url('pic/button_tiny_up.gif') no-repeat top left;
+      position:relative;
+      display: inline-block;
+      margin-bottom: 1em;
+      outline:none;
+      -webkit-border-radius: .25em;
+      -moz-border-radius: .25em;
+      border-radius: .25em;
+      background-color: #e4e4e4;
+      color:#555;
+      vertical-align: baseline;
+      text-align:center;
+      text-decoration: none;
+      cursor:pointer;
 	border: none;
 	font: normal 13px Tahoma;
 	padding: 4px 4px;
@@ -255,7 +274,19 @@ a.tt_f2:hover span.middle{ /* different middle bg for stretch */
 }
 
 .button_tiny_hover {
-	background: url('pic/button_tiny_rll.gif') no-repeat top left;
+      position:relative;
+      display: inline-block;
+      margin-bottom: 1em;
+      outline:none;
+      -webkit-border-radius: .25em;
+      -moz-border-radius: .25em;
+      border-radius: .25em;
+      background-color: #e4e4e4;
+      color:#555;
+      vertical-align: baseline;
+      text-align:center;
+      text-decoration: none;
+      cursor:pointer;
 	cursor: pointer;
 	font-weight: bold;
 	color: black;
@@ -268,7 +299,19 @@ a.tt_f2:hover span.middle{ /* different middle bg for stretch */
 }
 
 .button {
-	background: url('pic/button_sml_up.gif') no-repeat top left;
+      position:relative;
+      display: inline-block;
+      margin-bottom: 1em;
+      outline:none;
+      -webkit-border-radius: .25em;
+      -moz-border-radius: .25em;
+      border-radius: .25em;
+      background-color: #e4e4e4;
+      color:#555;
+      vertical-align: baseline;
+      text-align:center;
+      text-decoration: none;
+      cursor:pointer;
 	border: none;
 	font: normal 13px Tahoma;
 	padding: 4px 4px;
@@ -280,7 +323,19 @@ a.tt_f2:hover span.middle{ /* different middle bg for stretch */
 }
 
 .button_hover {
-	background: url('pic/button_sml_rll.gif') no-repeat top left;
+      position:relative;
+      display: inline-block;
+      margin-bottom: 1em;
+      outline:none;
+      -webkit-border-radius: .25em;
+      -moz-border-radius: .25em;
+      border-radius: .25em;
+      background-color: #e4e4e4;
+      color:#555;
+      vertical-align: baseline;
+      text-align:center;
+      text-decoration: none;
+      cursor:pointer;
 	cursor: pointer;
 	font-weight: bold;
 	color: black;
@@ -293,7 +348,19 @@ a.tt_f2:hover span.middle{ /* different middle bg for stretch */
 }
 
 .button_med {
-	background: url('pic/button_med_up.gif') no-repeat top left;
+      position:relative;
+      display: inline-block;
+      margin-bottom: 1em;
+      outline:none;
+      -webkit-border-radius: .25em;
+      -moz-border-radius: .25em;
+      border-radius: .25em;
+      background-color: #e4e4e4;
+      color:#555;
+      vertical-align: baseline;
+      text-align:center;
+      text-decoration: none;
+      cursor:pointer;
 	border: none;
 	font: normal 13px Tahoma;
 	padding: 4px 4px;
@@ -305,7 +372,19 @@ a.tt_f2:hover span.middle{ /* different middle bg for stretch */
 }
 
 .button_med_hover {
-	background: url('pic/button_med_rll.gif') no-repeat top left;
+      position:relative;
+      display: inline-block;
+      margin-bottom: 1em;
+      outline:none;
+      -webkit-border-radius: .25em;
+      -moz-border-radius: .25em;
+      border-radius: .25em;
+      background-color: #e4e4e4;
+      color:#555;
+      vertical-align: baseline;
+      text-align:center;
+      text-decoration: none;
+      cursor:pointer;
 	cursor: pointer;
 	font-weight: bold;
 	color: black;
@@ -318,7 +397,19 @@ a.tt_f2:hover span.middle{ /* different middle bg for stretch */
 }
 
 .button_big {
-	background: url('pic/button_big_up.gif') no-repeat top left;
+      position:relative;
+      display: inline-block;
+      margin-bottom: 1em;
+      outline:none;
+      -webkit-border-radius: .25em;
+      -moz-border-radius: .25em;
+      border-radius: .25em;
+      background-color: #e4e4e4;
+      color:#555;
+      vertical-align: baseline;
+      text-align:center;
+      text-decoration: none;
+      cursor:pointer;
 	border: none;
 	font: normal 13px Tahoma;
 	padding: 4px 4px;
@@ -330,7 +421,19 @@ a.tt_f2:hover span.middle{ /* different middle bg for stretch */
 }
 
 .button_big_hover {
-	background: url('pic/button_big_rll.gif') no-repeat top left;
+      position:relative;
+      display: inline-block;
+      margin-bottom: 1em;
+      outline:none;
+      -webkit-border-radius: .25em;
+      -moz-border-radius: .25em;
+      border-radius: .25em;
+      background-color: #e4e4e4;
+      color:#555;
+      vertical-align: baseline;
+      text-align:center;
+      text-decoration: none;
+      cursor:pointer;
 	cursor: pointer;
 	font-weight: bold;
 	color: black;
@@ -387,7 +490,7 @@ option.body {
 
 .text_area_small {
 	background-color: #FEFEF4;
-	color: black;	
+	color: black;
 	border:2px inset #878261;
 	width: 600px;
 	height: 120px;
@@ -400,7 +503,7 @@ fieldset.poll_select {
   border: none;
 }
 
-/* drop down for IP thing in forums 
+/* drop down for IP thing in forums
  This menu was inspired by (and the basic technique taken from) Eric Meyer's Pure CSS Menus.
 found at :
 http://www.howtocreate.co.uk/tutorials/testMenu.html*/
@@ -433,8 +536,8 @@ ul.makeMenu li > ul {          /* using the > selector prevents many lesser brow
 }
 ul.makeMenu li:hover, ul.makeMenu li.CSStoHighlight {
   background-color: #e8e3c5;      /* gives the active menu items a yellow background */
-  color: #000;                 /* makes the active menu item text black */ 
-  background: url(pic/forums/headindex.png); 
+  color: #000;                 /* makes the active menu item text black */
+  background: url(pic/forums/headindex.png);
   text-align:left;
 }
 ul.makeMenu ul.CSStoShow {     /* must not be combined with the next rule or IE gets confused */
@@ -445,15 +548,15 @@ ul.makeMenu li:hover > ul {    /* one of the most important declarations - the b
   display: block;              /* makes the child block visible - one of the most important declarations */
 }
 /* and some link styles */
-ul.makeMenu li a { 
-color: #000; 
+ul.makeMenu li a {
+color: #000;
 display: block;
-width: 100%; 
-text-decoration: underline; 
+width: 100%;
+text-decoration: underline;
 }
 ul.makeMenu li a:hover, ul.makeMenu li a.CSStoHighLink {
- color: #000; 
+ color: #000;
 }
 ul.makeMenu li:hover > a {
- color: #000; 
+ color: #000;
 } /* supports links in branch headings - should not be display: block; */

@@ -137,17 +137,17 @@ class CACHE extends Memcache
         }
         foreach ($Values as $Key => $Value) {
             if (!array_key_exists($Key, $UpdateArray)) {
-                trigger_error('Bad transaction key ('.$Key.') for cache '.$this->MemcacheDBKey);
+                trigger_error('Bad transaction key (' . $Key . ') for cache ' . $this->MemcacheDBKey);
             }
             if ($Value === '+1') {
                 if (!is_number($UpdateArray[$Key])) {
-                    trigger_error('Tried to increment non-number ('.$Key.') for cache '.$this->MemcacheDBKey);
+                    trigger_error('Tried to increment non-number (' . $Key . ') for cache ' . $this->MemcacheDBKey);
                 }
                 ++$UpdateArray[$Key]; // Increment value
                 
             } elseif ($Value === '-1') {
                 if (!is_number($UpdateArray[$Key])) {
-                    trigger_error('Tried to decrement non-number ('.$Key.') for cache '.$this->MemcacheDBKey);
+                    trigger_error('Tried to decrement non-number (' . $Key . ') for cache ' . $this->MemcacheDBKey);
                 }
                 --$UpdateArray[$Key]; // Decrement value
                 
@@ -161,6 +161,19 @@ class CACHE extends Memcache
         } else {
             $this->MemcacheDBArray[$Row] = $UpdateArray;
         }
+    }
+    public static function clean()
+    {
+        if (!self::$this) {
+            trigger_error('Not connected to Memcache server in ' . __METHOD__, E_USER_WARNING);
+            return false;
+        }
+        self::$count++;
+        $time = microtime(true);
+        $clean = self::$link->flush();
+        self::$time+= (microtime(true) - $time);
+        self::set_error(__METHOD__);
+        return $clean;
     }
 } //end class
 
