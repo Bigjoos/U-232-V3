@@ -125,7 +125,7 @@ if ($game) {
         }
         if ($points == 21) {
             if ($waitarr['c'] > 0) {
-                $r = sql_query("SELECT bj.*, u.username FROM blackjack AS bj LEFT JOIN users AS u ON u.id=bj.userid WHERE bj.status='waiting' AND bj.userid != " . sqlesc($CURUSER['id']) . " ORDER BY bj.date ASC LIMIT 1");
+                $r = sql_query("SELECT bj.*, u.username, u.uploaded, u.downloaded, u.bjwins, u.bjlosses FROM blackjack AS bj LEFT JOIN users AS u ON u.id=bj.userid WHERE bj.status='waiting' AND bj.userid != " . sqlesc($CURUSER['id']) . " ORDER BY bj.date ASC LIMIT 1");
                 $a = mysqli_fetch_assoc($r);
                 if ($a["points"] != 21) {
                     $winorlose = "you won " . mksize($mb);
