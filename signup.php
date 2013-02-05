@@ -68,7 +68,7 @@ foreach ($countries as $cntry) $country.= "<option value='" . (int)$cntry['id'] 
 $gender.= "<select name=\"gender\">
     <option value=\"Male\">{$lang['signup_male']}</option>
     <option value=\"Female\">{$lang['signup_female']}</option>
-    <option value=\"N/A\">{$lang['signup_na']}</option>
+    <option value=\"NA\">{$lang['signup_na']}</option>
     </select>";
 // Normal Entry Point...
 //== click X by Retro
