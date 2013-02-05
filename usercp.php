@@ -337,7 +337,7 @@ elseif ($action == "personal") {
     $HTMLOUT.= tr($lang['usercp_stylesheet'], "<select name='stylesheet'>\n$stylesheets\n</select>", 1);
     $HTMLOUT.= tr($lang['usercp_gender'], "<input type='radio' name='gender'".($CURUSER["gender"] == "Male" ? " checked='checked'" : "")." value='Male' />{$lang['usercp_male']}
     <input type='radio' name='gender'".($CURUSER["gender"] == "Female" ? " checked='checked'" : "")." value='Female' />{$lang['usercp_female']}
-    <input type='radio' name='gender'".($CURUSER["gender"] == "N/A" ? " checked='checked'" : "")." value='N/A' />{$lang['usercp_na']}", 1);
+    <input type='radio' name='gender'".($CURUSER["gender"] == "NA" ? " checked='checked'" : "")." value='NA' />{$lang['usercp_na']}", 1);
     $HTMLOUT.= tr($lang['usercp_shoutback'], "<input type='radio' name='shoutboxbg'".($CURUSER["shoutboxbg"] == "1" ? " checked='checked'" : "")." value='1' />{$lang['usercp_shoutback_white']}
     <input type='radio' name='shoutboxbg'".($CURUSER["shoutboxbg"] == "2" ? " checked='checked'" : "")." value='2' />{$lang['usercp_shoutback_grey']}<input type='radio' name='shoutboxbg'".($CURUSER["shoutboxbg"] == "3" ? " checked='checked'" : "")." value='3' />{$lang['usercp_shoutback_black']}", 1);
     //=== messenger stuff
