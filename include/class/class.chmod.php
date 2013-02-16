@@ -40,7 +40,7 @@ class Chmod
     }
     private function getMode()
     {
-        return 0.$this->_modes['owner'].$this->_modes['group'].$this->_modes['public'];
+        return $this->_modes['owner'].$this->_modes['group'].$this->_modes['public'];
     }
     private function setMode($read, $write, $execute)
     {
