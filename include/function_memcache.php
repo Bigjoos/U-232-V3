@@ -27,9 +27,9 @@ function remove_torrent_peers($id)
     $seed_key = 'torrents::seeds:::'.$id;
     $leech_key = 'torrents::leechs:::'.$id;
     $comp_key = 'torrents::comps:::'.$id;
-    $delete+= $mc1->delete_value($seed_key, 5);
-    $delete+= $mc1->delete_value($leech_key, 5);
-    $delete+= $mc1->delete_value($comp_key, 5);
+    $delete+= $mc1->delete_value($seed_key);
+    $delete+= $mc1->delete_value($leech_key);
+    $delete+= $mc1->delete_value($comp_key);
     return (bool)$delete;
 }
 ?>

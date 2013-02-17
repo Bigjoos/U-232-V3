@@ -9,6 +9,7 @@
  */
 require_once (dirname(__FILE__).DIRECTORY_SEPARATOR.'include'.DIRECTORY_SEPARATOR.'bittorrent.php');
 require_once (INCL_DIR.'user_functions.php');
+require_once (INCL_DIR . 'function_memcache.php');
 dbconn();
 loggedinorreturn();
 $lang = array_merge(load_language('global') , load_language('delete'));
@@ -50,6 +51,7 @@ elseif ($rt == 4) {
     $reasonstr = trim($reason[3]);
 }
 deletetorrent($id);
+remove_torrent_peers($id);
 //$mc1->delete_value('lastest_tor_');
 $mc1->delete_value('top5_tor_');
 $mc1->delete_value('last5_tor_');
