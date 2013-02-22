@@ -2870,7 +2870,7 @@ CREATE TABLE IF NOT EXISTS `ustatus` (
   `archive` text NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `userid` (`userid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `ustatus`
