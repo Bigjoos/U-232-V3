@@ -994,6 +994,9 @@ CREATE TABLE IF NOT EXISTS `events` (
 -- Dumping data for table `events`
 --
 
+INSERT INTO `events` (`id`, `userid`, `startTime`, `endTime`, `overlayText`, `displayDates`, `freeleechEnabled`, `duploadEnabled`, `hdownEnabled`) VALUES
+(1, 1, 1354629410, 1354888610, 'FreeLeech [ON]', 1, 0, 0, 0);
+
 -- --------------------------------------------------------
 
 --
