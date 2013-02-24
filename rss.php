@@ -12,6 +12,11 @@ dbconn();
 $passkey = (isset($_GET["passkey"]) ? htmlsafechars($_GET["passkey"]) : '');
 $feed = (isset($_GET["type"]) && $_GET['type'] == 'dl' ? 'dl' : 'web');
 $cats = (isset($_GET["cats"]) ? $_GET["cats"] : "");
+if ($cats) {
+        $validate_cats = explode(',', $cats);
+        $cats = implode(', ', array_map('intval', $validate_cats));
+        $cats = implode(', ', array_map('sqlesc', $validate_cats));
+    }
 if (!empty($passkey)) {
     if (strlen($passkey) != 32) die("Your passkey is not long enough! Go to ".$INSTALLER09['site_name']." and reset your passkey");
     else {
