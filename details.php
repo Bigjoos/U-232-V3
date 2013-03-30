@@ -68,7 +68,12 @@ foreach ($categorie as $key => $value) $change[$value['id']] = array(
     'image' => $value['image']
 );
 if (($torrents = $mc1->get_value('torrent_details_'.$id)) === false) {
-    $torrents = mysqli_fetch_assoc(sql_query("SELECT seeders, leechers, banned, thanks, leechers, info_hash, checked_by, filename, search_text, LENGTH(nfo) AS nfosz, name, comments, owner, save_as, visible, size, added, views, hits, id, type, poster, url, numfiles, times_completed, anonymous, points, allow_comments, description, nuked, nukereason, last_reseed, vip, category, subs, username, newgenre, release_group, free, silver, youtube, tags, rating_sum, num_ratings, IF(num_ratings < {$INSTALLER09['minvotes']}, NULL, ROUND(rating_sum / num_ratings, 1)) AS rating FROM torrents WHERE id = ".sqlesc($id))) or sqlerr(__FILE__, __LINE__);
+    $tor_q = sql_query("SELECT seeders, leechers, banned, thanks, leechers, info_hash, checked_by, filename, search_text, LENGTH(nfo) AS nfosz, name, comments, owner, save_as, visible, size, added, views, hits, id, type, poster, url, numfiles, times_completed, anonymous, points, allow_comments, description, nuked, nukereason, last_reseed, vip, category, subs, username, newgenre, release_group, free, silver, youtube, tags, rating_sum, num_ratings, IF(num_ratings < {$INSTALLER09['minvotes']}, NULL, ROUND(rating_sum / num_ratings, 1)) AS rating FROM torrents WHERE id = ".sqlesc($id))) or sqlerr(__FILE__, __LINE__);
+    if (mysqli_num_rows($tor_q) === 0) {
+            header('Location: browse.php');
+            die();
+    }
+    $torrents = mysqli_fetch_assoc($tor_q);
     $torrents['seeders'] = (int)$torrents['seeders'];
     $torrents['leechers'] = (int)$torrents['leechers'];
     $torrents['points'] = (int)$torrents['points'];

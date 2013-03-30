@@ -1,6 +1,6 @@
 <?php
 if ($CURUSER) {
-    if (isset($free)) {
+    if (isset($free) && (count($free) >= 1)) {
         foreach ($free as $fl) {
             switch ($fl['modifier']) {
             case 1:
