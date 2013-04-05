@@ -22,10 +22,10 @@ function docleanup($data)
     ignore_user_abort(1);
     // Remove expired readposts...
     $dt = TIME_NOW - $INSTALLER09["readpost_expiry"];
-    sql_query("DELETE readposts FROM readposts "."LEFT JOIN posts ON readposts.lastpostread = posts.id "."WHERE posts.added < $dt");
+    sql_query("DELETE readposts FROM read_posts " . "LEFT JOIN posts ON read_posts.lastpostread = posts.id " . "WHERE posts.added < ".sqlesc($dt)) or sqlerr(__FILE__, __LINE__);
     if ($queries > 0) write_log("Readpost Clean -------------------- Readpost cleanup Complete using $queries queries --------------------");
     if (false !== mysqli_affected_rows($GLOBALS["___mysqli_ston"])) {
-        $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"])." items deleted/updated";
+        $data['clean_desc'] = mysqli_affected_rows($GLOBALS["___mysqli_ston"]) . " items deleted/updated";
     }
     if ($data['clean_log']) {
         cleanup_log($data);
