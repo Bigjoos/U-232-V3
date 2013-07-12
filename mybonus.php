@@ -1294,7 +1294,7 @@ $mc1->begin_transaction('userstats_'.$useridgift);
 $mc1->update_row(false, array('seedbonus' => $giftbonus1));
 $mc1->commit_transaction($INSTALLER09['expires']['u_stats']);
 $mc1->begin_transaction('user_stats_'.$useridgift);
-$mc1->update_row(false, array('seedbonus' => $seedbonus, 'bonuscomment' => $bonuscomment_gift));
+$mc1->update_row(false, array('seedbonus' => $giftbonus1, 'bonuscomment' => $bonuscomment_gift));
 $mc1->commit_transaction($INSTALLER09['expires']['user_stats']);
 //===send message
 $subject = sqlesc("Someone Loves you"); 
