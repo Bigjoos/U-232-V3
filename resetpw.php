@@ -86,24 +86,39 @@ if ($step == '1') {
         $subject = "Failed password reset";
         sql_query('INSERT INTO messages (receiver, msg, subject, added) VALUES (' . sqlesc((int)$fetch['id']) . ', ' . sqlesc($msg) . ', ' . sqlesc($subject) . ', ' . TIME_NOW . ')') or sqlerr(__FILE__, __LINE__);
         stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_error7']}");
-    } else {
-        $HTMLOUT.= "<form method='post' action='?step=3'>
-<table border='1' cellspacing='0' cellpadding='10'>
-<tr><td class='rowhead'>{$lang['main_new_pass']}</td>
-<td><input type='password' size='40' name='newpass' /></td></tr>
-<tr><td class='rowhead'>{$lang['main_new_pass_confirm']}</td><td><input type='password' size='40' name='newpassagain' /></td></tr>
-<tr><td colspan='2' align='center'><input type='submit' value='{$lang['main_changeit']}' class='btn' />
-<input type='hidden' name='id' value='" . (int)$fetch['id'] . "' /></td></tr></table></form>";
-        echo stdhead('Reset Lost Password') . $HTMLOUT . stdfoot();
-    }
+    }     else {
+                    $sec = mksecret();
+                    $sechash =  md5($sec.$fetch['id'].$fetch['hintanswer']);
+                    sql_query("UPDATE users SET editsecret = ".sqlesc($sec)." WHERE id = ".sqlesc($id));
+                    $mc1->begin_transaction('MyUser_'.$fetch["id"]);
+                    $mc1->update_row(false, array('editsecret' => $sec));
+                    $mc1->commit_transaction($INSTALLER09['expires']['curuser']);
+                    $mc1->begin_transaction('user'.$fetch["id"]);
+                    $mc1->update_row(false, array('editsecret' => $sec));
+                    $mc1->commit_transaction($INSTALLER09['expires']['user_cache']);
+                    $HTMLOUT .= "<form method='post' action='?step=3'>
+    <table border='1' cellspacing='0' cellpadding='10'>
+    <tr><td class='rowhead'>{$lang['main_new_pass']}</td>
+    <td><input type='password' size='40' name='newpass' /></td></tr>
+    <tr><td class='rowhead'>{$lang['main_new_pass_confirm']}</td><td><input type='password' size='40' name='newpassagain' /></td></tr>
+    <tr><td colspan='2' align='center'><input type='submit' value='{$lang['main_changeit']}' class='btn' />
+    <input type='hidden' name='id' value='".(int)$fetch['id']."' />
+    <input type='hidden' name='hash' value='". $sechash ."' /></td></tr></table></form>";
+     
+                    echo stdhead('Reset Lost Password').$HTMLOUT.stdfoot();
+        }
 } elseif ($step == '3') {
-    if (!mkglobal('id:newpass:newpassagain')) die();
+    if (!mkglobal('id:newpass:newpassagain:hash')) die();
+    if (strlen($hash) != 32 || !ctype_xdigit($hash))
+    die('access denied');
     $select = sql_query('SELECT id, editsecret FROM users WHERE id = ' . sqlesc($id)) or sqlerr(__FILE__, __LINE__);
     $fetch = mysqli_fetch_assoc($select) or stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_error8']}");
     if (empty($newpass)) stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_error9']}");
     if ($newpass != $newpassagain) stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_error10']}");
     if (strlen($newpass) < 6) stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_error11']}");
     if (strlen($newpass) > 40) stderr("{$lang['stderr_errorhead']}", "{$lang['stderr_error12']}");
+    if ($hash != md5($fetch['editsecret'].$fetch['id'].$fetch['hintanswer']))
+        die('invalid hash');
     $secret = mksecret();
     $newpassword = make_passhash($secret, md5($newpass));
     sql_query('UPDATE users SET secret = ' . sqlesc($secret) . ', editsecret = "", passhash=' . sqlesc($newpassword) . ' WHERE id = ' . sqlesc($id) . ' AND editsecret = ' . sqlesc($fetch["editsecret"]));
