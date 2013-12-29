@@ -342,7 +342,11 @@ if (count($_POST) > 0); //&& isset($_POST['n']))
         if (is_array($names_inc)) {
             $where_is.= !empty($where_is) ? " AND (" : "(";
             foreach ($names_inc as $name) {
-                if (!haswildcard($name)) $name_is.= (!empty($name_is) ? " OR " : "")."u.username = ".sqlesc($name);
+             if (!haswildcard($name))
+             if (is_numeric($name))
+                  $name_is .= (!empty($name_is) ? " OR " : "")." u.id = ".(int)($name);
+                else
+                  $name_is.= (!empty($name_is) ? " OR " : "")."u.username = ".sqlesc($name);
                 else {
                     $name = str_replace(array(
                         '?',
@@ -360,7 +364,11 @@ if (count($_POST) > 0); //&& isset($_POST['n']))
         if (is_array($names_exc)) {
             $where_is.= !empty($where_is) ? " AND NOT (" : " NOT (";
             foreach ($names_exc as $name) {
-                if (!haswildcard($name)) $name_is.= (isset($name_is) ? " OR " : "")."u.username = ".sqlesc($name);
+             if (!haswildcard($name))
+             if (is_numeric($name))
+                  $name_is .= (!empty($name_is) ? " OR " : "")." u.id = ".(int)($name);
+                else
+                  $name_is.= (!empty($name_is) ? " OR " : "")."u.username = ".sqlesc($name);
                 else {
                     $name = str_replace(array(
                         '?',
@@ -374,6 +382,7 @@ if (count($_POST) > 0); //&& isset($_POST['n']))
             }
             $where_is.= $name_is.")";
         }
+    
         $q1.= ($q1 ? "&amp;" : "")."n=".urlencode(trim($_POST['n']));
     }
     // email
@@ -526,6 +535,7 @@ if (count($_POST) > 0); //&& isset($_POST['n']))
                 }
                 $where_is.= $comment_is.")";
             }
+            $where_is .= (isset($where_is)?" AND ":"")."u.class<".$CURUSER['class'];
             $q1.= ($q1 ? "&amp;" : "")."co=".urlencode(trim($_POST['co']));
         }
     }
