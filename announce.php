@@ -159,7 +159,7 @@ else {
     }
     $resp.= strlen($o).':'.$o.'e';
 }
-$selfwhere = "torrent = $torrentid AND ".hash_where("peer_id", $peer_id);
+$selfwhere = "torrent = ".ann_sqlesc($torrentid)." AND ".hash_where("peer_id", $peer_id);
 if (!isset($self)) {
     $res = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT $fields FROM peers WHERE $selfwhere") or ann_sqlerr(__FILE__, __LINE__);
     $row = mysqli_fetch_assoc($res);
@@ -314,7 +314,7 @@ if (mysqli_num_rows($res_snatch) > 0) {
 if (!mysqli_affected_rows($GLOBALS["___mysqli_ston"]) && $seeder == "no") mysqli_query($GLOBALS["___mysqli_ston"], "INSERT LOW_PRIORITY INTO snatched (torrentid, userid, peer_id, ip, port, connectable, uploaded, downloaded, to_go, start_date, last_action, seeder, agent) VALUES (".ann_sqlesc($torrentid).", ".ann_sqlesc($userid).", ".ann_sqlesc($peer_id).", ".ann_sqlesc($realip).", ".ann_sqlesc($port).", ".ann_sqlesc($connectable).", ".ann_sqlesc($uploaded).", ".($INSTALLER09['ratio_free'] ? "0" : "".ann_sqlesc($downloaded)."").", ".ann_sqlesc($left).", ".TIME_NOW.", ".TIME_NOW.", ".ann_sqlesc($seeder).", ".ann_sqlesc($agent).")") or ann_sqlerr(__FILE__, __LINE__);
 $updateset = $snatch_updateset = array();
 if (isset($self) && $event == "stopped") {
-    mysqli_query($GLOBALS["___mysqli_ston"], "DELETE FROM peers WHERE ".ann_sqlesc($selfwhere)) or ann_sqlerr(__FILE__, __LINE__);
+    mysqli_query($GLOBALS["___mysqli_ston"], "DELETE FROM peers WHERE $selfwhere") or ann_sqlerr(__FILE__, __LINE__);
     //=== only run the function if the ratio is below 1
     if (($a['uploaded'] + $upthis) < ($a['downloaded'] + $downthis) && $a['finished'] == 'yes') {
         $HnR_time_seeded = ($a['seedtime'] + $self['announcetime']);

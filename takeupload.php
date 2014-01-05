@@ -280,7 +280,7 @@ if ($request > 0) {
     }
     sql_query('UPDATE requests SET filled_by_user_id = '.sqlesc($CURUSER['id']).', filled_torrent_id = '.sqlesc($id).' WHERE id = '.sqlesc($request)) or sqlerr(__FILE__, __LINE__);
     sql_query("UPDATE usersachiev SET reqfilled = reqfilled + 1 WHERE id =".sqlesc($CURUSER['id'])) or sqlerr(__FILE__, __LINE__);
-    write_log('Request for torrent '.$id.' ('.htmlspeciachars($torrent).') was filled by '.$CURUSER['username']);
+    write_log('Request for torrent '.$id.' ('.htmlsafechars($torrent).') was filled by '.$CURUSER['username']);
     $filled = 1;
 }
 if ($filled == 0) write_log(sprintf($lang['takeupload_log'], $id, $torrent, $CURUSER['username']));
