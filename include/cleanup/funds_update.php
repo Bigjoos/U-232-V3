@@ -20,10 +20,9 @@ function docleanup($data)
     global $INSTALLER09, $queries, $mc1;
     set_time_limit(1200);
     ignore_user_abort(1);
-    // ===Clear funds after one month
-    $secs = 30 * 86400;
-    $dt = sqlesc(TIME_NOW - $secs);
-    sql_query("DELETE FROM funds WHERE added < $dt");
+    // ===Clear funds on first day of the month
+  if (date("d") == 1){
+   sql_query("TRUNCATE funds");}
     //if (mysqli_affected_rows() > 0)
     $mc1->delete_value('totalfunds_');
     // ===End
